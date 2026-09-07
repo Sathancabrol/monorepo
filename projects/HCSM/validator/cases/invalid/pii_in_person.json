@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "expect": "fail",
+    "description": "Civil identifiers forbidden."
+  },
+  "id": "person:leaked",
+  "type": "Person",
+  "label": "Patient",
+  "status": "PROPOSED",
+  "email": "patient@example.com",
+  "full_name": "Jane Doe",
+  "date_of_birth": "1990-01-01"
+}

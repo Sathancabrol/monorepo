@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Monorepo — Explorer & Preview{% endblock %}
+{% block head %}
+<style>
+.layout{display:grid;grid-template-columns:320px 1fr;gap:12px;min-height:72vh}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pane h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:8px;border-bottom:1px solid var(--line);background:#0f1115}
+.tabs button{padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:#171a20;color:var(--text);cursor:pointer;font-size:12px}
+.tabs button.active{background:var(--accent);border-color:var(--accent);color:white}
+.list{overflow:auto;flex:1}
+.row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #1b1e26;cursor:pointer;font-size:13px}
+.row:hover{background:#171a20}
+.row.dir{font-weight:600}
+.breadcrumb{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px;border-bottom:1px solid var(--line);background:#0f1115;font-size:12px}
+.viewer{flex:1;overflow:auto}
+.preview-bar{display:flex;gap:6px;align-items:center;padding:8px;border-bottom:1px solid var(--line);background:#0f1115;flex-wrap:wrap}
+.preview-bar input{flex:1;min-width:180px;background:#0b0c0f;border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:8px}
+iframe{width:100%;height:100%;border:0;background:white}
+.split{display:grid;grid-template-rows:420px 1fr;gap:12px;height:100%}
+@media(max-width:900px){.split{grid-template-rows:360px 420px}}
+pre{margin:0;padding:12px;overflow:auto;background:#0f1115;font:12px ui-monospace,monospace;white-space:pre-wrap;word-break:break-word}
+</style>
+{% endblock %}
+{% block content %}
+<h1 style="margin-bottom:4px">Monorepo — navigue dans le code et prévisualise</h1>
+<div class="muted" style="font-size:12px;margin-bottom:10px">Tout est local dans <code>projects/</code> • Preview en iframe same-origin (navigable avec ←/→) • Fichiers via <code>/api/fs</code> • Aucun token exposé</div>
+
+<div class="layout">
+  <!-- left: explorer -->
+  <div class="pane" style="min-height:520px">
+    <h3>
+      <span>Explorateur</span>
+      <span class="muted" id="file-count" style="font-size:11px"></span>
+    </h3>
+    <div class="tabs" id="project-tabs"></div>
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <div style="padding:6px 8px;border-bottom:1px solid var(--line);display:flex;gap:6px">
+      <input id="filter" placeholder="Filtrer fichiers…" style="flex:1;background:#0b0c0f;border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:8px;font-size:12px">
+      <button class="btn" onclick="upOne()">↑</button>
+    </div>
+    <div class="list" id="file-list"></div>
+  </div>
+
+  <!-- right: preview + viewer -->
+  <div class="split">
+    <div class="pane" style="min-height:420px">
+      <div class="preview-bar">
+        <strong style="font-size:12px">Preview</strong>
+        <button class="btn" onclick="navBack()" title="Retour">←</button>
+        <button class="btn" onclick="navFwd()" title="Avancer">→</button>
+        <button class="btn" onclick="navHome()" title="Accueil">⌂</button>
+        <button class="btn" onclick="reloadPreview()" title="Recharger">⟳</button>
+        <input id="addr" placeholder="/preview/{project}/…" onkeydown="if(event.key==='Enter') goAddr()">
+        <button class="btn" onclick="goAddr()">Aller</button>
+        <button class="btn" onclick="openNewTab()">↗</button>
+        <select id="entry-sel" style="background:#0b0c0f;border:1px solid var(--line);color:var(--text);padding:6px;border-radius:8px;font-size:12px"></select>
+      </div>
+      <div style="flex:1;position:relative;background:white">
+        <iframe id="preview" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>
+        <div id="preview-fallback" style="display:none;position:absolute;inset:0;background:#0f1115;color:var(--text);padding:20px;overflow:auto"></div>
+      </div>
+    </div>
+
+    <div class="pane" style="min-height:300px">
+      <h3>
+        <span id="viewer-title">Sélectionne un fichier</span>
+        <span style="display:flex;gap:6px">
+          <button class="btn" onclick="copyPath()">Copier chemin</button>
+          <a class="btn" id="open-preview-link" href="#" target="_blank" style="display:none">Ouvrir dans preview</a>
+        </span>
+      </h3>
+      <div class="viewer" id="viewer">
+        <div style="padding:14px" class="muted">Clique un fichier à gauche. Markdown rendu, images/PDF affichés, code coloré. Navigation dans la preview synchronisée avec la barre d'adresse.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <h3 style="margin:0 0 6px">Projets</h3>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+    {% for p in projects %}
+    <div style="font-size:12px"><strong>{{p.name}}</strong> <span class="muted">• {{p.file_count}} fichiers</span> {% if p.preview %}<span class="badge" style="color:#2dd4bf;border-color:#2dd4bf">preview: {{p.preview}}</span>{% else %}<span class="badge">code seul</span>{% endif %}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const PROJECTS = {{ projects|tojson }};
+const SNAP = {{ snapshot|tojson if snapshot else 'null' }};
+let currentProject = new URLSearchParams(location.search).get('project') || (PROJECTS[0]?.name || '');
+let currentPath = "";
+let historyStack = [];
+let histIndex = -1;
+
+function $(id){return document.getElementById(id)}
+
+function renderTabs(){
+  const el=$('project-tabs');
+  el.innerHTML = PROJECTS.map(p=>`<button class="${p.name===currentProject?'active':''}" onclick="switchProject('${p.name}')">${p.name} ${p.preview? '•':' '}</button>`).join('');
+  // entry selector
+  const sel=$('entry-sel');
+  const proj = PROJECTS.find(p=>p.name===currentProject);
+  if(proj){
+    const opts = ["dist/index.html","index.html","output/visual/index.html","output/visual/d3_interactive.html","learning/index.html","learning/money-poc.html","README.md"].filter(Boolean);
+    sel.innerHTML = '<option value="">— entrée —</option>' + opts.map(o=>`<option value="${o}">${o}</option>`).join('') + (proj.preview? `<option value="${proj.preview}" selected>${proj.preview} ★</option>`:'');
+    sel.onchange = ()=>{ if(sel.value) navigatePreview(PROJECTS.find(p=>p.name===currentProject).name + '/' + sel.value) };
+  }
+}
+function switchProject(name){
+  currentProject=name;
+  currentPath="";
+  historyStack=[]; histIndex=-1;
+  const url=new URL(location.href); url.searchParams.set('project', name); history.replaceState(null,'',url);
+  renderTabs();
+  loadList();
+  loadPreviewForProject();
+}
+async function loadList(){
+  const filter=$('filter').value.toLowerCase();
+  const res=await fetch(`/api/fs/list?project=${encodeURIComponent(currentProject)}&path=${encodeURIComponent(currentPath)}`);
+  if(!res.ok){ $('file-list').innerHTML=`<div style="padding:12px;color:#f87171">Erreur ${res.status}: ${await res.text()}</div>`; return; }
+  const data=await res.json();
+  // breadcrumb
+  const bc=$('breadcrumb');
+  bc.innerHTML = data.breadcrumb.map((b,i)=>`<a href="#" onclick="goTo('${b.path}');return false" style="${i===data.breadcrumb.length-1?'font-weight:700':''}">${b.name}</a>`).join(' <span class="muted">›</span> ');
+  $('file-count').textContent = data.entries.length + ' éléments';
+  let entries=data.entries;
+  if(filter) entries=entries.filter(e=>e.name.toLowerCase().includes(filter));
+  $('file-list').innerHTML = entries.map(e=>{
+    const icon=e.is_dir?'📁':'📄';
+    const badge=e.is_dir?'':`<span class="badge">${e.ext||''}</span>`;
+    return `<div class="row ${e.is_dir?'dir':''}" onclick="${e.is_dir?`goTo('${e.path.replace(/'/g,"\\'")}')`:`openFile('${e.path.replace(/'/g,"\\'")}')`}" title="${e.path}">${icon} ${e.name} <span class="muted" style="margin-left:auto;font-size:11px">${e.is_dir?'':(e.size||0)+' o'}</span> ${badge}</div>`
+  }).join('') || '<div class="muted" style="padding:12px">Dossier vide</div>';
+}
+function goTo(path){ currentPath=path; loadList(); }
+function upOne(){
+  if(!currentPath) return;
+  const parts=currentPath.split('/'); parts.pop(); currentPath=parts.join('/'); loadList();
+}
+async function openFile(path){
+  $('viewer-title').textContent = currentProject + '/' + path;
+  $('open-preview-link').style.display='inline-block';
+  $('open-preview-link').href = `/preview/${currentProject}/${path}`;
+  const res=await fetch(`/api/fs/file?project=${encodeURIComponent(currentProject)}&path=${encodeURIComponent(path)}`);
+  if(!res.ok){ $('viewer').innerHTML=`<div style="padding:12px;color:#f87171">Erreur ${res.status}</div>`; return; }
+  const data=await res.json();
+  if(data.binary){
+    if(data.mime && data.mime.startsWith('image/')){
+      $('viewer').innerHTML=`<div style="padding:12px"><img src="/preview/${currentProject}/${path}" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px"><div class="muted" style="font-size:12px;margin-top:6px">${data.mime} • ${data.size} o</div></div>`;
+    } else if(data.mime==='application/pdf' || path.toLowerCase().endsWith('.pdf')){
+      $('viewer').innerHTML=`<iframe src="/preview/${currentProject}/${path}" style="width:100%;height:520px;border:0;background:white"></iframe>`;
+    } else {
+      $('viewer').innerHTML=`<div style="padding:12px" class="muted">Binaire ${data.mime||''} • ${data.size} o — <a href="/preview/${currentProject}/${path}" target="_blank">ouvrir</a></div>`;
+    }
+    return;
+  }
+  const ext=(data.ext||'').toLowerCase();
+  let html='';
+  if(ext==='.md' || ext==='.markdown'){
+    html = `<div style="padding:14px;max-width:760px">${renderMarkdown(data.content)}</div>`;
+  } else {
+    html = `<pre><code>${esc(data.content)}</code></pre>`;
+  }
+  $('viewer').innerHTML = html;
+}
+function renderMarkdown(md){
+  // minimal md to html
+  let h=esc(md);
+  h=h.replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^## (.*)$/gm,'<h2>$1</h2>').replace(/^# (.*)$/gm,'<h1>$1</h1>');
+  h=h.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/`([^`]+)`/g,'<code>$1</code>');
+  h=h.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>');
+  h=h.replace(/^- (.*)$/gm,'<li>$1</li>'); h=h.replace(/(<li>.*<\/li>)/s,'<ul>$1</ul>');
+  h=h.replace(/\n/g,'<br>');
+  return h;
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function copyPath(){
+  const t=$('viewer-title').textContent;
+  navigator.clipboard.writeText(t);
+}
+
+// preview nav
+function previewUrl(project, rel){ return `/preview/${project}/${rel}` }
+function navigatePreview(relPathWithProject){
+  // relPathWithProject = "watchtower/dist/index.html" or "ETAT.../output/visual/..."
+  const url = `/preview/${relPathWithProject}`;
+  pushHist(url);
+  $('preview').src=url;
+  $('addr').value=url;
+  $('preview-fallback').style.display='none';
+}
+function pushHist(url){
+  // truncate forward
+  if(histIndex < historyStack.length-1) historyStack = historyStack.slice(0, histIndex+1);
+  historyStack.push(url); histIndex=historyStack.length-1;
+}
+function navBack(){
+  if(histIndex>0){ histIndex--; $('preview').src=historyStack[histIndex]; $('addr').value=historyStack[histIndex];}
+}
+function navFwd(){
+  if(histIndex < historyStack.length-1){ histIndex++; $('preview').src=historyStack[histIndex]; $('addr').value=historyStack[histIndex];}
+}
+function navHome(){ loadPreviewForProject(); }
+function reloadPreview(){ const f=$('preview'); f.src=f.src; }
+function goAddr(){
+  const v=$('addr').value.trim();
+  if(!v) return;
+  // allow full /preview/... or relative
+  let url=v;
+  if(!v.startsWith('/preview/') && !v.startsWith('http')){
+    // treat as path within current project
+    url=`/preview/${currentProject}/${v.replace(/^\/+/,'')}`;
+  }
+  pushHist(url); $('preview').src=url;
+}
+function openNewTab(){ const src=$('preview').src; if(src && src!=='about:blank') window.open(src,'_blank'); }
+
+function loadPreviewForProject(){
+  const proj=currentProject;
+  const entry = (PROJECTS.find(p=>p.name===proj)||{}).preview;
+  if(entry){
+    navigatePreview(proj + '/' + entry);
+  } else {
+    // show README preview if exists
+    navigatePreview(proj + '/README.md');
+    // fallback message
+    setTimeout(()=>{
+      const f=$('preview');
+      // if README md will be served as text, show in viewer instead
+    }, 300);
+  }
+}
+// capture navigation inside iframe (same-origin only)
+function hookIframe(){
+  const iframe=$('preview');
+  iframe.addEventListener('load', ()=>{
+    try{
+      const doc=iframe.contentDocument;
+      if(!doc) return;
+      const cur = iframe.contentWindow.location.pathname;
+      // update addr if same-origin
+      if(cur.startsWith('/preview/')){
+        $('addr').value = cur + iframe.contentWindow.location.search;
+        // push if not already top
+        if(historyStack[histIndex] !== iframe.contentWindow.location.pathname + iframe.contentWindow.location.search){
+          pushHist(iframe.contentWindow.location.pathname + iframe.contentWindow.location.search);
+        }
+      }
+      // intercept clicks
+      doc.addEventListener('click', (e)=>{
+        const a=e.target.closest('a');
+        if(a && a.href){
+          const u=new URL(a.href, iframe.contentWindow.location.href);
+          if(u.origin===location.origin && u.pathname.startsWith('/preview/')){
+            e.preventDefault();
+            navigatePreview(u.pathname.replace(/^\/preview\//,'') + u.search);
+          }
+        }
+      });
+    }catch(err){
+      // cross-origin (should not happen as same-origin)
+    }
+  });
+}
+
+renderTabs();
+loadList();
+loadPreviewForProject();
+hookIframe();
+$('filter').addEventListener('input', loadList);
+</script>
+{% endblock %}

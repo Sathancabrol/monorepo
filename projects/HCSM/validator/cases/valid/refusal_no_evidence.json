@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "expect": "pass",
+    "description": "Well-formed Refusal (NO_EVIDENCE) — refusal is a valid scientific outcome."
+  },
+  "id": "hcsm:inference/refusal/wm_px_t0",
+  "type": "Refusal",
+  "insufficient_for": "hcsm:knowledge/construct/working_memory",
+  "about_person": "person:opaque:px",
+  "code": "NO_EVIDENCE",
+  "message": "No observation with alignment exact|close for working_memory in window.",
+  "has_window": {
+    "center": "2026-08-25T09:40:00Z",
+    "half_width": 30,
+    "unit": "min"
+  },
+  "has_provenance": {
+    "id": "prov:inf_wm_px_t0",
+    "activity_type": "InferenceActivity",
+    "started_at": "2026-08-25T09:50:00Z",
+    "associated_agent": "agent:hcsm_placeholder_v0"
+  }
+}

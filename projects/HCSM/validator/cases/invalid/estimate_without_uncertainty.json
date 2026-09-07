@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "expect": "fail",
+    "description": "ConstructEstimate missing uncertainty."
+  },
+  "id": "hcsm:inference/estimate/bad_unc",
+  "type": "ConstructEstimate",
+  "status": "PROPOSED",
+  "estimates": "hcsm:knowledge/construct/attention",
+  "about_person": "person:opaque:px",
+  "value": 0.73,
+  "scale": "unit_interval",
+  "inferred_from": ["obs:1"],
+  "has_context": "ctx:1",
+  "has_window": {
+    "center": "2026-08-25T09:40:00Z",
+    "half_width": 30,
+    "unit": "min"
+  },
+  "has_provenance": {
+    "activity_type": "InferenceActivity",
+    "started_at": "2026-08-25T09:50:00Z",
+    "associated_agent": "agent:x"
+  },
+  "estimate_status": "estimated"
+}

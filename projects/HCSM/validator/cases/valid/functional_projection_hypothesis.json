@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "expect": "pass",
+    "description": "ICF projection always HYPOTHESIS."
+  },
+  "id": "hcsm:inference/fp/d160_px_t0",
+  "type": "FunctionalProjection",
+  "status": "HYPOTHESIS",
+  "from_estimates": ["hcsm:inference/estimate/att_px_t0"],
+  "maps_to": "icf:d160",
+  "kind": "activity_limitation_hypothesis",
+  "does_not_imply": ["diagnosis", "fact"]
+}

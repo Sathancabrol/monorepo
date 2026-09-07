@@ -1,0 +1,6 @@
+{
+  "name": "Ferrofluid Consciousness Vessel",
+  "description": "Photorealistic 3D scientific-art visualization of an organic ovoid glass vessel containing black ferrofluid suspended in microgravity near an event horizon.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

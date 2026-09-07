@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Monorepo — Vue d'ensemble{% endblock %}
+{% block content %}
+<h1>Monorepo unifié — 8 dépôts en un seul projet navigable</h1>
+<p class="muted">Tout ton code est désormais dans <code>projects/</code>. Navigue dans les fichiers et ouvre chaque preview directement dans l'interface — sans quitter la page.</p>
+
+<div class="topbar" style="margin:12px 0">
+  <a class="btn primary" href="/monorepo">↗ Ouvrir l'explorateur + previews</a>
+  <a class="btn" href="/repos">Voir le panorama GitHub</a>
+  <button class="btn" onclick="refreshSnap()">⟳ Refresh snapshot GitHub</button>
+  <span id="refresh-msg" class="muted"></span>
+</div>
+
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+  {% for p in projects %}
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+      <strong>{{ p.name }}</strong>
+      {% if p.preview %}<span class="badge" style="border-color:#2dd4bf;color:#2dd4bf">preview ✓</span>{% else %}<span class="badge">code seul</span>{% endif %}
+    </div>
+    <div class="muted" style="font-size:12px;margin:6px 0">{{ p.file_count }} fichiers • <code>projects/{{p.name}}/</code></div>
+    {% if p.preview %}
+    <div style="font-size:12px">Entrée: <code>{{ p.preview }}</code></div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <a class="btn" href="/monorepo?project={{p.name}}">Explorer</a>
+      <a class="btn" href="/preview/{{p.name}}/{{p.preview}}" target="_blank">Ouvrir preview ↗</a>
+    </div>
+    {% else %}
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <a class="btn" href="/monorepo?project={{p.name}}">Explorer</a>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% if snapshot %}
+<div class="card" style="margin-top:16px">
+  <h2 style="margin-top:0">Snapshot GitHub — fusion logique (sans copier le code)</h2>
+  <div class="muted" style="font-size:12px">Généré {{ snapshot.generated_at }} • {{ snapshot.count }} dépôts • {{ snapshot.api_calls }} appels API</div>
+  <div id="fusion-graph" style="height:280px;border:1px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden;background:#0f1115"></div>
+  <div class="muted" style="font-size:12px;margin-top:6px">Nœuds = dépôts, liens = dépendances communes (≥2) ou relation explicite COGNITORIUM→watchtower. Voir <a href="/repos">Panorama</a> pour le détail.</div>
+</div>
+{% endif %}
+
+<div class="card" style="margin-top:16px">
+  <h2 style="margin-top:0">Comment c'est organisé</h2>
+  <pre style="white-space:pre-wrap;background:#0f1115;padding:12px;border-radius:10px;border:1px solid var(--line);font-size:12px">monorepo/
+├─ projects/
+│  ├─ animation-chronos/        → Vite + React (build → dist/)
+│  ├─ proto-cognitorium/        → Vite + React + server.ts (build → dist/)
+│  ├─ watchtower/               → Vite + Cesium (build → dist/, X-Frame autorisé)
+│  ├─ COGNITORIUM/              → learning/ + watchtower-mods/ (statique)
+│  ├─ ETAT-DE-LART-PSYCHOLOGIE/ → app/ FastAPI + output/visual/*.html
+│  ├─ HCSM/                     → Python (ontology, model)
+│  ├─ reaserch-engine/          → Python (engine/)
+│  └─ Language-decoder/         → README (quasi vide)
+├─ app/                         → cette interface (FastAPI + templates)
+├─ scripts/github_inventory.py  → inventaire API GitHub (token serveur, jamais exposé)
+├─ data/github_inventory.json   → snapshot JSON (cache serveur)
+└─ MANIFEST.json                → provenance (URL, branche, SHA)</pre>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <span class="kbd">/preview/{project}/{path}</span>
+    <span class="kbd">/api/fs/list?project=X&path=Y</span>
+    <span class="kbd">/api/github/snapshot</span>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+async function refreshSnap(){
+  const el=document.getElementById('refresh-msg');
+  el.textContent='… refresh en cours';
+  try{
+    const r=await fetch('/api/github/refresh',{method:'POST'});
+    const j=await r.json();
+    el.textContent=j.ok?'✓ snapshot rafraîchi — recharge la page':'✗ erreur: '+(j.stderr_tail||j.error||r.status);
+    if(j.ok) setTimeout(()=>location.reload(),600);
+  }catch(e){ el.textContent='✗ '+e.message}
+}
+{% if snapshot %}
+(function(){
+  const data = {{ snapshot.fusion|tojson }};
+  if(!data || !data.nodes) return;
+  const el=document.getElementById('fusion-graph');
+  const w=el.clientWidth, h=el.clientHeight;
+  const svg=d3.create("svg").attr("viewBox",[0,0,w,h]).attr("width",w).attr("height",h);
+  el.appendChild(svg.node());
+  const sim=d3.forceSimulation(data.nodes)
+    .force("link", d3.forceLink(data.links).id(d=>d.id).distance(90).strength(0.5))
+    .force("charge", d3.forceManyBody().strength(-220))
+    .force("center", d3.forceCenter(w/2,h/2))
+    .force("collide", d3.forceCollide().radius(28));
+  const link=svg.append("g").selectAll("line").data(data.links).join("line").attr("stroke","#2a2e39").attr("stroke-width",d=>1+Math.min(4,d.weight||1)).attr("stroke-opacity",0.8);
+  const node=svg.append("g").selectAll("g").data(data.nodes).join("g").call(d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y}).on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
+  node.append("circle").attr("r",14).attr("fill",d=>d.lang==='TypeScript'?'#3178c6':d.lang==='JavaScript'?'#f7df1e':d.lang==='Python'?'#3572A5':d.lang==='HTML'?'#e34c26':'#2dd4bf').attr("stroke","#0b0c0f").attr("stroke-width",1.2);
+  node.append("text").text(d=>d.id).attr("text-anchor","middle").attr("dy",-18).attr("fill","#e8eaed").attr("font-size",10).attr("font-weight",600).attr("paint-order","stroke").attr("stroke","#0b0c0f").attr("stroke-width",3)
+  sim.on("tick",()=>{link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);node.attr("transform",d=>`translate(${d.x},${d.y})`)});
+})();
+{% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,12 @@
+{
+  "_meta": {
+    "expect": "fail",
+    "description": "FunctionalProjection presented as ESTABLISHED fact."
+  },
+  "id": "hcsm:inference/fp/bad",
+  "type": "FunctionalProjection",
+  "status": "ESTABLISHED",
+  "from_estimates": ["hcsm:inference/estimate/att_px_t0"],
+  "maps_to": "icf:d160",
+  "kind": "activity_limitation_hypothesis"
+}

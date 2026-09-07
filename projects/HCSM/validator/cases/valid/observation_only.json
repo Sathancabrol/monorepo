@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "expect": "pass",
+    "description": "Observation is never a construct — well-formed behavioral observation."
+  },
+  "id": "obs:cpt_omissions",
+  "type": "Observation",
+  "observed_on": "person:opaque:px",
+  "produced_by": "mi:cpt_px_t0",
+  "channel": "behavioral",
+  "raw_value": 0.18,
+  "quality_flag": "ok",
+  "alignment": "close",
+  "has_context": "ctx:px_t0",
+  "has_provenance": "prov:meas_cpt_px_t0"
+}

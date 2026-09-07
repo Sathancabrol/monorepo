@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "expect": "pass",
+    "description": "Single well-formed ConstructEstimate (schema example)."
+  },
+  "id": "hcsm:inference/estimate/att_px_t0",
+  "type": "ConstructEstimate",
+  "status": "PROPOSED",
+  "estimates": "hcsm:knowledge/construct/attention",
+  "about_person": "person:opaque:px",
+  "value": 0.73,
+  "scale": "unit_interval",
+  "uncertainty": {
+    "kind": "sd",
+    "value": 0.12,
+    "measurement_component": null,
+    "evidence_component": 0.08,
+    "inference_component": 0.09
+  },
+  "inferred_from": [
+    "obs:cpt_omissions",
+    "obs:rt_var",
+    "obs:ema_focus",
+    "obs:self_report"
+  ],
+  "measures": [
+    "hcsm:knowledge/task/cpt",
+    "hcsm:knowledge/measure/rt_variability",
+    "hcsm:knowledge/measure/ema_focus"
+  ],
+  "has_context": "ctx:px_t0",
+  "has_window": {
+    "center": "2026-08-25T09:40:00Z",
+    "half_width": 30,
+    "unit": "min"
+  },
+  "population_reference": null,
+  "alternatives": [
+    {"modulator": "hcsm:knowledge/construct/fatigue", "plausibility": null},
+    {"modulator": "hcsm:knowledge/construct/arousal", "plausibility": null},
+    {"modulator": "motivation", "plausibility": null},
+    {"modulator": "task_difficulty", "plausibility": null}
+  ],
+  "has_provenance": {
+    "id": "prov:inf_att_px_t0",
+    "activity_type": "InferenceActivity",
+    "started_at": "2026-08-25T09:50:00Z",
+    "associated_agent": "agent:hcsm_placeholder_v0"
+  },
+  "estimate_status": "estimated"
+}

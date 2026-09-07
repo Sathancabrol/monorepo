@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Panorama GitHub — Sathancabrol{% endblock %}
+{% block head %}
+<style>
+.repo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.tree{font-family:ui-monospace,monospace;font-size:12px;background:#0f1115;border:1px solid var(--line);border-radius:10px;padding:10px;overflow:auto;max-height:320px}
+.drawer{position:fixed;inset:0;display:none;z-index:30}
+.drawer.open{display:block}
+.drawer .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.drawer .panel{position:absolute;right:0;top:0;bottom:0;width:min(560px,96vw);background:#0f1115;border-left:1px solid var(--line);overflow:auto;padding:16px}
+</style>
+{% endblock %}
+{% block content %}
+<h1>Panorama GitHub — {{ snapshot.user if snapshot else "Sathancabrol" }}</h1>
+<div class="topbar">
+  <span class="muted">{% if snapshot %}{{ snapshot.count }} dépôts • généré {{ snapshot.generated_at }} • {{ snapshot.api_calls }} appels API{% else %}Aucun snapshot{% endif %}</span>
+  <button class="btn" onclick="refreshSnap()">⟳ Refresh</button>
+  <span id="refresh-msg" class="muted"></span>
+  <a class="btn" href="/monorepo">→ Monorepo + Preview</a>
+</div>
+
+{% if not snapshot %}
+<div class="card" style="margin-top:14px">
+  <p>Aucun snapshot trouvé. Lance un refresh (token serveur côté backend, pas d'exposition).</p>
+  <button class="btn primary" onclick="refreshSnap()">Générer le snapshot</button>
+</div>
+{% else %}
+<div class="card" style="margin-top:12px">
+  <h2 style="margin-top:0">Graphe de fusion (agrégation visuelle + cartographie logique)</h2>
+  <div id="fusion-graph" style="height:320px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0f1115"></div>
+  <div class="muted" style="font-size:12px;margin-top:6px">Liens = dépendances partagées (≥2) ou relation explicite. Aucune copie de code — juste la cartographie.</div>
+</div>
+
+<div class="repo-grid" style="margin-top:14px">
+{% for r in snapshot.repos %}
+  <div class="card" style="cursor:pointer" onclick="openDrawer('{{ r.name }}')">
+    <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+      <strong>{{ r.name }}</strong>
+      <span class="badge">{{ r.language or "—" }}</span>
+    </div>
+    <div class="muted" style="font-size:12px;margin:4px 0;min-height:34px">{{ r.description or "—" }}</div>
+    <div style="font-size:12px;display:flex;gap:6px;flex-wrap:wrap">
+      <span class="badge">{{ r.branches|length }} branches</span>
+      <span class="badge">{{ r.commits|length }} commits récents</span>
+      <span class="badge">{{ r.modules|length }} modules</span>
+      {% if r.topics %}{% for t in r.topics[:3] %}<span class="badge">#{{t}}</span>{% endfor %}{% endif %}
+    </div>
+    <div style="font-size:11px;margin-top:8px" class="muted">
+      <div>defaut: <code>{{ r.default_branch }}</code> • maj: {{ r.pushed_at[:10] if r.pushed_at else "—" }}</div>
+      <div>local: {{ r.file_count_local or "—" }} fichiers</div>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:6px">
+      <a class="btn" href="/monorepo?project={{r.name}}" onclick="event.stopPropagation()">Explorer</a>
+      <a class="btn" href="{{ r.html_url }}" target="_blank" onclick="event.stopPropagation()">GitHub ↗</a>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h2 style="margin-top:0">Hiérarchie repo › branches › modules</h2>
+  <div id="hierarchy" class="tree"></div>
+</div>
+{% endif %}
+
+<div id="drawer" class="drawer">
+  <div class="backdrop" onclick="closeDrawer()"></div>
+  <div class="panel">
+    <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+      <strong id="drawer-title">Détail</strong>
+      <button class="btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div id="drawer-body" style="margin-top:10px"></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+let SNAP=null;
+try{ SNAP = {{ snapshot|tojson if snapshot else 'null' }} }catch(e){ SNAP=null}
+async function refreshSnap(){
+  const el=document.getElementById('refresh-msg');
+  el.textContent='… refresh';
+  try{
+    const r=await fetch('/api/github/refresh',{method:'POST'});
+    const j=await r.json();
+    el.textContent=j.ok?'✓ ok — recharge':'✗ '+(j.stderr_tail||j.error||r.status);
+    if(j.ok) setTimeout(()=>location.reload(),700);
+  }catch(e){ el.textContent='✗ '+e.message }
+}
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open')}
+function openDrawer(name){
+  if(!SNAP) return;
+  const repo = SNAP.repos.find(r=>r.name===name);
+  if(!repo) return;
+  document.getElementById('drawer-title').textContent = repo.full_name;
+  const body=document.getElementById('drawer-body');
+  body.innerHTML = `
+    <div class="muted" style="font-size:12px">${repo.description||''}</div>
+    <div style="margin:8px 0;display:flex;gap:6px;flex-wrap:wrap">
+      <a class="btn" href="/monorepo?project=${repo.name}">Explorer dans monorepo</a>
+      <a class="btn" href="${repo.html_url}" target="_blank">GitHub ↗</a>
+      ${repo.language?`<span class="badge">${repo.language}</span>`:''}
+    </div>
+    <h3>Branches (${repo.branches.length})</h3>
+    <div class="tree" style="max-height:140px">${repo.branches.map(b=>`<div><span class="kbd">${b.name}</span> <span class="muted">${b.sha}</span></div>`).join('')||'<span class="muted">—</span>'}</div>
+    <h3>20 derniers commits (${repo.default_branch})</h3>
+    <div class="tree" style="max-height:180px">${repo.commits.map(c=>`<div style="margin:4px 0"><span class="kbd">${c.sha}</span> ${esc(c.message)}<br><span class="muted" style="font-size:11px">${c.author||''} • ${c.date?c.date.slice(0,10):''}</span></div>`).join('')||'<span class="muted">—</span>'}</div>
+    <h3>Modules détectés (${repo.modules.length})</h3>
+    <div class="tree" style="max-height:140px">${repo.modules.map(m=>`<div>${esc(m.path)} — <span class="muted">${m.manifest||'—'}</span> <span class="badge">${m.lang}</span></div>`).join('')||'<span class="muted">—</span>'}</div>
+    <h3>Langages (GitHub)</h3>
+    <div class="muted" style="font-size:12px">${Object.entries(repo.languages||{}).map(([k,v])=>`${k}: ${v}`).join(' • ')||'—'}</div>
+  `;
+  document.getElementById('drawer').classList.add('open');
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+(function(){
+  if(!SNAP) return;
+  // hierarchy
+  const h=document.getElementById('hierarchy');
+  if(h){
+    let html='';
+    for(const r of SNAP.repos){
+      html+=`<div style="margin:6px 0"><strong>${r.name}</strong> <span class="muted">(${r.language||'—'} • ${r.default_branch})</span>`;
+      html+=`<div style="margin-left:14px">branches: ${r.branches.slice(0,6).map(b=>`<span class="kbd">${b.name}</span>`).join(' ')}${r.branches.length>6?' …':''}</div>`;
+      html+=`<div style="margin-left:14px">modules: ${r.modules.map(m=>`<span class="kbd">${m.path}</span><span class="muted">:${m.manifest||'—'}</span>`).join(' ')} </div></div>`;
+    }
+    h.innerHTML=html||'<span class="muted">—</span>';
+  }
+  // fusion graph
+  const data=SNAP.fusion;
+  const el=document.getElementById('fusion-graph');
+  if(!data||!el) return;
+  const w=el.clientWidth,h=el.clientHeight;
+  const svg=d3.create("svg").attr("viewBox",[0,0,w,h]).attr("width",w).attr("height",h);
+  el.appendChild(svg.node());
+  const sim=d3.forceSimulation(data.nodes)
+    .force("link", d3.forceLink(data.links).id(d=>d.id).distance(110).strength(0.6))
+    .force("charge", d3.forceManyBody().strength(-260))
+    .force("center", d3.forceCenter(w/2,h/2))
+    .force("collide", d3.forceCollide().radius(34));
+  const link=svg.append("g").selectAll("line").data(data.links).join("line").attr("stroke","#2a2e39").attr("stroke-width",d=>1+Math.min(4,d.weight||1));
+  const node=svg.append("g").selectAll("g").data(data.nodes).join("g").call(d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y}).on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
+  node.append("circle").attr("r",16).attr("fill",d=>d.lang==='TypeScript'?'#3178c6':d.lang==='JavaScript'?'#f7df1e':d.lang==='Python'?'#3572A5':d.lang==='HTML'?'#e34c26':'#2dd4bf').attr("stroke","#0b0c0f").attr("stroke-width",1.2);
+  node.append("text").text(d=>d.id).attr("text-anchor","middle").attr("dy",-20).attr("fill","#e8eaed").attr("font-size",11).attr("font-weight",700).attr("paint-order","stroke").attr("stroke","#0b0c0f").attr("stroke-width",3);
+  node.append("title").text(d=> (d.deps||[]).slice(0,6).join(', '));
+  sim.on("tick",()=>{link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);node.attr("transform",d=>`translate(${d.x},${d.y})`)});
+})();
+</script>
+{% endblock %}

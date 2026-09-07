@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: "HCSM — Human Cognitive State Model"
+message: If you use this framework, please cite it as below.
+type: software
+authors:
+  - name: "HCSM contributors"
+    website: "https://github.com/Sathancabrol/HCSM"
+abstract: >-
+  Scientific framework for representing human cognitive state at T0 as a
+  latent, multidimensional, contextualized, temporal and evidential object,
+  with explicit provenance and uncertainty. Cognition Hub is the computational
+  system; HCSM is the underlying scientific model.
+keywords:
+  - cognitive state
+  - ontology
+  - evidence graph
+  - inference
+  - uncertainty
+  - provenance
+  - digital phenotyping
+  - RDoC
+  - ICF
+  - Cognitive Atlas
+license: CC-BY-4.0
+version: 0.1.1
+date-released: "2026-08-25"
+repository-code: "https://github.com/Sathancabrol/HCSM"
+url: "https://github.com/Sathancabrol/HCSM"

@@ -1,0 +1,62 @@
+{
+  "_meta": {
+    "expect": "refuse",
+    "description": "V5 MISALIGNED_MEASURE — all observations alignment=none."
+  },
+  "type": "Bundle",
+  "inference_requests": [
+    {
+      "construct": "hcsm:knowledge/construct/attention",
+      "about_person": "person:opaque:px",
+      "has_window": {
+        "center": "2026-08-25T09:40:00Z",
+        "half_width": 30,
+        "unit": "min"
+      },
+      "has_context": "ctx:px_t0",
+      "inferred_from": ["obs:noise"],
+      "alternatives": [
+        {"modulator": "fatigue"},
+        {"modulator": "arousal"},
+        {"modulator": "motivation"},
+        {"modulator": "task_difficulty"},
+        {"modulator": "sleep_pressure"}
+      ],
+      "has_provenance": "prov:inf"
+    }
+  ],
+  "objects": [
+    {
+      "id": "obs:noise",
+      "type": "Observation",
+      "observed_on": "person:opaque:px",
+      "produced_by": "mi:1",
+      "channel": "digital_passive",
+      "raw_value": 120,
+      "quality_flag": "ok",
+      "alignment": "none",
+      "has_provenance": "prov:m"
+    },
+    {
+      "id": "prov:m",
+      "type": "ProvenanceRecord",
+      "activity_type": "MeasureActivity",
+      "started_at": "2026-08-25T09:00:00Z",
+      "associated_agent": "agent:x"
+    },
+    {
+      "id": "prov:inf",
+      "type": "ProvenanceRecord",
+      "activity_type": "InferenceActivity",
+      "started_at": "2026-08-25T09:50:00Z",
+      "associated_agent": "agent:x"
+    },
+    {
+      "id": "ctx:px_t0",
+      "type": "ContextRecord",
+      "of_person": "person:opaque:px",
+      "completeness": "partial",
+      "task": {"name": "passive"}
+    }
+  ]
+}

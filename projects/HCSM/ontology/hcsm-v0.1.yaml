@@ -1,0 +1,468 @@
+# HCSM ontology v0.1.0
+# Status: PROPOSED
+# This is not an ontology of cognition. It is an ontology of estimated
+# cognitive state: aligned constructs, observations, estimates, refusals,
+# context, time, provenance, and functioning projections.
+#
+# IRI: https://github.com/Sathancabrol/HCSM/ontology/0.1.0
+
+id: hcsm:ontology/0.1.0
+title: Human Cognitive State Model ontology
+version: 0.1.0
+date: 2026-08-25
+license: CC-BY-4.0
+status: PROPOSED
+layer: ONTOLOGY
+
+principles:
+  - HCSM does not replace Cognitive Atlas, RDoC, ICF, or HPO.
+  - External identifiers are primary; HCSM identifiers are bridges.
+  - Observation is never a subclass of Construct.
+  - ConstructEstimate is invalid without uncertainty, evidence, window, provenance.
+  - Diagnosis is out of scope.
+  - There is no NeurologicalState class.
+
+namespaces:
+  hcsm: https://github.com/Sathancabrol/HCSM/ontology/0.1.0#
+  cogatlas: https://www.cognitiveatlas.org/
+  prov: http://www.w3.org/ns/prov#
+  skos: http://www.w3.org/2004/02/skos/core#
+  icf: https://icd.who.int/dev11/l-icf/en#
+  hp: http://purl.obolibrary.org/obo/HP_
+
+graphs:
+  - knowledge
+  - evidence
+  - inference
+  - cross
+
+status_vocabulary:
+  - ESTABLISHED
+  - SUPPORTED
+  - PROPOSED
+  - HYPOTHESIS
+  - OPEN_QUESTION
+
+evidence_channels:
+  - behavioral
+  - subjective
+  - physiological
+  - neural
+  - contextual
+  - computational
+  - digital_passive
+
+refusal_codes:
+  - NO_CONSTRUCT
+  - NO_EVIDENCE
+  - WINDOW_UNDEFINED
+  - CONTEXT_MISSING
+  - UNRESOLVED_ALTERNATIVES
+  - MISALIGNED_MEASURE
+  - PROVENANCE_BROKEN
+
+context_dimensions:
+  - task
+  - environment
+  - somatic
+  - occupational
+  - social
+  - temporal_structure
+  - motivational
+
+classes:
+
+  Entity:
+    graph: cross
+    abstract: true
+    data_properties:
+      id: {type: iri, required: true}
+      label: {type: string, required: true}
+      description: {type: string}
+      status: {type: enum, values_from: status_vocabulary, required: true}
+      version: {type: string}
+
+  ProvenanceRecord:
+    graph: cross
+    subclass_of: Entity
+    aligns: [prov:Entity, prov:Activity, prov:Agent]
+    object_properties:
+      used: {range: Entity, many: true}
+      derived_from: {range: Entity, many: true}
+      associated_agent: {range: Agent, required: true}
+    data_properties:
+      activity_type: {type: enum, values: [MeasureActivity, PreprocessActivity, InferenceActivity], required: true}
+      started_at: {type: datetime, required: true}
+      ended_at: {type: datetime}
+      software_version: {type: string}
+
+  Agent:
+    graph: cross
+    subclass_of: Entity
+    data_properties:
+      agent_kind: {type: enum, values: [human, software, organization], required: true}
+
+  TimePoint:
+    graph: cross
+    subclass_of: Entity
+    data_properties:
+      timestamp: {type: datetime, required: true}
+
+  TemporalWindow:
+    graph: cross
+    subclass_of: Entity
+    object_properties:
+      center: {range: TimePoint, required: true}
+    data_properties:
+      half_width: {type: number, required: true, min: 0}
+      unit: {type: enum, values: [s, min, h, day], required: true}
+
+  Construct:
+    graph: knowledge
+    subclass_of: Entity
+    comments: Latent scientific construct. Not a person state.
+    object_properties:
+      part_has: {range: Subprocess, many: true}
+      measured_by: {range: [Task, Measure], many: true}
+      maps_to: {range: ExternalConcept, many: true, min: 1}
+      defined_by: {range: LiteratureRecord, many: true}
+      modulator_of: {range: Construct, many: true}
+    data_properties:
+      role: {type: enum, values: [cognitive_construct, state_modulator], required: true}
+      typical_timescale: {type: enum, values: [momentary, daily, episodic, dispositional]}
+      requires_context: {type: enum, values_from: context_dimensions, many: true}
+      mandatory_alternatives: {type: string, many: true}
+
+  Subprocess:
+    graph: knowledge
+    subclass_of: Entity
+    object_properties:
+      part_of: {range: Construct, required: true}
+
+  Theory:
+    graph: knowledge
+    subclass_of: Entity
+    object_properties:
+      involves: {range: Construct, many: true}
+      defined_by: {range: LiteratureRecord, many: true}
+
+  Task:
+    graph: knowledge
+    subclass_of: Entity
+    object_properties:
+      maps_to: {range: ExternalConcept, many: true}
+      yields_measure: {range: Measure, many: true}
+
+  Measure:
+    graph: knowledge
+    subclass_of: Entity
+    object_properties:
+      of_task: {range: Task}
+      measures_construct: {range: Construct, many: true}
+      modulator_of: {range: Construct, many: true}
+    data_properties:
+      channel: {type: enum, values_from: evidence_channels, required: true}
+      score_kind: {type: enum, values: [raw, standardized, model_parameter, digital_feature]}
+
+  LiteratureRecord:
+    graph: knowledge
+    subclass_of: Entity
+    data_properties:
+      doi: {type: string}
+      citation: {type: string, required: true}
+      role: {type: enum, values: [defines, supports, challenges]}
+
+  ExternalConcept:
+    graph: knowledge
+    subclass_of: Entity
+    data_properties:
+      source: {type: enum, values: [cognitive_atlas, rdoc, icf, hpo, cogpo], required: true}
+      source_iri: {type: iri, required: true}
+      match: {type: enum, values: [exact, close, related], required: true}
+
+  Person:
+    graph: evidence
+    subclass_of: Entity
+    comments: Opaque identifier only. No civil attributes.
+
+  Observation:
+    graph: evidence
+    subclass_of: Entity
+    forbidden_properties: [construct_id, estimates]
+    object_properties:
+      observed_on: {range: Person, required: true}
+      produced_by: {range: MeasureInstance, required: true}
+      has_context: {range: ContextRecord}
+      has_window: {range: TemporalWindow}
+      has_provenance: {range: ProvenanceRecord, required: true}
+      was_derived_from: {range: [Observation, Signal]}
+    data_properties:
+      channel: {type: enum, values_from: evidence_channels, required: true}
+      raw_value: {type: number}
+      normalized_value: {type: number}
+      missingness: {type: enum, values: [not_collected, collected_unusable, refused_by_person]}
+      quality_flag: {type: enum, values: [ok, degraded, unusable], required: true}
+      alignment: {type: enum, values: [exact, close, none], required: true}
+    constraints:
+      - raw_value XOR missingness
+      - timestamp via MeasureInstance or has_window required
+
+  MeasureInstance:
+    graph: evidence
+    subclass_of: Entity
+    object_properties:
+      instance_of: {range: Measure, required: true}
+      of_person: {range: Person, required: true}
+      has_context: {range: ContextRecord}
+      has_window: {range: TemporalWindow, required: true}
+      has_provenance: {range: ProvenanceRecord, required: true}
+
+  Signal:
+    graph: evidence
+    subclass_of: Entity
+    object_properties:
+      of_person: {range: Person, required: true}
+      has_provenance: {range: ProvenanceRecord, required: true}
+    data_properties:
+      sampling_hz: {type: number}
+      modality: {type: enum, values: [eeg, hrv, actigraphy, pupil, other]}
+
+  ContextRecord:
+    graph: evidence
+    subclass_of: Entity
+    object_properties:
+      of_person: {range: Person, required: true}
+      has_window: {range: TemporalWindow, required: true}
+      has_provenance: {range: ProvenanceRecord, required: true}
+    data_properties:
+      completeness: {type: enum, values: [full, partial, declared_unknown], required: true}
+      task: {type: object}
+      environment: {type: object}
+      somatic: {type: object}
+      occupational: {type: object}
+      social: {type: object}
+      temporal_structure: {type: object}
+      motivational: {type: object}
+
+  CognitiveState:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      about_person: {range: Person, required: true}
+      has_window: {range: TemporalWindow, required: true}
+      members: {range: [ConstructEstimate, Refusal], many: true, min: 1}
+      has_provenance: {range: ProvenanceRecord, required: true}
+
+  ConstructEstimate:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      estimates: {range: Construct, required: true}
+      about_person: {range: Person, required: true}
+      inferred_from: {range: Observation, many: true, min: 1}
+      has_uncertainty: {range: Uncertainty, required: true}
+      has_window: {range: TemporalWindow, required: true}
+      has_context: {range: ContextRecord, required: true}
+      has_provenance: {range: ProvenanceRecord, required: true}
+      alternatives: {range: AlternativeExplanation, many: true}
+      population_reference: {range: ExternalConcept}
+      member_of_state: {range: CognitiveState}
+    data_properties:
+      value: {type: number, required: true}
+      scale: {type: enum, values: [latent_z, unit_interval, model_param], required: true}
+      estimate_status: {type: enum, values: [estimated], required: true}
+    constraints:
+      - inferred_from.alignment in [exact, close] for at least one observation
+      - no diagnostic target
+
+  Uncertainty:
+    graph: inference
+    subclass_of: Entity
+    data_properties:
+      kind: {type: enum, values: [sd, variance, credible_interval, discrete, unknown], required: true}
+      value: {type: number}
+      lower: {type: number}
+      upper: {type: number}
+      measurement_component: {type: number}
+      evidence_component: {type: number}
+      inference_component: {type: number}
+
+  AlternativeExplanation:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      target: {range: Construct, required: true}
+      modulator: {range: Construct, required: true}
+      explains: {range: Observation, many: true}
+      competing_with: {range: AlternativeExplanation, many: true}
+    data_properties:
+      plausibility: {type: number, min: 0, max: 1}
+
+  Refusal:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      insufficient_for: {range: Construct, required: true}
+      about_person: {range: Person, required: true}
+      has_window: {range: TemporalWindow}
+      has_provenance: {range: ProvenanceRecord, required: true}
+      member_of_state: {range: CognitiveState}
+    data_properties:
+      code: {type: enum, values_from: refusal_codes, required: true}
+      message: {type: string, required: true}
+
+  FunctionalProjection:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      from_estimates: {range: ConstructEstimate, many: true, min: 1}
+      maps_to: {range: ExternalConcept, required: true}
+    data_properties:
+      kind: {type: enum, values: [body_function, activity_limitation_hypothesis, participation_restriction_hypothesis]}
+      status: {type: enum, values: [HYPOTHESIS], required: true}
+      does_not_imply: {type: string, many: true}
+
+  CapacityProfile:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      about_person: {range: Person, required: true}
+      of_construct: {range: Construct, required: true}
+      informed_by: {range: ConstructEstimate, many: true}
+    comments: Slow disposition. Not a T0 state.
+
+  Trajectory:
+    graph: inference
+    subclass_of: Entity
+    object_properties:
+      about_person: {range: Person, required: true}
+      states: {range: CognitiveState, many: true, min: 2}
+    comments: Ordered list. No implicit interpolation.
+
+# ---------------------------------------------------------------------------
+# Core constructs (intentionally small)
+# ---------------------------------------------------------------------------
+
+constructs:
+
+  attention:
+    id: hcsm:knowledge/construct/attention
+    label: Attention
+    role: cognitive_construct
+    status: ESTABLISHED
+    typical_timescale: momentary
+    requires_context: [task]
+    mandatory_alternatives: [fatigue, arousal, motivation, task_difficulty, sleep_pressure]
+    maps_to:
+      - {source: cognitive_atlas, source_iri: https://www.cognitiveatlas.org/concept/attention, match: exact}
+      - {source: rdoc, source_iri: rdoc:cognitive_systems/attention, match: exact}
+      - {source: icf, source_iri: icf:b140, match: close}
+    subprocesses: [selective_attention, sustained_attention, divided_attention, executive_attention]
+    notes: ICF b140 is a body function, not the latent construct. closeMatch.
+
+  working_memory:
+    id: hcsm:knowledge/construct/working_memory
+    label: Working memory
+    role: cognitive_construct
+    status: ESTABLISHED
+    typical_timescale: momentary
+    requires_context: [task]
+    mandatory_alternatives: [attention, fatigue, motivation, task_difficulty]
+    maps_to:
+      - {source: cognitive_atlas, source_iri: https://www.cognitiveatlas.org/concept/working_memory, match: exact}
+      - {source: rdoc, source_iri: rdoc:cognitive_systems/working_memory, match: exact}
+      - {source: icf, source_iri: icf:b144, match: close}
+    notes: ICF b144 Memory functions is broader. closeMatch only.
+
+  cognitive_control:
+    id: hcsm:knowledge/construct/cognitive_control
+    label: Cognitive control
+    role: cognitive_construct
+    status: ESTABLISHED
+    typical_timescale: momentary
+    requires_context: [task]
+    mandatory_alternatives: [attention, working_memory, motivation, fatigue]
+    maps_to:
+      - {source: cognitive_atlas, source_iri: https://www.cognitiveatlas.org/concept/cognitive_control, match: close}
+      - {source: rdoc, source_iri: rdoc:cognitive_systems/cognitive_control, match: exact}
+      - {source: icf, source_iri: icf:b164, match: close}
+
+  fatigue:
+    id: hcsm:knowledge/construct/fatigue
+    label: Fatigue
+    role: state_modulator
+    status: SUPPORTED
+    typical_timescale: daily
+    requires_context: [somatic]
+    maps_to:
+      - {source: icf, source_iri: icf:b1300, match: close}
+    modulator_of: [attention, working_memory, cognitive_control]
+
+  arousal:
+    id: hcsm:knowledge/construct/arousal
+    label: Arousal
+    role: state_modulator
+    status: ESTABLISHED
+    typical_timescale: momentary
+    maps_to:
+      - {source: rdoc, source_iri: rdoc:arousal_regulatory_systems/arousal, match: exact}
+    modulator_of: [attention, cognitive_control]
+
+  sleep_pressure:
+    id: hcsm:knowledge/construct/sleep_pressure
+    label: Sleep pressure
+    role: state_modulator
+    status: SUPPORTED
+    typical_timescale: daily
+    requires_context: [somatic]
+    maps_to:
+      - {source: rdoc, source_iri: rdoc:arousal_regulatory_systems, match: related}
+    modulator_of: [fatigue, attention, arousal]
+
+tasks_and_measures:
+
+  cpt:
+    id: hcsm:knowledge/task/cpt
+    label: Continuous Performance Test
+    measures: [attention]
+    channel: behavioral
+    maps_to:
+      - {source: cognitive_atlas, match: close, source_iri: https://www.cognitiveatlas.org/task/cpt}
+
+  rt_variability:
+    id: hcsm:knowledge/measure/rt_variability
+    label: Reaction-time variability
+    channel: behavioral
+    score_kind: raw
+    measures: [attention]
+    notes: Non-specific. alignment close at most.
+
+  nback:
+    id: hcsm:knowledge/task/nback
+    label: n-back
+    measures: [working_memory]
+    channel: behavioral
+    notes: Construct validity contested (see literature). alignment close, never exact by default.
+
+  ema_sleep:
+    id: hcsm:knowledge/measure/ema_sleep_hours
+    label: EMA sleep duration
+    channel: subjective
+    score_kind: raw
+    modulator_of: [sleep_pressure, fatigue]
+
+  ema_focus:
+    id: hcsm:knowledge/measure/ema_focus
+    label: EMA momentary focus
+    channel: subjective
+    score_kind: raw
+    measures: [attention]
+    notes: Self-report. alignment close.
+
+constraints_global:
+  - A class instance has exactly one graph.
+  - No subclassing across graphs.
+  - owl:sameAs is forbidden between Construct and ExternalConcept in v0.1.
+  - FunctionalProjection.status is always HYPOTHESIS.
+  - ConstructEstimate cannot target a diagnostic code.
+  - Channels genes, molecules, cells are out of v0.1.

@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "expect": "fail",
+    "description": "Observation carrying construct estimation fields."
+  },
+  "id": "obs:bad",
+  "type": "Observation",
+  "observed_on": "person:opaque:px",
+  "produced_by": "mi:cpt",
+  "channel": "behavioral",
+  "raw_value": 0.18,
+  "quality_flag": "ok",
+  "alignment": "close",
+  "has_provenance": "prov:x",
+  "construct_id": "hcsm:knowledge/construct/attention",
+  "estimates": "hcsm:knowledge/construct/attention"
+}

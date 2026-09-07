@@ -1,0 +1,101 @@
+{
+  "_meta": {
+    "expect": "admit",
+    "description": "V5: admissible inference request for attention with full evidence bundle."
+  },
+  "type": "Bundle",
+  "inference_requests": [
+    {
+      "construct": "hcsm:knowledge/construct/attention",
+      "about_person": "person:opaque:px",
+      "has_window": {
+        "center": "2026-08-25T09:40:00Z",
+        "half_width": 30,
+        "unit": "min"
+      },
+      "has_context": "ctx:px_t0",
+      "inferred_from": ["obs:cpt_omissions", "obs:rt_var"],
+      "alternatives": [
+        {"modulator": "fatigue"},
+        {"modulator": "arousal"},
+        {"modulator": "motivation"},
+        {"modulator": "task_difficulty"},
+        {"modulator": "sleep_pressure"}
+      ],
+      "has_provenance": "prov:inf_att_px_t0",
+      "measures": ["hcsm:knowledge/task/cpt"]
+    }
+  ],
+  "objects": [
+    {
+      "id": "ctx:px_t0",
+      "type": "ContextRecord",
+      "of_person": "person:opaque:px",
+      "completeness": "partial",
+      "task": {"name": "CPT"},
+      "has_window": {
+        "center": "2026-08-25T09:40:00Z",
+        "half_width": 30,
+        "unit": "min"
+      },
+      "has_provenance": "prov:meas_cpt_px_t0"
+    },
+    {
+      "id": "obs:cpt_omissions",
+      "type": "Observation",
+      "observed_on": "person:opaque:px",
+      "produced_by": "mi:cpt_px_t0",
+      "channel": "behavioral",
+      "raw_value": 0.18,
+      "quality_flag": "ok",
+      "alignment": "close",
+      "has_provenance": "prov:meas_cpt_px_t0"
+    },
+    {
+      "id": "obs:rt_var",
+      "type": "Observation",
+      "observed_on": "person:opaque:px",
+      "produced_by": "mi:cpt_px_t0",
+      "channel": "behavioral",
+      "raw_value": 0.4,
+      "quality_flag": "ok",
+      "alignment": "close",
+      "has_provenance": "prov:meas_rt_px_t0"
+    },
+    {
+      "id": "prov:meas_cpt_px_t0",
+      "type": "ProvenanceRecord",
+      "activity_type": "MeasureActivity",
+      "started_at": "2026-08-25T09:35:00Z",
+      "associated_agent": "agent:lab"
+    },
+    {
+      "id": "prov:meas_rt_px_t0",
+      "type": "ProvenanceRecord",
+      "activity_type": "PreprocessActivity",
+      "started_at": "2026-08-25T09:45:00Z",
+      "associated_agent": "agent:lab"
+    },
+    {
+      "id": "prov:inf_att_px_t0",
+      "type": "ProvenanceRecord",
+      "activity_type": "InferenceActivity",
+      "started_at": "2026-08-25T09:50:00Z",
+      "associated_agent": "agent:hcsm_placeholder_v0"
+    },
+    {
+      "id": "agent:lab",
+      "type": "Agent",
+      "agent_kind": "human",
+      "label": "Lab",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "agent:hcsm_placeholder_v0",
+      "type": "Agent",
+      "agent_kind": "software",
+      "label": "estimator",
+      "status": "PROPOSED"
+    }
+  ]
+}
