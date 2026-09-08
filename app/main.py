@@ -91,18 +91,18 @@ def home(request: Request):
     snap = load_snapshot()
     projects = list_projects()
     # enrichment: map preview types
-    return templates.TemplateResponse("index.html", {"request": request, "snapshot": snap, "projects": projects})
+    return templates.TemplateResponse(request, "index.html", {"snapshot": snap, "projects": projects})
 
 @app.get("/repos", response_class=HTMLResponse)
 def repos_page(request: Request):
     snap = load_snapshot()
-    return templates.TemplateResponse("repos.html", {"request": request, "snapshot": snap})
+    return templates.TemplateResponse(request, "repos.html", {"snapshot": snap})
 
 @app.get("/monorepo", response_class=HTMLResponse)
 def monorepo_page(request: Request):
     projects = list_projects()
     snap = load_snapshot()
-    return templates.TemplateResponse("monorepo.html", {"request": request, "projects": projects, "snapshot": snap})
+    return templates.TemplateResponse(request, "monorepo.html", {"projects": projects, "snapshot": snap})
 
 # --- API ---
 @app.get("/api/github/snapshot")
