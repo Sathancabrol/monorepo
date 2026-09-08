@@ -300,6 +300,7 @@ html = f'''<!DOCTYPE html>
   update();
 }})();
 </script>
+<a href="atlas/index.html" style="position:fixed;right:18px;top:18px;z-index:999;background:#0F4C5Cdd;color:#fff;border:1px solid #C99A2E;border-radius:24px;padding:9px 16px;font:600 13px/1 system-ui,sans-serif;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.35)">🕸️ Atlas interactif — graphe, carte heuristique, données</a>
 </body></html>'''
 
 out = os.path.join(BASE, "index.html")

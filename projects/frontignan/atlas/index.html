@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas interactif — Frontignan la Peyrade 2026-2040</title>
+<meta name="description" content="Graphe de connaissance, carte heuristique et présentation : acteurs, données et futurs de Frontignan la Peyrade dans le bassin de Thau.">
+<link rel="stylesheet" href="css/atlas.css">
+</head>
+<body data-mode="graph">
+
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <div>
+      <h1>Atlas Frontignan la Peyrade</h1>
+      <p id="brandSub">Acteurs · données · futurs — bassin de Thau, 2026 → 2040</p>
+    </div>
+  </div>
+
+  <nav class="modes" role="tablist" aria-label="Mode de visualisation">
+    <button class="mode is-on" data-mode="graph" role="tab" aria-selected="true">
+      <span class="ic">🕸️</span> Graphe <kbd>1</kbd>
+    </button>
+    <button class="mode" data-mode="mind" role="tab" aria-selected="false">
+      <span class="ic">🧠</span> Heuristique <kbd>2</kbd>
+    </button>
+    <button class="mode" data-mode="slides" role="tab" aria-selected="false">
+      <span class="ic">🎞️</span> Slides <kbd>3</kbd>
+    </button>
+    <button class="mode" data-mode="data" role="tab" aria-selected="false">
+      <span class="ic">📊</span> Données <kbd>4</kbd>
+    </button>
+  </nav>
+
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Rechercher un nœud, un acteur, un projet…  (/)" autocomplete="off">
+    <div id="suggest" class="suggest" hidden></div>
+  </div>
+</header>
+
+<main id="stage">
+
+  <!-- ============ GRAPHE ============ -->
+  <section class="view view-graph is-on" id="view-graph">
+    <aside class="sidebar" id="graphSidebar">
+      <div class="side-block">
+        <h3>Disposition</h3>
+        <div class="seg" id="layoutSeg">
+          <button data-layout="force" class="is-on">Libre</button>
+          <button data-layout="rings">Échelles</button>
+          <button data-layout="cluster">Familles</button>
+        </div>
+      </div>
+      <div class="side-block">
+        <h3>Échelles <span class="hint">du cœur à la France</span></h3>
+        <div id="tierFilters" class="chips"></div>
+      </div>
+      <div class="side-block">
+        <h3>Types de nœuds</h3>
+        <div id="typeFilters" class="chips"></div>
+      </div>
+      <div class="side-block">
+        <h3>Liens</h3>
+        <div id="linkFilters" class="chips small"></div>
+      </div>
+      <div class="side-block">
+        <h3>Réglages</h3>
+        <label class="row"><input type="checkbox" id="optImages" checked> Images dans les nœuds</label>
+        <label class="row"><input type="checkbox" id="optLabels" checked> Noms des nœuds</label>
+        <label class="row"><input type="checkbox" id="optEdgeLabels"> Libellés des liens</label>
+        <label class="row"><span>Force</span><input type="range" id="optCharge" min="200" max="2600" value="1150"></label>
+        <label class="row"><span>Distance</span><input type="range" id="optDist" min="50" max="320" value="140"></label>
+        <button class="ghost" id="btnReheat">↻ Relancer la simulation</button>
+      </div>
+      <div class="side-block legend" id="legend"></div>
+    </aside>
+
+    <div class="canvas-wrap">
+      <svg id="graph" role="img" aria-label="Graphe de connaissance du territoire"></svg>
+      <div class="canvas-hud">
+        <button class="hud" id="zoomIn" title="Zoom avant">＋</button>
+        <button class="hud" id="zoomOut" title="Zoom arrière">－</button>
+        <button class="hud" id="zoomFit" title="Recentrer">⤢</button>
+      </div>
+      <div class="canvas-tip" id="graphTip" hidden></div>
+      <div class="canvas-meta" id="graphMeta"></div>
+    </div>
+  </section>
+
+  <!-- ============ HEURISTIQUE ============ -->
+  <section class="view view-mind" id="view-mind">
+    <aside class="sidebar">
+      <div class="side-block">
+        <h3>Forme de la carte</h3>
+        <div class="seg" id="mindSeg">
+          <button data-mind="radial" class="is-on">Radiale</button>
+          <button data-mind="tree">Arborescente</button>
+        </div>
+      </div>
+      <div class="side-block">
+        <h3>Racine</h3>
+        <select id="mindRoot"></select>
+        <p class="hint">La carte heuristique déplie le territoire depuis un nœud pivot : cliquez sur un nœud pour
+          plier/déplier sa branche, double-cliquez pour en faire la nouvelle racine.</p>
+      </div>
+      <div class="side-block">
+        <h3>Profondeur</h3>
+        <input type="range" id="mindDepth" min="1" max="4" value="3">
+        <div class="seg two">
+          <button id="mindExpand">Tout déplier</button>
+          <button id="mindCollapse">Tout replier</button>
+        </div>
+      </div>
+      <div class="side-block">
+        <h3>Réglages</h3>
+        <label class="row"><input type="checkbox" id="mindImages" checked> Images dans les nœuds</label>
+        <label class="row"><input type="checkbox" id="mindFacts" checked> Chiffre clé sous le nom</label>
+      </div>
+      <div class="side-block legend" id="legendMind"></div>
+    </aside>
+    <div class="canvas-wrap">
+      <svg id="mind" role="img" aria-label="Carte heuristique du territoire"></svg>
+      <div class="canvas-hud">
+        <button class="hud" id="mZoomIn" title="Zoom avant">＋</button>
+        <button class="hud" id="mZoomOut" title="Zoom arrière">－</button>
+        <button class="hud" id="mZoomFit" title="Recentrer">⤢</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDES ============ -->
+  <section class="view view-slides" id="view-slides">
+    <div class="deck" id="deck"></div>
+    <div class="deck-nav">
+      <button id="prevSlide" title="Précédent">◀</button>
+      <span id="slideCount">1 / 1</span>
+      <button id="nextSlide" title="Suivant">▶</button>
+      <button id="slideGrid" title="Vue d'ensemble">▦</button>
+    </div>
+    <div class="deck-progress"><i id="deckBar"></i></div>
+  </section>
+
+  <!-- ============ DONNÉES ============ -->
+  <section class="view view-data" id="view-data">
+    <aside class="sidebar">
+      <div class="side-block">
+        <h3>Jeux de données</h3>
+        <div id="datasetList" class="list"></div>
+      </div>
+      <div class="side-block">
+        <h3>Indicateur</h3>
+        <select id="dataVar"></select>
+        <p class="hint" id="dataVarHint"></p>
+      </div>
+      <div class="side-block">
+        <h3>Exports</h3>
+        <a class="ghost" href="data/communes-thau.csv" download>⬇ CSV — 14 communes</a>
+        <a class="ghost" href="data/atlas.json" download>⬇ JSON — atlas complet</a>
+      </div>
+    </aside>
+    <div class="data-wrap" id="dataWrap"></div>
+  </section>
+</main>
+
+<!-- ============ PANNEAU DE DÉTAIL ============ -->
+<aside class="panel" id="panel" hidden>
+  <button class="panel-close" id="panelClose" aria-label="Fermer">✕</button>
+  <div class="panel-scroll" id="panelBody"></div>
+</aside>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="js/charts.js"></script>
+<script src="js/atlas.js"></script>
+</body>
+</html>
