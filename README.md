@@ -14,7 +14,8 @@ monorepo/
 │  ├─ ETAT-DE-LART-PSYCHOLOGIE/ app/ FastAPI + output/visual/*.html
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
-│  └─ Language-decoder/         README (quasi vide)
+│  ├─ Language-decoder/         README (quasi vide)
+│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
