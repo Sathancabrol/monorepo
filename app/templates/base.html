@@ -37,6 +37,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:8px 6px;border-bottom:1p
     <a href="/" class="{% if request.url.path=='/' %}active{% endif %}">Vue d'ensemble</a>
     <a href="/repos" class="{% if request.url.path=='/repos' %}active{% endif %}">Panorama GitHub</a>
     <a href="/monorepo" class="{% if request.url.path=='/monorepo' %}active{% endif %}">Monorepo + Preview</a>
+    <a href="/os/" class="{% if request.url.path.startswith('/os') %}active{% endif %}">NEXUS·OS (agents)</a>
   </nav>
   <div class="spacer"></div>
   <a class="btn" href="https://github.com/Sathancabrol/monorepo" target="_blank" rel="noreferrer">GitHub ↗</a>

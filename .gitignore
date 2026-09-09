@@ -13,3 +13,6 @@ monorepo.bundle
 !projects/
 !projects/*/dist/
 !projects/*/dist/**
+
+# NEXUS·OS — état local (base, mémoire, agents créés, sandbox des agents)
+.nexus/

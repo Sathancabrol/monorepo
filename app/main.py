@@ -254,6 +254,14 @@ def download_bundle():
         raise HTTPException(404, "Bundle non généré sur ce serveur — génère avec scripts/publish_monorepo.sh")
     return FileResponse(str(bundle), media_type="application/octet-stream", filename="monorepo.bundle")
 
+# --- NEXUS·OS : agentic OS monté sous /os -----------------------------------
+# Routeur de modèles multi-fournisseurs + runtime d'agents + créateur d'agents.
+# Monté ici pour une navigation unifiée ; lançable seul via `uvicorn nexus_os.app:app`.
+from nexus_os.app import app as nexus_app  # noqa: E402
+
+app.mount("/os", nexus_app)
+
+
 # legacy picture etc.
 @app.get("/api/manifest")
 def api_manifest():
