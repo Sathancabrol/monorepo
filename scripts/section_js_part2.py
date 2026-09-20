@@ -1,268 +1,285 @@
+# -*- coding: utf-8 -*-
+
 def get_js_part2():
-    return """
+    return r"""
     // ==========================================
-    // 7. WATCH TOWER 3D & 2D RADAR SIMULATOR
+    // 7. WATCH TOWER, 4D SIMULATION & GOD'S EYE
     // ==========================================
     const simulationScenarios = {
         'scen_tranchee_vrd': {
-            title: "Tranchée Assainissement & Blindage Profond (3.20m)",
-            desc: "Pose collecteur fonte DN400 sous nappe phréatique avec blindage caisson double glissière et rabattement de nappe.",
+            id: 'scen_tranchee_vrd',
+            title: '1. Tranchée Assainissement & Blindage Profond (3.20m)',
+            desc: 'Pose de collecteur Béton Ø400 135A sous nappe phréatique avec rabattement et caisson de blindage acier.',
             steps: [
-                { id: 'st1', phase: "Phase 1 : Détection & Piquetage Réseaux", risks: "Endommagement réseaux gaz/élec existants", action: "Réalisation DICT + Détection géo-radar + Piquetage 7 couleurs AIPR.", machinery: "Camion Atelier + Détecteur RD8100", safety: "Port EPI obligatoire + Marquage peinture normée" },
-                { id: 'st2', phase: "Phase 2 : Démolition & Terrassement Supérieur", risks: "Éboulement de berge + Projection cailloux", action: "Sciage enrobé au disque diamanté, décapage 0.80m à la pelle 24T avec godet sans dents.", machinery: "Pelle 24T Liebherr + Scie Stihl TS800", safety: "Zone d'exclusion 10m autour de la tourelle" },
-                { id: 'st3', phase: "Phase 3 : Fonçage des Caissons de Blindage", risks: "Ensevelissement du personnel en fouille", action: "Pose caissons Krings 3.50m x 2.40m, fonçage progressif par poussée vérin godet.", machinery: "Pelle 24T + Élingues 4 brins contrôlées", safety: "Interdiction formelle de descendre hors blindage" },
-                { id: 'st4', phase: "Phase 4 : Pose Tuyaux Fonte DN400 & Calage", risks: "Écrasement membre lors du levage tuyaux", action: "Manutention au palonnier, guidage au cordage, emboîtement au tire-fort hydraulique.", machinery: "Pelle 15T sur pneus + Laser Piper 200", safety: "Contrôle atmosphère H2S/CO en fond de fouille" },
-                { id: 'st5', phase: "Phase 5 : Remblaiement & Compactage Méthodique", risks: "Tassement ultérieur de chaussée", action: "Remblai GNT 0/31.5 par couches de 30cm, compactage au pilonneur vibrant + contrôle q4 au pénétromètre.", machinery: "Compacteur Tandem Bomag + Pénétromètre PANDA", safety: "Protection auditive contre bruit pilonneuse" }
+                { title: '1. Piquetage DICT 7 Couleurs & Traçage', details: 'Détection géoradar, marquage au sol de la conduite Gaz MPB PEHD 110 et câble HTA 20kV. Pose des panneaux AK5 et cônes K5a.', mach: 'Scie Diamant Stihl, Détecteur RD8100', progress: 100 },
+                { title: '2. Découpe Enrobés & Terrassement Fouille', details: 'Sciage chaussée ép. 15cm. Terrassement en pleine masse à la pelle Liebherr 24t. Évacuation déblais par camion 8x4.', mach: 'Pelle 24t R924, Camion Scania 8x4', progress: 100 },
+                { title: '3. Descente Caisson de Blindage Lourd R4534', details: 'Mise en fiche des caissons acier 3.50m x 2.40m au godet de terrassement. Vérification étaiement hydraulique et absence de personnel sous charge.', mach: 'Pelle R924, Caisson Krings 3.5m', progress: 85 },
+                { title: '4. Réglage Lit de Pose Sable 4/10 au Laser', details: 'Mise en place de 15cm de sable concassé. Nivellement avec laser canalisateur Piper 200 à pente 1.45% avec mire réceptrice.', mach: 'Laser Canalisateur Leica Piper 200', progress: 60 },
+                { title: '5. Descente & Emboîtement Tuyaux Béton Ø400', details: 'Élingage au crochet de sécurité, graissage des joints toriques élastomère et emboîtement au tire-fort hydraulique.', mach: 'Pelle R924, Élingues 2 brins CMU 3T', progress: 30 },
+                { title: '6. Remblaiement Méthodique & Compactage Q4', details: 'Enrobage sable jusqu\'à 30cm au-dessus de la génératrice supérieure. Remblai GNT 0/31.5 par passes de 30cm au pilonneur.', mach: 'Pilonneuse Wacker BS60, Compacteur V3', progress: 0 }
             ]
         },
         'scen_enrobes_chaud': {
-            title: "Mise en Œuvre Enrobés Chauds (BBSG 0/10)",
-            desc: "Application d'une couche de roulement 6cm sur 4500m² avec finisseur guidé laser et compactage lourd.",
+            id: 'scen_enrobes_chaud',
+            title: '2. Mise en Œuvre Enrobés Chauds BBSG 0/10',
+            desc: 'Application d\'une couche de roulement en BBSG 0/10 classe 3 à 160°C sur 1200 m² de chaussée urbaine.',
             steps: [
-                { id: 'e1', phase: "Phase 1 : Balayage & Émulsion d'Accrochage", risks: "Brûlures thermiques émulsion chaude + Glissance", action: "Balayeuse aspiratrice haute pression + Répandeuse émulsion cationique à 65°C (350g/m²).", machinery: "Balayeuse Ravo + Répandeuse Émulsion", safety: "Balisage d'approche AK5 + B14 (30 km/h)" },
-                { id: 'e2', phase: "Phase 2 : Approvisionnement par Semi 38t", risks: "Écrasement piétons lors des manœuvres en marche arrière", action: "Guidage systématique des camions par homme de trafic qualifié avec gilet HV classe 3.", machinery: "Semi-remorques calorifugées 38t", safety: "Bipeur de recul + Caméra 360° en service" },
-                { id: 'e3', phase: "Phase 3 : Réglage au Finisseur Haute Densité", risks: "Brûlures contact table chauffante + Inhalation fumées", action: "Alimentation continue, réglage épaisseur automatique par palpeurs à ultrasons, T° > 140°C.", machinery: "Finisseur Vögele Super 1800-3i", safety: "Aspiration des fumées de bitume active" },
-                { id: 'e4', phase: "Phase 4 : Compactage & Finition des Joints", risks: "Fissuration thermique ou surcompactage", action: "Train de compactage : 4 passes tandem vibrant lourd + 2 passes rouleau à pneus lisse.", machinery: "Bomag BW 174 AP + Rouleau Pneus Hamm", safety: "Arrosage permanent des billes sans excès" }
+                { title: '1. Balayage Mécanique & Dépoussiérage', details: 'Aspiration et brossage haute pression sur la couche de base GB 0/14.', mach: 'Balayeuse Aspiratrice Ravo 540', progress: 100 },
+                { title: '2. Répandage Émulsion d\'Accrochage C65B4', details: 'Dosage précis à 350 g/m² de bitume résiduel à la rampe automatique.', mach: 'Bouille à bitume hydrostatique', progress: 100 },
+                { title: '3. Guidage Finisseur & Alimentation Camions', details: 'Alimentation continue de la trémie sans à-coups par rotation des camions bâchés.', mach: 'Finisseur Vögele Super 1800-3i', progress: 75 },
+                { title: '4. Compactage Vibrant Tandem & Finition Gomme', details: '6 passes au rouleau tandem double bille vibrant suivies de 4 passes au compacteur à pneus.', mach: 'Compacteur Bomag BW 154, Pneu Hamm', progress: 40 },
+                { title: '5. Sciage Joints de Raccordement & Mastic', details: 'Découpe franche des raccords transversaux et application de mastic bitumineux à chaud.', mach: 'Scie diamant, Chaudière à mastic', progress: 0 }
             ]
         },
         'scen_carrefour_giratoire': {
-            title: "Création Carrefour Giratoire Urbain sous Circulation",
-            desc: "Aménagement complet d'un rond-point 4 branches avec gestion des flux résiduels et déviations de nuit.",
+            id: 'scen_carrefour_giratoire',
+            title: '3. Carrefour Giratoire Urbain sous Circulation',
+            desc: 'Aménagement d\'un rond-point à 4 branches avec alternat temporaire et îlot central décoratif.',
             steps: [
-                { id: 'g1', phase: "Phase 1 : Dévoiement Provisoire de Circulation", risks: "Collision véhicules tiers avec la zone chantier", action: "Pose séparateurs modulaires de voies (SMV béton K16), signalisation temporaire de nuit.", machinery: "Camion Grue Palfinger + Fourgon Signalisation", safety: "Garde-corps et balises K5c rétroréfléchissantes" },
-                { id: 'g2', phase: "Phase 2 : Démolition & Terrassement de l'Îlot Central", risks: "Sectionnement réseaux non répertoriés", action: "Décapage terre végétale, fouilles en pleine masse avec contrôle continu détecteur réseau.", machinery: "Pelle 15T + Camion 8x4 Scania", safety: "Sondages préliminaires manuels obligatoires" },
-                { id: 'g3', phase: "Phase 3 : Pose des Bordures T2 / I2 & Franchissable", risks: "Troubles musculo-squelettiques (TMS) manutention lourde", action: "Pose bordures granit et béton au pince-bordure hydraulique sur lit de béton C25/30.", machinery: "Pince hydraulique sur mini-pelle + Bétonnière", safety: "Port gants anti-coupure et chaussures de sécurité S3" },
-                { id: 'g4', phase: "Phase 4 : Éclairage Public & Massifs Candelabres", risks: "Risque électrique lors du raccordement armoire", action: "Coulage massifs béton 1m³, passage gaines TPC rouge 90mm, raccordement hors tension vérifié.", machinery: "Tarière hydraulique + Camion Nacelle 18m", safety: "Habilitation électrique B2V / H0V requise" }
+                { title: '1. Phase 1 : Neutralisation Demi-Chaussée Ouest', details: 'Pose de séparateurs de voies K16 et feux tricolores d\'alternat KR11.', mach: 'Fourgon Balisage, Feux KR11 Sync', progress: 100 },
+                { title: '2. Décaissement & Fondation GNT 0/31.5', details: 'Terrassement plateforme et réglage de 30cm de grave traitée au guidage 3D.', mach: 'Niveleuse Cat 140M GPS, Cylindre V5', progress: 90 },
+                { title: '3. Pose Bordures T2 & Caniveaux CC1', details: 'Calage au béton dosé à 250 kg/m³ avec joints de dilatation tous les 10m.', mach: 'Pince à bordure ventouse, Bétonnière', progress: 65 },
+                { title: '4. Coulage Anneau Pavé & Béton Désactivé', details: 'Coulage dalle béton C30/37 avec pulvérisation de désactivant et lavage HP.', mach: 'Camion malaxeur, Nettoyeur HP 200 bar', progress: 20 },
+                { title: '5. Bascule Phase 2 & Couche BBSG Finale', details: 'Inversion de la circulation et tapis d\'enrobé continu sur l\'ensemble de l\'anneau.', mach: 'Finisseur Vögele, Compacteur Bomag', progress: 0 }
             ]
         }
     };
 
-    function loadScenario(scenKey) {
-        currentScenarioId = scenKey;
+    function loadScenario(scenId) {
+        currentScenarioId = scenId;
         activeScenarioStepIdx = 0;
-        const scen = simulationScenarios[scenKey];
-        if (!scen) return;
+        const scen = simulationScenarios[scenId] || simulationScenarios['scen_tranchee_vrd'];
 
-        const infoCard = document.getElementById('scenario-info-card');
-        if (infoCard) {
-            infoCard.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+        const card = document.getElementById('scenario-info-card');
+        if (card) {
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <div>
-                        <span class="badge badge-info">Scénario Interactif</span>
-                        <h3 style="font-size:1.15rem; font-weight:800; color:#f8fafc; margin-top:0.25rem;">${scen.title}</h3>
+                        <span class="badge badge-info" style="font-size:0.7rem; font-family:'JetBrains Mono';">${scen.id}</span>
+                        <h4 style="font-size:1.05rem; font-weight:800; color:#38bdf8; margin-top:3px;">${scen.title}</h4>
+                        <p style="font-size:0.8rem; color:#cbd5e1; margin-top:4px; line-height:1.4;">${scen.desc}</p>
                     </div>
-                    <span style="font-family:'JetBrains Mono'; font-size:0.8rem; color:#38bdf8; background:rgba(2,132,199,0.2); padding:0.2rem 0.5rem; border-radius:4px;">${scen.steps.length} Étapes</span>
                 </div>
-                <p style="font-size:0.85rem; color:#94a3b8; line-height:1.4;">${scen.desc}</p>
             `;
         }
 
-        renderScenarioStepList();
-        drawStepVisual(activeScenarioStepIdx);
-        logCockpit(`Scénario chargé : ${scen.title}`, 'info');
+        renderScenarioStepsList();
+        showStepDetails(0);
+        drawStepVisual(0);
+        logCockpit(`Scénario Watchtower chargé : ${scen.title}`, 'info');
     }
 
-    function renderScenarioStepList() {
+    function renderScenarioStepsList() {
+        const scen = simulationScenarios[currentScenarioId] || simulationScenarios['scen_tranchee_vrd'];
         const list = document.getElementById('scenario-steps-list');
-        const scen = simulationScenarios[currentScenarioId];
-        if (!list || !scen) return;
+        if (!list) return;
 
         list.innerHTML = scen.steps.map((st, idx) => `
-            <div onclick="selectScenarioStep(${idx})" style="padding:0.75rem; border-radius:6px; cursor:pointer; margin-bottom:0.5rem; border:1px solid ${idx === activeScenarioStepIdx ? 'var(--cyan)' : 'rgba(51,65,85,0.4)'}; background:${idx === activeScenarioStepIdx ? 'rgba(6,182,212,0.15)' : 'rgba(15,23,42,0.5)'}; transition:all 0.2s;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="font-size:0.85rem; color:${idx === activeScenarioStepIdx ? '#38bdf8' : '#f8fafc'};">${st.phase}</strong>
-                    <span style="font-size:0.7rem; font-family:'JetBrains Mono'; color:#64748b;">Étape ${idx + 1}/${scen.steps.length}</span>
+            <div onclick="selectScenarioStep(${idx})" style="background: ${idx === activeScenarioStepIdx ? 'rgba(56, 189, 248, 0.2)' : 'rgba(15, 23, 42, 0.7)'}; border: 1px solid ${idx === activeScenarioStepIdx ? '#38bdf8' : 'rgba(51, 65, 85, 0.6)'}; border-left: 4px solid ${idx === activeScenarioStepIdx ? '#38bdf8' : (st.progress === 100 ? '#10b981' : '#64748b')}; padding: 0.6rem; border-radius: 6px; margin-bottom: 0.4rem; cursor: pointer; transition: all 0.15s;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; font-weight: 800; color: ${idx === activeScenarioStepIdx ? '#38bdf8' : '#f8fafc'};">${st.title}</span>
+                    <span class="badge ${st.progress === 100 ? 'badge-success' : (st.progress > 0 ? 'badge-info' : 'badge-warning')}" style="font-size: 0.65rem;">${st.progress}%</span>
                 </div>
-                <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.2rem;">⚠️ Risque : <span style="color:#fca5a5;">${st.risks}</span></div>
+                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">🚜 ${st.mach}</div>
             </div>
         `).join('');
     }
 
     function selectScenarioStep(idx) {
         activeScenarioStepIdx = idx;
-        renderScenarioStepList();
+        renderScenarioStepsList();
+        showStepDetails(idx);
         drawStepVisual(idx);
-    }
 
-    function nextScenarioStep() {
-        const scen = simulationScenarios[currentScenarioId];
-        if (scen && activeScenarioStepIdx < scen.steps.length - 1) {
-            selectScenarioStep(activeScenarioStepIdx + 1);
+        const phaseLabel = document.getElementById('sim-4d-phase-label');
+        if (phaseLabel) {
+            const scen = simulationScenarios[currentScenarioId] || simulationScenarios['scen_tranchee_vrd'];
+            phaseLabel.textContent = `ÉTAPE ${idx + 1}/${scen.steps.length} : ${(scen.steps[idx]?.title || '').toUpperCase()}`;
         }
     }
 
     function prevScenarioStep() {
-        if (activeScenarioStepIdx > 0) {
-            selectScenarioStep(activeScenarioStepIdx - 1);
-        }
+        const scen = simulationScenarios[currentScenarioId] || simulationScenarios['scen_tranchee_vrd'];
+        if (activeScenarioStepIdx > 0) selectScenarioStep(activeScenarioStepIdx - 1);
     }
 
-    function drawStepVisual(stepIdx) {
-        const scen = simulationScenarios[currentScenarioId];
-        if (!scen) return;
-        const st = scen.steps[stepIdx];
-        if (!st) return;
-
-        const detailsBox = document.getElementById('step-details-box');
-        if (detailsBox) {
-            detailsBox.innerHTML = `
-                <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(51,65,85,0.7); border-radius:8px; padding:1rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-                        <h4 style="font-size:1rem; font-weight:800; color:#38bdf8;">📌 ${st.phase}</h4>
-                        <span class="badge badge-success">Conforme CSPS / SPS</span>
-                    </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; font-size:0.85rem; margin-bottom:0.75rem;">
-                        <div>
-                            <span style="color:#64748b; font-size:0.75rem;">ENGINS & OUTILLAGE MOBILISÉS :</span>
-                            <div style="color:#f8fafc; font-weight:700;">🚜 ${st.machinery}</div>
-                        </div>
-                        <div>
-                            <span style="color:#64748b; font-size:0.75rem;">PRESCRIPTION SÉCURITÉ OPBTP :</span>
-                            <div style="color:var(--amber); font-weight:700;">🦺 ${st.safety}</div>
-                        </div>
-                    </div>
-                    <div style="background:rgba(2,132,199,0.1); border-left:3px solid #0284c7; padding:0.6rem; border-radius:4px; font-size:0.85rem; color:#cbd5e1;">
-                        <strong>Action Méthode :</strong> ${st.action}
-                    </div>
-                </div>
-            `;
-        }
+    function nextScenarioStep() {
+        const scen = simulationScenarios[currentScenarioId] || simulationScenarios['scen_tranchee_vrd'];
+        if (activeScenarioStepIdx < scen.steps.length - 1) selectScenarioStep(activeScenarioStepIdx + 1);
+        else selectScenarioStep(0);
     }
 
-    function setSimulatorView(mode) {
+    function showStepDetails(idx) {
+        const scen = simulationScenarios[currentScenarioId] || simulationScenarios['scen_tranchee_vrd'];
+        const st = scen.steps[idx];
+        const box = document.getElementById('step-details-box');
+        if (!box || !st) return;
+
+        box.innerHTML = `
+            <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; padding: 0.85rem;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">🔍 Prescriptions Opérationnelles : ${st.title}</div>
+                <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 6px;">${st.details}</div>
+                <div style="font-size: 0.75rem; color: var(--amber); font-weight: 700;">🚜 Matériel : ${st.mach}</div>
+            </div>
+        `;
+    }
+
+    function setSimulatorViewMode(mode) {
         simulatorViewMode = mode;
         document.querySelectorAll('.sim-view-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-sim-${mode}`)?.classList.add('active');
+        document.getElementById('btn-sim-' + mode)?.classList.add('active');
 
-        const radarEl = document.getElementById('radar-canvas-container');
-        const view3dEl = document.getElementById('view3d-canvas-container');
+        const radarCont = document.getElementById('radar-canvas-container');
+        const view3dCont = document.getElementById('view3d-canvas-container');
+        const standardLayout = document.getElementById('sim-standard-layout');
+        const globalLayout = document.getElementById('sim-global-layout');
 
-        if (mode === 'radar') {
-            if (radarEl) radarEl.style.display = 'block';
-            if (view3dEl) view3dEl.style.display = 'none';
+        if (mode === 'global') {
+            if (standardLayout) standardLayout.style.display = 'none';
+            if (globalLayout) globalLayout.style.display = 'block';
+            setTimeout(renderGodsEyeCanvas, 50);
         } else {
-            if (radarEl) radarEl.style.display = 'none';
-            if (view3dEl) view3dEl.style.display = 'block';
-            init3DCanvas();
+            if (standardLayout) standardLayout.style.display = 'grid';
+            if (globalLayout) globalLayout.style.display = 'none';
+
+            if (mode === 'radar') {
+                if (radarCont) radarCont.style.display = 'block';
+                if (view3dCont) view3dCont.style.display = 'none';
+                setTimeout(initWatchtowerRadar, 50);
+            } else {
+                if (radarCont) radarCont.style.display = 'none';
+                if (view3dCont) view3dCont.style.display = 'block';
+                setTimeout(() => {
+                    init3DCanvas();
+                    drawStepVisual(activeScenarioStepIdx);
+                }, 50);
+            }
         }
     }
 
-    function toggleRadarStream() {
+    function toggleRadarLiveMode() {
         isRadarLive = !isRadarLive;
         const btn = document.getElementById('btn-radar-toggle');
-        if (btn) btn.textContent = isRadarLive ? '🟢 Signal Radar En Direct' : '🔴 Radar En Pause';
-        logCockpit(`Radar télémétrique : ${isRadarLive ? 'Actif' : 'En Pause'}`, isRadarLive ? 'ok' : 'warn');
+        if (btn) {
+            btn.textContent = isRadarLive ? '🟢 Signal Direct' : '⏸️ Signal Figé';
+            btn.className = isRadarLive ? 'btn btn-secondary' : 'btn btn-warning';
+        }
     }
 
+    function togglePlay4DSimulation() {
+        is4DSimPlaying = !is4DSimPlaying;
+        const btn = document.getElementById('btn-play-4d-sim');
+
+        if (is4DSimPlaying) {
+            if (btn) btn.innerHTML = '⏸️ Pause Simulation 4D';
+            if (simulatorViewMode !== '3d') setSimulatorViewMode('3d');
+            
+            sim4DInterval = setInterval(() => {
+                nextScenarioStep();
+            }, 2500);
+            logCockpit('Simulation 4D animée démarrée en continu.', 'ok');
+        } else {
+            if (btn) btn.innerHTML = '▶️ Lancer Simulation 4D';
+            if (sim4DInterval) clearInterval(sim4DInterval);
+            logCockpit('Simulation 4D mise en pause.', 'info');
+        }
+    }
+
+    // 2D RADAR ANIMATION
+    let radarAngle = 0;
     function initWatchtowerRadar() {
         radarCanvas = document.getElementById('watchtower-radar-canvas');
         if (!radarCanvas) return;
         radarCtx = radarCanvas.getContext('2d');
+        const w = radarCanvas.parentElement.clientWidth || 500;
+        const h = radarCanvas.parentElement.clientHeight || 400;
+        radarCanvas.width = w;
+        radarCanvas.height = h;
 
-        // Resize canvas to parent
-        radarCanvas.width = radarCanvas.offsetWidth || 600;
-        radarCanvas.height = radarCanvas.offsetHeight || 400;
-
-        let angle = 0;
-        const radarTargets = [
-            { x: 0.35, y: 0.4, label: 'Pelle CAT 320 (ZAC Pins)', color: '#10b981', code: 'ENG-01' },
-            { x: 0.65, y: 0.3, label: 'Porteur 8x4 Scania (Bd Haussmann)', color: '#38bdf8', code: 'ENG-03' },
-            { x: 0.5, y: 0.7, label: 'Compacteur Bomag (ZI Nord)', color: '#f59e0b', code: 'ENG-02' },
-            { x: 0.8, y: 0.75, label: 'Équipe A (Tranchée Ouverte)', color: '#ec4899', code: 'EQ-A' },
-            { x: 0.2, y: 0.8, label: 'Drone LiDAR DJI Matrice', color: '#06b6d4', code: 'DRN-01' }
-        ];
-
-        function renderRadarFrame() {
-            if (!radarCtx || radarCanvas.style.display === 'none') {
-                radarAnimId = requestAnimationFrame(renderRadarFrame);
-                return;
-            }
-
-            const w = radarCanvas.width;
-            const h = radarCanvas.height;
-            const cx = w / 2;
-            const cy = h / 2;
-            const maxR = Math.min(cx, cy) - 20;
-
-            radarCtx.fillStyle = '#090d16';
-            radarCtx.fillRect(0, 0, w, h);
-
-            // Draw concentric range circles
-            radarCtx.strokeStyle = 'rgba(6, 182, 212, 0.25)';
-            radarCtx.lineWidth = 1;
-            for (let r = maxR / 4; r <= maxR; r += maxR / 4) {
-                radarCtx.beginPath();
-                radarCtx.arc(cx, cy, r, 0, Math.PI * 2);
-                radarCtx.stroke();
-            }
-
-            // Draw crosshairs
-            radarCtx.beginPath();
-            radarCtx.moveTo(cx - maxR, cy);
-            radarCtx.lineTo(cx + maxR, cy);
-            radarCtx.moveTo(cx, cy - maxR);
-            radarCtx.lineTo(cx, cy + maxR);
-            radarCtx.stroke();
-
-            // Draw sweeping line
-            if (isRadarLive) angle += 0.03;
-            const sweepX = cx + Math.cos(angle) * maxR;
-            const sweepY = cy + Math.sin(angle) * maxR;
-
-            const grad = radarCtx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
-            grad.addColorStop(0, 'rgba(6, 182, 212, 0.4)');
-            grad.addColorStop(1, 'rgba(6, 182, 212, 0)');
-
-            radarCtx.beginPath();
-            radarCtx.moveTo(cx, cy);
-            radarCtx.arc(cx, cy, maxR, angle - 0.35, angle);
-            radarCtx.closePath();
-            radarCtx.fillStyle = 'rgba(6, 182, 212, 0.15)';
-            radarCtx.fill();
-
-            radarCtx.beginPath();
-            radarCtx.moveTo(cx, cy);
-            radarCtx.lineTo(sweepX, sweepY);
-            radarCtx.strokeStyle = '#38bdf8';
-            radarCtx.lineWidth = 2;
-            radarCtx.stroke();
-
-            // Draw targets
-            radarTargets.forEach(t => {
-                const tx = t.x * w;
-                const ty = t.y * h;
-
-                radarCtx.fillStyle = t.color;
-                radarCtx.beginPath();
-                radarCtx.arc(tx, ty, 5, 0, Math.PI * 2);
-                radarCtx.fill();
-
-                radarCtx.strokeStyle = t.color;
-                radarCtx.beginPath();
-                radarCtx.arc(tx, ty, 9, 0, Math.PI * 2);
-                radarCtx.stroke();
-
-                radarCtx.fillStyle = '#f8fafc';
-                radarCtx.font = '10px "JetBrains Mono"';
-                radarCtx.fillText(`[${t.code}] ${t.label}`, tx + 12, ty + 4);
-            });
-
-            radarAnimId = requestAnimationFrame(renderRadarFrame);
-        }
-
-        cancelAnimationFrame(radarAnimId);
-        renderRadarFrame();
+        if (radarAnimId) cancelAnimationFrame(radarAnimId);
+        animateRadar();
     }
 
-    function init3DCanvas() {
-        const c = document.getElementById('watchtower-3d-canvas');
-        if (!c) return;
-        const ctx = c.getContext('2d');
-        c.width = c.offsetWidth || 600;
-        c.height = c.offsetHeight || 400;
+    function animateRadar() {
+        if (!radarCanvas || !radarCtx) return;
+        const w = radarCanvas.width;
+        const h = radarCanvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const maxR = Math.min(cx, cy) - 20;
 
-        // Mouse drag event listeners for camera
-        c.onmousedown = (e) => {
+        radarCtx.fillStyle = 'rgba(9, 13, 22, 0.2)';
+        radarCtx.fillRect(0, 0, w, h);
+
+        // Concentric Rings
+        radarCtx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        radarCtx.lineWidth = 1;
+        for (let r = maxR / 4; r <= maxR; r += maxR / 4) {
+            radarCtx.beginPath();
+            radarCtx.arc(cx, cy, r, 0, Math.PI * 2);
+            radarCtx.stroke();
+        }
+
+        // Crosshairs
+        radarCtx.beginPath();
+        radarCtx.moveTo(cx, cy - maxR); radarCtx.lineTo(cx, cy + maxR);
+        radarCtx.moveTo(cx - maxR, cy); radarCtx.lineTo(cx + maxR, cy);
+        radarCtx.stroke();
+
+        // Sweep Line
+        if (isRadarLive) radarAngle += 0.03;
+        radarCtx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
+        radarCtx.lineWidth = 2;
+        radarCtx.beginPath();
+        radarCtx.moveTo(cx, cy);
+        radarCtx.lineTo(cx + Math.cos(radarAngle) * maxR, cy + Math.sin(radarAngle) * maxR);
+        radarCtx.stroke();
+
+        // Target Blips (Fleet Assets)
+        const targets = [
+            { label: 'PELLE-R924', dist: 0.45, ang: 1.2, color: '#f59e0b' },
+            { label: 'CAMION-8X4', dist: 0.7, ang: 2.8, color: '#38bdf8' },
+            { label: 'COMPACTEUR-V5', dist: 0.3, ang: 4.5, color: '#10b981' },
+            { label: 'DRONE-LIDAR', dist: 0.85, ang: 5.6, color: '#c084fc' }
+        ];
+
+        targets.forEach(t => {
+            const tx = cx + Math.cos(t.ang) * (maxR * t.dist);
+            const ty = cy + Math.sin(t.ang) * (maxR * t.dist);
+
+            radarCtx.fillStyle = t.color;
+            radarCtx.beginPath();
+            radarCtx.arc(tx, ty, 5, 0, Math.PI * 2);
+            radarCtx.fill();
+
+            radarCtx.font = 'bold 9px monospace';
+            radarCtx.fillStyle = '#f8fafc';
+            radarCtx.fillText(t.label, tx + 8, ty + 3);
+        });
+
+        // HUD Text
+        radarCtx.font = 'bold 10px monospace';
+        radarCtx.fillStyle = 'var(--emerald)';
+        radarCtx.fillText(`TÉLÉMÉTRIE RTK : ACTIF (${targets.length} BALISES)`, 15, 20);
+        radarCtx.fillText(`RAYON SURVEILLANCE : 250m`, 15, 35);
+
+        if (simulatorViewMode === 'radar') {
+            radarAnimId = requestAnimationFrame(animateRadar);
+        }
+    }
+
+    // 3D / 4D SIMULATION ENGINE CANVAS
+    let canvas3D, ctx3D;
+    function init3DCanvas() {
+        canvas3D = document.getElementById('watchtower-3d-canvas');
+        if (!canvas3D) return;
+        ctx3D = canvas3D.getContext('2d');
+        const w = canvas3D.parentElement.clientWidth || 600;
+        const h = canvas3D.parentElement.clientHeight || 400;
+        canvas3D.width = w;
+        canvas3D.height = h;
+
+        canvas3D.onmousedown = (e) => {
             isDragging3D = true;
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
@@ -273,70 +290,215 @@ def get_js_part2():
             const dx = e.clientX - lastMouseX;
             const dy = e.clientY - lastMouseY;
             cameraRotY += dx * 0.5;
-            cameraRotX = Math.max(10, Math.min(80, cameraRotX + dy * 0.5));
+            cameraRotX += dy * 0.5;
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
-            render3DScene(ctx, c.width, c.height);
+            drawStepVisual(activeScenarioStepIdx);
         };
-
-        render3DScene(ctx, c.width, c.height);
     }
 
-    function render3DScene(ctx, w, h) {
-        if (!ctx) return;
-        ctx.fillStyle = '#090d16';
-        ctx.fillRect(0, 0, w, h);
+    function set3DPreset(mode) {
+        if (mode === 'top') { cameraRotX = 90; cameraRotY = 0; }
+        if (mode === 'iso') { cameraRotX = 30; cameraRotY = -45; }
+        drawStepVisual(activeScenarioStepIdx);
+    }
 
+    function zoom3D(factor) {
+        cameraZoom *= factor;
+        drawStepVisual(activeScenarioStepIdx);
+    }
+
+    function drawStepVisual(stepIdx) {
+        if (!canvas3D || !ctx3D) {
+            canvas3D = document.getElementById('watchtower-3d-canvas');
+            if (canvas3D) ctx3D = canvas3D.getContext('2d');
+            else return;
+        }
+
+        const w = canvas3D.width;
+        const h = canvas3D.height;
         const cx = w / 2;
-        const cy = h / 2 + 30;
+        const cy = h / 2 + 20;
 
-        // Draw isometric terrain grid
-        ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
-        ctx.lineWidth = 1;
+        ctx3D.fillStyle = '#090d16';
+        ctx3D.fillRect(0, 0, w, h);
 
-        const gridSize = 14;
-        const spacing = 22 * cameraZoom;
+        ctx3D.save();
+        ctx3D.translate(cx, cy);
+        ctx3D.scale(cameraZoom, cameraZoom);
+
+        // Ground Plane Grid in Isometric View
         const radY = (cameraRotY * Math.PI) / 180;
         const radX = (cameraRotX * Math.PI) / 180;
 
-        for (let i = -gridSize; i <= gridSize; i++) {
-            ctx.beginPath();
-            for (let j = -gridSize; j <= gridSize; j++) {
-                const x0 = i * spacing;
-                const z0 = j * spacing;
-                const rx = x0 * Math.cos(radY) - z0 * Math.sin(radY);
-                const rz = x0 * Math.sin(radY) + z0 * Math.cos(radY);
-                const sy = -rz * Math.sin(radX);
-                const sx = rx;
-                if (j === -gridSize) ctx.moveTo(cx + sx, cy + sy);
-                else ctx.lineTo(cx + sx, cy + sy);
-            }
-            ctx.stroke();
+        function project3D(x, y, z) {
+            const cosY = Math.cos(radY), sinY = Math.sin(radY);
+            const x1 = x * cosY - z * sinY;
+            const z1 = x * sinY + z * cosY;
+
+            const cosX = Math.cos(radX), sinX = Math.sin(radX);
+            const y2 = y * cosX - z1 * sinX;
+            const z2 = y * sinX + z1 * cosX;
+
+            return { px: x1, py: y2, depth: z2 };
         }
 
-        // Draw 3D Trench Object in center
-        ctx.fillStyle = '#0284c7';
-        ctx.font = 'bold 12px "JetBrains Mono"';
-        ctx.fillText(`📐 Vue Isométrique 3D Chantier (Rot: ${Math.round(cameraRotY)}°, Incl: ${Math.round(cameraRotX)}°)`, 20, 30);
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '10px system-ui';
-        ctx.fillText('Maintenez le clic gauche et glissez pour faire pivoter la caméra en orbite 3D', 20, 50);
+        // Draw Ground Grid
+        ctx3D.strokeStyle = 'rgba(51, 65, 85, 0.4)';
+        ctx3D.lineWidth = 1;
+        const gridSize = 180, gridStep = 30;
 
-        // Draw excavation trench box
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
-        ctx.strokeStyle = '#ef4444';
+        for (let x = -gridSize; x <= gridSize; x += gridStep) {
+            const p1 = project3D(x, 0, -gridSize);
+            const p2 = project3D(x, 0, gridSize);
+            ctx3D.beginPath(); ctx3D.moveTo(p1.px, p1.py); ctx3D.lineTo(p2.px, p2.py); ctx3D.stroke();
+        }
+        for (let z = -gridSize; z <= gridSize; z += gridStep) {
+            const p1 = project3D(-gridSize, 0, z);
+            const p2 = project3D(gridSize, 0, z);
+            ctx3D.beginPath(); ctx3D.moveTo(p1.px, p1.py); ctx3D.lineTo(p2.px, p2.py); ctx3D.stroke();
+        }
+
+        // 1. Excavation Trench (Tranchée)
+        const tLen = 140, tWidth = 35, tDepth = 45;
+        const c1 = project3D(-tLen, 0, -tWidth);
+        const c2 = project3D(tLen, 0, -tWidth);
+        const c3 = project3D(tLen, 0, tWidth);
+        const c4 = project3D(-tLen, 0, tWidth);
+
+        const b1 = project3D(-tLen, tDepth, -tWidth);
+        const b2 = project3D(tLen, tDepth, -tWidth);
+        const b3 = project3D(tLen, tDepth, tWidth);
+        const b4 = project3D(-tLen, tDepth, tWidth);
+
+        // Trench Bottom
+        ctx3D.fillStyle = '#1e1b18';
+        ctx3D.beginPath();
+        ctx3D.moveTo(b1.px, b1.py); ctx3D.lineTo(b2.px, b2.py); ctx3D.lineTo(b3.px, b3.py); ctx3D.lineTo(b4.px, b4.py);
+        ctx3D.closePath(); ctx3D.fill();
+
+        // Trench Walls
+        ctx3D.fillStyle = '#292524';
+        ctx3D.beginPath();
+        ctx3D.moveTo(c1.px, c1.py); ctx3D.lineTo(c2.px, c2.py); ctx3D.lineTo(b2.px, b2.py); ctx3D.lineTo(b1.px, b1.py);
+        ctx3D.closePath(); ctx3D.fill();
+
+        // 2. Trench Shield (Caisson de Blindage) if step >= 2
+        if (stepIdx >= 2) {
+            ctx3D.fillStyle = 'rgba(234, 179, 8, 0.75)';
+            ctx3D.strokeStyle = '#b45309';
+            ctx3D.lineWidth = 2;
+            const sh1 = project3D(-60, 5, -tWidth + 2);
+            const sh2 = project3D(60, 5, -tWidth + 2);
+            const sh3 = project3D(60, tDepth - 5, -tWidth + 2);
+            const sh4 = project3D(-60, tDepth - 5, -tWidth + 2);
+            ctx3D.beginPath(); ctx3D.moveTo(sh1.px, sh1.py); ctx3D.lineTo(sh2.px, sh2.py); ctx3D.lineTo(sh3.px, sh3.py); ctx3D.lineTo(sh4.px, sh4.py);
+            ctx3D.closePath(); ctx3D.fill(); ctx3D.stroke();
+        }
+
+        // 3. Pipe (Tuyau Béton Ø400) if step >= 3
+        if (stepIdx >= 3) {
+            ctx3D.strokeStyle = '#38bdf8';
+            ctx3D.lineWidth = 8;
+            const pp1 = project3D(-120, tDepth - 10, 0);
+            const pp2 = project3D(120, tDepth - 10, 0);
+            ctx3D.beginPath(); ctx3D.moveTo(pp1.px, pp1.py); ctx3D.lineTo(pp2.px, pp2.py); ctx3D.stroke();
+
+            // Laser Beam (Vert Fluo)
+            ctx3D.strokeStyle = '#10b981';
+            ctx3D.lineWidth = 2;
+            ctx3D.setLineDash([4, 4]);
+            const lz1 = project3D(-130, tDepth - 12, 0);
+            const lz2 = project3D(130, tDepth - 12, 0);
+            ctx3D.beginPath(); ctx3D.moveTo(lz1.px, lz1.py); ctx3D.lineTo(lz2.px, lz2.py); ctx3D.stroke();
+            ctx3D.setLineDash([]);
+        }
+
+        // 4. Heavy Excavator Pelle Liebherr R924 Position
+        const pellePos = project3D(90 + (stepIdx * 5), -20, 70);
+        ctx3D.fillStyle = '#f59e0b';
+        ctx3D.beginPath(); ctx3D.arc(pellePos.px, pellePos.py, 16, 0, Math.PI * 2); ctx3D.fill();
+        ctx3D.strokeStyle = '#b45309'; ctx3D.lineWidth = 3; ctx3D.stroke();
+        ctx3D.fillStyle = '#fff'; ctx3D.font = 'bold 9px monospace';
+        ctx3D.fillText('🚜 R924', pellePos.px - 16, pellePos.py - 20);
+
+        // 5. Hardhat Workers (Compagnons VRD)
+        const worker1 = project3D(-20, tDepth - 15, 5);
+        ctx3D.fillStyle = '#facc15';
+        ctx3D.beginPath(); ctx3D.arc(worker1.px, worker1.py, 6, 0, Math.PI * 2); ctx3D.fill();
+        ctx3D.fillStyle = '#fff'; ctx3D.font = 'bold 8px monospace';
+        ctx3D.fillText('👷 M. Traoré', worker1.px - 20, worker1.py - 8);
+
+        ctx3D.restore();
+
+        // 2D Compass / HUD
+        ctx3D.font = 'bold 11px JetBrains Mono';
+        ctx3D.fillStyle = '#38bdf8';
+        ctx3D.fillText(`PERSPECTIVE 3D : AZIMUT ${Math.round(cameraRotY)}° • ÉLÉVATION ${Math.round(cameraRotX)}°`, 12, h - 15);
+    }
+
+    // GOD'S EYE / REGIONAL OCCITANIE MAP CANVAS
+    function renderGodsEyeCanvas() {
+        const canvas = document.getElementById('godseye-map-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.parentElement.clientWidth || 700;
+        const h = canvas.parentElement.clientHeight || 350;
+        canvas.width = w;
+        canvas.height = h;
+
+        ctx.fillStyle = '#050811';
+        ctx.fillRect(0, 0, w, h);
+
+        // Occitanie Regional Coastline & Road Network Simulation
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.rect(cx - 80, cy - 30, 160, 60);
-        ctx.fill();
+        ctx.moveTo(w * 0.1, h * 0.85);
+        ctx.bezierCurveTo(w * 0.4, h * 0.8, w * 0.7, h * 0.75, w * 0.95, h * 0.6);
         ctx.stroke();
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText('ZONE DE FOUILLE BLINDÉE', cx - 70, cy + 5);
+
+        // Sites Nodes
+        const sites = [
+            { name: "Alès (Giratoire RD906)", x: w * 0.45, y: h * 0.25, status: "Actif", alerts: 0 },
+            { name: "Montpellier (Voie Verte)", x: w * 0.55, y: h * 0.45, status: "Actif", alerts: 0 },
+            { name: "Pézenas (Centre Ancien)", x: w * 0.35, y: h * 0.55, status: "Actif", alerts: 0 },
+            { name: "Sète (ZAC Littoral)", x: w * 0.45, y: h * 0.7, status: "Actif", alerts: 0 }
+        ];
+
+        // Connection Web
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        for (let i = 0; i < sites.length; i++) {
+            for (let j = i + 1; j < sites.length; j++) {
+                ctx.beginPath();
+                ctx.moveTo(sites[i].x, sites[i].y);
+                ctx.lineTo(sites[j].x, sites[j].y);
+                ctx.stroke();
+            }
+        }
+        ctx.setLineDash([]);
+
+        // Render Sites Markers
+        sites.forEach(s => {
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+            ctx.beginPath(); ctx.arc(s.x, s.y, 16, 0, Math.PI * 2); ctx.fill();
+
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath(); ctx.arc(s.x, s.y, 6, 0, Math.PI * 2); ctx.fill();
+
+            ctx.font = 'bold 10px system-ui';
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillText(s.name, s.x + 10, s.y + 4);
+        });
     }
 
     // ==========================================
-    // 8. FLEET & MACHINERY ENGINE
+    // 8. FLEET MACHINERY & VISUAL SWITCHER
     // ==========================================
+    const fleetAssetsState = {};
+
     function filterFleet(type, btn) {
         fleetFilter = type;
         document.querySelectorAll('.fleet-filter-btn').forEach(b => b.classList.remove('active'));
@@ -344,99 +506,152 @@ def get_js_part2():
         renderFleetGrid();
     }
 
-    function renderFleetGrid() {
-        const grid = document.getElementById('fleet-grid');
-        if (!grid || !companyData.fleet) return;
-
-        const filtered = companyData.fleet.filter(f => fleetFilter === 'all' || f.type.toLowerCase().includes(fleetFilter));
-
-        grid.innerHTML = filtered.map(f => `
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                    <div style="height:140px; margin-bottom:1rem; border-radius:6px; overflow:hidden; border:1px solid rgba(51,65,85,0.6);">
-                        ${getVehicleSVG(f.type, f.name)}
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
-                        <span class="badge ${f.status === 'Sur chantier' ? 'badge-success' : 'badge-warning'}">${f.status}</span>
-                        <span style="font-family:'JetBrains Mono'; font-size:0.8rem; color:#94a3b8;">${f.id}</span>
-                    </div>
-                    <h3 style="font-size:1.1rem; font-weight:800; color:#f8fafc; margin-bottom:0.25rem;">${f.name}</h3>
-                    <div style="font-size:0.8rem; color:#38bdf8; font-weight:700; margin-bottom:0.75rem;">${f.type}</div>
-
-                    <div style="font-size:0.8rem; background:rgba(15,23,42,0.6); padding:0.6rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4); margin-bottom:0.75rem;">
-                        <div><span style="color:#64748b;">Affectation :</span> <strong style="color:#f1f5f9;">${f.assigned}</strong></div>
-                        <div><span style="color:#64748b;">Opérateur :</span> <strong style="color:#f1f5f9;">${f.operator}</strong></div>
-                        <div><span style="color:#64748b;">Heures compteur :</span> <strong style="font-family:'JetBrains Mono'; color:var(--emerald);">${f.hours} h</strong></div>
-                        <div><span style="color:#64748b;">Prochaine VGP :</span> <strong style="font-family:'JetBrains Mono'; color:#f59e0b;">${f.vgp}</strong></div>
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-                    <button class="btn btn-primary" style="flex:1; font-size:0.8rem;" onclick="openVehicleModal('${f.id}')">
-                        📋 Fiche Technique VGP
-                    </button>
-                </div>
-            </div>
-        `).join('');
+    function switchFleetCardView(vehId, viewMode) {
+        fleetAssetsState[vehId] = viewMode;
+        renderFleetGrid();
     }
 
-    function openVehicleModal(vehicleId) {
-        const v = (companyData.fleet || []).find(x => x.id === vehicleId);
-        if (!v) return;
+    function renderFleetGrid() {
+        const grid = document.getElementById('fleet-grid');
+        if (!grid) return;
+
+        const fleet = companyData.fleet || [];
+        const filtered = fleet.filter(v => {
+            if (fleetFilter === 'all') return true;
+            return (v.type || '').toLowerCase().includes(fleetFilter);
+        });
+
+        grid.innerHTML = filtered.map(v => {
+            const currentView = fleetAssetsState[v.id] || 'schema';
+            let visualContent = '';
+
+            if (currentView === 'photo') {
+                visualContent = `<img src="${v.photo_url || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800'}" alt="${v.name}" style="width:100%; height:180px; object-fit:cover; border-radius:6px; border:1px solid rgba(51,65,85,0.7);">`;
+            } else if (currentView === 'cam') {
+                visualContent = `
+                    <div style="background:#000; height:180px; border-radius:6px; border:1px solid var(--cyan); position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <div style="font-size:2rem; margin-bottom:4px;">📹</div>
+                        <div style="font-size:0.75rem; font-weight:800; color:#38bdf8; font-family:'JetBrains Mono';">CAMÉRA CABINE FLUX DIRECT</div>
+                        <div style="font-size:0.65rem; color:#94a3b8; font-family:'JetBrains Mono';">Signal 5G • 1080p 30fps • 42ms</div>
+                        <div style="position:absolute; top:6px; left:6px; background:rgba(15,23,42,0.8); padding:2px 6px; border-radius:3px; font-size:0.65rem; color:var(--emerald); font-family:'JetBrains Mono';">● LIVE</div>
+                    </div>
+                `;
+            } else if (currentView === 'diag') {
+                visualContent = `
+                    <div style="background:rgba(15,23,42,0.9); height:180px; border-radius:6px; border:1px solid rgba(51,65,85,0.8); padding:0.75rem; font-size:0.75rem; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div style="font-weight:800; color:#38bdf8;">⚙️ Diagnostic Télémétrique CAN-bus</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.7rem;">
+                            <div>Niveau Carburant : <strong style="color:var(--emerald);">84%</strong></div>
+                            <div>Pression Huile : <strong style="color:var(--emerald);">4.2 bar</strong></div>
+                            <div>Température Moteur : <strong style="color:var(--amber);">88°C</strong></div>
+                            <div>Heures Totales : <strong>${v.hours} h</strong></div>
+                        </div>
+                        <div style="font-size:0.65rem; color:#94a3b8;">GPS: ${v.geoloc ? v.geoloc.lat + '°N, ' + v.geoloc.lng + '°E' : 'Occitanie'}</div>
+                    </div>
+                `;
+            } else {
+                visualContent = `<div style="height:180px; border-radius:6px; overflow:hidden;">${getVehicleSVG(v.type, v.name)}</div>`;
+            }
+
+            return `
+                <div class="card" style="border: 1px solid rgba(51,65,85,0.8); background: rgba(15,23,42,0.95); display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <!-- VIEW SWITCHER BUTTONS -->
+                        <div style="display: flex; gap: 0.25rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn-secondary ${currentView === 'schema' ? 'active' : ''}" style="padding: 0.2rem 0.4rem; font-size: 0.65rem;" onclick="switchFleetCardView('${v.id}', 'schema')">📐 Schéma</button>
+                            <button class="btn-secondary ${currentView === 'photo' ? 'active' : ''}" style="padding: 0.2rem 0.4rem; font-size: 0.65rem;" onclick="switchFleetCardView('${v.id}', 'photo')">📸 Photo HD</button>
+                            <button class="btn-secondary ${currentView === 'cam' ? 'active' : ''}" style="padding: 0.2rem 0.4rem; font-size: 0.65rem;" onclick="switchFleetCardView('${v.id}', 'cam')">📹 Caméra</button>
+                            <button class="btn-secondary ${currentView === 'diag' ? 'active' : ''}" style="padding: 0.2rem 0.4rem; font-size: 0.65rem;" onclick="switchFleetCardView('${v.id}', 'diag')">⚙️ Diag</button>
+                        </div>
+
+                        <!-- VISUAL DISPLAY -->
+                        <div style="margin-bottom: 0.75rem;">
+                            ${visualContent}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <div>
+                                <span class="badge badge-info" style="font-size: 0.65rem; font-family: 'JetBrains Mono';">${v.id}</span>
+                                <h3 style="font-size: 1rem; font-weight: 800; color: #f8fafc; margin-top: 2px;">${v.name}</h3>
+                                <div style="font-size: 0.75rem; color: #94a3b8;">${v.type} • Immat: <strong>${v.immat || 'TP-340-FR'}</strong></div>
+                            </div>
+                            <span class="badge badge-success">${v.status || 'Opérationnel'}</span>
+                        </div>
+
+                        <!-- SPECS SUMMARY -->
+                        <div style="background: rgba(30,41,59,0.5); padding: 0.5rem; border-radius: 6px; font-size: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 0.75rem;">
+                            <div>Heures: <strong>${v.hours} h</strong></div>
+                            <div>Affectation: <strong>${v.project}</strong></div>
+                            <div>VGP: <strong style="color: var(--emerald);">${v.vgp}</strong></div>
+                            <div>Prix: <strong style="color: var(--amber);">${(v.price || 150000).toLocaleString('fr-FR')} €</strong></div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; font-size: 0.8rem;" onclick="openVehicleModal('${v.id}')">
+                        🔍 Spécifications & Télémétrie Complète
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openVehicleModal(vehId) {
+        const vehicle = (companyData.fleet || []).find(v => v.id === vehId) || (companyData.fleet || [])[0];
+        if (!vehicle) return;
 
         const body = document.getElementById('vehicle-modal-body');
         if (!body) return;
 
         body.innerHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
-                <div style="height:220px; border-radius:8px; overflow:hidden; border:1px solid rgba(51,65,85,0.8);">
-                    ${getVehicleSVG(v.type, v.name)}
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid rgba(51,65,85,0.7); padding-bottom: 0.75rem;">
                 <div>
-                    <span class="badge ${v.status === 'Sur chantier' ? 'badge-success' : 'badge-warning'}">${v.status}</span>
-                    <h2 style="font-size:1.5rem; font-weight:900; color:#f8fafc; margin-top:0.35rem;">${v.name}</h2>
-                    <div style="color:#38bdf8; font-weight:700; margin-bottom:1rem;">${v.type} • Matr. ${v.id}</div>
-
-                    <div style="background:rgba(15,23,42,0.8); padding:0.85rem; border-radius:6px; border:1px solid rgba(51,65,85,0.6); font-size:0.85rem;">
-                        <div style="margin-bottom:0.4rem;"><span style="color:#64748b;">Chantier en cours :</span> <strong style="color:#f8fafc;">${v.assigned}</strong></div>
-                        <div style="margin-bottom:0.4rem;"><span style="color:#64748b;">Chauffeur / Machiniste :</span> <strong style="color:#f8fafc;">${v.operator}</strong></div>
-                        <div style="margin-bottom:0.4rem;"><span style="color:#64748b;">Heures moteur cumulées :</span> <strong style="font-family:'JetBrains Mono'; color:var(--emerald);">${v.hours} h</strong></div>
-                        <div><span style="color:#64748b;">Validité Contrôle VGP :</span> <strong style="font-family:'JetBrains Mono'; color:#f59e0b;">${v.vgp} (Conforme APAVE)</strong></div>
-                    </div>
+                    <span class="badge badge-info" style="font-size: 0.75rem; font-family: 'JetBrains Mono';">${vehicle.id}</span>
+                    <h2 style="font-size: 1.3rem; font-weight: 900; color: #38bdf8; margin-top: 4px;">${vehicle.name}</h2>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">${vehicle.type} • Immatriculation : <strong>${vehicle.immat || 'TP-340-FR'}</strong> • Constructeur : <strong>${vehicle.brand || 'Liebherr'}</strong></div>
                 </div>
+                <span class="badge badge-success" style="font-size: 0.85rem;">${vehicle.status || 'Opérationnel'}</span>
             </div>
 
-            <h3 style="font-size:1.1rem; font-weight:800; color:#38bdf8; margin-bottom:0.75rem;">⚙️ Spécifications & Carnet d'Entretien</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; font-size:0.85rem;">
-                <div style="background:rgba(30,41,59,0.5); padding:0.75rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
-                    <div style="color:#64748b; font-size:0.75rem;">CONSOMMATION MOYENNE</div>
-                    <div style="font-weight:700; color:#f8fafc; margin-top:2px;">18.5 L/heure (GNR B100)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <!-- PHOTO HD & SVG -->
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Photo Réelle HD :</div>
+                    <img src="${vehicle.photo_url || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800'}" alt="${vehicle.name}" style="width: 100%; height: 190px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(51,65,85,0.8); margin-bottom: 0.75rem;">
+                    
+                    <div style="font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Schéma Vectoriel Coté :</div>
+                    <div style="height: 140px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(51,65,85,0.8);">
+                        ${getVehicleSVG(vehicle.type, vehicle.name)}
+                    </div>
                 </div>
-                <div style="background:rgba(30,41,59,0.5); padding:0.75rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
-                    <div style="color:#64748b; font-size:0.75rem;">CACES EXIGÉ</div>
-                    <div style="font-weight:700; color:var(--emerald); margin-top:2px;">R482 Catégorie B1 / C1</div>
-                </div>
-                <div style="background:rgba(30,41,59,0.5); padding:0.75rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
-                    <div style="color:#64748b; font-size:0.75rem;">CLASSE ÉMISSION</div>
-                    <div style="font-weight:700; color:#38bdf8; margin-top:2px;">Stage V / Filtre à Particules</div>
-                </div>
-                <div style="background:rgba(30,41,59,0.5); padding:0.75rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
-                    <div style="color:#64748b; font-size:0.75rem;">GÉOLOCALISATION GPS</div>
-                    <div style="font-weight:700; color:var(--emerald); margin-top:2px;">🟢 Balise Active (Télématique 4G)</div>
+
+                <!-- COMPREHENSIVE TECH SPECS TABLE -->
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; margin-bottom: 6px;">📋 Fiche Technique & Paramètres VGP :</div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.6); border-radius: 6px;">
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Prix d'Acquisition :</td><td style="padding: 6px 10px; font-weight: 800; color: var(--amber);">${(vehicle.price || 150000).toLocaleString('fr-FR')} € HT</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Poids Opérationnel (PTAC) :</td><td style="padding: 6px 10px; font-weight: 800;">${vehicle.weight || '24 500 kg'}</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Dimensions (L x l x h) :</td><td style="padding: 6px 10px; font-weight: 800;">${vehicle.dimensions || '9.80m x 2.98m x 3.15m'}</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Puissance Moteur :</td><td style="padding: 6px 10px; font-weight: 800; color: var(--emerald);">${vehicle.power || '129 kW (175 ch)'}</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Capacité Benne / Godet :</td><td style="padding: 6px 10px; font-weight: 800;">${vehicle.capacity || '1.25 m³'}</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Consommation Moyenne :</td><td style="padding: 6px 10px; font-weight: 800;">${vehicle.consumption || '16.5 L/h'} GNR</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Compteur Horaire :</td><td style="padding: 6px 10px; font-weight: 800;">${vehicle.hours} heures</td></tr>
+                            <tr style="border-bottom: 1px solid rgba(51,65,85,0.4);"><td style="padding: 6px 10px; color: #94a3b8;">Chantier Actuel :</td><td style="padding: 6px 10px; font-weight: 800; color: #38bdf8;">${vehicle.project}</td></tr>
+                            <tr><td style="padding: 6px 10px; color: #94a3b8;">Prochaine VGP :</td><td style="padding: 6px 10px; font-weight: 800; color: var(--emerald);">${vehicle.vgp} (Conforme)</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         `;
+
         openModal('vehicle-details-modal');
     }
-"""
 
-def get_js_part2_continued():
-    return """
     // ==========================================
-    // 9. TOOLS & MATERIALS CATALOG ENGINE
+    // 9. CATALOG & MATERIALS ENGINE
     // ==========================================
-    function filterCatalog(cat, btn) {
-        catalogFilter = cat;
+    function filterCatalog(category, btn) {
+        catalogFilter = category;
         document.querySelectorAll('.catalog-filter-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
         renderCatalogGrid();
@@ -444,247 +659,86 @@ def get_js_part2_continued():
 
     function renderCatalogGrid() {
         const grid = document.getElementById('catalog-grid');
-        if (!grid || !companyData.catalog) return;
+        if (!grid) return;
 
-        const filtered = companyData.catalog.filter(c => catalogFilter === 'all' || c.category === catalogFilter);
+        const items = companyData.catalog || [];
+        const filtered = items.filter(item => {
+            if (catalogFilter === 'all') return true;
+            if (catalogFilter === 'safety') return (item.category || '').toLowerCase().includes('sécurité') || (item.category || '').toLowerCase().includes('epi') || (item.category || '').toLowerCase().includes('signal');
+            if (catalogFilter === 'tools') return (item.category || '').toLowerCase().includes('outillage') || (item.category || '').toLowerCase().includes('laser') || (item.category || '').toLowerCase().includes('topographie');
+            if (catalogFilter === 'materials') return (item.category || '').toLowerCase().includes('béton') || (item.category || '').toLowerCase().includes('bordure') || (item.category || '').toLowerCase().includes('canalisation') || (item.category || '').toLowerCase().includes('voirie') || (item.category || '').toLowerCase().includes('fonte');
+            return true;
+        });
 
         grid.innerHTML = filtered.map(item => `
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="card" style="border: 1px solid rgba(51,65,85,0.8); background: rgba(15,23,42,0.95); display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div style="height:120px; margin-bottom:0.75rem; border-radius:6px; overflow:hidden; border:1px solid rgba(51,65,85,0.5);">
+                    <!-- SVG TECHNICAL VECTOR -->
+                    <div style="height: 120px; border-radius: 6px; overflow: hidden; margin-bottom: 0.75rem; border: 1px solid rgba(51,65,85,0.6);">
                         ${getToolMaterialSVG(item.id, item.name)}
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.25rem;">
-                        <span class="badge ${item.stock > 10 ? 'badge-success' : 'badge-warning'}">Stock: ${item.stock} ${item.unit}</span>
-                        <span style="font-family:'JetBrains Mono'; font-size:0.75rem; color:#64748b;">${item.id}</span>
-                    </div>
-                    <h3 style="font-size:1rem; font-weight:800; color:#f8fafc; margin-bottom:0.25rem;">${item.name}</h3>
-                    <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:0.75rem;">Fournisseur : <strong style="color:#cbd5e1;">${item.supplier}</strong></div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(15,23,42,0.6); padding:0.5rem 0.75rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4); margin-bottom:0.75rem;">
-                        <span style="font-size:0.75rem; color:#64748b;">Prix Unitaire HT</span>
-                        <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:1rem; color:var(--emerald);">${item.unit_price.toFixed(2)} € / ${item.unit}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                        <div>
+                            <span class="badge badge-info" style="font-size: 0.65rem; font-family: 'JetBrains Mono';">${item.id}</span>
+                            <h3 style="font-size: 0.95rem; font-weight: 800; color: #f8fafc; margin-top: 2px;">${item.name}</h3>
+                            <div style="font-size: 0.72rem; color: #94a3b8;">${item.category} • Norme: <strong>${item.norm || 'NF P98-305'}</strong></div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(30,41,59,0.5); padding: 0.5rem; border-radius: 6px; font-size: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 0.75rem;">
+                        <div>Prix HT: <strong style="color: var(--amber);">${(item.price_ht || 0).toLocaleString('fr-FR')} € / ${item.unit || 'u'}</strong></div>
+                        <div>Stock: <strong style="color: var(--emerald);">${item.stock || 50} ${item.unit || 'u'}</strong></div>
+                        <div>Fournisseur: <strong>${item.supplier || 'Négoce Occitanie'}</strong></div>
+                        <div>Dispo: <strong>24/48h</strong></div>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" style="font-size:0.75rem; padding:0.4rem;" onclick="openCatalogItemModal('${item.id}')">
-                    🔍 Fiche Technique Produit
+                <button class="btn btn-secondary" style="width: 100%; font-size: 0.75rem;" onclick="openCatalogItemModal('${item.id}')">
+                    📄 Fiche Technique & Commande
                 </button>
             </div>
         `).join('');
     }
 
     function openCatalogItemModal(itemId) {
-        const item = (companyData.catalog || []).find(x => x.id === itemId);
+        const item = (companyData.catalog || []).find(i => i.id === itemId) || (companyData.catalog || [])[0];
         if (!item) return;
 
         const body = document.getElementById('catalog-item-modal-body');
         if (!body) return;
 
         body.innerHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
-                <div style="height:200px; border-radius:8px; overflow:hidden; border:1px solid rgba(51,65,85,0.8);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid rgba(51,65,85,0.7); padding-bottom: 0.75rem;">
+                <div>
+                    <span class="badge badge-info" style="font-size: 0.75rem; font-family: 'JetBrains Mono';">${item.id}</span>
+                    <h2 style="font-size: 1.25rem; font-weight: 900; color: #38bdf8; margin-top: 4px;">${item.name}</h2>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">Catégorie : <strong>${item.category}</strong> • Fournisseur : <strong>${item.supplier || 'Négoce Occitanie'}</strong></div>
+                </div>
+                <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem;" onclick="closeModal('catalog-item-modal')">✕</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div style="height: 180px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(51,65,85,0.8);">
                     ${getToolMaterialSVG(item.id, item.name)}
                 </div>
                 <div>
-                    <span class="badge badge-info">${item.category.toUpperCase()}</span>
-                    <h2 style="font-size:1.4rem; font-weight:900; color:#f8fafc; margin-top:0.35rem;">${item.name}</h2>
-                    <div style="color:#94a3b8; font-size:0.85rem; margin-bottom:1rem;">Réf Fournisseur : <strong style="color:#38bdf8;">${item.supplier}</strong> (Réf: ${item.id})</div>
-
-                    <div style="background:rgba(15,23,42,0.8); padding:0.85rem; border-radius:6px; border:1px solid rgba(51,65,85,0.6); font-size:0.85rem;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
-                            <span style="color:#64748b;">Prix Unitaire Achat HT :</span>
-                            <strong style="font-family:'JetBrains Mono'; color:var(--emerald); font-size:1.1rem;">${item.unit_price.toFixed(2)} € / ${item.unit}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
-                            <span style="color:#64748b;">Stock Actuel Dépôt :</span>
-                            <strong style="font-family:'JetBrains Mono'; color:#38bdf8;">${item.stock} ${item.unit}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:#64748b;">Norme de Conformité :</span>
-                            <strong style="color:#f8fafc;">${item.norm || 'NF EN 1340 / CE'}</strong>
-                        </div>
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">Spécifications Techniques :</div>
+                    <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.75rem;">${item.description || 'Fourniture certifiée conforme au fascicule 70 du CCTG et aux exigences de résistance mécanique NF.'}</p>
+                    <div style="background: rgba(30,41,59,0.7); padding: 0.6rem; border-radius: 6px; font-size: 0.8rem;">
+                        <div>Prix Unitaire HT : <strong style="color: var(--amber);">${(item.price_ht || 0).toLocaleString('fr-FR')} € / ${item.unit || 'u'}</strong></div>
+                        <div>Stock Actuel : <strong style="color: var(--emerald);">${item.stock || 50} ${item.unit || 'u'}</strong></div>
+                        <div>Norme de Conformité : <strong>${item.norm || 'NF P98-305'}</strong></div>
                     </div>
                 </div>
             </div>
 
-            <div style="background:rgba(2,132,199,0.1); border-left:3px solid #0284c7; padding:0.85rem; border-radius:6px; font-size:0.85rem; color:#cbd5e1; margin-bottom:1.25rem;">
-                <strong>Consignes de Manutention & Pose :</strong> Manipuler obligatoirement avec pinces et élingues homologuées. Stockage sur sol stabilisé et calé. Port des gants et chaussures de sécurité obligatoire lors de la manipulation.
-            </div>
-
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
                 <button class="btn btn-secondary" onclick="closeModal('catalog-item-modal')">Fermer</button>
-                <button class="btn btn-primary" onclick="alert('Commande de réapprovisionnement transmise à l\'acheteur !'); closeModal('catalog-item-modal');">🛒 Créer Bon de Commande</button>
+                <button class="btn btn-primary" onclick="alert('Bon de commande généré pour ${item.name} !'); closeModal('catalog-item-modal');">🛒 Créer Demande d'Achat</button>
             </div>
         `;
+
         openModal('catalog-item-modal');
-    }
-
-    // ==========================================
-    // 10. HR ORGANIGRAM TREE ENGINE
-    // ==========================================
-    function initHrTree() {
-        const container = document.getElementById('hr-tree-container');
-        if (!container || !companyData.hr_hierarchy) return;
-
-        const h = companyData.hr_hierarchy;
-
-        container.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:1.5rem; min-width:800px; padding:1rem;">
-                <!-- DIRECTION -->
-                <div style="background:rgba(30,41,59,0.95); border:2px solid #06b6d4; border-radius:10px; padding:1rem 1.5rem; text-align:center; width:300px; box-shadow:0 4px 15px rgba(6,182,212,0.2);">
-                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">👑</div>
-                    <div style="font-weight:900; font-size:1.1rem; color:#f8fafc;">${h.director.name}</div>
-                    <div style="font-size:0.8rem; color:#38bdf8; font-weight:700;">${h.director.role}</div>
-                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.25rem;">Certifié : ${h.director.cert}</div>
-                </div>
-
-                <div style="width:2px; height:24px; background:#06b6d4;"></div>
-
-                <!-- CONDUCTEURS -->
-                <div style="display:flex; gap:2rem; justify-content:center; width:100%;">
-                    ${h.conducteurs.map(cd => `
-                        <div style="flex:1; max-width:380px; display:flex; flex-direction:column; align-items:center;">
-                            <div style="background:rgba(30,41,59,0.9); border:1px solid #3b82f6; border-radius:8px; padding:1rem; text-align:center; width:100%; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
-                                <div style="font-size:1.3rem; margin-bottom:0.25rem;">👷‍♂️</div>
-                                <div style="font-weight:800; font-size:1rem; color:#f8fafc;">${cd.name}</div>
-                                <div style="font-size:0.8rem; color:#38bdf8; font-weight:700;">${cd.role}</div>
-                                <div style="font-size:0.75rem; color:#cbd5e1; margin-top:0.25rem;">Chantiers : <strong>${cd.assigned.join(', ')}</strong></div>
-                            </div>
-
-                            <div style="width:2px; height:20px; background:#3b82f6;"></div>
-
-                            <!-- CHEFS & ÉQUIPES -->
-                            <div style="display:flex; flex-direction:column; gap:0.75rem; width:100%;">
-                                ${cd.chefs.map(ch => `
-                                    <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(51,65,85,0.7); border-radius:8px; padding:0.75rem; width:100%;">
-                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
-                                            <strong style="color:#f8fafc; font-size:0.85rem;">🚜 ${ch.name}</strong>
-                                            <span class="badge badge-success" style="font-size:0.65rem;">Chef de Chantier</span>
-                                        </div>
-                                        <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:0.5rem;">Affecté à : <strong style="color:#38bdf8;">${ch.site}</strong></div>
-                                        <div style="border-top:1px solid rgba(51,65,85,0.4); padding-top:0.35rem; font-size:0.75rem; color:#cbd5e1;">
-                                            <span style="color:#64748b;">Équipe :</span> ${ch.workers.join(', ')}
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // 11. OPBTP SIGNAGE CALCULATOR
-    // ==========================================
-    function calculateSignage() {
-        const roadType = document.getElementById('opbtp-road-type')?.value || 'urbain';
-        const speed = document.getElementById('opbtp-speed')?.value || '50';
-        const length = parseFloat(document.getElementById('opbtp-length')?.value || 100);
-
-        let dApproach = 50;
-        let dInterPanneaux = 30;
-        let taperRatio = 15;
-        let conesCount = Math.max(10, Math.ceil(length / 5));
-
-        if (roadType === 'bidirectionnel') {
-            dApproach = (speed === '80' || speed === '90') ? 150 : 100;
-            dInterPanneaux = 50;
-            taperRatio = 25;
-            conesCount = Math.max(20, Math.ceil(length / 3));
-        } else if (roadType === 'autoroute') {
-            dApproach = 500;
-            dInterPanneaux = 100;
-            taperRatio = 50;
-            conesCount = Math.max(50, Math.ceil(length / 2));
-        }
-
-        const out = document.getElementById('opbtp-results');
-        if (!out) return;
-
-        out.innerHTML = `
-            <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(51,65,85,0.7); border-radius:8px; padding:1.25rem;">
-                <h4 style="font-size:1.1rem; font-weight:800; color:#38bdf8; margin-bottom:1rem;">📋 Résultats du Calcul Réglementaire OPBTP</h4>
-
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1.25rem;">
-                    <div style="background:rgba(30,41,59,0.5); padding:0.85rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4);">
-                        <div style="font-size:0.75rem; color:#64748b;">DISTANCE PRÉ-SIGNALISATION (AK5)</div>
-                        <div style="font-size:1.3rem; font-weight:900; color:var(--emerald); font-family:'JetBrains Mono'; margin-top:2px;">${dApproach} m</div>
-                    </div>
-                    <div style="background:rgba(30,41,59,0.5); padding:0.85rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4);">
-                        <div style="font-size:0.75rem; color:#64748b;">ESPACEMENT ENTRE PANNEAUX</div>
-                        <div style="font-size:1.3rem; font-weight:900; color:#38bdf8; font-family:'JetBrains Mono'; margin-top:2px;">${dInterPanneaux} m</div>
-                    </div>
-                    <div style="background:rgba(30,41,59,0.5); padding:0.85rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4);">
-                        <div style="font-size:0.75rem; color:#64748b;">LONGUEUR DU BIAIS (K5a)</div>
-                        <div style="font-size:1.3rem; font-weight:900; color:var(--amber); font-family:'JetBrains Mono'; margin-top:2px;">${taperRatio} m</div>
-                    </div>
-                    <div style="background:rgba(30,41,59,0.5); padding:0.85rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4);">
-                        <div style="font-size:0.75rem; color:#64748b;">CÔNES K5a RECOMMANDÉS</div>
-                        <div style="font-size:1.3rem; font-weight:900; color:#f8fafc; font-family:'JetBrains Mono'; margin-top:2px;">${conesCount} unités</div>
-                    </div>
-                </div>
-
-                <div style="background:rgba(234,179,8,0.1); border-left:3px solid #eab308; padding:0.85rem; border-radius:6px; font-size:0.85rem; color:#fef08a;">
-                    <strong>Séquence de Panneaux Réglementaire :</strong> AK5 (Travaux) ➜ B14 (Limitation Vitesse ${speed} km/h) ➜ BK15 (Interdiction de dépasser) ➜ AK3 (Rétrécissement) ➜ B21b (Obligation de contournement).
-                </div>
-            </div>
-        `;
-    }
-
-    // ==========================================
-    // 12. RDC DAILY LOGBOOK ENGINE
-    // ==========================================
-    function saveRdcEntry() {
-        const proj = document.getElementById('rdc-proj-select')?.value;
-        const date = document.getElementById('rdc-date')?.value || new Date().toISOString().split('T')[0];
-        const chief = document.getElementById('rdc-chief')?.value || 'M. Traoré';
-        const weather = document.getElementById('rdc-weather')?.value || 'Ensoleillé (22°C)';
-        const desc = document.getElementById('rdc-desc')?.value || 'Pose de bordures et caniveaux sur section A.';
-        const hMO = parseFloat(document.getElementById('rdc-heures-mo')?.value || 35);
-        const hEng = parseFloat(document.getElementById('rdc-heures-engins')?.value || 14);
-
-        if (!reportsData.rdc_entries) reportsData.rdc_entries = [];
-
-        const newEntry = {
-            id: `RDC-${Date.now().toString().slice(-4)}`,
-            project: proj,
-            date: date,
-            chief: chief,
-            weather: weather,
-            notes: desc,
-            hours_mo: hMO,
-            hours_engins: hEng,
-            incidents: 'Aucun'
-        };
-
-        reportsData.rdc_entries.unshift(newEntry);
-        renderRdcTable();
-        logCockpit(`Rapport journalier de chantier enregistré pour le projet ${proj}.`, 'ok');
-        alert('Rapport RDC enregistré avec succès dans le registre chantiers !');
-    }
-
-    function renderRdcTable() {
-        const tbody = document.getElementById('rdc-table-body');
-        if (!tbody || !reportsData.rdc_entries) return;
-
-        tbody.innerHTML = reportsData.rdc_entries.map(r => `
-            <tr style="border-bottom:1px solid rgba(51,65,85,0.3);">
-                <td style="padding:0.75rem; font-family:'JetBrains Mono'; font-weight:700; color:#38bdf8;">${r.id}</td>
-                <td style="padding:0.75rem; font-weight:600; color:#f8fafc;">${r.project}</td>
-                <td style="padding:0.75rem; font-family:'JetBrains Mono'; color:#94a3b8;">${r.date}</td>
-                <td style="padding:0.75rem; color:#cbd5e1;">${r.chief}</td>
-                <td style="padding:0.75rem; font-size:0.8rem; color:#94a3b8; max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.notes}</td>
-                <td style="padding:0.75rem; font-family:'JetBrains Mono'; color:var(--emerald); font-weight:700;">${r.hours_mo} h</td>
-                <td style="padding:0.75rem; font-family:'JetBrains Mono'; color:#f59e0b; font-weight:700;">${r.hours_engins} h</td>
-                <td style="padding:0.75rem;">
-                    <button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.7rem;" onclick="downloadProjectDoc('${r.id}_RDC_${r.date}', '${r.project}', 'pdf')">
-                        📄 PDF
-                    </button>
-                </td>
-            </tr>
-        `).join('');
     }
 """

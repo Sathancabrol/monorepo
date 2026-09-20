@@ -32,45 +32,12 @@ reports = {}
 for rfile in sorted((TARGET / 'rapports').glob('*.md')):
     reports[rfile.name] = rfile.read_text(encoding='utf-8')
 
-# Populate comprehensive DQE items
-raw_dqe = get_dqe_dataset()
-dqe_items = []
-for item in raw_dqe:
-    mo = item.get('mo_u', 0)
-    mat = item.get('mat_u', 0)
-    eq = item.get('eq_u', 0)
-    st = item.get('st_u', 0)
-    unit_ds = mo + mat + eq + st
-    k = item.get('k', 1.35)
-    unit_pv = unit_ds * k
-    dqe_items.append({
-        'id': item.get('id'),
-        'project_id': item.get('project_id'),
-        'project_name': item.get('project_name'),
-        'lot': item.get('lot'),
-        'code': item.get('code'),
-        'designation': item.get('designation'),
-        'unit': item.get('unite', 'u'),
-        'quantity': item.get('qte', 1),
-        'ds_mo': mo,
-        'ds_mat': mat,
-        'ds_eq': eq,
-        'ds_st': st,
-        'unit_ds': unit_ds,
-        'unit_pv': unit_pv,
-        'status': item.get('statut', 'En cours')
-    })
-
+# Populate comprehensive 28 DQE items with unified field names
+dqe_items = get_dqe_dataset()
 synthese['dqe_items'] = dqe_items
 
 obsidian_graph_data = get_obsidian_dataset()
 extra_data = get_company_data()
-
-# Ensure catalog in extra_data has consistent structure
-catalog_items = []
-for c in extra_data.get('catalog', []):
-    catalog_items.append(c)
-extra_data['catalog'] = catalog_items
 
 inventory_json = json.dumps(inventory, ensure_ascii=False)
 synthese_json = json.dumps(synthese, ensure_ascii=False)
@@ -80,7 +47,7 @@ reports_json = json.dumps(reports, ensure_ascii=False)
 obsidian_json = json.dumps(obsidian_graph_data, ensure_ascii=False)
 extra_data_json = json.dumps(extra_data, ensure_ascii=False)
 
-print("Compiling full BTP Autonomous Command suite v4.6...")
+print("Compiling full BTP Autonomous Command suite v4.8...")
 
 with open(TARGET / 'template.html', 'r', encoding='utf-8') as f:
     template = f.read()
@@ -96,4 +63,4 @@ html_content = template.replace('__INVENTORY_JSON__', inventory_json) \
 with open(TARGET / 'index.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
 
-print(f"Successfully generated full BTP Autonomous Command v4.6 application ({len(html_content)} bytes) at {TARGET / 'index.html'}")
+print(f"Successfully generated full BTP Autonomous Command v4.8 application ({len(html_content)} bytes) at {TARGET / 'index.html'}")

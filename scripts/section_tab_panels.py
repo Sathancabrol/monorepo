@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 def get_tab_panels():
-    return """
+    return r"""
     <!-- ========================================== -->
     <!-- TAB 1: COCKPIT / DIRECTION OVERVIEW        -->
     <!-- ========================================== -->
@@ -24,7 +26,7 @@ def get_tab_panels():
                     </div>
                     <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.6); padding: 0.85rem; border-radius: 8px;">
                         <div style="font-size: 0.75rem; color: #64748b; font-weight: 700;">FLOTTE DÉPLOYÉE</div>
-                        <div style="font-size: 1.4rem; font-weight: 900; color: var(--amber); font-family: 'JetBrains Mono'; margin-top: 2px;">8 / 10 Engins</div>
+                        <div style="font-size: 1.4rem; font-weight: 900; color: var(--amber); font-family: 'JetBrains Mono'; margin-top: 2px;">6 / 6 Engins</div>
                         <div style="font-size: 0.7rem; color: #f59e0b; margin-top: 2px;">VGP 100% Valides</div>
                     </div>
                     <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.6); padding: 0.85rem; border-radius: 8px;">
@@ -42,6 +44,7 @@ def get_tab_panels():
                         <button class="btn btn-secondary" onclick="switchNav('simulator')">🛰️ Watch Tower 3D</button>
                         <button class="btn btn-secondary" onclick="switchNav('fleet')">🚜 Flotte & Engins</button>
                         <button class="btn btn-secondary" onclick="switchNav('catalog')">🛒 Catalogue & Stocks</button>
+                        <button class="btn btn-secondary" onclick="switchNav('hr')">👷 Organigramme RH</button>
                         <button class="btn btn-secondary" onclick="switchNav('sdp')">💰 28 SDP & DQE TCD</button>
                         <button class="btn btn-secondary" onclick="switchNav('obsidian')">🕸️ Graphe Obsidian</button>
                     </div>
@@ -115,8 +118,8 @@ def get_tab_panels():
         <div class="card">
             <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <span class="card-title">📅 Planning d'Exécution, Gantt & Agenda par Équipes</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Progression journalière et affectation méthodique des équipes</div>
+                    <span class="card-title">📅 Planning d'Exécution, Gantt & Agenda Interactif par Équipes</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Cliquez sur n'importe quelle case de tâche pour ouvrir sa fiche détaillée d'affectation</div>
                 </div>
 
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
@@ -138,6 +141,14 @@ def get_tab_panels():
                         <option value="projet_pezenas">Centre Ancien Pézenas</option>
                         <option value="projet_montpellier">Voie Verte Montpellier</option>
                     </select>
+
+                    <select id="planning-team-select" class="input-field" style="width: auto; padding: 0.35rem 0.6rem;" onchange="renderPlanningAgenda()">
+                        <option value="all">Toutes les équipes</option>
+                        <option value="team_a">Équipe VRD A (M. Traoré)</option>
+                        <option value="team_b">Équipe Réseaux Secs B (K. Benali)</option>
+                        <option value="team_c">Équipe Enrobés C (P. Durand)</option>
+                        <option value="team_topo">Cellule Topo (D. Lemoine)</option>
+                    </select>
                 </div>
             </div>
 
@@ -148,36 +159,38 @@ def get_tab_panels():
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 5: WATCH TOWER 3D & 2D RADAR           -->
+    <!-- TAB 5: WATCH TOWER 3D, 4D & GOD'S EYE VIEW -->
     <!-- ========================================== -->
     <div id="tab-simulator" class="tab-panel">
         <div class="card">
             <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <span class="card-title">🛰️ Watch Tower 3D & Simulateur de Scénarios Méthodes</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Télémétrie d'engins, radar de zone et analyse de phasage CSPS</div>
+                    <span class="card-title">🛰️ Watch Tower : Télémétrie, Simulation 4D & Vue Globale Osiris</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Supervision temps réel, radar de zone et synchronisation 4D des étapes de travaux</div>
                 </div>
 
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <select id="sim-scenario-select" class="input-field" style="width: auto;" onchange="loadScenario(this.value)">
                         <option value="scen_tranchee_vrd">1. Tranchée Assainissement & Blindage Profond (3.20m)</option>
                         <option value="scen_enrobes_chaud">2. Mise en Œuvre Enrobés Chauds BBSG 0/10</option>
-                        <option value="scen_carrefour_giratoire">3. Carrefour Giratoire sous Circulation</option>
+                        <option value="scen_carrefour_giratoire">3. Carrefour Giratoire Urbain sous Circulation</option>
                     </select>
 
                     <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border);">
                         <button class="btn-secondary sim-view-btn active" id="btn-sim-radar" onclick="setSimulatorViewMode('radar')">📡 Radar 2D</button>
-                        <button class="btn-secondary sim-view-btn" id="btn-sim-3d" onclick="setSimulatorViewMode('3d')">📐 Scène 3D</button>
+                        <button class="btn-secondary sim-view-btn" id="btn-sim-3d" onclick="setSimulatorViewMode('3d')">📐 Scène 4D Animée</button>
+                        <button class="btn-secondary sim-view-btn" id="btn-sim-global" onclick="setSimulatorViewMode('global')">🌍 Vue Globale Osiris</button>
                     </div>
 
-                    <button class="btn btn-secondary" id="btn-radar-toggle" onclick="toggleRadarLiveMode()">🟢 Signal Radar Direct</button>
+                    <button class="btn btn-secondary" id="btn-radar-toggle" onclick="toggleRadarLiveMode()">🟢 Signal Direct</button>
+                    <button class="btn btn-primary" id="btn-play-4d-sim" onclick="togglePlay4DSimulation()">▶️ Lancer Simulation 4D</button>
                 </div>
             </div>
 
-            <div class="grid-split-40-60">
+            <div class="grid-split-40-60" id="sim-standard-layout">
                 <div>
                     <div id="scenario-info-card" style="margin-bottom: 1rem; background: rgba(15,23,42,0.6); padding: 1rem; border-radius: 8px; border: 1px solid rgba(51,65,85,0.6);"></div>
-                    <div style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem;">Étapes du Phasage Travaux</div>
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem;">Étapes du Phasage Travaux (Cliquez pour Synchroniser la Scène 4D)</div>
                     <div id="scenario-steps-list"></div>
                     <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
                         <button class="btn btn-secondary" style="flex: 1;" onclick="prevScenarioStep()">◀ Étape Préc.</button>
@@ -186,19 +199,68 @@ def get_tab_panels():
                 </div>
 
                 <div>
-                    <div id="radar-canvas-container" style="height: 380px; background: #090d16; border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; overflow: hidden; position: relative;">
+                    <!-- 2D RADAR -->
+                    <div id="radar-canvas-container" style="height: 400px; background: #090d16; border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; overflow: hidden; position: relative;">
                         <canvas id="watchtower-radar-canvas" style="width: 100%; height: 100%;"></canvas>
                     </div>
-                    <div id="view3d-canvas-container" style="height: 380px; background: #090d16; border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; overflow: hidden; position: relative; display: none;">
+
+                    <!-- 3D / 4D SIMULATION CANVAS -->
+                    <div id="view3d-canvas-container" style="height: 400px; background: #090d16; border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; overflow: hidden; position: relative; display: none;">
                         <canvas id="watchtower-3d-canvas" style="width: 100%; height: 100%; cursor: grab;"></canvas>
-                        <div style="position: absolute; bottom: 10px; right: 10px; display: flex; gap: 4px; z-index: 5;">
-                            <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="set3DPreset('top')">Haut</button>
-                            <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="set3DPreset('iso')">Iso</button>
-                            <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="zoom3D(1.2)">🔍+</button>
-                            <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="zoom3D(0.8)">🔍-</button>
+                        <div style="position: absolute; top: 12px; left: 12px; background: rgba(15,23,42,0.9); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--cyan); font-size: 0.75rem; font-family: 'JetBrains Mono'; color: #38bdf8;">
+                            🎬 SIMULATION 4D TEMPS RÉEL : <span id="sim-4d-phase-label" style="color:#fff; font-weight:700;">PHASE 1</span>
+                        </div>
+                        <div style="position: absolute; bottom: 12px; right: 12px; display: flex; gap: 4px; z-index: 5;">
+                            <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="set3DPreset('top')">Haut</button>
+                            <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="set3DPreset('iso')">Iso</button>
+                            <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="zoom3D(1.2)">🔍+</button>
+                            <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" onclick="zoom3D(0.8)">🔍-</button>
                         </div>
                     </div>
+
                     <div id="step-details-box" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+
+            <!-- GLOBAL GOD'S EYE VIEW / OSIRIS LAYOUT -->
+            <div id="sim-global-layout" style="display: none; margin-top: 1rem;">
+                <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; padding: 1.25rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                        <div>
+                            <h3 style="font-size:1.2rem; font-weight:800; color:#38bdf8;">🌍 Vue Globale Stratégique : Watchtower • Osiris • Monorepo BTP</h3>
+                            <div style="font-size:0.8rem; color:#94a3b8;">Agrégation multi-satellitaire, flux télématiques et passerelles vers les outils du monorepo</div>
+                        </div>
+                        <div style="display:flex; gap:0.4rem;">
+                            <button class="btn btn-secondary" onclick="alert('Module Watchtower Cesium 3D Globe activé !');">🌐 Watchtower Globe</button>
+                            <button class="btn btn-secondary" onclick="alert('Connexion au flux Osiris Intelligence BTP active.');">👁️ Osiris BTP</button>
+                            <button class="btn btn-secondary" onclick="alert('Passerelle Cognitorium active.');">🧠 Cognitorium</button>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:1rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
+                            <div style="font-size:0.75rem; color:#64748b;">RADAR RÉGIONAL OCCITANIE</div>
+                            <div style="font-size:1.1rem; font-weight:800; color:var(--emerald); margin-top:2px;">4 Sites Connectés (5G)</div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Alès, Sète, Pézenas, Montpellier</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:1rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
+                            <div style="font-size:0.75rem; color:#64748b;">BALISES TÉLÉMÉTRIQUES ACTIVES</div>
+                            <div style="font-size:1.1rem; font-weight:800; color:#38bdf8; margin-top:2px;">14 Balises GPS RTK</div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Précision cinématique ±10mm</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:1rem; border-radius:6px; border:1px solid rgba(51,65,85,0.5);">
+                            <div style="font-size:0.75rem; color:#64748b;">CAPTEURS SÉCURITÉ & DICT</div>
+                            <div style="font-size:1.1rem; font-weight:800; color:var(--amber); margin-top:2px;">0 Alerte Majeure</div>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">Surveillance géoradar active</div>
+                        </div>
+                    </div>
+
+                    <div style="height:350px; background:#000; border:1px solid var(--border); border-radius:8px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                        <canvas id="godseye-map-canvas" style="width:100%; height:100%;"></canvas>
+                        <div style="position:absolute; top:12px; left:12px; background:rgba(15,23,42,0.9); padding:6px 12px; border-radius:6px; border:1px solid #38bdf8; font-size:0.75rem; font-family:'JetBrains Mono'; color:#38bdf8;">
+                            🛰️ GOD'S EYE VIEW : COUVERTURE GLOBALE OCCITANIE BTP
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,14 +274,14 @@ def get_tab_panels():
             <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                     <span class="card-title">🚜 Parc Matériel & Flotte d'Engins TP</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Suivi des horamètres, contrôles VGP périodiques et CACES associés</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Photos réelles HD, schémas techniques, caméras embarquées, géolocalisation et spécifications VGP</div>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                     <button class="btn-secondary fleet-filter-btn active" onclick="filterFleet('all', this)">Tous</button>
                     <button class="btn-secondary fleet-filter-btn" onclick="filterFleet('pelle', this)">Pelles</button>
                     <button class="btn-secondary fleet-filter-btn" onclick="filterFleet('compacteur', this)">Compacteurs</button>
                     <button class="btn-secondary fleet-filter-btn" onclick="filterFleet('camion', this)">Camions</button>
-                    <button class="btn btn-primary" onclick="openAddVehicleModal()">➕ Enregistrer un Engin</button>
+                    <button class="btn btn-primary" onclick="alert('Module enregistrement nouvel engin ouvert.');">➕ Enregistrer un Engin</button>
                 </div>
             </div>
             <div id="fleet-grid" class="grid-3">
@@ -235,14 +297,14 @@ def get_tab_panels():
         <div class="card">
             <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
                 <div>
-                    <span class="card-title">🛒 Catalogue Fournitures, Petit Outillage & Stocks Dépôt</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Références normées, prix négociés et fiches techniques vectorielles</div>
+                    <span class="card-title">🛒 Catalogue Fournitures, EPI, Petit Outillage & Bétons</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Fournitures normées, outillage de précision, tuyaux assainissement et bordures avec fiches techniques vectorielles</div>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <button class="btn-secondary catalog-filter-btn active" onclick="filterCatalog('all', this)">Tous</button>
-                    <button class="btn-secondary catalog-filter-btn" onclick="filterCatalog('materials', this)">Matériaux & Bétons</button>
-                    <button class="btn-secondary catalog-filter-btn" onclick="filterCatalog('tools', this)">Petit Outillage & Lasers</button>
-                    <button class="btn-secondary catalog-filter-btn" onclick="filterCatalog('safety', this)">EPI & Signalétique</button>
+                    <button class="btn-secondary catalog-filter-btn active" onclick="filterCatalog('all', this)">Tous les articles</button>
+                    <button class="btn-secondary catalog-filter-btn" onclick="filterCatalog('safety', this)">🦺 EPI & Signalétique</button>
+                    <button class="btn-secondary catalog-filter-btn" onclick="filterCatalog('tools', this)">⚙️ Petit Outillage & Lasers</button>
+                    <button class="btn-secondary catalog-filter-btn" onclick="filterCatalog('materials', this)">🧱 Bétons, Bordures & Tuyaux</button>
                 </div>
             </div>
             <div id="catalog-grid" class="grid-3">
@@ -256,9 +318,12 @@ def get_tab_panels():
     <!-- ========================================== -->
     <div id="tab-hr" class="tab-panel">
         <div class="card">
-            <div class="card-header">
-                <span class="card-title">👷 Organigramme RH, Habilitations & Compagnons</span>
-                <span class="badge badge-success">35 Salariés Actifs</span>
+            <div class="card-header" style="flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                    <span class="card-title">👷 Organigramme RH, Habilitations & Agents IA Intégrés</span>
+                    <div style="font-size:0.8rem; color:#94a3b8;">Cliquez sur n'importe quel collaborateur ou Agent IA pour ouvrir sa fiche détaillée</div>
+                </div>
+                <span class="badge badge-success">35 Salariés • 5 Agents IA Actifs</span>
             </div>
             <div id="hr-tree-container" style="overflow-x: auto; padding: 1rem 0;"></div>
         </div>
@@ -269,36 +334,60 @@ def get_tab_panels():
     <!-- ========================================== -->
     <div id="tab-opbtp" class="tab-panel">
         <div class="card">
-            <div class="card-header">
-                <span class="card-title">🦺 Signalisation Temporaire & Balisage OPBTP</span>
-                <span class="badge badge-warning">Sécurité Routière</span>
+            <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <span class="card-title">🦺 Signalisation Temporaire & Balisage Visuel OPBTP</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Simulation dynamique pour 6 configurations réglementaires de chantier</div>
+                </div>
+                <div style="display: flex; gap: 0.4rem;">
+                    <button class="btn btn-secondary" id="btn-opbtp-sim-play" onclick="toggleOpbtpTrafficSimulation()">▶️ Lancer Simulation Trafic</button>
+                    <button class="btn btn-primary" onclick="calculateSignage()">🔄 Recalculer Plan</button>
+                </div>
             </div>
+
             <div class="grid-split-40-60">
                 <div>
                     <div class="input-group">
-                        <label class="input-label">Type de Voie</label>
+                        <label class="input-label">Configuration du Chantier (6 Scénarios Réglementaires)</label>
+                        <select id="opbtp-task-type" class="input-field" onchange="calculateSignage()">
+                            <option value="tranchee_traversee">1. 🕳️ Tranchée en Traversée de Chaussée (Alternat KR11)</option>
+                            <option value="rond_point">2. 🔄 Création Giratoire sous Circulation (Déviation K16)</option>
+                            <option value="tranchee_trottoir">3. 🚶 Tranchée sous Trottoir (Passage Piétons Déporté)</option>
+                            <option value="voie_etroite">4. 🏘️ Chantier en Impasse / Voie Étroite (Rue Barrée B44)</option>
+                            <option value="retrecissement">5. 🛣️ Rétrécissement de Voie avec Priorité B15/C18</option>
+                            <option value="nuit">6. 🌙 Intervention d'Urgence de Nuit (Balises K8 & Flashs)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Type de Voie & Vitesse de Référence</label>
                         <select id="opbtp-road-type" class="input-field" onchange="calculateSignage()">
                             <option value="urbain">Agglomération / Rue Urbaine (50 km/h)</option>
-                            <option value="bidirectionnel">Route Bidirectionnelle (80-90 km/h)</option>
-                            <option value="autoroute">Voie Rapide / Autoroute (110-130 km/h)</option>
+                            <option value="bidirectionnel">Route Bidirectionnelle Rase Campagne (80 km/h)</option>
+                            <option value="autoroute">Voie Rapide / 2x2 Voies (110 km/h)</option>
                         </select>
                     </div>
                     <div class="input-group">
-                        <label class="input-label">Vitesse Approche Réglementaire</label>
-                        <select id="opbtp-speed" class="input-field" onchange="calculateSignage()">
-                            <option value="50">50 km/h</option>
-                            <option value="80">80 km/h</option>
-                            <option value="90">90 km/h</option>
-                            <option value="110">110 km/h</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">Longueur de Chantier (ml)</label>
+                        <label class="input-label">Longueur de Chantier (mètres linéaires)</label>
                         <input type="number" id="opbtp-length" class="input-field" value="120" min="20" max="5000" oninput="calculateSignage()">
                     </div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="calculateSignage()">🔄 Recalculer la Signalétique</button>
                 </div>
                 <div id="opbtp-results"></div>
+            </div>
+
+            <!-- VISUAL ROAD SIGNAGE DIAGRAM -->
+            <div style="margin-top: 1.5rem; background: #090d16; border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; padding: 1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+                    <div>
+                        <h4 style="font-size:1rem; font-weight:800; color:#38bdf8;" id="opbtp-diagram-title">📐 Schéma Visuel d'Implantation des Panneaux & Trafic</h4>
+                        <div style="font-size:0.75rem; color:#94a3b8;" id="opbtp-diagram-subtitle">Instruction Interministérielle Livre I - 8e partie</div>
+                    </div>
+                    <div style="display:flex; gap:0.3rem;">
+                        <button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="switchTrafficLightState()">🚦 Inverser Feux KR11</button>
+                    </div>
+                </div>
+                <div style="height: 240px; position:relative; overflow:hidden;" id="opbtp-canvas-wrapper">
+                    <canvas id="opbtp-signage-canvas" style="width: 100%; height: 100%;"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -308,29 +397,65 @@ def get_tab_panels():
     <!-- ========================================== -->
     <div id="tab-safety" class="tab-panel">
         <div class="card">
-            <div class="card-header">
-                <span class="card-title">🛡️ Sécurité de Chantier, DICT & AIPR</span>
-                <span class="badge badge-success">0 Accident (Taux F = 0)</span>
+            <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <span class="card-title">🛡️ Sécurité AIPR, DICT & Code Couleur des Réseaux</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Prévention des risques d'endommagement, blindage et consignes réglementaires</div>
+                </div>
+                <button class="btn btn-danger" onclick="openSafetyEmergencySimulator()">🚨 Lancer Simulateur de Crise & Heatmap</button>
             </div>
-            <div class="grid-2">
+
+            <div class="grid-2" style="margin-bottom: 1.5rem;">
                 <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.6); padding: 1rem; border-radius: 8px;">
-                    <h4 style="color: #38bdf8; font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem;">🎨 Code Couleur Normalisé des Réseaux (AIPR)</h4>
+                    <h4 style="color: #38bdf8; font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem;">🎨 Code Couleur Normalisé des 7 Réseaux (AIPR)</h4>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #ef4444; border-radius: 3px; display: inline-block;"></span> <strong>ROUGE :</strong> Électricité BT/HT & Éclairage Public</div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #eab308; border-radius: 3px; display: inline-block;"></span> <strong>JAUNE :</strong> Gaz combustible & Hydrocarbures</div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #3b82f6; border-radius: 3px; display: inline-block;"></span> <strong>BLEU :</strong> Eau Potable (AEP) & Incendie</div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #a855f7; border-radius: 3px; display: inline-block;"></span> <strong>VIOLET :</strong> Assainissement EU / EP</div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #10b981; border-radius: 3px; display: inline-block;"></span> <strong>VERT :</strong> Télécommunications & Fibre Optique</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #ef4444; border-radius: 3px; display: inline-block;"></span> <strong>ROUGE :</strong> Électricité BT/HTA/HTB & Éclairage Public</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #eab308; border-radius: 3px; display: inline-block;"></span> <strong>JAUNE :</strong> Gaz combustible (MPB/MPC) & Hydrocarbures</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #3b82f6; border-radius: 3px; display: inline-block;"></span> <strong>BLEU :</strong> Eau Potable (AEP) & Défense Incendie</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #a855f7; border-radius: 3px; display: inline-block;"></span> <strong>VIOLET :</strong> Assainissement Eaux Usées (EU) / Pluviales (EP)</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #10b981; border-radius: 3px; display: inline-block;"></span> <strong>VERT :</strong> Télécommunications, Fibre Optique & Vidéoprotection</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #f97316; border-radius: 3px; display: inline-block;"></span> <strong>ORANGE :</strong> Produits Chimiques & Matières Dangereuses</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 14px; height: 14px; background: #ffffff; border-radius: 3px; display: inline-block;"></span> <strong>BLANC :</strong> Piquetage / Traçage Zone de Chantier</div>
                     </div>
                 </div>
 
                 <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.6); padding: 1rem; border-radius: 8px;">
-                    <h4 style="color: var(--emerald); font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem;">📋 Règles d'Or Prévention Anti-Endommagement</h4>
+                    <h4 style="color: var(--emerald); font-size: 1rem; font-weight: 800; margin-bottom: 0.5rem;">📋 Recommandations & Impératifs Chantier / Bureau</h4>
                     <ul style="list-style: none; font-size: 0.85rem; color: #cbd5e1; line-height: 1.6;">
-                        <li>✔️ DICT obligatoire au moins 9 jours avant l'engagement des fouilles.</li>
-                        <li>✔️ Piquetage traçage obligatoire en présence du Chef de Chantier AIPR.</li>
-                        <li>✔️ Terrassement doux (pelle à dents protégées ou aspiration) à moins de 0.50m des canalisations identifiées.</li>
+                        <li>✔️ <strong>Bureau</strong> : Déclaration DICT dématérialisée obligatoire sous 9 jours minimum.</li>
+                        <li>✔️ <strong>Chantier</strong> : Piquetage traçage obligatoire en présence de l'Encadrant AIPR certifié.</li>
+                        <li>✔️ <strong>Fouilles</strong> : Blindage impératif dès 1.30m de profondeur selon R4534.</li>
+                        <li>✔️ <strong>Approche</strong> : Terrassement doux / aspiration à moins de 0.50m des conduites sensibles.</li>
+                        <li>✔️ <strong>Lignes HTA</strong> : Distance de sécurité minimale de 3m (<50kV) et 5m (>50kV).</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- NEW PERMANENT VISUAL SIMULATION WINDOW (BOTTOM OF AIPR TAB) -->
+            <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                    <div>
+                        <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8;">🔬 Simulateur Visuel de Situations Réelles de Chantier & Détection Réseaux</h3>
+                        <div style="font-size:0.8rem; color:#94a3b8;">Visualisation en coupe de terrain des distances d'approche et des interactions engin / réseaux</div>
+                    </div>
+                    <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                        <button class="btn-secondary aipr-sim-btn active" onclick="setAiprSituation('gaz')">1. Conduite Gaz PEHD</button>
+                        <button class="btn-secondary aipr-sim-btn" onclick="setAiprSituation('hta')">2. Ligne Aérienne HTA 20kV</button>
+                        <button class="btn-secondary aipr-sim-btn" onclick="setAiprSituation('fibre_aep')">3. Fibre + AEP Fonte</button>
+                        <button class="btn-secondary aipr-sim-btn" onclick="setAiprSituation('blindage')">4. Blindage Profond 3.2m</button>
+                    </div>
+                </div>
+
+                <div class="grid-split-60-40">
+                    <div style="height: 320px; background: #000; border: 1px solid rgba(56,189,248,0.4); border-radius: 6px; position: relative; overflow: hidden;">
+                        <canvas id="aipr-simulation-canvas" style="width: 100%; height: 100%; cursor: pointer;"></canvas>
+                        <div id="aipr-sim-hud" style="position: absolute; bottom: 8px; left: 8px; background: rgba(15,23,42,0.9); padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">
+                            SITUATION : FOUILLE À PROXIMITÉ CONDUITE GAZ PEHD 4 BAR
+                        </div>
+                    </div>
+                    <div id="aipr-situation-action-box" style="background: rgba(30,41,59,0.5); border: 1px solid rgba(51,65,85,0.6); padding: 1rem; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <!-- Populated dynamically by setAiprSituation() -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -347,6 +472,7 @@ def get_tab_panels():
                     <div style="font-size: 0.8rem; color: #94a3b8;">Journal légal des opérations, intempéries, incidents et pointage MO/Engins</div>
                 </div>
                 <div style="display: flex; gap: 0.4rem;">
+                    <button class="btn btn-secondary" onclick="openRdcCameraModal()">📷 Prendre Photo / Flux Direct</button>
                     <button class="btn btn-primary" onclick="exportRDC()">📥 Exporter Registre Complet (PDF)</button>
                 </div>
             </div>
@@ -390,7 +516,7 @@ def get_tab_panels():
                     <input type="text" id="rdc-desc" class="input-field" value="Pose de 90 ml de bordures T2 et coulage calage béton. Contrôle altimétrique conforme.">
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                    <button class="btn btn-secondary" onclick="triggerPhotoUpload()">📷 Joindre Photo Géotaggée</button>
+                    <button class="btn btn-secondary" onclick="openRdcCameraModal()">📷 Prendre Photo / Flux Direct</button>
                     <button class="btn btn-primary" onclick="saveRdcEntry()">💾 Enregistrer le Rapport</button>
                 </div>
             </div>
@@ -419,25 +545,52 @@ def get_tab_panels():
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 12: COMPAGNON MOBILE MODE              -->
+    <!-- TAB 12: COMPAGNON MOBILE MODE (WITH DIRECT PLANNING) -->
     <!-- ========================================== -->
     <div id="tab-compagnon_mobile" class="tab-panel">
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <div class="card-header">
-                <span class="card-title">📱 Mode Terrain Compagnon</span>
-                <span class="badge badge-success">Connecté 4G</span>
+        <div class="card" style="max-width: 780px; margin: 0 auto;">
+            <div class="card-header" style="flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                    <span class="card-title">📱 Mode Terrain Compagnon & Mon Planning</span>
+                    <div style="font-size:0.8rem; color:#94a3b8;">Espace dédié aux ouvriers et chefs d'équipe sur chantier</div>
+                </div>
+                <span class="badge badge-success">Connecté 4G • GPS RTK Actif</span>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <button class="btn btn-primary" style="padding: 1rem; font-size: 1rem;" onclick="triggerPhotoUpload()">
-                    📷 Prendre Photo Chantier & Géolocaliser
+
+            <!-- TEAM SELECTION FOR COMPAGNON -->
+            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(30,41,59,0.6); padding:0.75rem; border-radius:6px; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                    <div style="font-size:0.75rem; color:#94a3b8;">MON ÉQUIPE :</div>
+                    <select id="compagnon-team-select" class="input-field" style="width:auto; padding:0.35rem 0.6rem; font-weight:800; color:#38bdf8;" onchange="renderCompagnonPlanning()">
+                        <option value="team_a">Équipe VRD A (Mamadou Traoré)</option>
+                        <option value="team_b">Équipe Réseaux Secs B (Karim Benali)</option>
+                        <option value="team_c">Équipe Enrobés C (Patrick Durand)</option>
+                        <option value="team_topo">Cellule Topo (David Lemoine)</option>
+                    </select>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:0.75rem; color:#94a3b8;">CHANTIER :</div>
+                    <div style="font-size:0.9rem; font-weight:800; color:var(--emerald);" id="compagnon-current-site">Giratoire RD906 Alès</div>
+                </div>
+            </div>
+
+            <!-- COMPAGNON'S DIRECT PLANNING BOX -->
+            <div id="compagnon-planning-container" style="margin-bottom:1.25rem;">
+                <!-- Populated dynamically by renderCompagnonPlanning() -->
+            </div>
+
+            <!-- FIELD QUICK ACTION BUTTONS -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <button class="btn btn-primary" style="padding: 0.85rem; font-size: 0.9rem;" onclick="openRdcCameraModal()">
+                    📷 Prendre Photo Chantier & Géoloc
                 </button>
-                <button class="btn btn-secondary" style="padding: 1rem; font-size: 1rem;" onclick="switchNav('opbtp')">
-                    🦺 Guide de Balisage OPBTP Rapide
+                <button class="btn btn-secondary" style="padding: 0.85rem; font-size: 0.9rem;" onclick="switchNav('opbtp')">
+                    🦺 Guide de Balisage OPBTP
                 </button>
-                <button class="btn btn-secondary" style="padding: 1rem; font-size: 1rem;" onclick="switchNav('rdc')">
-                    📋 Déclarer les Heures du Jour
+                <button class="btn btn-secondary" style="padding: 0.85rem; font-size: 0.9rem;" onclick="switchNav('rdc')">
+                    📋 Déclarer mes Heures du Jour
                 </button>
-                <button class="btn btn-danger" style="padding: 1rem; font-size: 1rem;" onclick="triggerSimulatedCrisis()">
+                <button class="btn btn-danger" style="padding: 0.85rem; font-size: 0.9rem;" onclick="triggerSimulatedCrisis()">
                     ⚠️ Alerte Sécurité / Arrêt d'Urgence
                 </button>
             </div>
@@ -452,25 +605,32 @@ def get_tab_panels():
             <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                     <span class="card-title">🕸️ Graphe de Connaissances Obsidian (Génie Civil & VRD)</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Relations dynamiques stabilisées entre réglementations, fascicules CCTP et chantiers</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Relations dynamiques stabilisées : cliquez sur un nœud pour inspecter sa fiche Markdown</div>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <button class="btn-secondary active" onclick="setObsidianHeuristic('all')">Tous les nœuds</button>
-                    <button class="btn-secondary" onclick="setObsidianHeuristic('technique')">Technique VRD</button>
-                    <button class="btn-secondary" onclick="setObsidianHeuristic('reglementaire')">Réglementaire</button>
-                    <button class="btn-secondary" onclick="setObsidianHeuristic('financier')">Financier</button>
-                    <button class="btn btn-secondary" onclick="exportObsidianVault()">📦 Exporter Vault</button>
+                    <input type="text" id="obsidian-search-input" placeholder="🔍 Rechercher..." class="input-field" style="width: 140px; padding: 0.35rem 0.5rem;" oninput="searchObsidianNodes(this.value)">
+                    <button class="btn-secondary active obs-cat-btn" onclick="setObsidianHeuristic('all', this)">Tous</button>
+                    <button class="btn-secondary obs-cat-btn" onclick="setObsidianHeuristic('technique', this)">Technique</button>
+                    <button class="btn-secondary obs-cat-btn" onclick="setObsidianHeuristic('reglementaire', this)">Réglementaire</button>
+                    <button class="btn-secondary obs-cat-btn" onclick="setObsidianHeuristic('financier', this)">Financier</button>
+                    <button class="btn-secondary obs-cat-btn" onclick="setObsidianHeuristic('management', this)">Sécurité/RH</button>
+                    <button class="btn btn-secondary" onclick="resetObsidianCamera()">🎯 Recentrer</button>
                 </div>
             </div>
 
             <div class="obsidian-layout">
-                <div class="obsidian-graph-container">
-                    <canvas id="obsidian-canvas" style="width: 100%; height: 100%;"></canvas>
+                <div class="obsidian-graph-container" style="height: 550px; position: relative;">
+                    <canvas id="obsidian-canvas" style="width: 100%; height: 100%; cursor: grab;"></canvas>
+                    <div style="position: absolute; bottom: 12px; left: 12px; display: flex; gap: 4px; z-index: 5;">
+                        <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="zoomObsidian(1.2)">🔍 +</button>
+                        <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="zoomObsidian(0.8)">🔍 -</button>
+                        <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="reorganizeObsidianNodes()">🔄 Réorganiser</button>
+                    </div>
                 </div>
-                <div class="obsidian-drawer">
-                    <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">📌 Détails de la Fiche Active</div>
+                <div class="obsidian-drawer" style="height: 550px;">
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8;">📌 Détails de la Fiche Technique Active</div>
                     <div id="obsidian-node-info">
-                        <div style="color: #64748b; font-size: 0.8rem;">Survolez ou cliquez sur un nœud pour inspecter ses liaisons et son contenu technique.</div>
+                        <div style="color: #64748b; font-size: 0.8rem; line-height: 1.5;">Cliquez ou glissez un nœud sur le graphe pour afficher son contenu technique complet, ses règles associées et ses liaisons transversales.</div>
                     </div>
                 </div>
             </div>
@@ -537,7 +697,7 @@ def get_tab_panels():
                     </div>
 
                     <select id="dqe-project-select" class="input-field" style="width: auto; padding: 0.35rem 0.6rem;" onchange="renderDQEPivotTable()">
-                        <option value="all">Tous les chantiers</option>
+                        <option value="all">Tous les chantiers (28 prix)</option>
                         <option value="projet_ales">Giratoire RD906 Alès</option>
                         <option value="projet_sete">ZAC Littoral Sète</option>
                         <option value="projet_pezenas">Centre Ancien Pézenas</option>
@@ -576,7 +736,7 @@ def get_tab_panels():
                 <div style="display: flex; gap: 0.4rem;">
                     <button class="btn-secondary" onclick="sortSuppliers('rating')">Trier par Note ⭐</button>
                     <button class="btn-secondary" onclick="sortSuppliers('distance')">Trier par Distance 📍</button>
-                    <button class="btn btn-primary" onclick="openAddSupplierModal()">➕ Ajouter Fournisseur</button>
+                    <button class="btn btn-primary" onclick="alert('Module ajout partenaire ouvert.');">➕ Ajouter Fournisseur</button>
                 </div>
             </div>
             <div id="suppliers-grid" class="grid-3">

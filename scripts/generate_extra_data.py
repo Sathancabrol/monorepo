@@ -2,1323 +2,612 @@ import json
 
 def get_company_data():
     return {
-    "company": {
-        "name": "BTP HÉRAULT OCCITANIE TP & VRD",
-        "siege": "Sète / Agde / Alès (Occitanie)",
-        "capital": "500 000 €",
-        "siren": "849 321 654",
-        "ca_annuel_prev": 4250000,
-        "carnet_commandes_12m": 5890000,
-        "tresorerie_actuelle": 485200,
-        "bfr": 142800,
-        "situations_en_attente": 318450,
-        "retenues_garantie_5pct": 138200,
-        "depenses_mois": {
-            "salaires_charges": 112000,
-            "fournisseurs_materiaux": 68400,
-            "carburant_energie": 18200,
-            "location_materiel": 16000
+        "company": {
+            "name": "BTP HÉRAULT OCCITANIE TP & VRD",
+            "siege": "Sète / Agde / Alès (Occitanie)",
+            "capital": "500 000 €",
+            "siren": "849 321 654",
+            "ca_annuel_prev": 4250000,
+            "carnet_commandes_12m": 5890000,
+            "tresorerie_actuelle": 485200,
+            "bfr": 142800,
+            "situations_en_attente": 318450,
+            "retenues_garantie_5pct": 138200,
+            "depenses_mois": {
+                "salaires_charges": 112000,
+                "fournisseurs_materiaux": 68400,
+                "carburant_energie": 18200,
+                "location_materiel": 16000
+            },
+            "marge_nette_moyenne": 14.2,
+            "taux_frequence_accidents": 0,
+            "taux_gravite": 0
         },
-        "marge_nette_moyenne": 12.4,
-        "taux_frequence_accidents": 0,
-        "taux_gravite": 0
-    },
-    "projects": [
-        {
-            "id": "projet_ales",
-            "name": "Aménagement Giratoire RD906 & Voie Verte",
-            "client": "Conseil Départemental du Gard / Ville d'Alès",
-            "location": "Alès / Barbazan",
-            "conducteur": "Sylvain CABROL",
-            "chef_chantier": "Alain MARTIN",
-            "budget_total": 850000,
-            "depense_reelle": 612000,
-            "avancement_physique_pct": 80,
-            "delai_consomme_pct": 78,
-            "rendement_moyen_pct": 108,
-            "ouvriers_sur_place": 14,
-            "machines_sur_place": 5,
-            "marge_estimee_pct": 14.2,
-            "statut": "En cours - Phase Enrobés",
-            "phase_actuelle": "Phase 4 : Exécution GNT & BBSG",
-            "date_debut": "2026-05-15",
-            "date_fin_prevue": "2026-10-30",
-            "risques_aipr": "Conduite Gaz MPB 4 bars à 1.20m (DICT validée)",
-            "kpis": {
-                "cpi": 1.11,
-                "spi": 1.02
-            }
-        },
-        {
-            "id": "projet_sete",
-            "name": "Viabilisation & Réseaux Profonds ZAC Littoral",
-            "client": "Sète Agglopôle Méditerranée",
-            "location": "Sète (Port / Entrée Est)",
-            "conducteur": "Sylvain CABROL",
-            "chef_chantier": "Marc GOMEZ",
-            "budget_total": 1450000,
-            "depense_reelle": 435000,
-            "avancement_physique_pct": 38,
-            "delai_consomme_pct": 35,
-            "rendement_moyen_pct": 99,
-            "ouvriers_sur_place": 18,
-            "machines_sur_place": 7,
-            "marge_estimee_pct": 11.8,
-            "statut": "En cours - Réseaux Profonds",
-            "phase_actuelle": "Phase 4 : Tranchée Blindée & Collecteur DN400",
-            "date_debut": "2026-07-01",
-            "date_fin_prevue": "2027-02-28",
-            "risques_aipr": "Nappe phréatique à -1.40m + câbles Enedis 20kV",
-            "kpis": {
-                "cpi": 1.08,
-                "spi": 1.08
-            }
-        },
-        {
-            "id": "projet_pezenas",
-            "name": "Rénovation Réseau Assainissement EU/EP Centre Ancien",
-            "client": "Communauté d'Agglomération Hérault Méditerranée",
-            "location": "Pézenas",
-            "conducteur": "Sylvain CABROL",
-            "chef_chantier": "Sophie LACOMBE",
-            "budget_total": 420000,
-            "depense_reelle": 390000,
-            "avancement_physique_pct": 98,
-            "delai_consomme_pct": 95,
-            "rendement_moyen_pct": 115,
-            "ouvriers_sur_place": 8,
-            "machines_sur_place": 3,
-            "marge_estimee_pct": 16.1,
-            "statut": "Phase Réception & OPR",
-            "phase_actuelle": "Phase 5 : Épreuves hydro & Inspection télévisée",
-            "date_debut": "2026-06-01",
-            "date_fin_prevue": "2026-09-30",
-            "risques_aipr": "Zone piétonne classée ABF, réseaux enchevêtrés classe C",
-            "kpis": {
-                "cpi": 1.05,
-                "spi": 1.03
-            }
-        },
-        {
-            "id": "projet_montpellier",
-            "name": "Piste Cyclable & Enrobés Tièdes Bas Carbone",
-            "client": "Montpellier Méditerranée Métropole",
-            "location": "Montpellier Sud",
-            "conducteur": "Sylvain CABROL",
-            "chef_chantier": "Sophie LACOMBE",
-            "budget_total": 310000,
-            "depense_reelle": 50000,
-            "avancement_physique_pct": 22,
-            "delai_consomme_pct": 20,
-            "rendement_moyen_pct": 102,
-            "ouvriers_sur_place": 6,
-            "machines_sur_place": 2,
-            "marge_estimee_pct": 13.5,
-            "statut": "En cours - Terrassement GNT",
-            "phase_actuelle": "Phase 3 : Préparation & Décaissement",
-            "date_debut": "2026-09-01",
-            "date_fin_prevue": "2026-11-15",
-            "risques_aipr": "Croisement fibre optique classe A",
-            "kpis": {
-                "cpi": 1.1,
-                "spi": 1.1
-            }
-        }
-    ],
-    "fleet": [
-        {
-            "id": "eq_01",
-            "name": "Pelle Chenilles Liebherr R924 G8",
-            "type": "Pelle Hydraulique (24 t)",
-            "category": "excavator",
-            "immat": "EQ-884-TP",
-            "horametre": 2418,
-            "fuel_pct": 78,
-            "status": "En opération",
-            "vgp_date": "2026-11-14",
-            "vgp_status": "Valide",
-            "current_project": "projet_ales",
-            "operator": "M. Lopez",
-            "caces_req": "CACES R482 Cat B1",
-            "conso_lh": 14.2,
-            "puissance_kw": 129,
-            "godet_m3": 1.45,
-            "cout_horaire": 82.0,
-            "valeur_achat": 215000
-        },
-        {
-            "id": "eq_02",
-            "name": "Pelle Pneus Mecalac 12MTX",
-            "type": "Pelle Polyvalente (10 t)",
-            "category": "excavator",
-            "immat": "EQ-721-MC",
-            "horametre": 1890,
-            "fuel_pct": 62,
-            "status": "En opération",
-            "vgp_date": "2026-10-02",
-            "vgp_status": "Valide",
-            "current_project": "projet_sete",
-            "operator": "D. Blanc",
-            "caces_req": "CACES R482 Cat B2",
-            "conso_lh": 9.8,
-            "puissance_kw": 85,
-            "godet_m3": 0.65,
-            "cout_horaire": 65.0,
-            "valeur_achat": 145000
-        },
-        {
-            "id": "eq_03",
-            "name": "Minipelle Kubota KX057-4",
-            "type": "Minipelle Urbaine (5.7 t)",
-            "category": "excavator",
-            "immat": "EQ-312-KB",
-            "horametre": 1120,
-            "fuel_pct": 85,
-            "status": "En opération",
-            "vgp_date": "2026-12-22",
-            "vgp_status": "Valide",
-            "current_project": "projet_pezenas",
-            "operator": "K. Benali",
-            "caces_req": "CACES R482 Cat A",
-            "conso_lh": 5.5,
-            "puissance_kw": 35,
-            "godet_m3": 0.22,
-            "cout_horaire": 45.0,
-            "valeur_achat": 68000
-        },
-        {
-            "id": "eq_04",
-            "name": "Chargeuse sur Pneus Volvo L110H",
-            "type": "Chargeuse Godet 3.5m³ (19 t)",
-            "category": "loader",
-            "immat": "EQ-904-VL",
-            "horametre": 3650,
-            "fuel_pct": 45,
-            "status": "En opération",
-            "vgp_date": "2026-11-05",
-            "vgp_status": "Valide",
-            "current_project": "projet_ales",
-            "operator": "R. Garcia",
-            "caces_req": "CACES R482 Cat C1",
-            "conso_lh": 16.5,
-            "puissance_kw": 190,
-            "godet_m3": 3.5,
-            "cout_horaire": 95.0,
-            "valeur_achat": 260000
-        },
-        {
-            "id": "eq_05",
-            "name": "Compacteur Vibrant Bomag BW213 B-5",
-            "type": "Compacteur Monocylindre V5 (13 t)",
-            "category": "compactor",
-            "immat": "EQ-445-BM",
-            "horametre": 1430,
-            "fuel_pct": 90,
-            "status": "En opération",
-            "vgp_date": "2027-01-18",
-            "vgp_status": "Valide",
-            "current_project": "projet_montpellier",
-            "operator": "F. Dumas",
-            "caces_req": "CACES R482 Cat D",
-            "conso_lh": 11.0,
-            "puissance_kw": 95,
-            "godet_m3": 0.0,
-            "cout_horaire": 70.0,
-            "valeur_achat": 125000
-        },
-        {
-            "id": "eq_06",
-            "name": "Camion Bi-Benne Scania P450 8x4",
-            "type": "Porteur TP 32 t Bi-Benne",
-            "category": "truck",
-            "immat": "GC-412-TP",
-            "horametre": 4210,
-            "fuel_pct": 70,
-            "status": "En rotation transport",
-            "vgp_date": "2026-09-29",
-            "vgp_status": "Valide",
-            "current_project": "projet_sete",
-            "operator": "P. Mercier",
-            "caces_req": "Permis C / FIMO / FCO",
-            "conso_lh": 38.0,
-            "puissance_kw": 331,
-            "godet_m3": 16.0,
-            "cout_horaire": 88.0,
-            "valeur_achat": 178000
-        },
-        {
-            "id": "eq_07",
-            "name": "Camion Hydrocureur Renault K480 6x4",
-            "type": "Hydrocureur Haute Pression & Aspiration",
-            "category": "truck",
-            "immat": "HD-882-RN",
-            "horametre": 2100,
-            "fuel_pct": 55,
-            "status": "Disponible",
-            "vgp_date": "2026-10-15",
-            "vgp_status": "Valide",
-            "current_project": "projet_pezenas",
-            "operator": "T. Vidal",
-            "caces_req": "Permis C / ADR Citerne",
-            "conso_lh": 24.0,
-            "puissance_kw": 353,
-            "godet_m3": 10.0,
-            "cout_horaire": 135.0,
-            "valeur_achat": 320000
-        },
-        {
-            "id": "eq_08",
-            "name": "Finisseur Enrobé Dynapac SD2500CS",
-            "type": "Finisseur Grande Largeur sur Chenilles",
-            "category": "paver",
-            "immat": "FN-601-DP",
-            "horametre": 980,
-            "fuel_pct": 95,
-            "status": "En veille technique",
-            "vgp_date": "2027-03-08",
-            "vgp_status": "Valide",
-            "current_project": "projet_ales",
-            "operator": "J. Roux",
-            "caces_req": "CACES R482 Cat G",
-            "conso_lh": 22.0,
-            "puissance_kw": 142,
-            "godet_m3": 0.0,
-            "cout_horaire": 140.0,
-            "valeur_achat": 310000
-        },
-        {
-            "id": "eq_drone_01",
-            "name": "Drone Topo DJI Matrice 350 RTK + LiDAR Zenmuse L2",
-            "type": "Vecteur Aérien Drone Topo & LiDAR 3D (6.5 kg)",
-            "category": "drone",
-            "immat": "FR-DRONE-01-UAV",
-            "horametre": 142,
-            "fuel_pct": 92,
-            "status": "En vol / Cartographie MNT",
-            "vgp_date": "2026-12-10",
-            "vgp_status": "Valide",
-            "current_project": "projet_sete",
-            "operator": "L. Vasseur (Télépilote DGAC)",
-            "caces_req": "Habilitation DGAC Cat. Spécifique STS-01/02 + AIPR Concepteur",
-            "conso_lh": 0.5,
-            "puissance_kw": 1.2,
-            "godet_m3": 0.0,
-            "cout_horaire": 65.0,
-            "valeur_achat": 28500,
-            "icon": "🛸",
-            "tech_specs": "Précision RTK < 1.5 cm | Nuage 240k pts/sec | LiDAR + Capteur RVB 4/3 | Cubatures déblais/remblais automatiques"
-        },
-        {
-            "id": "eq_exo_01",
-            "name": "Exosquelette Lombaire Actif HAPO BTP Ergo-Lifting",
-            "type": "Assistance Posturale & Port de Charges (1.9 kg)",
-            "category": "exosquelette",
-            "immat": "EXO-HAPO-01",
-            "horametre": 520,
-            "fuel_pct": 100,
-            "status": "En opération / Pose Bordures T2",
-            "vgp_date": "2027-01-15",
-            "vgp_status": "Valide",
-            "current_project": "projet_pezenas",
-            "operator": "K. Benali & F. Roche",
-            "caces_req": "Formation Ergonomie Posturale & Notice Constructeur OPBTP",
-            "conso_lh": 0.0,
-            "puissance_kw": 0.0,
-            "godet_m3": 0.0,
-            "cout_horaire": 12.0,
-            "valeur_achat": 3800,
-            "icon": "🦾",
-            "tech_specs": "Décharge lombaire instantanée -14 kg sur L4/L5 | Ressorts composites carbone | Réduction 70% des TMS"
-        },
-        {
-            "id": "eq_exo_02",
-            "name": "Exosquelette Membres Supérieurs Auxivo CarrySuit",
-            "type": "Armature Exosquelette Bras & Épaules (2.8 kg)",
-            "category": "exosquelette",
-            "immat": "EXO-AUXIV-02",
-            "horametre": 380,
-            "fuel_pct": 100,
-            "status": "En opération / Découpe & Règle",
-            "vgp_date": "2027-02-01",
-            "vgp_status": "Valide",
-            "current_project": "projet_ales",
-            "operator": "F. Dumas & T. Mercier",
-            "caces_req": "Formation Ergonomie & Ajustement Morphologique",
-            "conso_lh": 0.0,
-            "puissance_kw": 0.0,
-            "godet_m3": 0.0,
-            "cout_horaire": 14.0,
-            "valeur_achat": 4200,
-            "icon": "🦿",
-            "tech_specs": "Transfert de charges bras vers le bassin | Maintien prolongé tronçonneuse thermique / règle vibrante sans fatigue"
-        },
-        {
-            "id": "eq_robot_01",
-            "name": "Robot de Découpe & Sciage Husqvarna DXR 300",
-            "type": "Robot Chenillé Électrique Télécommandé 370V (2.0 t)",
-            "category": "robotique",
-            "immat": "RBT-772-TP",
-            "horametre": 890,
-            "fuel_pct": 85,
-            "status": "En opération / Sciage Tranchée",
-            "vgp_date": "2026-10-25",
-            "vgp_status": "Valide",
-            "current_project": "projet_sete",
-            "operator": "M. Gomez (Pilotage Radio 50m)",
-            "caces_req": "Habilitation Électrique B2V / CACES R482 Cat B1 / AIPR",
-            "conso_lh": 0.0,
-            "puissance_kw": 22.0,
-            "godet_m3": 0.0,
-            "cout_horaire": 75.0,
-            "valeur_achat": 145000,
-            "icon": "🤖",
-            "tech_specs": "Sciage enrobé/béton jusqu à 40cm | BRH 410 Joules | Zéro opérateur en tranchée instable | Zéro émission directe"
-        },
-        {
-            "id": "eq_aspiratrice_01",
-            "name": "Aspiratrice-Excavatrice Réseaux DINO 4.5 Rivard",
-            "type": "Porteur 32t Aspiration Douce Haute Dépression",
-            "category": "excavator",
-            "immat": "AS-931-RD",
-            "horametre": 1840,
-            "fuel_pct": 72,
-            "status": "En opération / Dégagement Gaz MPB",
-            "vgp_date": "2026-11-20",
-            "vgp_status": "Valide",
-            "current_project": "projet_sete",
-            "operator": "P. Carrière (Chauffeur PL)",
-            "caces_req": "Permis C/CE / FIMO / AIPR Encadrant / CACES R482 Cat G",
-            "conso_lh": 32.0,
-            "puissance_kw": 330,
-            "godet_m3": 8.0,
-            "cout_horaire": 165.0,
-            "valeur_achat": 385000,
-            "icon": "🌪️",
-            "tech_specs": "Turbine 42 000 m³/h | Cuve basculante 8 m³ | Dégagement doux sans impact mécanique sur tuyaux Gaz/Élec"
-        },
-        {
-            "id": "eq_topo_01",
-            "name": "Station Totale Robotisée & Guidage 3D Leica iCON 70",
-            "type": "Système de Guidage Topographique 3D Machine Control",
-            "category": "topo_guidage",
-            "immat": "TOPO-LEICA-88",
-            "horametre": 1120,
-            "fuel_pct": 95,
-            "status": "En opération / Guidage Pelle Cat 320",
-            "vgp_date": "2027-03-10",
-            "vgp_status": "Valide",
-            "current_project": "projet_ales",
-            "operator": "T. Fabre (Géomètre)",
-            "caces_req": "AIPR Concepteur & Formation Guidage 3D Leica Machine",
-            "conso_lh": 0.1,
-            "puissance_kw": 0.05,
-            "godet_m3": 0.0,
-            "cout_horaire": 45.0,
-            "valeur_achat": 52000,
-            "icon": "📐",
-            "tech_specs": "Précision millimétrique | Connexion directe modèle IFC / LandXML | Asservissement godet et lame niveleuse"
-        }
-    ],
-    "employees": [
-        {
-            "id": "emp_01",
-            "name": "Laurent VIALA",
-            "role": "Directeur Général / Gérant TP",
-            "group": "Direction",
-            "avatar": "👔",
-            "taux_horaire": 85.0,
-            "habilitations": [
-                "AIPR Concepteur",
-                "Ingénieur ESTP",
-                "Dirigeant TP"
-            ],
-            "project": "Direction Siège",
-            "visite_med": "2027-04-12",
-            "heures_mois": 152,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_02",
-            "name": "Sylvain CABROL",
-            "role": "Conducteur de Travaux Principal (TP / VRD)",
-            "group": "Conduite",
-            "avatar": "👷‍♂️",
-            "taux_horaire": 52.0,
-            "habilitations": [
-                "AIPR Encadrant / Concepteur",
-                "SST",
-                "OpenBIM IFC 4.3",
-                "Gestion Marchés Publics"
-            ],
-            "project": "Tous chantiers",
-            "visite_med": "2026-11-20",
-            "heures_mois": 168,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_03",
-            "name": "Alain MARTIN",
-            "role": "Chef de Chantier Terrassement & Enrobés",
-            "group": "Maitrise",
-            "avatar": "👷",
-            "taux_horaire": 38.5,
-            "habilitations": [
-                "AIPR Encadrant",
-                "SST",
-                "CACES R482 Cat A/B1/D",
-                "Fascicule 70-1"
-            ],
-            "project": "projet_ales",
-            "visite_med": "2026-10-15",
-            "heures_mois": 160,
-            "secu_score": 98
-        },
-        {
-            "id": "emp_04",
-            "name": "Marc GOMEZ",
-            "role": "Chef de Chantier VRD & Réseaux Profonds",
-            "group": "Maitrise",
-            "avatar": "👷",
-            "taux_horaire": 39.0,
-            "habilitations": [
-                "AIPR Encadrant",
-                "SST",
-                "CACES R482 Cat A/B1/C1",
-                "CCTG Fascicule 71"
-            ],
-            "project": "projet_sete",
-            "visite_med": "2026-12-05",
-            "heures_mois": 164,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_05",
-            "name": "Sophie LACOMBE",
-            "role": "Conductrice de Travaux Ouvrages d'Art & Assainissement",
-            "group": "Conduite",
-            "avatar": "👷‍♀️",
-            "taux_horaire": 46.0,
-            "habilitations": [
-                "AIPR Encadrant",
-                "SST",
-                "Travaux Hauteur / Échafaudages",
-                "Eurocode 2"
-            ],
-            "project": "projet_pezenas",
-            "visite_med": "2027-01-14",
-            "heures_mois": 158,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_06",
-            "name": "Thomas FABRE",
-            "role": "Géomètre-Topographe & Méthodes BIM",
-            "group": "Maitrise",
-            "avatar": "📐",
-            "taux_horaire": 36.0,
-            "habilitations": [
-                "AIPR Concepteur",
-                "GNSS RTK RGF93",
-                "Laser Scanner 3D",
-                "OpenBIM"
-            ],
-            "project": "projet_ales",
-            "visite_med": "2027-03-01",
-            "heures_mois": 152,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_07",
-            "name": "Manuel LOPEZ",
-            "role": "Chauffeur Pelle Hydraulique 24t",
-            "group": "Compagnon",
-            "avatar": "🚜",
-            "taux_horaire": 28.5,
-            "habilitations": [
-                "AIPR Opérateur",
-                "CACES R482 Cat B1",
-                "SST"
-            ],
-            "project": "projet_ales",
-            "visite_med": "2026-10-28",
-            "heures_mois": 160,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_08",
-            "name": "Karim BENALI",
-            "role": "Chef d'Équipe Canalisateurs & Poseurs de Fonte",
-            "group": "Compagnon",
-            "avatar": "💧",
-            "taux_horaire": 31.0,
-            "habilitations": [
-                "AIPR Opérateur / Encadrant",
-                "CACES R482 Cat A",
-                "SST",
-                "Épreuves Pression"
-            ],
-            "project": "projet_sete",
-            "visite_med": "2026-11-10",
-            "heures_mois": 160,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_09",
-            "name": "Pascal MERCIER",
-            "role": "Chauffeur Poids Lourd 8x4 Bi-Benne",
-            "group": "Compagnon",
-            "avatar": "🚛",
-            "taux_horaire": 27.0,
-            "habilitations": [
-                "Permis C / EC",
-                "FIMO / FCO",
-                "AIPR Opérateur",
-                "SST"
-            ],
-            "project": "projet_sete",
-            "visite_med": "2026-09-30",
-            "heures_mois": 160,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_10",
-            "name": "Fabrice DUMAS",
-            "role": "Conducteur Compacteur & Cylindreur Enrobé",
-            "group": "Compagnon",
-            "avatar": "🚜",
-            "taux_horaire": 28.0,
-            "habilitations": [
-                "AIPR Opérateur",
-                "CACES R482 Cat D",
-                "SST",
-                "Essais Dynaplaque"
-            ],
-            "project": "projet_montpellier",
-            "visite_med": "2027-02-12",
-            "heures_mois": 156,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_11",
-            "name": "Lucas VASSEUR",
-            "role": "Télépilote Drone Pro & Opérateur LiDAR 3D",
-            "group": "Maitrise",
-            "avatar": "🛸",
-            "taux_horaire": 42.0,
-            "habilitations": [
-                "Télépilote Certifié DGAC Open/Specific",
-                "AIPR Concepteur",
-                "LiDAR 3D Topo",
-                "SST"
-            ],
-            "project": "projet_sete",
-            "visite_med": "2027-05-18",
-            "heures_mois": 152,
-            "secu_score": 100
-        },
-        {
-            "id": "emp_12",
-            "name": "Franck ROCHE",
-            "role": "Compagnon Poseur VRD Équipé Exosquelette HAPO",
-            "group": "Compagnon",
-            "avatar": "🦾",
-            "taux_horaire": 29.5,
-            "habilitations": [
-                "Formation Exosquelette HAPO / OPBTP",
-                "AIPR Opérateur",
-                "Pose Bordures T2/A2",
-                "SST"
-            ],
-            "project": "projet_pezenas",
-            "visite_med": "2027-02-28",
-            "heures_mois": 160,
-            "secu_score": 100
-        }
-    ],
-    "tool_catalog": [
-        {
-            "id": "cat_01",
-            "task": "tranchee",
-            "task_label": "🕳️ Creusement de Tranchée & Réseaux Profonds",
-            "name": "Pelle Chenilles 24t Liebherr R924 G8",
-            "category": "Engin Lourd",
-            "description": "Idéale pour terrassement de tranchées profondes (jusqu'à 6.5m), équipée attache rapide et godet rétro 1200mm.",
-            "prix_achat_neuf": "220 000 €",
-            "tarif_location_jour": "450 € / jour",
-            "conso_moyenne": "14 L/h (GNR)",
-            "rendement": "45 à 65 m³/h en tranchée",
-            "caces": "CACES R482 Cat B1",
-            "icon": "🚜"
-        },
-        {
-            "id": "cat_02",
-            "task": "tranchee",
-            "task_label": "🕳️ Creusement de Tranchée & Réseaux Profonds",
-            "name": "Blindage Caisson SBH Double Guidage",
-            "category": "Sécurité / Étaiement",
-            "description": "Caisson acier 3.50m x 2.40m avec vérins hydrauliques pour soutènement de tranchée conforme R442.",
-            "prix_achat_neuf": "18 500 € / module",
-            "tarif_location_jour": "65 € / jour",
-            "conso_moyenne": "0 L/h",
-            "rendement": "Sécurisation intégrale > 1.30m",
-            "caces": "Formation Pose Blindage",
-            "icon": "🛡️"
-        },
-        {
-            "id": "cat_03",
-            "task": "tranchee",
-            "task_label": "🕳️ Creusement de Tranchée & Réseaux Profonds",
-            "name": "Laser de Canalisation Leica Piper 100",
-            "category": "Topographie & Guidage",
-            "description": "Laser d'alignement étanche avec réglage automatique de pente (-10% à +25%) pour pose de collecteurs.",
-            "prix_achat_neuf": "4 200 €",
-            "tarif_location_jour": "35 € / jour",
-            "conso_moyenne": "Batterie Li-Ion 40h",
-            "rendement": "Précision ± 1.5mm / 30m",
-            "caces": "AIPR Opérateur",
-            "icon": "🔴"
-        },
-        {
-            "id": "cat_04",
-            "task": "terrassement",
-            "task_label": "🏔️ Terrassement de Masse & Décapage",
-            "name": "Chargeuse sur Pneus Volvo L110H",
-            "category": "Engin Lourd",
-            "description": "Godet 3.5m³ avec pesage embarqué Co-Pilot pour chargement rapide des camions et régalage des déblais.",
-            "prix_achat_neuf": "260 000 €",
-            "tarif_location_jour": "520 € / jour",
-            "conso_moyenne": "16.5 L/h",
-            "rendement": "180 m³/h en reprise",
-            "caces": "CACES R482 Cat C1",
-            "icon": "🚜"
-        },
-        {
-            "id": "cat_05",
-            "task": "terrassement",
-            "task_label": "🏔️ Terrassement de Masse & Décapage",
-            "name": "Camion Bi-Benne Scania P450 8x4 (32 t)",
-            "category": "Transport TP",
-            "description": "Charge utile 18.5 tonnes, bâche électrique et bi-benne acier Hardox pour évacuation des déblais vers ISDI.",
-            "prix_achat_neuf": "180 000 €",
-            "tarif_location_jour": "650 € / jour (avec chauffeur)",
-            "conso_moyenne": "38 L/100km",
-            "rendement": "4 rotations / jour (80t)",
-            "caces": "Permis C / FIMO",
-            "icon": "🚛"
-        },
-        {
-            "id": "cat_06",
-            "task": "compactage",
-            "task_label": "🔨 Compactage de Plateformes & GNT",
-            "name": "Compacteur Monocylindre Vibrant Bomag BW213 V5",
-            "category": "Compactage",
-            "description": "Cylindre vibrant 13 tonnes avec mesure de compactage en continu Terrameter (EV2 en direct).",
-            "prix_achat_neuf": "125 000 €",
-            "tarif_location_jour": "290 € / jour",
-            "conso_moyenne": "11 L/h",
-            "rendement": "120 à 200 m³/h selon Q/S",
-            "caces": "CACES R482 Cat D",
-            "icon": "🚜"
-        },
-        {
-            "id": "cat_07",
-            "task": "compactage",
-            "task_label": "🔨 Compactage de Plateformes & GNT",
-            "name": "Plaque Vibrante Réversible Wacker Neuson DPU6555",
-            "category": "Matériel Léger",
-            "description": "Force centrifuge 65 kN, largeur 550mm, idéale pour compactage des fonds de fouille et remblais de tranchées.",
-            "prix_achat_neuf": "9 800 €",
-            "tarif_location_jour": "55 € / jour",
-            "conso_moyenne": "1.8 L/h (Diesel)",
-            "rendement": "650 m²/h",
-            "caces": "Formation interne",
-            "icon": "🧱"
-        },
-        {
-            "id": "cat_08",
-            "task": "enrobes",
-            "task_label": "🛣️ Application d'Enrobés & Bitumes",
-            "name": "Finisseur Dynapac SD2500CS Chenilles",
-            "category": "Application Routière",
-            "description": "Table chauffante électrique largeur 2.50m à 5.00m avec poutre de nivellement ultrasons 3D pour BBSG 0/10.",
-            "prix_achat_neuf": "310 000 €",
-            "tarif_location_jour": "1 100 € / jour (avec régleur)",
-            "conso_moyenne": "22 L/h",
-            "rendement": "120 à 250 t/h",
-            "caces": "CACES R482 Cat G",
-            "icon": "🛣️"
-        },
-        {
-            "id": "cat_09",
-            "task": "enrobes",
-            "task_label": "🛣️ Application d'Enrobés & Bitumes",
-            "name": "Rouleau Tandem Mixte Bomag BW120 AD-5",
-            "category": "Cylindrage Enrobé",
-            "description": "Compacteur double bille acier 2.7 tonnes avec arrosage d'eau sous pression pour fermeture de couche BBSG.",
-            "prix_achat_neuf": "42 000 €",
-            "tarif_location_jour": "140 € / jour",
-            "conso_moyenne": "4.5 L/h",
-            "rendement": "400 m²/h",
-            "caces": "CACES R482 Cat D",
-            "icon": "🚜"
-        },
-        {
-            "id": "cat_10",
-            "task": "bordures",
-            "task_label": "📐 Pose de Bordures & Béton Désactivé",
-            "name": "Pince Mécanique Automatique Hunklinger",
-            "category": "Accessoire Pose",
-            "description": "Pince de levage sur flèche de minipelle pour préhension et alignement sans effort des bordures T2/A2 (80 kg).",
-            "prix_achat_neuf": "3 800 €",
-            "tarif_location_jour": "30 € / jour",
-            "conso_moyenne": "0 L/h",
-            "rendement": "120 ml / jour (gain 40%)",
-            "caces": "AIPR Opérateur",
-            "icon": "🔧"
-        },
-        {
-            "id": "cat_11",
-            "task": "aipr",
-            "task_label": "⚡ Détection Réseaux & Sécurité AIPR",
-            "name": "Détecteur Électromagnétique Radiodetection RD8100",
-            "category": "AIPR & Détection",
-            "description": "Localisateur de câbles et canalisations enterrées avec générateur TX-10 et mesure de profondeur en continu.",
-            "prix_achat_neuf": "6 500 €",
-            "tarif_location_jour": "75 € / jour",
-            "conso_moyenne": "Batterie 30h",
-            "rendement": "Classe A (± 10 cm garanti)",
-            "caces": "AIPR Encadrant",
-            "icon": "📡"
-        },
-        {
-            "id": "cat_drone_01",
-            "task": "releves_topo",
-            "task_label": "🛸 Télédétection, Drones & Relevés Topo LiDAR",
-            "name": "Drone Topographique DJI Matrice 350 RTK + LiDAR Zenmuse L2",
-            "category": "Haute Technologie",
-            "description": "Vecteur aérien pour photogrammétrie et scan LiDAR 3D centimétrique. Génération de MNT, nuages de points et cubatures automatiques.",
-            "prix_achat_neuf": "28 500 €",
-            "tarif_location_jour": "180 € / jour",
-            "conso_moyenne": "Batterie LiPo 45 min",
-            "rendement": "40 ha / jour",
-            "caces": "Certificat Télépilote DGAC Catégorie Spécifique",
-            "impact_qualite": "+4.8 pts / Précision absolue RGF93 CC43"
-        },
-        {
-            "id": "cat_exo_01",
-            "task": "bordures",
-            "task_label": "🦾 Ergonomie & Assistance Exosquelette Lombaire",
-            "name": "Exosquelette Postural Lombaire HAPO BTP Ergo-Lifting",
-            "category": "Ergonomie & Santé",
-            "description": "Dispositif passif à ressorts composites pour soulager les vertèbres lombaires lors de la manutention répétée de bordures T2 et tuyaux.",
-            "prix_achat_neuf": "3 800 €",
-            "tarif_location_jour": "25 € / jour",
-            "conso_moyenne": "0 kW (Mécanique passive)",
-            "rendement": "+25% endurance poseurs",
-            "caces": "Formation Ergonomie OPBTP",
-            "impact_qualite": "-70% risque TMS / 0 arrêt maladie"
-        },
-        {
-            "id": "cat_robot_01",
-            "task": "tranchee",
-            "task_label": "🤖 Robotique & Téléopération Sécurisée",
-            "name": "Robot Chenillé Électrique de Sciage & Démolition Husqvarna DXR 300",
-            "category": "Robotique TP",
-            "description": "Engin télécommandé à distance 50m pour sciage d enrobé et démolition d ouvrages béton en milieu confiné ou tranchée instable.",
-            "prix_achat_neuf": "145 000 €",
-            "tarif_location_jour": "350 € / jour",
-            "conso_moyenne": "22 kW Élec 380V",
-            "rendement": "35 m²/h sciage 40cm",
-            "caces": "CACES R482 B1 / Habilitation B2V",
-            "impact_qualite": "Zéro risque ensevelissement opérateur"
-        },
-        {
-            "id": "cat_aspiratrice_01",
-            "task": "terrassement",
-            "task_label": "🌪️ Terrassement Doux & Aspiration Réseaux AIPR",
-            "name": "Camion Aspiratrice-Excavatrice Amphitec / Rivard DINO 4.5",
-            "category": "Engin Spécial Réseaux",
-            "description": "Terrassement par aspiration d air haute dépression sans risque d accrochage mécanique sur câbles électriques HTA ou canalisations gaz MPB.",
-            "prix_achat_neuf": "385 000 €",
-            "tarif_location_jour": "850 € / jour",
-            "conso_moyenne": "32 L/h GNR",
-            "rendement": "12 m³/h en terrain dense",
-            "caces": "Permis C / CACES R482 Cat G / AIPR",
-            "impact_qualite": "Zéro endommagement réseaux / 100% conforme DICT"
-        },
-        {
-            "id": "cat_tool_01",
-            "task": "outillage_main",
-            "task_label": "🔨 Outillage Standard & Manutention",
-            "name": "Massette TP 1.5kg & Marteau de Coffreur",
-            "category": "Outillage Standard",
-            "description": "Massette manche tri-matière incassable pour frappe de piquets et réglage de bordures. Tête en acier forgé trempé.",
-            "prix_achat_neuf": "18.50 €",
-            "tarif_location_jour": "Inclus boîte à outils",
-            "conso_moyenne": "Manuelle",
-            "rendement": "Usage continu",
-            "caces": "Sensibilisation EPI",
-            "impact_qualite": "Frappe précise sans éclat",
-            "stock_status": "in_stock",
-            "stock_qty": "18 unités en stock",
-            "weight": "1.5 kg",
-            "supplier": "Quincaillerie Pro TP Sète",
-            "icon": "🔨"
-        },
-        {
-            "id": "cat_tool_02",
-            "task": "bordures",
-            "task_label": "📐 Pose de Bordures & Caniveaux",
-            "name": "Pince à Bordures Autobloquante Manuelle Probst",
-            "category": "Outillage Standard",
-            "description": "Pince de préhension mécanique à double serrage pour pose de bordures T2, A2, P1 jusqu'à 150 kg à deux compagnons.",
-            "prix_achat_neuf": "280.00 €",
-            "tarif_location_jour": "15 € / jour",
-            "conso_moyenne": "Mécanique",
-            "rendement": "40 ml / h",
-            "caces": "Formation Gestes & Postures",
-            "impact_qualite": "Zéro écornure des bordures",
-            "stock_status": "in_stock",
-            "stock_qty": "6 paires en stock",
-            "weight": "8.5 kg",
-            "supplier": "Probst BTP Distribution",
-            "icon": "🗜️"
-        },
-        {
-            "id": "cat_tool_03",
-            "task": "sciage",
-            "task_label": "⚡ Sciage & Découpe Béton / Enrobé",
-            "name": "Découpeuse Thermique à Disque Stihl TS420 Ø350",
-            "category": "Outillage Électroportatif",
-            "description": "Tronçonneuse thermique pour découpe nette d'enrobé, tuyaux fonte et béton. Système d'arrosage eau anti-poussière.",
-            "prix_achat_neuf": "1 250.00 €",
-            "tarif_location_jour": "45 € / jour",
-            "conso_moyenne": "1.2 L/h Mélange 2T",
-            "rendement": "25 ml/h coupe 12cm",
-            "caces": "Notice fabricant & Port EPI",
-            "impact_qualite": "Bords de saignée parfaitement verticaux",
-            "stock_status": "in_transit",
-            "stock_qty": "En réappro (Livraison prévue 24h)",
-            "weight": "9.6 kg",
-            "supplier": "Stihl Pro Méditerranée",
-            "icon": "🪚"
-        },
-        {
-            "id": "cat_tool_04",
-            "task": "sciage",
-            "task_label": "⚡ Sciage & Découpe Béton / Enrobé",
-            "name": "Scie à Sol Diamantée Thermique Husqvarna FS400",
-            "category": "Outillage Lourd",
-            "description": "Scie à sol poussée sur roues avec disque diamant Ø450mm pour tranchées longues et joints de dilatation réguliers.",
-            "prix_achat_neuf": "3 400.00 €",
-            "tarif_location_jour": "90 € / jour",
-            "conso_moyenne": "2.5 L/h SP98",
-            "rendement": "60 ml/h coupe 16cm",
-            "caces": "Formation Sécurité Sciage",
-            "impact_qualite": "Profondeur constante guidée",
-            "stock_status": "in_stock",
-            "stock_qty": "2 unités disponibles",
-            "weight": "99 kg",
-            "supplier": "Husqvarna Construction France",
-            "icon": "⚙️"
-        },
-        {
-            "id": "cat_tool_05",
-            "task": "securite_epi",
-            "task_label": "🦺 Équipements de Protection Individuelle (EPI)",
-            "name": "Pack EPI Chantier TP Complet (Casque, Gilet Cl3, Gants, S3)",
-            "category": "Sécurité & Protection",
-            "description": "Kit complet réglementaire : Casque NF EN 397 avec jugulaire, Gilet haute visibilité Classe 3, Chaussures S3 anti-perforation, Gants anti-coupure D, Lunettes solaires et bouchons d'oreille.",
-            "prix_achat_neuf": "145.00 €",
-            "tarif_location_jour": "Dotation salarié obligatoire",
-            "conso_moyenne": "Usage individuel",
-            "rendement": "100% Protection",
-            "caces": "Obligatoire sur tous chantiers",
-            "impact_qualite": "0 accident corporel",
-            "stock_status": "in_stock",
-            "stock_qty": "24 packs neufs au magasin",
-            "weight": "2.2 kg",
-            "supplier": "Protect BTP Languedoc",
-            "icon": "🦺"
-        },
-        {
-            "id": "cat_tool_06",
-            "task": "tranchee",
-            "task_label": "💧 Laser & Guidage de Canalisations",
-            "name": "Laser de Canalisation Piper 100 Rouge & Mire Automatique",
-            "category": "Topographie & Guidage",
-            "description": "Laser compact étanche IPX8 s'insérant directement dans le tuyau DN150 à DN600 pour contrôle permanent de la pente.",
-            "prix_achat_neuf": "2 100.00 €",
-            "tarif_location_jour": "50 € / jour",
-            "conso_moyenne": "Batterie Li-Ion 40h",
-            "rendement": "Précision ±0.005%",
-            "caces": "Formation AIPR",
-            "impact_qualite": "Pente au millimètre sans contre-pente",
-            "stock_status": "in_stock",
-            "stock_qty": "3 kits disponibles",
-            "weight": "4.8 kg",
-            "supplier": "Leica Geosystems France",
-            "icon": "🔴"
-        },
-        {
-            "id": "cat_tool_07",
-            "task": "outillage_main",
-            "task_label": "⛏️ Traçage & Implantation",
-            "name": "Bombe de Peinture de Traçage Fluo TP 360° (Lot de 12)",
-            "category": "Consommable Chantier",
-            "description": "Aérosol de marquage au sol haute tenue pour piquetage DICT, réseaux sensibles et alignement bordures. Tenue 6 mois.",
-            "prix_achat_neuf": "68.00 € / carton",
-            "tarif_location_jour": "Consommable",
-            "conso_moyenne": "1 bombe / 100 ml",
-            "rendement": "Séchage 5 min",
-            "caces": "Code couleur normalisé AFNOR",
-            "impact_qualite": "Visibilité immédiate des réseaux",
-            "stock_status": "out_of_stock",
-            "stock_qty": "En rupture (Réappro sous 3j)",
-            "weight": "5.5 kg",
-            "supplier": "Soppec / Quincaillerie Pro",
-            "icon": "🎨"
-        }
-    ],
-    "scenarios": [
-        {
-            "id": "scen_tranchee_vrd",
-            "title": "1. Tranchée Réseau Assainissement EU/EP sous Nappe & Gaz (ZAC Sète)",
-            "location": "ZAC Littoral Sète — Tranche 2",
-            "context": "Pose d'un collecteur Fonte DN400 à -2.60m sous la nappe phréatique (-1.40m) et croisement d'une conduite Gaz MPB 4 bars.",
-            "steps": [
+        "hierarchy": {
+            "direction": [
                 {
-                    "step_num": 1,
-                    "title": "Étape 1 : Creusement de la Tranchée & Détection Réseau Gaz",
-                    "visual_type": "excavation",
-                    "visual_title": "Fenêtre Visualisation 1 : Creusement & Repérage Doux AIPR",
-                    "briefing": "La conduite gaz est classée B sur le plan DICT. Quel mode de creusement appliquez-vous pour les 50 premiers cm ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Terrassement doux (aspiratrice de déblais + pelletage manuel) pour positionner le gaz en Classe A.",
-                            "budget_impact": 450,
-                            "delay_impact": 0.5,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Excellente décision conforme à l'arrêté du 15/02/2012. Aucun risque d'accrochage."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Creusement brutal à la pelle 24t avec godet à dents.",
-                            "budget_impact": 0,
-                            "delay_impact": 0,
-                            "safety_impact": 85,
-                            "quality_impact": 5,
-                            "verdict": "FAUTE GRAVE AIPR ! Risque d'explosion et arrêt immédiat de chantier."
-                        }
-                    ]
+                    "id": "emp_01",
+                    "name": "Laurent VIALA",
+                    "role": "Directeur Général / Gérant TP",
+                    "salary_bracket": "Direction Générale",
+                    "cert": "AIPR Concepteur • Ingénieur ESTP",
+                    "secu": "100%",
+                    "rate": "85 €/h"
+                }
+            ],
+            "conduite": [
+                {
+                    "id": "emp_02",
+                    "name": "Sylvain CABROL",
+                    "role": "Conducteur de Travaux Principal VRD",
+                    "salary_bracket": "Cadre Position A",
+                    "cert": "AIPR Encadrant • Master Génie Civil",
+                    "secu": "99%",
+                    "rate": "55 €/h",
+                    "assigned": ["Giratoire RD906 Alès", "ZAC Littoral Sète"]
                 },
                 {
-                    "step_num": 2,
-                    "title": "Étape 2 : Pose du Caisson de Blindage & Rabattement de Nappe",
-                    "visual_type": "shoring",
-                    "visual_title": "Fenêtre Visualisation 2 : Descente Caisson SBH & Pompage",
-                    "briefing": "À -1.40m, l'eau sature les parois. Comment sécurisez-vous la fouille jusqu'à -2.60m ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Pose d'un blindage caisson double guidage SBH avec rabattement par pointes filtrantes sous vide.",
-                            "budget_impact": 1800,
-                            "delay_impact": 1.0,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Conformité R442 et Fascicule 70-1. Tranchée asséchée et parois stables."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Descente des ouvriers sans blindage avec une pompe vide-cave.",
-                            "budget_impact": 200,
-                            "delay_impact": 0,
-                            "safety_impact": 95,
-                            "quality_impact": 2,
-                            "verdict": "DANGER DE MORT par ensevelissement ! Violation du Code du Travail."
-                        }
-                    ]
+                    "id": "emp_03",
+                    "name": "Sophie LACOMBE",
+                    "role": "Conductrice de Travaux Aménagements & Prix",
+                    "salary_bracket": "Cadre Position B",
+                    "cert": "AIPR Encadrant • Ingénieure BTP",
+                    "secu": "100%",
+                    "rate": "52 €/h",
+                    "assigned": ["Centre Ancien Pézenas", "Voie Verte Montpellier"]
+                }
+            ],
+            "chefs": [
+                {
+                    "id": "emp_04",
+                    "name": "Alain MARTIN",
+                    "role": "Chef de Chantier TP / VRD",
+                    "salary_bracket": "ETAM Niveau G",
+                    "site": "Giratoire RD906 Alès",
+                    "caces": "CACES R482 B1/C1 • AIPR Encadrant",
+                    "secu": "100%"
                 },
                 {
-                    "step_num": 3,
-                    "title": "Étape 3 : Lit de Pose & Emboîtement du Tuyau Fonte DN400",
-                    "visual_type": "pipe_laying",
-                    "visual_title": "Fenêtre Visualisation 3 : Calage Gravillon 4/10 & Laser Leica",
-                    "briefing": "Le fond de fouille est réglé. Quelle méthode de pose appliquez-vous ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Lit de gravillon lavé 4/10 de 15 cm avec découpe de niches et alignement au laser Piper 100 à 1.5% de pente.",
-                            "budget_impact": 350,
-                            "delay_impact": 0,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Conformité parfaite au Fascicule 70-1 Titre I. Répartition des charges optimale."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Pose sur déblais tout-venant avec blocs rocheux sans contrôle laser.",
-                            "budget_impact": -150,
-                            "delay_impact": 0,
-                            "safety_impact": 20,
-                            "quality_impact": 4,
-                            "verdict": "Poinçonnement du tuyau et contre-pente. Rejet à l'inspection caméra."
-                        }
-                    ]
+                    "id": "emp_05",
+                    "name": "Mamadou TRAORÉ",
+                    "role": "Chef de Chantier Terrassement & Réseaux",
+                    "salary_bracket": "ETAM Niveau F",
+                    "site": "Giratoire RD906 Alès",
+                    "caces": "CACES R482 Cat B1 • AIPR Encadrant",
+                    "secu": "100%"
                 },
                 {
-                    "step_num": 4,
-                    "title": "Étape 4 : Épreuve Hydrostatique & Remblaiement Méthodique",
-                    "visual_type": "testing",
-                    "visual_title": "Fenêtre Visualisation 4 : Manomètre Enregistreur & Compactage",
-                    "briefing": "La pose est achevée. Comment validez-vous la réception avant remblai final ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Test d'étanchéité sous pression (Fascicule 70-1) avec obturateurs et PV contradictoire MOE.",
-                            "budget_impact": 500,
-                            "delay_impact": 0.5,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Épreuve d'étanchéité 100% conforme. Remblaiement validé par couches de 30 cm."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Remblayer d'un coup sans test préalable.",
-                            "budget_impact": 0,
-                            "delay_impact": 0,
-                            "safety_impact": 30,
-                            "quality_impact": 4,
-                            "verdict": "Refus de réception MOA et obligation de rouvrir la tranchée."
-                        }
-                    ]
+                    "id": "emp_06",
+                    "name": "Marc GOMEZ",
+                    "role": "Chef de Chantier Réseaux Profonds",
+                    "salary_bracket": "ETAM Niveau G",
+                    "site": "ZAC Littoral Sète",
+                    "caces": "AIPR Encadrant • CATEC Espace Confiné",
+                    "secu": "98%"
+                },
+                {
+                    "id": "emp_07",
+                    "name": "Karim BENALI",
+                    "role": "Chef de Chantier Réseaux Secs & Télécom",
+                    "salary_bracket": "ETAM Niveau F",
+                    "site": "ZAC Littoral Sète",
+                    "caces": "AIPR Encadrant • H0B0 Élec",
+                    "secu": "100%"
+                },
+                {
+                    "id": "emp_08",
+                    "name": "Patrick DURAND",
+                    "role": "Chef d'Équipe Enrobés & Chaussée",
+                    "salary_bracket": "ETAM Niveau E",
+                    "site": "Centre Ancien Pézenas",
+                    "caces": "CACES R482 Cat D/E",
+                    "secu": "100%"
+                },
+                {
+                    "id": "emp_09",
+                    "name": "David LEMOINE",
+                    "role": "Chef de Cellule Topographie & Drone",
+                    "salary_bracket": "ETAM Niveau F",
+                    "site": "Voie Verte Montpellier",
+                    "caces": "Télépilote Drone Pro DGAC • GPS RTK",
+                    "secu": "100%"
                 }
             ]
         },
-        {
-            "id": "scen_giratoire_enrobes",
-            "title": "2. Terrassement, Plateforme GNT & Enrobés Giratoire (RD906 Alès)",
-            "location": "RD906 Alès / Barbazan",
-            "context": "Réalisation du corps de chaussée d'un giratoire sous trafic T1 : Décapage, couche de fondation GNT 0/31.5 (25 cm) et couche de roulement BBSG 0/10 (6 cm).",
-            "steps": [
-                {
-                    "step_num": 1,
-                    "title": "Étape 1 : Décapage Terre Végétale & Plateforme PST",
-                    "visual_type": "terrassement",
-                    "visual_title": "Fenêtre Visualisation 1 : Décapage Pelle & Nivellement",
-                    "briefing": "Le sol support présente une portance médiocre (EV2 = 35 MPa). Comment traitez-vous l'arase ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Traitement à la chaux vive (1.5%) + géotextile anti-contaminant 200 g/m² avant pose de la GNT.",
-                            "budget_impact": 1200,
-                            "delay_impact": 0.5,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Arase transformée en plateforme PF3 (EV2 > 120 MPa). Conforme GTR."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Poser la GNT directement sur le sol humide sans traitement.",
-                            "budget_impact": 0,
-                            "delay_impact": 0,
-                            "safety_impact": 25,
-                            "quality_impact": 6,
-                            "verdict": "Poinçonnement et perte de portance. Orniérage rapide sous trafic lourd."
-                        }
-                    ]
-                },
-                {
-                    "step_num": 2,
-                    "title": "Étape 2 : Régalage & Compactage Méthodique de la GNT 0/31.5",
-                    "visual_type": "compacting",
-                    "visual_title": "Fenêtre Visualisation 2 : Bomag BW213 V5 & Terrameter",
-                    "briefing": "La GNT 0/31.5 est approvisionnée. Quel plan de compactage appliquez-vous ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Réglage teneur en eau w_OPN + 6 passes de compacteur vibrant V5 à 3.5 km/h (Q/S <= 0.050 m³/m²).",
-                            "budget_impact": 250,
-                            "delay_impact": 0,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Densité maximale atteinte (100% OPN) et module EV2 > 130 MPa."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Compactage à sec à vitesse rapide 10 km/h.",
-                            "budget_impact": -100,
-                            "delay_impact": -0.5,
-                            "safety_impact": 15,
-                            "quality_impact": 5,
-                            "verdict": "Refus de densification et rejet par le laboratoire de contrôle."
-                        }
-                    ]
-                },
-                {
-                    "step_num": 3,
-                    "title": "Étape 3 : Application Enrobé BBSG 0/10 au Finisseur",
-                    "visual_type": "paver",
-                    "visual_title": "Fenêtre Visualisation 3 : Finisseur Dynapac & Caméra Thermique",
-                    "briefing": "L'enrobé arrive à 160°C sur le chantier. Comment gérez-vous l'application ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Émulsion d'accrochage à 350 g/m² + pose continue au finisseur avec guidage laser et cylindrage tandem immédiat > 130°C.",
-                            "budget_impact": 400,
-                            "delay_impact": 0,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Macrotexture et compacité 98% parfaites selon NF P98-150."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Attendre 2 heures avant de compacter pour laisser refroidir.",
-                            "budget_impact": 0,
-                            "delay_impact": 0.5,
-                            "safety_impact": 10,
-                            "quality_impact": 4,
-                            "verdict": "Enrobé figé indéformable, décollement et désenrobage sous 3 mois."
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id": "scen_bordures_trottoir",
-            "title": "3. Pose de Bordures T2 & Trottoir Béton Désactivé (Pézenas / Montpellier)",
-            "location": "Pézenas / Centre-Ville",
-            "context": "Aménagement urbain comprenant la pose de 250 ml de bordures T2 sur semelle béton et coulage de 400 m² de béton désactivé décoratif.",
-            "steps": [
-                {
-                    "step_num": 1,
-                    "title": "Étape 1 : Implantation Topographique & Lit de Béton de Calage",
-                    "visual_type": "curb_laying",
-                    "visual_title": "Fenêtre Visualisation 1 : Implantation RTK & Béton C25/30",
-                    "briefing": "Comment implantez-vous l'alignement et la hauteur de bordure ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Implantation au théodolite/GNSS RTK + cordeau tendu + semelle béton C25/30 de 10 cm avec épaulement arrière.",
-                            "budget_impact": 300,
-                            "delay_impact": 0,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Alignement millimétrique et tenue parfaite au ripage des véhicules."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Pose à l'œil sur sable sec sans semelle béton.",
-                            "budget_impact": -200,
-                            "delay_impact": 0,
-                            "safety_impact": 20,
-                            "quality_impact": 3,
-                            "verdict": "Affaissement des bordures au premier passage de camion poubelle."
-                        }
-                    ]
-                },
-                {
-                    "step_num": 2,
-                    "title": "Étape 2 : Coulage Béton Désactivé & Lavage Haute Pression",
-                    "visual_type": "concrete_wash",
-                    "visual_title": "Fenêtre Visualisation 2 : Désactivant & Lavage HP 150 bars",
-                    "briefing": "Le béton désactivé est coulé et tiré à la règle. Quel protocole de désactivation appliquez-vous ?",
-                    "choices": [
-                        {
-                            "id": "c1",
-                            "text": "A. Pulvérisation immédiate d'un désactivant de surface régulier puis lavage haute pression après 16h de prise.",
-                            "budget_impact": 250,
-                            "delay_impact": 0.5,
-                            "safety_impact": 0,
-                            "quality_impact": 20,
-                            "verdict": "Aspect esthétique régulier avec gravillons apparents sans arrachement."
-                        },
-                        {
-                            "id": "c2",
-                            "text": "B. Lavage direct au jet d'eau après 1 heure.",
-                            "budget_impact": 0,
-                            "delay_impact": 0,
-                            "safety_impact": 10,
-                            "quality_impact": 2,
-                            "verdict": "Lessivage total de la pâte de ciment, trottoir ruiné et à démolir."
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-    "suppliers": [
-        {
-            "id": "sup_01",
-            "name": "Carrières & Granulats du Languedoc",
-            "specialty": "Grave GNT 0/31.5, Gravillons 4/10, Sables alluvionnaires",
-            "location": "Frontignan / Villeveyrac (34)",
-            "distance_km": 14,
-            "price_index": "€€ (Très compétitif)",
-            "price_level": 2,
-            "quality_rating": 4.8,
-            "delivery_delay": "Livraison 24h ou retrait direct",
-            "phone": "04 67 18 22 10",
-            "email": "commandes@carrieres-languedoc.fr",
-            "active_orders": 3
-        },
-        {
-            "id": "sup_02",
-            "name": "Bétons Occitanie Méditerranée",
-            "specialty": "Bétons Prêts à l'Emploi C25/30 XF1, Béton désactivé, Mortiers",
-            "location": "Sète / ZI des Eaux Blanches",
-            "distance_km": 6,
-            "price_index": "€€€ (Standard NF)",
-            "price_level": 3,
-            "quality_rating": 4.9,
-            "delivery_delay": "Toupie sous 2h (Centrale locale)",
-            "phone": "04 67 46 80 00",
-            "email": "contact@betons-occitanie.fr",
-            "active_orders": 5
-        },
-        {
-            "id": "sup_03",
-            "name": "Saint-Gobain PAM Canalisation",
-            "specialty": "Tuyaux Fonte Ductile DN100 à DN600, Tampons D400, Grilles C250",
-            "location": "Dépôt Régional Montpellier / Vendargues",
-            "distance_km": 28,
-            "price_index": "€€€ (Haute résistance)",
-            "price_level": 3,
-            "quality_rating": 5.0,
-            "delivery_delay": "Livraison sur chantier sous 48h",
-            "phone": "04 67 87 90 00",
-            "email": "commercial.sud@saint-gobain.com",
-            "active_orders": 2
-        },
-        {
-            "id": "sup_04",
-            "name": "PUM Plastiques & Réseaux Sète",
-            "specialty": "Tubes PVC CR8 Ø200/Ø300, PEHD Gaz SDR11, Gaines TPC, Géotextiles",
-            "location": "Sète / Zone d'Activité",
-            "distance_km": 4,
-            "price_index": "€€ (Tarif Pro Négocié)",
-            "price_level": 2,
-            "quality_rating": 4.7,
-            "delivery_delay": "Dispo comptoir immédiate ou navette matin",
-            "phone": "04 67 43 12 34",
-            "email": "agence.sete@mypum.fr",
-            "active_orders": 4
-        },
-        {
-            "id": "sup_05",
-            "name": "Enrobés Bitumineux du Sud (Centrale Alès)",
-            "specialty": "Enrobé à chaud BBSG 0/10 Classe 3, Enrobé Tiède Bas Carbone, EB8",
-            "location": "Alès / Saint-Martin-de-Valgalgues (30)",
-            "distance_km": 18,
-            "price_index": "€€ (Direct usine)",
-            "price_level": 2,
-            "quality_rating": 4.8,
-            "delivery_delay": "Semi calorifugée départ centrale 160°C",
-            "phone": "04 66 56 44 20",
-            "email": "enrobes.sud@eurovia.com",
-            "active_orders": 1
-        }
-    ]
-}
+        "ai_agents": [
+            {
+                "id": "ai_nexus",
+                "tier": "direction",
+                "name": "BTP-Nexus (Direction & Trésorerie)",
+                "role": "Agent IA Gouvernance & Trésorerie",
+                "desc": "Surveillance prédictive BFR, arbitrage situations de travaux Chorus Pro, respect CCAG 2021 et alertes trésorerie."
+            },
+            {
+                "id": "ai_optichantier",
+                "tier": "conduite",
+                "name": "OptiChantier-AI (Méthodes & Planif)",
+                "role": "Agent IA Méthodes & Logistique",
+                "desc": "Optimisation des cadences de rotation d'engins, synchronisation 4D des phases et gestion des flux de trafic résiduel."
+            },
+            {
+                "id": "ai_kestimator",
+                "tier": "conduite",
+                "name": "K-Estimator (Étude de Prix)",
+                "role": "Agent IA Étude de Prix & SDP",
+                "desc": "Contrôle en continu du ratio Déboursé Sec vs Prix de Vente, analyse des écarts et recalcul dynamique du coefficient K."
+            },
+            {
+                "id": "ai_safetysentinel",
+                "tier": "terrain",
+                "name": "SafetySentinel (AIPR & Sécurité)",
+                "role": "Agent IA Prévention des Risques",
+                "desc": "Vérification continue des distances d'approche DICT, des hauteurs de blindage de tranchée et de la conformité des EPI."
+            },
+            {
+                "id": "ai_topobot",
+                "tier": "terrain",
+                "name": "TopoBot (Contrôle Altimétrique)",
+                "role": "Agent IA Nivellement & Guidage 3D",
+                "desc": "Contrôle altimétrique temps réel des pentes de canalisation (tolérance ±5mm) et guidage automatique des engins par GPS RTK."
+            }
+        ],
+        "projects": [
+            {
+                "id": "projet_ales",
+                "name": "Aménagement Giratoire RD906 & Voie Verte",
+                "client": "Conseil Départemental du Gard / Ville d'Alès",
+                "location": "Alès / Barbazan (30)",
+                "conducteur": "Sylvain CABROL",
+                "chef_chantier": "Alain MARTIN",
+                "budget_total": 850000,
+                "depense_reelle": 612000,
+                "avancement_physique_pct": 80,
+                "delai_consomme_pct": 78,
+                "statut": "En cours - Phase Enrobés",
+                "date_debut": "2026-05-15",
+                "date_fin_prevue": "2026-10-30",
+                "risques_aipr": "Conduite Gaz MPB 4 bars à 1.20m (DICT validée)",
+                "kpis": { "cpi": 1.11, "spi": 1.02 },
+                "timeline_steps": [
+                    { "step": 1, "name": "DICT & Piquetage Réseaux 7 Couleurs", "date": "15/05/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 2, "name": "Terrassement en déblai & Purge sol", "date": "10/06/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 3, "name": "Pose Collecteur Pluvial BA Ø400", "date": "15/07/2026", "progress": 100, "status": "Terminé", "lot": "Lot 02" },
+                    { "step": 4, "name": "Fourreaux TPC Réseaux Secs & Massifs", "date": "15/08/2026", "progress": 100, "status": "Terminé", "lot": "Lot 04" },
+                    { "step": 5, "name": "Pose Bordures T2 & Caniveaux CC1", "date": "10/09/2026", "progress": 85, "status": "En cours", "lot": "Lot 03" },
+                    { "step": 6, "name": "Couche de Roulement BBSG 0/10 (350t)", "date": "15/10/2026", "progress": 10, "status": "À venir", "lot": "Lot 03" },
+                    { "step": 7, "name": "Réception des Travaux & OPR / DGD", "date": "30/10/2026", "progress": 0, "status": "À venir", "lot": "Clôture" }
+                ],
+                "assigned_machinery": [
+                    { "name": "Pelle Liebherr R924 G8 (24t)", "type": "Terrassement / Pose", "status": "Actif" },
+                    { "name": "Chargeuse Volvo L110H", "type": "Manutention GNT", "status": "Actif" },
+                    { "name": "Camion Scania 8x4 Bi-Benne", "type": "Évacuation Déblais", "status": "En rotation" }
+                ],
+                "assigned_tools": [
+                    { "name": "Laser Canalisateur Piper 200", "type": "Topographie" },
+                    { "name": "Scie Diamant Stihl TS800", "type": "Découpe Chaussée" },
+                    { "name": "Pilonneuse Wacker Neuson BS60", "type": "Compactage Tranchée" }
+                ],
+                "assigned_materials": [
+                    { "name": "Grave GNT 0/31.5 Classe A", "qty": "4 200 tonnes", "supplier": "Carrières du Languedoc" },
+                    { "name": "Bordures Béton T2 NF", "qty": "850 ml", "supplier": "Bétons Occitanie" },
+                    { "name": "Tuyau Béton Ø400 135A", "qty": "650 ml", "supplier": "BOM" },
+                    { "name": "Enrobé Chaud BBSG 0/10", "qty": "350 tonnes", "supplier": "Enrobés du Sud" }
+                ],
+                "lots_breakdown": [
+                    {
+                        "lot": "01",
+                        "name": "Terrassement & Déblais",
+                        "budget": 212500,
+                        "progress": 100,
+                        "status": "Terminé",
+                        "tech_steps": [
+                            "Décapage terre végétale épaisseur 20cm au scraper et stockage séparé pour réemploi paysager.",
+                            "Déblais grande masse en pleine masse à la pelle 24t avec nivellement guidé laser (pente 2%).",
+                            "Traitement de la plateforme de sol à la chaux vive 2% pour assurer une portance EV2 >= 50 MPa.",
+                            "Évacuation des déblais excédentaires inertes en décharge agréée ISDI avec bordereau BSD."
+                        ],
+                        "admin_steps": [
+                            "Obtention des récépissés DICT conformes auprès de GRDF, Enedis et Orange.",
+                            "Arrêté municipal de circulation et de restriction de vitesse (30 km/h) validé.",
+                            "Dépôt et validation du Plan Particulier de Sécurité et Protection de la Santé (PPSPS).",
+                            "Édition du Procès-Verbal de réception de plateforme terrassement par le géotechnicien."
+                        ]
+                    },
+                    {
+                        "lot": "02",
+                        "name": "Assainissement & Eaux Pluviales",
+                        "budget": 297500,
+                        "progress": 100,
+                        "status": "Terminé",
+                        "tech_steps": [
+                            "Ouverture de tranchée 1.80m avec blindage continu et lit de pose sable 4/10 compacté (10cm).",
+                            "Pose au laser des tuyaux béton armé Ø400 135A avec contrôle continu des pentes (1.5%).",
+                            "Mise en place de 14 regards de visite préfabriqués 1000x1000 avec cunettes hydrauliques soignées.",
+                            "Remblaiement par couches de 30cm en GNT 0/31.5 avec contrôle au pénétromètre dynamique PANDA (Q4)."
+                        ],
+                        "admin_steps": [
+                            "Validation des fiches d'agrément des fournitures par la Maîtrise d'Œuvre.",
+                            "Rapport d'épreuve d'étanchéité à l'air / eau selon Fascicule 70-1 Titre I.",
+                            "Rapport d'inspection télévisée (ITV) caméra haute définition avant remblai final.",
+                            "Plans de récolement DAO levés en classe A par géomètre-expert."
+                        ]
+                    },
+                    {
+                        "lot": "03",
+                        "name": "Voirie, Bordures & Structure de Chaussée",
+                        "budget": 170000,
+                        "progress": 75,
+                        "status": "En cours",
+                        "tech_steps": [
+                            "Réglage de la couche de fondation GNT 0/31.5 épaisseur 25cm au compacteur vibrant V5.",
+                            "Pose sur semelle béton C25/30 de 850 ml de bordures T2 et 850 ml de caniveaux CC1.",
+                            "Coulage de l'îlot central en béton désactivé décoratif avec gravillons de Garonne 6/10.",
+                            "Application de la couche de roulement enrobé à chaud BBSG 0/10 à 160°C au finisseur grande largeur."
+                        ],
+                        "admin_steps": [
+                            "Validation de la formule de compactage et rapport Terrameter (EV2 > 120 MPa).",
+                            "Essais d'extraction et de compacité de l'enrobé par laboratoire accrédité COFRAC.",
+                            "Contrôle de l'uni longitudinal et transversal de la couche de roulement.",
+                            "Dossier des Ouvrages Exécutés (DOE) provisoire remis à la MOE."
+                        ]
+                    },
+                    {
+                        "lot": "04",
+                        "name": "Réseaux Secs & Éclairage Public",
+                        "budget": 170000,
+                        "progress": 65,
+                        "status": "En cours",
+                        "tech_steps": [
+                            "Pose sous trottoir de fourreaux TPC Ø110 rouge (élec), vert (télécom) et jaune (gaz).",
+                            "Mise en place d'un grillage avertisseur normé 20cm au-dessus des génératrices supérieures.",
+                            "Coulage des massifs béton armé 1.00m x 1.00m pour 12 candélabres LED 8m.",
+                            "Tirage des câbles et raccordement au coffret de commande télégestion."
+                        ],
+                        "admin_steps": [
+                            "Contrôle d'isolement et de continuité électrique par organisme tiers agréé (APAVE).",
+                            "Déclaration d'achèvement de raccordement auprès du gestionnaire Enedis.",
+                            "Fiche technique de conformité photométrique des luminaires LED.",
+                            "Attestation de conformité Consuel pour les installations d'éclairage public."
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "projet_sete",
+                "name": "Viabilisation & Réseaux Profonds ZAC Littoral",
+                "client": "Sète Agglopôle Méditerranée",
+                "location": "Sète / Entrée Est (34)",
+                "conducteur": "Sylvain CABROL",
+                "chef_chantier": "Marc GOMEZ",
+                "budget_total": 1450000,
+                "depense_reelle": 435000,
+                "avancement_physique_pct": 38,
+                "delai_consomme_pct": 35,
+                "statut": "En cours - Tranchée Profonde",
+                "date_debut": "2026-07-01",
+                "date_fin_prevue": "2027-02-28",
+                "risques_aipr": "Nappe phréatique sub-affleurante à -1.40m, rabattement actif",
+                "kpis": { "cpi": 1.05, "spi": 1.00 },
+                "timeline_steps": [
+                    { "step": 1, "name": "DICT & Pompage / Rabattement de nappe", "date": "01/07/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 2, "name": "Terrassement sous blindage lourd caisson", "date": "20/07/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 3, "name": "Pose Collecteur Fonte DN400 (prof. 3.20m)", "date": "15/08/2026", "progress": 70, "status": "En cours", "lot": "Lot 02" },
+                    { "step": 4, "name": "Station de refoulement EU & Électromécanique", "date": "01/10/2026", "progress": 20, "status": "En cours", "lot": "Lot 02" },
+                    { "step": 5, "name": "Réseaux Divers (AEP, BT/HTA, Fibre)", "date": "15/11/2026", "progress": 0, "status": "À venir", "lot": "Lot 04" },
+                    { "step": 6, "name": "Structure Voirie Lourde & Enrobés", "date": "15/01/2027", "progress": 0, "status": "À venir", "lot": "Lot 03" },
+                    { "step": 7, "name": "Épreuves Fascicule 70 & Réception", "date": "28/02/2027", "progress": 0, "status": "À venir", "lot": "Clôture" }
+                ],
+                "assigned_machinery": [
+                    { "name": "Pelle Liebherr R924 G8 (24t)", "type": "Tranchée Profonde", "status": "Actif" },
+                    { "name": "Pelleteuse Mecalac 12MTX", "type": "Manutention Urbaine", "status": "Actif" },
+                    { "name": "Hydrocureur Renault K480", "type": "Curage Réseaux", "status": "Actif" }
+                ],
+                "assigned_tools": [
+                    { "name": "Laser Canalisateur Piper 200", "type": "Topographie" },
+                    { "name": "Détecteur de Réseaux RD8100", "type": "Détection DICT" }
+                ],
+                "assigned_materials": [
+                    { "name": "Tuyau Fonte DN400 Integral", "qty": "850 ml", "supplier": "Saint-Gobain PAM" },
+                    { "name": "Grave GNT 0/31.5 Concassée", "qty": "3 100 tonnes", "supplier": "Carrières du Languedoc" }
+                ],
+                "lots_breakdown": [
+                    {
+                        "lot": "01",
+                        "name": "Terrassement Profond & Rabattement",
+                        "budget": 362500,
+                        "progress": 85,
+                        "status": "En cours",
+                        "tech_steps": [
+                            "Installation de pointes filtrantes tous les 1.50m pour rabattement de nappe phréatique.",
+                            "Terrassement par passe de 1.00m avec descente guidée des caissons de blindage acier (R4534).",
+                            "Évacuation en site propre des limons maritimes saturés d'eau."
+                        ],
+                        "admin_steps": [
+                            "Autorisation de rejet des eaux de pompage (Loi sur l'Eau).",
+                            "Surveillance piézométrique continue du niveau de nappe.",
+                            "Contrôle journalier de l'étaiement des caissons de blindage."
+                        ]
+                    },
+                    {
+                        "lot": "02",
+                        "name": "Assainissement Fonte & Poste de Relevage",
+                        "budget": 652500,
+                        "progress": 45,
+                        "status": "En cours",
+                        "tech_steps": [
+                            "Pose au tire-fort hydraulique des tuyaux fonte ductile DN400 avec joints verrouillés Vi.",
+                            "Coulage du radier béton armé hydrofuge pour la bâche de pompage (diamètre 3.00m).",
+                            "Installation des pompes submersibles dilacératrices 22 kW."
+                        ],
+                        "admin_steps": [
+                            "Contrôle de conformité de l'ancrage anti-sous-pression par bureau de contrôle.",
+                            "Essais d'étanchéité sous pression 6 bars Fascicule 71.",
+                            "Réception électromécanique par le délégataire d'assainissement."
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "projet_pezenas",
+                "name": "Rénovation Réseaux & Voirie Centre Ancien",
+                "client": "Ville de Pézenas (34)",
+                "location": "Pézenas / Centre Historique (34)",
+                "conducteur": "Sophie LACOMBE",
+                "chef_chantier": "Karim BENALI",
+                "budget_total": 480000,
+                "depense_reelle": 210000,
+                "avancement_physique_pct": 52,
+                "delai_consomme_pct": 50,
+                "statut": "En cours - Pose Pavage & Réseaux",
+                "date_debut": "2026-06-01",
+                "date_fin_prevue": "2026-11-15",
+                "risques_aipr": "Ruelles étroites (largeur 2.40m), voûtes et réseaux anciens non répertoriés",
+                "kpis": { "cpi": 1.08, "spi": 1.01 },
+                "timeline_steps": [
+                    { "step": 1, "name": "Reconnaissance géoradar & Sondages doux", "date": "01/06/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 2, "name": "Dépose pavés anciens & Tri patrimonial", "date": "15/06/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 3, "name": "Renouvellement Conduite AEP Fonte Ø150", "date": "10/07/2026", "progress": 100, "status": "Terminé", "lot": "Lot 02" },
+                    { "step": 4, "name": "Enfouissement Réseaux Élec & Fibre", "date": "15/08/2026", "progress": 60, "status": "En cours", "lot": "Lot 04" },
+                    { "step": 5, "name": "Repose Pavés Granit & Joints Résine", "date": "15/09/2026", "progress": 30, "status": "En cours", "lot": "Lot 03" },
+                    { "step": 6, "name": "Éclairage Public Style Ancien & Lanternes", "date": "15/10/2026", "progress": 0, "status": "À venir", "lot": "Lot 04" },
+                    { "step": 7, "name": "Réception & Libération des Rues", "date": "15/11/2026", "progress": 0, "status": "À venir", "lot": "Clôture" }
+                ],
+                "assigned_machinery": [
+                    { "name": "Mini-Pelle Kubota KX057-4 (5.5t)", "type": "Micro-Terrassement", "status": "Actif" },
+                    { "name": "Hydrocureur Renault K480", "type": "Curage / Aspiration", "status": "Actif" }
+                ],
+                "assigned_tools": [
+                    { "name": "Scie Diamant Stihl TS800", "type": "Découpe Granit" },
+                    { "name": "Pilonneuse Wacker Neuson BS60", "type": "Compactage Tranchée" }
+                ],
+                "assigned_materials": [
+                    { "name": "Tuyau Fonte DN150 AEP", "qty": "320 ml", "supplier": "Saint-Gobain PAM" },
+                    { "name": "Pavés Granit Occitanie", "qty": "850 m²", "supplier": "Carrières Régionales" }
+                ],
+                "lots_breakdown": [
+                    {
+                        "lot": "01",
+                        "name": "Terrassement & Dépose Patrimoniale",
+                        "budget": 120000,
+                        "progress": 100,
+                        "status": "Terminé",
+                        "tech_steps": [
+                            "Dépose manuelle soignée des pavés anciens et palettisation pour réemploi.",
+                            "Terrassement par aspiration / micro-pelle pour préserver les caves voûtées."
+                        ],
+                        "admin_steps": [
+                            "Autorisation de l'Architecte des Bâtiments de France (ABF).",
+                            "Arrêté de fermeture de rue avec gestion des accès piétons riverains."
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "projet_montpellier",
+                "name": "Création Voie Verte & Réseaux Pluviaux",
+                "client": "Montpellier Méditerranée Métropole",
+                "location": "Montpellier / Grabels (34)",
+                "conducteur": "Sophie LACOMBE",
+                "chef_chantier": "David LEMOINE",
+                "budget_total": 620000,
+                "depense_reelle": 124000,
+                "avancement_physique_pct": 25,
+                "delai_consomme_pct": 20,
+                "statut": "En cours - Nivellement & Bassin",
+                "date_debut": "2026-08-01",
+                "date_fin_prevue": "2026-12-20",
+                "risques_aipr": "Zone naturelle sensible, franchissement cours d'eau temporaire",
+                "kpis": { "cpi": 1.15, "spi": 1.05 },
+                "timeline_steps": [
+                    { "step": 1, "name": "Débroussaillage & Piquetage Topo Drone", "date": "01/08/2026", "progress": 100, "status": "Terminé", "lot": "Lot 01" },
+                    { "step": 2, "name": "Création Bassin de Rétention Infiltrant", "date": "20/08/2026", "progress": 80, "status": "En cours", "lot": "Lot 02" },
+                    { "step": 3, "name": "Terrassement Plateforme Voie 3.00m", "date": "10/09/2026", "progress": 40, "status": "En cours", "lot": "Lot 01" },
+                    { "step": 4, "name": "Pose Noues Enherbées & Buses Béton", "date": "01/10/2026", "progress": 0, "status": "À venir", "lot": "Lot 02" },
+                    { "step": 5, "name": "Couche de Fondation & Enrobé Tiède Ocre", "date": "01/11/2026", "progress": 0, "status": "À venir", "lot": "Lot 03" },
+                    { "step": 6, "name": "Signalétique Cyclable & Mobilier Bois", "date": "01/12/2026", "progress": 0, "status": "À venir", "lot": "Lot 03" },
+                    { "step": 7, "name": "Réception & DGD", "date": "20/12/2026", "progress": 0, "status": "À venir", "lot": "Clôture" }
+                ],
+                "assigned_machinery": [
+                    { "name": "Pelleteuse Mecalac 12MTX", "type": "Nivellement Guidé", "status": "Actif" },
+                    { "name": "Compacteur Bomag BW 154 AP", "type": "Compactage Écologique", "status": "Actif" }
+                ],
+                "assigned_tools": [
+                    { "name": "Canne GPS RTK Leica", "type": "Contrôle Altimétrique" },
+                    { "name": "Drone Aérien DJI RTK", "type": "Photogrammétrie" }
+                ],
+                "assigned_materials": [
+                    { "name": "Grave GNT 0/31.5 Concassée", "qty": "1 800 tonnes", "supplier": "Carrières du Languedoc" },
+                    { "name": "Enrobé Tiède Ocre Drainant", "qty": "450 tonnes", "supplier": "Enrobés du Sud" }
+                ],
+                "lots_breakdown": [
+                    {
+                        "lot": "01",
+                        "name": "Terrassement Voie Verte & Bassin",
+                        "budget": 248000,
+                        "progress": 60,
+                        "status": "En cours",
+                        "tech_steps": [
+                            "Décapage terre végétale et création d'un merlon paysager antibruit.",
+                            "Terrassement du bassin de rétention 1200 m³ avec talus à 1:2.",
+                            "Réglage guidé 3D au drone de la plateforme cyclo-piétonne 3.00m."
+                        ],
+                        "admin_steps": [
+                            "Autorisation environnementale Loi sur l'Eau.",
+                            "Plan d'implantation topographique certifié classe A."
+                        ]
+                    }
+                ]
+            }
+        ],
+        "fleet": [
+            {
+                "id": "veh_01",
+                "name": "Pelle sur Chenilles Liebherr R924 G8 (24t)",
+                "type": "Pelle Hydraulique",
+                "brand": "Liebherr",
+                "immat": "TP-340-LH",
+                "hours": 1420,
+                "project": "Giratoire RD906 Alès",
+                "vgp": "14/11/2026",
+                "price": 285000,
+                "weight": "24 200 kg",
+                "dimensions": "9.90m x 2.98m x 3.15m",
+                "power": "129 kW (175 ch)",
+                "capacity": "1.45 m³ (Godet terrassement)",
+                "consumption": "16.8 L/h",
+                "geoloc": { "lat": 44.1284, "lng": 4.0833, "site": "Alès RD906" },
+                "photo_url": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800",
+                "status": "Opérationnel (En fonction)"
+            },
+            {
+                "id": "veh_02",
+                "name": "Pelleteuse sur Pneus Mecalac 12MTX",
+                "type": "Pelle sur Pneus Polyvalente",
+                "brand": "Mecalac",
+                "immat": "TP-120-MC",
+                "hours": 890,
+                "project": "ZAC Littoral Sète",
+                "vgp": "08/10/2026",
+                "price": 195000,
+                "weight": "9 700 kg",
+                "dimensions": "5.60m x 2.38m x 3.10m",
+                "power": "85 kW (115 ch)",
+                "capacity": "0.75 m³ (Godet 4 en 1)",
+                "consumption": "10.5 L/h",
+                "geoloc": { "lat": 43.4075, "lng": 3.6928, "site": "Sète ZAC" },
+                "photo_url": "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=800",
+                "status": "Opérationnel (En fonction)"
+            },
+            {
+                "id": "veh_03",
+                "name": "Compacteur Tandem Vibrant Bomag BW 154 AP-5",
+                "type": "Compacteur Lourd V5",
+                "brand": "Bomag",
+                "immat": "TP-154-BM",
+                "hours": 620,
+                "project": "Giratoire RD906 Alès",
+                "vgp": "22/12/2026",
+                "price": 145000,
+                "weight": "8 800 kg",
+                "dimensions": "4.61m x 1.68m x 2.95m",
+                "power": "55 kW (75 ch)",
+                "capacity": "Largeur bille 1.50m double vibration",
+                "consumption": "9.2 L/h",
+                "geoloc": { "lat": 44.1290, "lng": 4.0840, "site": "Alès RD906" },
+                "photo_url": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800",
+                "status": "Opérationnel (En fonction)"
+            },
+            {
+                "id": "veh_04",
+                "name": "Camion Bi-Benne 8x4 Scania G450 XT (32t)",
+                "type": "Camion Porteur 8x4",
+                "brand": "Scania",
+                "immat": "FN-842-TP",
+                "hours": 2150,
+                "project": "Giratoire RD906 Alès",
+                "vgp": "15/01/2027",
+                "price": 210000,
+                "weight": "32 000 kg (PTAC)",
+                "dimensions": "8.80m x 2.55m x 3.40m",
+                "power": "331 kW (450 ch)",
+                "capacity": "Benne Hardox 18 m³ (20 tonnes)",
+                "consumption": "34.5 L/100km",
+                "geoloc": { "lat": 44.1280, "lng": 4.0820, "site": "Rotation Alès" },
+                "photo_url": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800",
+                "status": "Opérationnel (En fonction)"
+            },
+            {
+                "id": "veh_05",
+                "name": "Camion Hydrocureur / Aspiratrice Renault K480",
+                "type": "Camion Spécialisé Assainissement",
+                "brand": "Renault Trucks",
+                "immat": "GQ-318-VR",
+                "hours": 1100,
+                "project": "Centre Ancien Pézenas",
+                "vgp": "05/02/2027",
+                "price": 380000,
+                "weight": "26 000 kg",
+                "dimensions": "9.20m x 2.50m x 3.65m",
+                "power": "353 kW (480 ch)",
+                "capacity": "Cuve 10 000 L (Boues 7000L + Eau 3000L)",
+                "consumption": "28.0 L/h (Travail pompe)",
+                "geoloc": { "lat": 43.4600, "lng": 3.4230, "site": "Pézenas Centre" },
+                "photo_url": "https://images.unsplash.com/photo-1541888946425-d0fbb180c5f5?w=800",
+                "status": "Opérationnel (En fonction)"
+            },
+            {
+                "id": "veh_06",
+                "name": "Mini-Pelle Urbaine Kubota KX057-4 (5.5t)",
+                "type": "Mini-Pelle Compacte",
+                "brand": "Kubota",
+                "immat": "TP-057-KB",
+                "hours": 940,
+                "project": "Centre Ancien Pézenas",
+                "vgp": "18/10/2026",
+                "price": 68000,
+                "weight": "5 545 kg",
+                "dimensions": "5.52m x 1.96m x 2.55m",
+                "power": "35 kW (47.6 ch)",
+                "capacity": "0.18 m³ (Godet terrassement)",
+                "consumption": "6.2 L/h",
+                "geoloc": { "lat": 43.4605, "lng": 3.4235, "site": "Pézenas Centre" },
+                "photo_url": "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=800",
+                "status": "Opérationnel (En fonction)"
+            }
+        ],
+        "catalog": [
+            # 1. EPI & SIGNALÉTIQUE
+            { "id": "mat_01", "name": "Pack EPI Réglementaire BTP Classe 3", "category": "EPI & Signalétique", "supplier": "Négoce Protection Directe", "price_ht": 145.00, "unit": "pack", "stock": 50, "norm": "NF EN ISO 20471", "description": "Casque avec jugulaire, gilet haute visibilité classe 3, gants anti-coupure D et chaussures S3." },
+            { "id": "mat_02", "name": "Kit Signalisation Temporaire de Chantier AK5 + B14 + Cônes K5a", "category": "EPI & Signalétique", "supplier": "Signalétique Occitanie", "price_ht": 850.00, "unit": "kit", "stock": 15, "norm": "Instruction Interministérielle Livre I - 8e partie", "description": "2 panneaux AK5 1000mm, 2 panneaux B14 (30 km/h), 30 cônes K5a rétro-réfléchissants classe 2." },
+            { "id": "mat_03", "name": "Balises d'Alignement K8 Monodirectionnelles Rétro-Réfléchissantes", "category": "EPI & Signalétique", "supplier": "Signalétique Occitanie", "price_ht": 42.00, "unit": "u", "stock": 80, "norm": "NF P98-453", "description": "Balises plastiques avec socle lesté 15kg pour balisage d'approche de nuit." },
+            { "id": "mat_04", "name": "Séparateurs de Voies Plastiques K16 Lestables (Rouge & Blanc)", "category": "EPI & Signalétique", "supplier": "Signalétique Occitanie", "price_ht": 38.00, "unit": "ml", "stock": 250, "norm": "NF P98-450", "description": "Séparateur monobloc emboîtable à lester d'eau ou de sable pour déviation." },
+
+            # 2. PETIT OUTILLAGE & LASERS
+            { "id": "tool_01", "name": "Laser Canalisateur Rouge Automatique Piper 200", "category": "Petit Outillage & Lasers", "supplier": "Leica Geosystems France", "price_ht": 3450.00, "unit": "u", "stock": 4, "norm": "IP68 Submersible / Précision ±1.5mm à 30m", "description": "Laser de pose de canalisations avec télécommande infrarouge et alignement automatique." },
+            { "id": "tool_02", "name": "Niveau Laser Rotatif Double Pente Rugby CLA-CLX 700", "category": "Petit Outillage & Lasers", "supplier": "Leica Geosystems France", "price_ht": 2890.00, "unit": "u", "stock": 6, "norm": "IP68 / Portée 1350m", "description": "Laser rotatif pour guidage d'engins, terrassement et nivellement de plateforme." },
+            { "id": "tool_03", "name": "Découpeuse à Disque Diamant Thermique Stihl TS 800 (Ø400 mm)", "category": "Petit Outillage & Lasers", "supplier": "Stihl France Distribution", "price_ht": 1420.00, "unit": "u", "stock": 8, "norm": "CE / Profondeur coupe 145mm", "description": "Scie à béton et enrobé avec raccord d'arrosage anti-poussière intégré." },
+            { "id": "tool_04", "name": "Pilonneuse Vibrante 4 Temps Wacker Neuson BS 60-4As", "category": "Petit Outillage & Lasers", "supplier": "Wacker Neuson Occitanie", "price_ht": 2650.00, "unit": "u", "stock": 10, "norm": "ISO 9001 / Force frappe 18 kN", "description": "Pilonneuse pour compactage efficace en tranchée étroite et pied de bordure." },
+            { "id": "tool_05", "name": "Plaque Vibrante Réversible Wacker Neuson DPU 4045Ye (Diesel)", "category": "Petit Outillage & Lasers", "supplier": "Wacker Neuson Occitanie", "price_ht": 5800.00, "unit": "u", "stock": 5, "norm": "Force frappe 40 kN", "description": "Plaque pour compactage des couches de fondation GNT et enrobés." },
+
+            # 3. BÉTONS & BORDURES
+            { "id": "mat_05", "name": "Bordures Béton Trottoir Droites T2 NF (L=1.00m)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Bétons Occitanie Méditerranée", "price_ht": 8.80, "unit": "ml", "stock": 1400, "norm": "NF P98-305 / Classe U+D", "description": "Bordure de voirie standard 12x15x20 cm pour trottoirs et séparations de chaussée." },
+            { "id": "mat_06", "name": "Bordures Basses Infranchissables A2 NF (L=1.00m)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Bétons Occitanie Méditerranée", "price_ht": 9.20, "unit": "ml", "stock": 900, "norm": "NF P98-305", "description": "Bordure d'accotement et d'îlot pour canalisation de trafic urbain." },
+            { "id": "mat_07", "name": "Bordures Giratoire Franchissables I2 / P2 (L=1.00m)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Bétons Occitanie Méditerranée", "price_ht": 12.50, "unit": "ml", "stock": 650, "norm": "NF EN 1340", "description": "Bordure inclinée pour anneaux de giratoires franchissables par poids lourds." },
+            { "id": "mat_08", "name": "Caniveaux Préfabriqués CC1 à Fente Hydraulique (L=1.00m)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Bétons Occitanie Méditerranée", "price_ht": 18.50, "unit": "ml", "stock": 500, "norm": "NF EN 1433", "description": "Caniveau préfabriqué avec profil d'évacuation des eaux pluviales de chaussée." },
+            { "id": "mat_09", "name": "Béton Prêt à l'Emploi C25/30 XF1 / S3 pour Semelle Bordures", "category": "Bétons, Bordures & Tuyaux", "supplier": "Bétons Occitanie Méditerranée", "price_ht": 128.00, "unit": "m³", "stock": 200, "norm": "NF EN 206+A2/CN", "description": "Béton dosé à 250-300 kg de ciment avec calage rigide des bordures." },
+            { "id": "mat_10", "name": "Béton Désactivé Formulé Gravillons Garonne 6/10", "category": "Bétons, Bordures & Tuyaux", "supplier": "Bétons Occitanie Méditerranée", "price_ht": 155.00, "unit": "m³", "stock": 100, "norm": "NF EN 206 Décoratif", "description": "Béton d'ornement pour îlots centraux et trottoirs piétons." },
+
+            # 4. CANALISATIONS & FONTES
+            { "id": "mat_11", "name": "Tampon Fonte Ductile D400 PAM Rexel Ø600 Trafic Lourd", "category": "Bétons, Bordures & Tuyaux", "supplier": "Saint-Gobain PAM Canalisation", "price_ht": 145.00, "unit": "u", "stock": 65, "norm": "NF EN 124-2 / 400 kN", "description": "Tampon de regard de visite articulé avec joint polyéthylène antibruit." },
+            { "id": "mat_12", "name": "Grille Avaloir Concave Fonte C250 (500x500 mm)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Saint-Gobain PAM Canalisation", "price_ht": 98.00, "unit": "u", "stock": 70, "norm": "NF EN 124-2 / 250 kN", "description": "Grille de caniveau concave pour absorption optimale du fil d'eau." },
+            { "id": "mat_13", "name": "Tuyau Fonte Ductile DN400 Integral (L=6.00m)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Saint-Gobain PAM Canalisation", "price_ht": 115.00, "unit": "ml", "stock": 350, "norm": "Fascicule 70-1 / Revêtement Zinc-Alu", "description": "Tuyau fonte haute résistance mécanique avec joint automatique élastomère." },
+            { "id": "mat_14", "name": "Tuyau PVC Assainissement CR8 Ø200 (L=3.00m)", "category": "Bétons, Bordures & Tuyaux", "supplier": "PUM Plastiques Sète", "price_ht": 18.50, "unit": "ml", "stock": 600, "norm": "NF EN 1401 / Rigidité CR8", "description": "Canalisation PVC compact à joint pour réseau eaux usées et pluviales." },
+            { "id": "mat_15", "name": "Tube PEHD Gaz 100mm SDR11 Bande Jaune (4 bars)", "category": "Bétons, Bordures & Tuyaux", "supplier": "PUM Plastiques Sète", "price_ht": 22.00, "unit": "ml", "stock": 400, "norm": "NF EN 1555 / Gaz MPB", "description": "Tube polyéthylène haute densité pour distribution de gaz combustible." },
+            { "id": "mat_16", "name": "Grave Non Traitée GNT 0/31.5 Classe A Concassée", "category": "Bétons, Bordures & Tuyaux", "supplier": "Carrières du Languedoc", "price_ht": 16.50, "unit": "tonne", "stock": 3500, "norm": "NF EN 13285 / Guide GTR", "description": "Grave concassée pure pour couche de fondation et remblaiement de tranchée." },
+            { "id": "mat_17", "name": "Enrobé Bitumineux Chaud BBSG 0/10 Classe 3 (160°C)", "category": "Bétons, Bordures & Tuyaux", "supplier": "Enrobés du Sud", "price_ht": 82.00, "unit": "tonne", "stock": 800, "norm": "NF P98-150 / Roulement", "description": "Béton Bitumineux Semi-Grenu pour couche de roulement de chaussée." }
+        ]
+    }
+
+if __name__ == "__main__":
+    data = get_company_data()
+    print(f"Company data loaded successfully. Projects: {len(data['projects'])}, Fleet: {len(data['fleet'])}, Hierarchy: {len(data['hierarchy']['chefs'])}")

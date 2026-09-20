@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
+
 def get_js_part1():
-    return """
-<script>
+    return r"""<script>
     // ==========================================
     // 1. DATASETS INJECTION & ROBUST NORMALIZATION
     // ==========================================
@@ -24,7 +25,7 @@ def get_js_part1():
     companyData.projects = (companyData.projects || []).map(p => ({
         id: p.id || 'PRJ_01',
         name: p.name || 'Projet BTP',
-        client: p.client || 'Maître d\\'Ouvrage Public',
+        client: p.client || 'Maître d\'Ouvrage Public',
         location: p.location || 'Occitanie (34)',
         budget: Number(p.budget_total || p.budget || 500000),
         progress: Number(p.avancement_physique_pct || p.progress || 50),
@@ -33,11 +34,103 @@ def get_js_part1():
         site_chief: p.chef_chantier || p.site_chief || 'Alain MARTIN',
         start: p.date_debut || p.start || '2026-05-15',
         end: p.date_fin_prevue || p.end || '2026-10-30',
-        lots: p.lots || [
-            { lot: '01', name: 'Terrassement & Déblais', budget: (p.budget_total || 500000) * 0.25, progress: p.avancement_physique_pct || 75, status: 'En cours' },
-            { lot: '02', name: 'Assainissement EU/EP', budget: (p.budget_total || 500000) * 0.35, progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.9)), status: 'En cours' },
-            { lot: '03', name: 'Réseaux Secs & Élec', budget: (p.budget_total || 500000) * 0.2, progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.7)), status: 'En cours' },
-            { lot: '04', name: 'Voirie & Enrobés', budget: (p.budget_total || 500000) * 0.2, progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.4)), status: 'Préparation' }
+        timeline_steps: p.timeline_steps || [
+            { step: 1, name: "DICT & Piquetage 7 Couleurs", date: "15/05/2026", progress: 100, status: "Terminé", lot: "Lot 01" },
+            { step: 2, name: "Terrassement en déblai & Purge", date: "10/06/2026", progress: 100, status: "Terminé", lot: "Lot 01" },
+            { step: 3, name: "Pose Assainissement EU/EP", date: "15/07/2026", progress: 100, status: "Terminé", lot: "Lot 02" },
+            { step: 4, name: "Fourreaux Réseaux Secs", date: "15/08/2026", progress: 80, status: "En cours", lot: "Lot 04" },
+            { step: 5, name: "Pose Bordures & Caniveaux", date: "10/09/2026", progress: 60, status: "En cours", lot: "Lot 03" },
+            { step: 6, name: "Couche de Roulement BBSG", date: "15/10/2026", progress: 10, status: "À venir", lot: "Lot 03" },
+            { step: 7, name: "Réception OPR / DGD", date: "30/10/2026", progress: 0, status: "À venir", lot: "Clôture" }
+        ],
+        assigned_machinery: p.assigned_machinery || [
+            { name: "Pelle Liebherr R924 (24t)", type: "Terrassement", status: "Actif" },
+            { name: "Camion 8x4 Scania", type: "Transport", status: "Actif" }
+        ],
+        assigned_tools: p.assigned_tools || [
+            { name: "Laser Canalisateur Piper 200", type: "Topographie" },
+            { name: "Scie Diamant Stihl TS800", type: "Découpe" }
+        ],
+        assigned_materials: p.assigned_materials || [
+            { name: "Grave GNT 0/31.5 Classe A", qty: "4 200 tonnes", supplier: "Carrières du Languedoc" },
+            { name: "Bordures Béton T2 NF", qty: "850 ml", supplier: "Bétons Occitanie" }
+        ],
+        lots_breakdown: p.lots_breakdown || [
+            {
+                lot: '01',
+                name: 'Terrassement & Déblais',
+                budget: (p.budget_total || 500000) * 0.25,
+                progress: 100,
+                status: 'Terminé',
+                tech_steps: [
+                    "Décapage terre végétale épaisseur 20cm au scraper.",
+                    "Déblais grande masse en pleine masse à la pelle 24t.",
+                    "Traitement de sol à la chaux vive 2% (portance EV2 >= 50 MPa).",
+                    "Évacuation déblais en décharge agréée ISDI avec BSD."
+                ],
+                admin_steps: [
+                    "Récépissés DICT conformes (GRDF, Enedis, Orange).",
+                    "Arrêté municipal de restriction de circulation (30 km/h).",
+                    "Plan Particulier de Sécurité et Santé (PPSPS) validé.",
+                    "Procès-Verbal de réception de plateforme terrassement."
+                ]
+            },
+            {
+                lot: '02',
+                name: 'Assainissement & Eaux Pluviales',
+                budget: (p.budget_total || 500000) * 0.35,
+                progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.9)),
+                status: 'En cours',
+                tech_steps: [
+                    "Tranchée 1.80m avec blindage continu et lit de pose sable 4/10.",
+                    "Pose au laser des tuyaux béton armé Ø400 135A (pente 1.5%).",
+                    "Regards préfabriqués 1000x1000 avec cunettes hydrauliques.",
+                    "Remblaiement par couches 30cm GNT 0/31.5 au pilonneur."
+                ],
+                admin_steps: [
+                    "Agrément des fournitures par la Maîtrise d'Œuvre.",
+                    "Rapport d'épreuve d'étanchéité à l'air/eau Fascicule 70.",
+                    "Rapport d'inspection télévisée (ITV) caméra HD.",
+                    "Plans de récolement DAO levés en classe A."
+                ]
+            },
+            {
+                lot: '03',
+                name: 'Voirie, Bordures & Chaussée',
+                budget: (p.budget_total || 500000) * 0.2,
+                progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.6)),
+                status: 'En cours',
+                tech_steps: [
+                    "Couche de fondation GNT 0/31.5 ép. 25cm au rouleau V5.",
+                    "Pose sur semelle béton C25/30 de 850 ml bordures T2.",
+                    "Coulage îlot central en béton désactivé décoratif 6/10.",
+                    "Application BBSG 0/10 à 160°C au finisseur grande largeur."
+                ],
+                admin_steps: [
+                    "Rapport d'essais à la plaque Terrameter (EV2 > 120 MPa).",
+                    "Essais de compacité par laboratoire COFRAC.",
+                    "Contrôle d'uni longitudinal et transversal.",
+                    "Dossier des Ouvrages Exécutés (DOE) remis à la MOE."
+                ]
+            },
+            {
+                lot: '04',
+                name: 'Réseaux Secs & Éclairage',
+                budget: (p.budget_total || 500000) * 0.2,
+                progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.7)),
+                status: 'En cours',
+                tech_steps: [
+                    "Fourreaux TPC Ø110 rouge, vert et jaune sous trottoir.",
+                    "Grillage avertisseur normé 20cm au-dessus des gaines.",
+                    "Massifs béton armé 1.00m x 1.00m pour 12 candélabres LED.",
+                    "Raccordement au coffret télégestion."
+                ],
+                admin_steps: [
+                    "Contrôle d'isolement par organisme APAVE.",
+                    "Attestation de raccordement Enedis.",
+                    "Conformité Consuel pour éclairage public."
+                ]
+            }
         ],
         docs: [
             { name: 'CCTP_Voirie_Réseaux', type: 'pdf' },
@@ -48,96 +141,6 @@ def get_js_part1():
         ]
     }));
 
-    // Normalize fleet
-    companyData.fleet = (companyData.fleet || []).map(f => ({
-        id: f.id || 'EQ_01',
-        name: f.name || 'Engin Chantier',
-        type: f.type || 'Engin TP',
-        category: f.category || 'excavator',
-        status: f.status || f.statut || 'En opération',
-        assigned: f.current_project ? f.current_project.replace('projet_', '').toUpperCase() : (f.assigned || 'ZAC des Pins'),
-        operator: f.operator || 'M. Lopez',
-        hours: Number(f.horametre || f.hours || 1850),
-        vgp: f.vgp_date || f.vgp || '2026-11-15',
-        caces: f.caces_req || f.caces || 'CACES R482 Cat B1'
-    }));
-
-    // Normalize catalog (merge tools + materials)
-    const rawCatalog = [
-        ...(companyData.materials_catalog || []),
-        ...(companyData.tool_catalog || []),
-        ...(companyData.catalog || [])
-    ];
-
-    if (rawCatalog.length === 0) {
-        companyData.catalog = [
-            { id: 'mat_01', name: 'Bordures Béton Type T2 (100x20x28 cm)', category: 'materials', supplier: 'Bétons Occitanie', unit_price: 14.50, unit: 'ml', stock: 450, norm: 'NF EN 1340' },
-            { id: 'mat_02', name: 'Tampon Fonte Ductile D400 PAM REXEL Ø600', category: 'materials', supplier: 'Saint-Gobain PAM', unit_price: 145.00, unit: 'u', stock: 28, norm: 'NF EN 124 / 400 kN' },
-            { id: 'mat_03', name: 'Tuyau Fonte Ductile DN400 Integral (6m)', category: 'materials', supplier: 'Saint-Gobain PAM', unit_price: 115.00, unit: 'ml', stock: 180, norm: 'Fascicule 70-1' },
-            { id: 'mat_04', name: 'Grave Non Traitée GNT 0/31.5 Classe A', category: 'materials', supplier: 'Carrières Languedoc', unit_price: 16.50, unit: 'tonne', stock: 1250, norm: 'NF EN 13285' },
-            { id: 'tool_01', name: 'Laser Canalisateur Piper 200 Automatique', category: 'tools', supplier: 'Leica Geosystems', unit_price: 45.00, unit: 'jour', stock: 3, norm: 'Précision ±1.5mm' },
-            { id: 'tool_02', name: 'Découpeuse Béton Thermique Stihl TS800', category: 'tools', supplier: 'Stihl Pro BTP', unit_price: 35.00, unit: 'jour', stock: 6, norm: 'Disque Ø400 Diamant' },
-            { id: 'tool_03', name: 'Pénétromètre Dynamique Léger PANDA', category: 'tools', supplier: 'Sol Solution TP', unit_price: 80.00, unit: 'jour', stock: 2, norm: 'Norme NF P 94-105' },
-            { id: 'epi_01', name: 'Pack EPI Haute Visibilité & Casque Réfléchissant', category: 'safety', supplier: 'Protect BTP', unit_price: 85.00, unit: 'kit', stock: 45, norm: 'Classe 3 EN 20471' }
-        ];
-    } else {
-        companyData.catalog = rawCatalog.map((c, idx) => ({
-            id: c.id || `mat_${idx + 1}`,
-            name: c.name || 'Article BTP',
-            category: (c.category && c.category.includes('Engin')) ? 'tools' : (c.category || 'materials'),
-            supplier: c.fournisseur || c.supplier || 'Fournisseur Agréé TP',
-            unit_price: Number(c.prix_unitaire || (parseFloat((c.tarif_location_jour || '45').replace(/[^0-9.]/g, '')) || 45)),
-            unit: c.unit || (c.tarif_location_jour ? 'jour' : 'u'),
-            stock: c.stock ? (parseInt(c.stock) || 50) : 50,
-            norm: c.norme || c.caces || 'NF EN 1340 / CE'
-        }));
-    }
-
-    // Normalize suppliers
-    if (!companyData.suppliers || companyData.suppliers.length === 0) {
-        companyData.suppliers = [
-            { id: 'sup_01', name: 'Carrières & Granulats du Languedoc', specialty: 'Grave GNT 0/31.5, Gravillons 4/10', location: 'Frontignan (34)', distance_km: 14, quality_rating: 4.8 },
-            { id: 'sup_02', name: 'Bétons Occitanie Méditerranée', specialty: 'Bétons Prêts à l\\'Emploi C25/30 XF1', location: 'Sète / ZI Eaux Blanches', distance_km: 6, quality_rating: 4.9 },
-            { id: 'sup_03', name: 'Saint-Gobain PAM Canalisation', specialty: 'Tuyaux Fonte DN400, Tampons D400', location: 'Montpellier / Vendargues', distance_km: 28, quality_rating: 5.0 },
-            { id: 'sup_04', name: 'PUM Plastiques Sète', specialty: 'Tubes PVC CR8 Ø200, PEHD Gaz', location: 'Sète / Zone d\\'Activité', distance_km: 4, quality_rating: 4.7 },
-            { id: 'sup_05', name: 'Enrobés Bitumineux du Sud (Alès)', specialty: 'Enrobé BBSG 0/10 Classe 3', location: 'Alès / Gard', distance_km: 18, quality_rating: 4.8 }
-        ];
-    }
-
-    // Normalize HR hierarchy
-    companyData.hr_hierarchy = {
-        director: { name: "Laurent VIALA", role: "Directeur Général / Gérant TP", cert: "AIPR Concepteur • Ingénieur ESTP" },
-        conducteurs: [
-            {
-                name: "Sylvain CABROL",
-                role: "Conducteur de Travaux Principal VRD",
-                assigned: ["Giratoire RD906 Alès", "ZAC Littoral Sète"],
-                chefs: [
-                    { name: "Alain MARTIN", site: "Giratoire RD906 Alès", workers: ["M. Lopez (Pelle 24t)", "R. Garcia (Chargeur)", "P. Durand (Maçon VRD)", "T. Faure (Manoeuvre)"] },
-                    { name: "Marc GOMEZ", site: "ZAC Littoral Sète", workers: ["D. Blanc (Mecalac)", "P. Mercier (8x4)", "K. Benali (Canalisateur)", "A. Traoré (Poseur)"] }
-                ]
-            },
-            {
-                name: "Sophie LACOMBE",
-                role: "Conductrice de Travaux VRD & Aménagements",
-                assigned: ["Centre Ancien Pézenas", "Voie Verte Montpellier"],
-                chefs: [
-                    { name: "Karim BENALI", site: "Centre Ancien Pézenas", workers: ["S. Petit (Minipelle)", "T. Vidal (Hydrocureur)", "N. Roux (Paveur)", "J. Fabre (Manoeuvre)"] },
-                    { name: "David LEMOINE", site: "Voie Verte Montpellier", workers: ["F. Dumas (Compacteur)", "M. Giraud (Régleur Enrobé)", "L. Morin (Applicateur)"] }
-                ]
-            }
-        ]
-    };
-
-    // RDC entries
-    if (!reportsData.rdc_entries || reportsData.rdc_entries.length === 0) {
-        reportsData.rdc_entries = [
-            { id: 'RDC-0892', project: 'Giratoire RD906 Alès', date: '2026-09-18', chief: 'A. Martin', weather: 'Ensoleillé (24°C)', notes: 'Pose de 85 ml de bordures T2 et calage béton. Aucun aléa.', hours_mo: 35, hours_engins: 14 },
-            { id: 'RDC-0891', project: 'ZAC Littoral Sète', date: '2026-09-18', chief: 'M. Gomez', weather: 'Vent modéré (21°C)', notes: 'Blindage tranchée profonde 3.20m et pose 36 ml fonte DN400.', hours_mo: 42, hours_engins: 16 },
-            { id: 'RDC-0890', project: 'Centre Ancien Pézenas', date: '2026-09-17', chief: 'S. Lacombe', weather: 'Ensoleillé (25°C)', notes: 'Épreuves de pression collecteur PVC et remblaiement soigné.', hours_mo: 28, hours_engins: 7 }
-        ];
-    }
-
     // GLOBAL APP STATE
     let currentPerspective = 'patron';
     let currentNav = 'cockpit';
@@ -146,18 +149,24 @@ def get_js_part1():
     let currentAgendaWeekOffset = 0;
     let simulatorViewMode = 'radar';
     let isRadarLive = true;
+    let is4DSimPlaying = false;
+    let sim4DInterval = null;
     let currentScenarioId = 'scen_tranchee_vrd';
     let activeScenarioStepIdx = 0;
     let fleetFilter = 'all';
     let catalogFilter = 'all';
     let obsidianHeuristic = 'all';
     let sdpViewMode = 'dqe_tcd';
+    let activeGisLayer = 'dict';
+    let activeProjectModalId = 'projet_ales';
+    let activeProjectModalLotIdx = 0;
     let radarCanvas, radarCtx, radarAnimId;
     let cameraRotX = 30, cameraRotY = -45, cameraZoom = 1.0;
     let isDragging3D = false, lastMouseX = 0, lastMouseY = 0;
+    let webcamStream = null;
 
     // ==========================================
-    // 2. TECHNICAL SVG VECTOR ILLUSTRATIONS ENGINE
+    // 2. TECHNICAL SVG VECTOR ILLUSTRATIONS
     // ==========================================
     function getVehicleSVG(typeStr, nameStr) {
         const t = (typeStr + ' ' + (nameStr || '')).toLowerCase();
@@ -217,47 +226,54 @@ def get_js_part1():
 
     function getToolMaterialSVG(itemId, itemName) {
         const id = (itemId + ' ' + (itemName || '')).toLowerCase();
-        if (id.includes('bordure') || id.includes('mat_01') || id.includes('mat_02')) {
+        if (id.includes('bordure') || id.includes('mat_05') || id.includes('mat_06') || id.includes('mat_07')) {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <polygon points="40,95 170,95 220,50 90,50" fill="#94a3b8" stroke="#cbd5e1" stroke-width="2"/>
                 <polygon points="40,95 170,95 170,125 40,125" fill="#64748b" stroke="#334155" stroke-width="2"/>
                 <polygon points="170,95 220,50 220,80 170,125" fill="#475569" stroke="#1e293b" stroke-width="2"/>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Bordure Béton T2 / A2 NF</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Bordure Béton T2 / A2 / I2 NF</text>
             </svg>`;
-        } else if (id.includes('tampon') || id.includes('fonte') || id.includes('mat_03') || id.includes('mat_04')) {
+        } else if (id.includes('tampon') || id.includes('fonte') || id.includes('mat_11') || id.includes('mat_12')) {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <rect x="45" y="15" width="170" height="110" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
                 <circle cx="130" cy="70" r="42" fill="#0f172a" stroke="#94a3b8" stroke-width="3"/>
                 <text x="112" y="74" fill="#facc15" font-family="system-ui" font-weight="900" font-size="10">D 400</text>
-                <text x="15" y="15" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Tampon Fonte D400 PAM</text>
+                <text x="15" y="15" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Tampon Fonte D400 PAM Rexel</text>
             </svg>`;
-        } else if (id.includes('tuyau') || id.includes('mat_05') || id.includes('mat_06')) {
+        } else if (id.includes('tuyau') || id.includes('mat_13') || id.includes('mat_14') || id.includes('mat_15')) {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <rect x="50" y="45" width="170" height="45" rx="4" fill="#334155" stroke="#0284c7" stroke-width="2"/>
                 <rect x="25" y="38" width="30" height="58" rx="5" fill="#1e293b" stroke="#0284c7" stroke-width="2"/>
-                <text x="70" y="72" fill="#38bdf8" font-family="JetBrains Mono" font-size="10" font-weight="800">FONTE DN 400</text>
+                <text x="70" y="72" fill="#38bdf8" font-family="JetBrains Mono" font-size="10" font-weight="800">FONTE / PVC CR8</text>
                 <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Tuyau Assainissement</text>
             </svg>`;
-        } else if (id.includes('laser') || id.includes('piper')) {
+        } else if (id.includes('laser') || id.includes('piper') || id.includes('tool_01') || id.includes('tool_02')) {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <rect x="35" y="45" width="120" height="45" rx="8" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
                 <circle cx="155" cy="67" r="22" fill="#1e293b" stroke="#dc2626" stroke-width="2"/>
                 <circle cx="155" cy="67" r="7" fill="#10b981"/>
                 <line x1="160" y1="67" x2="240" y2="67" stroke="#10b981" stroke-width="2"/>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Laser Canalisateur Piper</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Laser Canalisateur Piper 200</text>
             </svg>`;
-        } else if (id.includes('scie') || id.includes('stihl')) {
+        } else if (id.includes('scie') || id.includes('stihl') || id.includes('tool_03') || id.includes('pilonneuse') || id.includes('tool_04')) {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <rect x="40" y="55" width="80" height="35" rx="5" fill="#ea580c" stroke="#c2410c" stroke-width="2"/>
                 <circle cx="175" cy="72" r="35" fill="#475569" stroke="#94a3b8" stroke-width="2"/>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Découpeuse Diamant Stihl</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Découpeuse Diamant Stihl TS800</text>
+            </svg>`;
+        } else if (id.includes('epi') || id.includes('casque') || id.includes('gilet') || id.includes('sig') || id.includes('mat_01') || id.includes('mat_02')) {
+            return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
+                <path d="M 40 55 C 40 30 95 30 95 55 Z" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+                <path d="M 120 40 L 180 40 L 195 105 L 105 105 Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+                <line x1="115" y1="70" x2="185" y2="70" stroke="#f8fafc" stroke-width="5"/>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Pack EPI Normé BTP Classe 3</text>
             </svg>`;
         } else {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <rect x="40" y="40" width="180" height="60" rx="6" fill="#1e293b" stroke="#06b6d4" stroke-width="2"/>
                 <circle cx="130" cy="70" r="18" fill="#06b6d4" fill-opacity="0.2"/>
                 <text x="130" y="75" fill="#f8fafc" font-size="14" text-anchor="middle">📦</text>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Fourniture / Outil TP</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Fourniture / Matériau TP</text>
             </svg>`;
         }
     }
@@ -306,6 +322,7 @@ def get_js_part1():
             { id: 'simulator', label: '🛰️ Watch Tower' },
             { id: 'fleet', label: '🚜 Flotte & Dispatch' },
             { id: 'catalog', label: '🛒 Commandes Matériaux' },
+            { id: 'hr', label: '👷 Équipes & RH' },
             { id: 'opbtp', label: '🦺 Signalétique OPBTP' },
             { id: 'safety', label: '🛡️ Sécurité & AIPR' },
             { id: 'rdc', label: '📋 Journal RDC' },
@@ -313,7 +330,8 @@ def get_js_part1():
             { id: 'procurement', label: '🛒 Fournisseurs' }
         ],
         'compagnon': [
-            { id: 'compagnon_mobile', label: '📱 Mode Terrain Mobile' },
+            { id: 'compagnon_mobile', label: '📱 Mode Terrain & Mon Planning' },
+            { id: 'planning', label: '📅 Planning Général' },
             { id: 'opbtp', label: '🦺 Balisage OPBTP' },
             { id: 'safety', label: '🛡️ Règles Sécurité' },
             { id: 'rdc', label: '📋 Saisie RDC' }
@@ -352,13 +370,13 @@ def get_js_part1():
 
         currentNav = tabId;
 
-        // Auto-render tab contents on switch
         try {
             if (tabId === 'projects_hub') renderProjectsHub();
             if (tabId === 'planning') {
                 if (planningViewMode.startsWith('agenda')) renderPlanningAgenda();
                 else renderPlanningGantt();
             }
+            if (tabId === 'compagnon_mobile') renderCompagnonPlanning();
             if (tabId === 'fleet') renderFleetGrid();
             if (tabId === 'catalog') renderCatalogGrid();
             if (tabId === 'obsidian') setTimeout(initObsidianGraph, 50);
@@ -374,6 +392,7 @@ def get_js_part1():
                 else renderSdpCards();
             }
             if (tabId === 'opbtp') calculateSignage();
+            if (tabId === 'safety') setTimeout(() => setAiprSituation('gaz'), 50);
             if (tabId === 'rdc') renderRdcTable();
             if (tabId === 'procurement') renderProcurement();
             if (tabId === 'ledger') renderLedger();
@@ -387,11 +406,9 @@ def get_js_part1():
         if (dock) dock.scrollBy({ left: offset, behavior: 'smooth' });
     }
 
-    // MODALS
     function openModal(id) { document.getElementById(id)?.classList.add('active'); }
     function closeModal(id) { document.getElementById(id)?.classList.remove('active'); }
 
-    // TACTICAL WHEEL
     function toggleTacticalWheel() {
         document.getElementById('tactical-wheel-menu')?.classList.toggle('active');
     }
@@ -401,14 +418,13 @@ def get_js_part1():
         switchNav(actionId);
     }
 
-    // SIMULATED INSTANT FILE DOWNLOADER
     function downloadProjectDoc(docName, projName, fileType) {
-        const content = `=== DOCUMENT OFFICIEL BTP ===\\nChantier : ${projName || 'Travaux Publics'}\\nDocument : ${docName}\\nFormat : ${fileType || 'PDF'}\\nDate de génération : ${new Date().toISOString()}\\nCertification d'intégrité SHA-256 : ${Math.random().toString(36).substring(2)}${Math.random().toString(36).substring(2)}\\n\\nCe fichier est conforme aux prescriptions du CCTP Lot Voirie / Réseaux et aux normes NF/EN applicables.`;
+        const content = `=== DOSSIER OFFICIEL BTP ===\nChantier : ${projName || 'Travaux Publics'}\nDocument : ${docName}\nFormat : ${fileType || 'PDF'}\nDate : ${new Date().toISOString()}\nCertification SHA-256 : ${Math.random().toString(36).substring(2)}\n\nConforme aux prescriptions CCTP et normes NF/EN.`;
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${(projName || 'Chantier').replace(/\\s+/g, '_')}_${docName.replace(/\\s+/g, '_')}.${fileType || 'pdf'}`;
+        a.download = `${(projName || 'Chantier').replace(/\s+/g, '_')}_${docName.replace(/\s+/g, '_')}.${fileType || 'pdf'}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -419,181 +435,421 @@ def get_js_part1():
     function downloadDoc(docName) {
         downloadProjectDoc(docName, 'Dossier_CCTP_Global', 'md');
     }
-"""
 
-def get_js_part1_continued():
-    return """
     // ==========================================
-    // 5. PROJECTS HUB ENGINE & MODAL
+    // 5. PROJECTS HUB & DETAILED PROJECT MODAL
     // ==========================================
     function renderProjectsHub() {
         const grid = document.getElementById('projects-grid');
-        if (!grid || !companyData.projects) return;
+        if (!grid) return;
 
-        grid.innerHTML = companyData.projects.map(p => `
-            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden;">
-                <div style="position:absolute; top:0; left:0; width:6px; height:100%; background:${p.status === 'En cours' ? 'var(--emerald)' : (p.status === 'Préparation' ? 'var(--amber)' : 'var(--blue)')};"></div>
+        const projects = companyData.projects || [];
+        grid.innerHTML = projects.map(p => `
+            <div class="card" style="border: 1px solid rgba(51,65,85,0.8); background: rgba(15,23,42,0.95); display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
-                        <span class="badge ${p.status === 'En cours' ? 'badge-success' : (p.status === 'Préparation' ? 'badge-warning' : 'badge-info')}">${p.status}</span>
-                        <span style="font-family:'JetBrains Mono'; font-weight:700; font-size:1.1rem; color:var(--emerald);">${(p.budget || 500000).toLocaleString()} € HT</span>
-                    </div>
-                    <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:0.25rem; color:#f8fafc;">${p.name}</h3>
-                    <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">📍 ${p.location} &nbsp;|&nbsp; 🏢 Client : <strong style="color:#e2e8f0;">${p.client}</strong></div>
-
-                    <div style="margin-bottom:1rem;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:0.35rem;">
-                            <span style="color:#94a3b8;">Avancement physique</span>
-                            <span style="font-family:'JetBrains Mono'; font-weight:700; color:#38bdf8;">${p.progress}%</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <div>
+                            <span class="badge badge-info" style="font-size: 0.7rem; font-family: 'JetBrains Mono';">${p.id}</span>
+                            <h3 style="font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin-top: 4px;">${p.name}</h3>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">📍 ${p.location} • MOA: <strong>${p.client}</strong></div>
                         </div>
-                        <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%; background:linear-gradient(90deg, #3b82f6, #06b6d4);"></div></div>
+                        <span class="badge badge-success">${p.status}</span>
                     </div>
 
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.8rem; background:rgba(15,23,42,0.6); padding:0.6rem; border-radius:6px; border:1px solid rgba(51,65,85,0.4); margin-bottom:1rem;">
-                        <div><span style="color:#64748b;">Conducteur :</span><br><strong style="color:#f1f5f9;">${p.manager}</strong></div>
-                        <div><span style="color:#64748b;">Chef de chantier :</span><br><strong style="color:#f1f5f9;">${p.site_chief || 'Équipe interne'}</strong></div>
-                        <div><span style="color:#64748b;">Début :</span><br><span style="font-family:'JetBrains Mono'; color:#cbd5e1;">${p.start}</span></div>
-                        <div><span style="color:#64748b;">Fin prév. :</span><br><span style="font-family:'JetBrains Mono'; color:#cbd5e1;">${p.end}</span></div>
+                    <!-- PROGRESS BAR -->
+                    <div style="margin: 0.75rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; margin-bottom: 3px;">
+                            <span>Avancement Global</span>
+                            <span style="font-weight: 700; color: var(--emerald);">${p.progress}%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="height: 8px;">
+                            <div class="progress-bar-fill" style="width: ${p.progress}%;"></div>
+                        </div>
                     </div>
 
-                    <div>
-                        <div style="font-size:0.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Documents d'exécution & CCTP</div>
-                        <div style="display:flex; flex-wrap:wrap; gap:0.35rem;">
-                            ${(p.docs || []).map(d => `
-                                <button class="btn btn-secondary" style="padding:0.25rem 0.6rem; font-size:0.75rem; background:rgba(30,41,59,0.8); border:1px solid rgba(51,65,85,0.7);" onclick="downloadProjectDoc('${d.name.replace(/'/g, "\\\\'")}', '${p.name.replace(/'/g, "\\\\'")}', '${d.type}')">
-                                    📄 ${d.name} <span style="opacity:0.6; font-size:0.65rem;">(${d.type.toUpperCase()})</span>
-                                </button>
-                            `).join('')}
+                    <!-- KEY METRICS -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; background: rgba(30,41,59,0.5); padding: 0.6rem; border-radius: 6px; font-size: 0.75rem; margin-bottom: 0.75rem;">
+                        <div><span style="color: #64748b;">Budget Total:</span> <strong style="color: var(--amber);">${(p.budget).toLocaleString('fr-FR')} €</strong></div>
+                        <div><span style="color: #64748b;">Conducteur:</span> <strong>${p.manager}</strong></div>
+                        <div><span style="color: #64748b;">Chef Chantier:</span> <strong>${p.site_chief}</strong></div>
+                        <div><span style="color: #64748b;">Livraison:</span> <strong>${p.end}</strong></div>
+                    </div>
+
+                    <!-- ASSIGNED ASSETS PILLS -->
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Engins & Outillage Mobilisés :</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                            ${(p.assigned_machinery || []).map(m => `<span class="badge badge-warning" style="font-size: 0.65rem;">🚜 ${m.name}</span>`).join('')}
+                            ${(p.assigned_tools || []).map(t => `<span class="badge badge-info" style="font-size: 0.65rem;">⚙️ ${t.name}</span>`).join('')}
                         </div>
                     </div>
                 </div>
 
-                <div style="margin-top:1.25rem; padding-top:0.75rem; border-top:1px solid rgba(51,65,85,0.4); display:flex; gap:0.5rem;">
-                    <button class="btn btn-primary" style="flex:1; font-size:0.8rem;" onclick="openProjectModal('${p.id}')">
-                        🔍 Fiche Complète & Lots
-                    </button>
-                    <button class="btn btn-secondary" style="font-size:0.8rem;" onclick="switchNav('planning'); setPlanningProjectFilter('${p.id}');">
-                        📅 Planning
-                    </button>
+                <div>
+                    <!-- DOWNLOADABLE PIECES -->
+                    <div style="font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Dossier Marché Téléchargeable :</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1rem;">
+                        ${(p.docs || []).map(d => `
+                            <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="downloadProjectDoc('${d.name}', '${p.name}', '${d.type}')">
+                                📄 ${d.name} (.${d.type})
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; border-top: 1px solid rgba(51,65,85,0.5); padding-top: 0.75rem;">
+                        <button class="btn btn-primary" style="flex: 1; font-size: 0.85rem;" onclick="openProjectModal('${p.id}')">🔍 Fiche Complète, SIG & Lots</button>
+                        <button class="btn btn-secondary" style="font-size: 0.85rem;" onclick="switchNav('planning')">📅 Planning</button>
+                    </div>
                 </div>
             </div>
         `).join('');
     }
 
     function openProjectModal(projectId) {
-        const p = (companyData.projects || []).find(x => x.id === projectId) || companyData.projects[0];
-        if (!p) return;
+        activeProjectModalId = projectId;
+        activeProjectModalLotIdx = 0;
+        const project = (companyData.projects || []).find(p => p.id === projectId) || (companyData.projects || [])[0];
+        if (!project) return;
 
         const body = document.getElementById('project-modal-body');
         if (!body) return;
 
         body.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <!-- HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(51,65,85,0.7); padding-bottom: 0.75rem;">
                 <div>
-                    <span class="badge ${p.status === 'En cours' ? 'badge-success' : 'badge-warning'}">${p.status}</span>
-                    <h2 style="font-size:1.75rem; font-weight:900; margin-top:0.35rem; color:#f8fafc;">${p.name}</h2>
-                    <p style="color:#94a3b8; font-size:0.9rem;">📍 ${p.location} &nbsp;|&nbsp; Maître d'Ouvrage : <strong style="color:#e2e8f0;">${p.client}</strong></p>
+                    <span class="badge badge-info" style="font-size: 0.75rem; font-family: 'JetBrains Mono';">${project.id}</span>
+                    <h2 style="font-size: 1.4rem; font-weight: 900; color: #38bdf8; margin-top: 4px;">${project.name}</h2>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">📍 ${project.location} • Client : <strong>${project.client}</strong> • Budget : <strong>${(project.budget).toLocaleString('fr-FR')} € HT</strong></div>
                 </div>
-                <div style="text-align:right;">
-                    <div style="font-size:0.8rem; color:#94a3b8;">Montant du Marché HT</div>
-                    <div style="font-size:1.75rem; font-weight:900; color:var(--emerald); font-family:'JetBrains Mono';">${(p.budget || 500000).toLocaleString()} €</div>
-                </div>
-            </div>
-
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-                <div style="background:rgba(15,23,42,0.8); padding:1rem; border-radius:8px; border:1px solid rgba(51,65,85,0.6);">
-                    <div style="font-size:0.75rem; color:#64748b;">CONDUCTEUR DE TRAVAUX</div>
-                    <div style="font-weight:700; font-size:1rem; color:#f8fafc; margin-top:0.25rem;">${p.manager}</div>
-                </div>
-                <div style="background:rgba(15,23,42,0.8); padding:1rem; border-radius:8px; border:1px solid rgba(51,65,85,0.6);">
-                    <div style="font-size:0.75rem; color:#64748b;">CHEF DE CHANTIER</div>
-                    <div style="font-weight:700; font-size:1rem; color:#f8fafc; margin-top:0.25rem;">${p.site_chief || 'Équipe A'}</div>
-                </div>
-                <div style="background:rgba(15,23,42,0.8); padding:1rem; border-radius:8px; border:1px solid rgba(51,65,85,0.6);">
-                    <div style="font-size:0.75rem; color:#64748b;">PÉRIODE TRAVAUX</div>
-                    <div style="font-weight:700; font-size:0.95rem; color:#38bdf8; margin-top:0.25rem; font-family:'JetBrains Mono';">${p.start} ➜ ${p.end}</div>
-                </div>
-                <div style="background:rgba(15,23,42,0.8); padding:1rem; border-radius:8px; border:1px solid rgba(51,65,85,0.6);">
-                    <div style="font-size:0.75rem; color:#64748b;">AVANCEMENT GLOBAL</div>
-                    <div style="font-weight:700; font-size:1.2rem; color:var(--emerald); margin-top:0.25rem; font-family:'JetBrains Mono';">${p.progress}%</div>
+                <div style="text-align: right;">
+                    <span class="badge badge-success" style="font-size: 0.85rem;">Statut : ${project.status}</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Livraison prévue : <strong>${project.end}</strong></div>
                 </div>
             </div>
 
-            <h3 style="font-size:1.1rem; font-weight:800; color:#38bdf8; margin-bottom:0.75rem;">📦 Lots Techniques & Décomposition</h3>
-            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(51,65,85,0.5); border-radius:8px; overflow:hidden; margin-bottom:1.5rem;">
-                <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-                    <thead>
-                        <tr style="background:rgba(30,41,59,0.8); color:#94a3b8; text-align:left;">
-                            <th style="padding:0.75rem;">Lot</th>
-                            <th style="padding:0.75rem;">Désignation</th>
-                            <th style="padding:0.75rem;">Budget Prév.</th>
-                            <th style="padding:0.75rem;">Avancement</th>
-                            <th style="padding:0.75rem;">Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${(p.lots || [
-                            { lot: '01', name: 'Terrassement & Déblais', budget: (p.budget || 500000) * 0.25, progress: p.progress, status: 'En cours' },
-                            { lot: '02', name: 'Assainissement EU/EP', budget: (p.budget || 500000) * 0.35, progress: Math.min(100, Math.round(p.progress * 0.9)), status: 'En cours' },
-                            { lot: '03', name: 'Réseaux Secs (AEP / Élec / Télécom)', budget: (p.budget || 500000) * 0.2, progress: Math.min(100, Math.round(p.progress * 0.7)), status: 'En cours' },
-                            { lot: '04', name: 'Voirie & Enrobés', budget: (p.budget || 500000) * 0.2, progress: Math.min(100, Math.round(p.progress * 0.4)), status: 'Préparation' }
-                        ]).map(l => `
-                            <tr style="border-top:1px solid rgba(51,65,85,0.3);">
-                                <td style="padding:0.75rem; font-weight:700; color:#38bdf8;">Lot ${l.lot}</td>
-                                <td style="padding:0.75rem; font-weight:600; color:#f8fafc;">${l.name}</td>
-                                <td style="padding:0.75rem; font-family:'JetBrains Mono'; font-weight:700; color:var(--emerald);">${Math.round(l.budget).toLocaleString()} €</td>
-                                <td style="padding:0.75rem;">
-                                    <div style="display:flex; align-items:center; gap:0.5rem;">
-                                        <div class="progress-bar" style="flex:1; height:6px;"><div class="progress-fill" style="width:${l.progress}%; background:#38bdf8;"></div></div>
-                                        <span style="font-family:'JetBrains Mono'; font-size:0.75rem;">${l.progress}%</span>
-                                    </div>
-                                </td>
-                                <td style="padding:0.75rem;"><span class="badge ${l.progress >= 90 ? 'badge-success' : 'badge-info'}">${l.status}</span></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-
-            <h3 style="font-size:1.1rem; font-weight:800; color:#38bdf8; margin-bottom:0.75rem;">📄 Documents Contractuels & Plans Disponibles</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem;">
-                ${(p.docs || []).map(d => `
-                    <div style="background:rgba(30,41,59,0.5); border:1px solid rgba(51,65,85,0.6); padding:0.85rem; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <div style="font-weight:700; font-size:0.85rem; color:#f8fafc;">${d.name}</div>
-                            <div style="font-size:0.75rem; color:#64748b;">Format ${d.type.toUpperCase()} • Validé MOE</div>
-                        </div>
-                        <button class="btn btn-primary" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="downloadProjectDoc('${d.name.replace(/'/g, "\\\\'")}', '${p.name.replace(/'/g, "\\\\'")}', '${d.type}')">
-                            📥 Ouvrir
-                        </button>
+            <!-- 1. BARRE DE PROGRESSION DU CHANTIER / LIGNE TEMPORELLE AVEC NOEUDS ÉTAPES -->
+            <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(51,65,85,0.8); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #f8fafc; text-transform: uppercase;">
+                        ⏳ Progression Chronologique & Nœuds d'Étapes VRD
                     </div>
-                `).join('')}
+                    <span class="badge badge-success" style="font-size: 0.8rem;">Avancement Global : ${project.progress}%</span>
+                </div>
+
+                <!-- HORIZONTAL NODE TIMELINE -->
+                <div style="position: relative; padding: 1.5rem 0.5rem 0.5rem; overflow-x: auto;">
+                    <div style="position: absolute; top: 38px; left: 30px; right: 30px; height: 4px; background: rgba(51,65,85,0.8); z-index: 1;">
+                        <div style="height: 100%; width: ${project.progress}%; background: linear-gradient(90deg, #10b981, #38bdf8); border-radius: 2px;"></div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; position: relative; z-index: 2; min-width: 650px;">
+                        ${(project.timeline_steps || []).map((st, idx) => {
+                            const isDone = st.progress === 100;
+                            const isInProgress = st.progress > 0 && st.progress < 100;
+                            const nodeBg = isDone ? '#10b981' : (isInProgress ? '#38bdf8' : '#1e293b');
+                            const nodeBorder = isDone ? '#059669' : (isInProgress ? '#0284c7' : '#475569');
+                            const nodeTextColor = isDone ? '#0f172a' : '#f8fafc';
+                            return `
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 90px; text-align: center;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: ${nodeBg}; border: 3px solid ${nodeBorder}; color: ${nodeTextColor}; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                                        ${isDone ? '✓' : st.step}
+                                    </div>
+                                    <div style="font-size: 0.72rem; font-weight: 800; color: ${isInProgress ? '#38bdf8' : '#f8fafc'}; margin-top: 8px; line-height: 1.2;">
+                                        ${st.name}
+                                    </div>
+                                    <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 2px;">${st.date}</div>
+                                    <span class="badge ${isDone ? 'badge-success' : (isInProgress ? 'badge-info' : 'badge-warning')}" style="font-size: 0.6rem; padding: 1px 4px; margin-top: 4px;">
+                                        ${st.progress}%
+                                    </span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SATELLITE & MULTI-LAYER GIS MAP CANVAS -->
+            <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(51,65,85,0.8); border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <div>
+                        <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; text-transform: uppercase;">
+                            🗺️ SIG Chantier : Image Satellite HD & Calques Réglementaires
+                        </div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Délimitation géoréférencée, réseaux DICT classe A et points d'intérêt</div>
+                    </div>
+
+                    <!-- GIS LAYER BUTTONS -->
+                    <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                        <button class="btn-secondary gis-layer-btn ${activeGisLayer === 'dict' ? 'active' : ''}" onclick="switchGisLayer('dict')">⚡ DICT Réseaux</button>
+                        <button class="btn-secondary gis-layer-btn ${activeGisLayer === 'satellite' ? 'active' : ''}" onclick="switchGisLayer('satellite')">🛰️ Satellite HD</button>
+                        <button class="btn-secondary gis-layer-btn ${activeGisLayer === 'osm' ? 'active' : ''}" onclick="switchGisLayer('osm')">🗺️ Cadastre / OSM</button>
+                        <button class="btn-secondary gis-layer-btn ${activeGisLayer === '3d' ? 'active' : ''}" onclick="switchGisLayer('3d')">📐 3D Isométrique</button>
+                        <button class="btn-secondary gis-layer-btn ${activeGisLayer === 'ar' ? 'active' : ''}" onclick="switchGisLayer('ar')">🥽 AR / VR</button>
+                        <button class="btn-secondary gis-layer-btn ${activeGisLayer === 'pov' ? 'active' : ''}" onclick="switchGisLayer('pov')">📹 POV Chantier</button>
+                    </div>
+                </div>
+
+                <!-- GIS CANVAS CONTAINER -->
+                <div style="height: 280px; background: #000; border: 1px solid rgba(56,189,248,0.4); border-radius: 6px; position: relative; overflow: hidden;">
+                    <canvas id="project-gis-canvas" style="width: 100%; height: 100%;"></canvas>
+                    
+                    <!-- LAYER INFO HUD OVERLAY -->
+                    <div id="gis-layer-hud" style="position: absolute; bottom: 8px; left: 8px; background: rgba(15,23,42,0.9); padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">
+                        CALQUE : DICT RÉSEAUX (GAZ MPB • ÉLEC HTA • AEP • FIBRE)
+                    </div>
+                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(15,23,42,0.9); padding: 4px 8px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--emerald);">
+                        GPS: 44.1284° N, 4.0833° E • Précision RTK ±1cm
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ASSIGNED ASSETS (ENGINS, OUTILLAGE, MATÉRIAUX) -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(51,65,85,0.6); padding: 0.75rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--amber); margin-bottom: 0.5rem;">🚜 Machines & Engins Assignés</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        ${(project.assigned_machinery || []).map(m => `
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; background: rgba(30,41,59,0.6); padding: 4px 8px; border-radius: 4px;">
+                                <span>${m.name}</span>
+                                <span class="badge badge-warning" style="font-size: 0.65rem;">${m.type}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(51,65,85,0.6); padding: 0.75rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.5rem;">⚙️ Petit Outillage & Lasers</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        ${(project.assigned_tools || []).map(t => `
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; background: rgba(30,41,59,0.6); padding: 4px 8px; border-radius: 4px;">
+                                <span>${t.name}</span>
+                                <span class="badge badge-info" style="font-size: 0.65rem;">${t.type}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(51,65,85,0.6); padding: 0.75rem; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--emerald); margin-bottom: 0.5rem;">🧱 Matériaux & Consommables Livrés</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        ${(project.assigned_materials || []).map(mat => `
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; background: rgba(30,41,59,0.6); padding: 4px 8px; border-radius: 4px;">
+                                <span>${mat.name}</span>
+                                <span style="color: var(--emerald); font-weight: 700;">${mat.qty}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. LOTS BREAKDOWN & TECHNICAL/ADMINISTRATIVE EXECUTION STEPS -->
+            <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(51,65,85,0.8); border-radius: 8px; padding: 1.25rem;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #f8fafc; text-transform: uppercase; margin-bottom: 0.75rem;">
+                    📑 Décomposition des Lots du Marché & Fiches d'Exécution
+                </div>
+
+                <!-- LOT SELECTOR TABS -->
+                <div style="display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    ${(project.lots_breakdown || []).map((lot, idx) => `
+                        <button class="btn-secondary project-lot-tab-btn ${idx === activeProjectModalLotIdx ? 'active' : ''}" onclick="selectProjectModalLot(${idx})">
+                            Lot ${lot.lot} : ${lot.name} (${lot.progress}%)
+                        </button>
+                    `).join('')}
+                </div>
+
+                <!-- SELECTED LOT DETAILS -->
+                <div id="project-lot-content-area">
+                    <!-- Populated dynamically by selectProjectModalLot() -->
+                </div>
             </div>
         `;
+
         openModal('project-details-modal');
+        setTimeout(() => {
+            renderGisCanvas();
+            selectProjectModalLot(0);
+        }, 50);
+    }
+
+    function switchGisLayer(layerName) {
+        activeGisLayer = layerName;
+        document.querySelectorAll('.gis-layer-btn').forEach(b => b.classList.remove('active'));
+        const activeBtn = Array.from(document.querySelectorAll('.gis-layer-btn')).find(b => b.textContent.toLowerCase().includes(layerName));
+        if (activeBtn) activeBtn.classList.add('active');
+
+        const hud = document.getElementById('gis-layer-hud');
+        if (hud) {
+            if (layerName === 'dict') hud.textContent = 'CALQUE : DICT RÉSEAUX (GAZ MPB • ÉLEC HTA • AEP • FIBRE)';
+            if (layerName === 'satellite') hud.textContent = 'CALQUE : IMAGERIE SATELLITE HD OCCITANIE 10CM/PX';
+            if (layerName === 'osm') hud.textContent = 'CALQUE : OPENSTREETMAP / PARCELLAIRE CADASTRE DGI';
+            if (layerName === '3d') hud.textContent = 'CALQUE : MNT MODÈLE NUMÉRIQUE DE TERRAIN 3D LIDAR';
+            if (layerName === 'ar') hud.textContent = 'CALQUE : RÉALITÉ AUGMENTÉE (AR) RÉSEAUX ENTERRÉS';
+            if (layerName === 'pov') hud.textContent = 'CALQUE : POV CAMÉRA CHANTIER PTZ TEMPS RÉEL';
+        }
+
+        renderGisCanvas();
+    }
+
+    function renderGisCanvas() {
+        const canvas = document.getElementById('project-gis-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.parentElement.clientWidth || 700;
+        const h = canvas.parentElement.clientHeight || 280;
+        canvas.width = w;
+        canvas.height = h;
+
+        if (activeGisLayer === 'satellite') {
+            ctx.fillStyle = '#1c2826';
+            ctx.fillRect(0, 0, w, h);
+            for (let i = 0; i < 60; i++) {
+                ctx.fillStyle = i % 2 === 0 ? 'rgba(34, 56, 45, 0.4)' : 'rgba(50, 40, 30, 0.3)';
+                ctx.fillRect(Math.random() * w, Math.random() * h, Math.random() * 80 + 20, Math.random() * 80 + 20);
+            }
+        } else if (activeGisLayer === 'osm') {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, w, h);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            for (let x = 40; x < w; x += 80) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 30; y < h; y += 60) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+        } else {
+            ctx.fillStyle = '#090d16';
+            ctx.fillRect(0, 0, w, h);
+        }
+
+        // Draw Site Boundary Polygon
+        ctx.strokeStyle = '#eab308';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        ctx.moveTo(w * 0.15, h * 0.25);
+        ctx.lineTo(w * 0.75, h * 0.2);
+        ctx.lineTo(w * 0.85, h * 0.75);
+        ctx.lineTo(w * 0.25, h * 0.85);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(234, 179, 8, 0.08)';
+        ctx.fill();
+
+        ctx.fillStyle = '#eab308';
+        ctx.font = 'bold 11px system-ui';
+        ctx.fillText('🚧 EMPRISE CHANTIER AUTORISÉE', w * 0.18, h * 0.32);
+
+        // Draw DICT Networks
+        if (activeGisLayer === 'dict' || activeGisLayer === 'ar' || activeGisLayer === 'satellite') {
+            ctx.strokeStyle = '#eab308';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.1, h * 0.5);
+            ctx.lineTo(w * 0.9, h * 0.5);
+            ctx.stroke();
+            ctx.fillStyle = '#eab308';
+            ctx.fillText('⚡ GAZ MPB PEHD Ø110 (Piquetage J+1)', w * 0.45, h * 0.48);
+
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.2, h * 0.15);
+            ctx.lineTo(w * 0.8, h * 0.85);
+            ctx.stroke();
+            ctx.fillStyle = '#ef4444';
+            ctx.fillText('🔴 HTA 20kV ENEDIS', w * 0.6, h * 0.7);
+
+            ctx.strokeStyle = '#0284c7';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.15, h * 0.7);
+            ctx.lineTo(w * 0.85, h * 0.35);
+            ctx.stroke();
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('💧 AEP Fonte Ø150', w * 0.2, h * 0.65);
+        }
+
+        // Machinery Marker
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.arc(w * 0.48, h * 0.4, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 10px monospace';
+        ctx.fillText('🚜 Pelle R924 (RTK)', w * 0.5, h * 0.39);
+
+        // North Arrow
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.moveTo(w - 25, 25);
+        ctx.lineTo(w - 30, 45);
+        ctx.lineTo(w - 20, 45);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('N', w - 28, 20);
+    }
+
+    function selectProjectModalLot(lotIdx) {
+        activeProjectModalLotIdx = lotIdx;
+        document.querySelectorAll('.project-lot-tab-btn').forEach((b, i) => {
+            b.classList.toggle('active', i === lotIdx);
+        });
+
+        const project = (companyData.projects || []).find(p => p.id === activeProjectModalId) || (companyData.projects || [])[0];
+        const lot = (project.lots_breakdown || [])[lotIdx];
+        const area = document.getElementById('project-lot-content-area');
+        if (!lot || !area) return;
+
+        area.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="background: rgba(30,41,59,0.7); border: 1px solid rgba(56,189,248,0.4); padding: 1rem; border-radius: 6px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.6rem;">
+                        <span style="font-weight: 800; color: #38bdf8; font-size: 0.85rem;">🔧 Étapes d'Exécution Techniques & Tolérances</span>
+                        <span class="badge badge-info" style="font-size:0.65rem;">Lot ${lot.lot}</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem; color: #cbd5e1; line-height: 1.6;">
+                        ${(lot.tech_steps || []).map(st => `<li>${st}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div style="background: rgba(30,41,59,0.7); border: 1px solid rgba(16,185,129,0.4); padding: 1rem; border-radius: 6px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.6rem;">
+                        <span style="font-weight: 800; color: var(--emerald); font-size: 0.85rem;">📋 Démarches Administratives & Réglementaires</span>
+                        <span class="badge badge-success" style="font-size:0.65rem;">Conformité MOE/MOA</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.8rem; color: #cbd5e1; line-height: 1.6;">
+                        ${(lot.admin_steps || []).map(st => `<li>${st}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
     }
 
     // ==========================================
-    // 6. PLANNING GANTT & AGENDA ENGINE
+    // 6. PLANNING ENGINE (AGENDA & GANTT & COMPAGNON)
     // ==========================================
-    function setPlanningView(mode) {
+    function setPlanningViewMode(mode) {
         planningViewMode = mode;
         document.querySelectorAll('.planning-mode-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-plan-${mode}`)?.classList.add('active');
+        document.getElementById('btn-plan-' + mode)?.classList.add('active');
 
-        const agendaEl = document.getElementById('planning-agenda-view');
-        const ganttEl = document.getElementById('planning-gantt-view');
-        if (agendaEl) agendaEl.style.display = (mode.startsWith('agenda')) ? 'block' : 'none';
-        if (ganttEl) ganttEl.style.display = (mode === 'gantt') ? 'block' : 'none';
-
-        if (mode.startsWith('agenda')) {
+        const agendaView = document.getElementById('planning-agenda-view');
+        const ganttView = document.getElementById('planning-gantt-view');
+        if (mode === 'agenda_week') {
+            if (agendaView) agendaView.style.display = 'block';
+            if (ganttView) ganttView.style.display = 'none';
             renderPlanningAgenda();
         } else {
+            if (agendaView) agendaView.style.display = 'none';
+            if (ganttView) ganttView.style.display = 'block';
             renderPlanningGantt();
         }
     }
 
-    function shiftAgendaWeek(delta) {
+    function changeAgendaWeek(delta) {
         currentAgendaWeekOffset += delta;
         renderPlanningAgenda();
     }
@@ -603,14 +859,64 @@ def get_js_part1_continued():
         renderPlanningAgenda();
     }
 
-    function setPlanningProjectFilter(projId) {
-        const select = document.getElementById('planning-project-select');
-        if (select) {
-            select.value = projId;
-            if (planningViewMode.startsWith('agenda')) renderPlanningAgenda();
-            else renderPlanningGantt();
+    const agendaTeamsData = [
+        {
+            team_id: 'team_a',
+            team_name: 'Équipe VRD A (Mamadou Traoré)',
+            chief: 'Mamadou TRAORÉ',
+            site: 'Giratoire RD906 Alès',
+            size: 5,
+            schedule: [
+                { id: 'tsk_101', day: 'Lundi', task: 'Pose bordures T2 Giratoire Alès', project: 'Giratoire RD906 Alès', color: '#0284c7', hours: '07h30 - 16h30', volume: '120 ml', progress: 100, team: 'M. Traoré + 4 ouvriers', gear: 'Pelle Liebherr R924, Laser Piper 200', safety: 'Port gants anti-coupure et chaussures S3.' },
+                { id: 'tsk_102', day: 'Mardi', task: 'Calage béton C25/30 semelle bordures', project: 'Giratoire RD906 Alès', color: '#0284c7', hours: '07h30 - 16h30', volume: '24 m³', progress: 85, team: 'M. Traoré + 4 ouvriers', gear: 'Camion Toupie, Aiguille vibrante', safety: 'Lunettes de protection projection laitance.' },
+                { id: 'tsk_103', day: 'Mercredi', task: 'Terrassement tranchée assainissement EP', project: 'Giratoire RD906 Alès', color: '#eab308', hours: '07h30 - 16h30', volume: '45 ml (prof 2.20m)', progress: 60, team: 'M. Traoré + Pelleur', gear: 'Pelle Liebherr R924, Caisson blindage', safety: 'Blindage obligatoire dès 1.30m (R4534).' },
+                { id: 'tsk_104', day: 'Jeudi', task: 'Pose collecteur Béton 135A Ø400', project: 'Giratoire RD906 Alès', color: '#eab308', hours: '07h30 - 16h30', volume: '30 ml', progress: 30, team: 'M. Traoré + Poseur', gear: 'Laser canalisateur Piper 200', safety: 'Vérification absence de réseau gaz sous tension.' },
+                { id: 'tsk_105', day: 'Vendredi', task: 'Remblaiement GNT 0/31.5 & Compactage', project: 'Giratoire RD906 Alès', color: '#10b981', hours: '07h30 - 15h30', volume: '60 m³', progress: 0, team: 'M. Traoré + 3 ouvriers', gear: 'Pilonneuse Wacker, Compacteur Bomag', safety: 'Protection auditive 85dB obligatoire.' }
+            ]
+        },
+        {
+            team_id: 'team_b',
+            team_name: 'Équipe Réseaux Secs B (Karim Benali)',
+            chief: 'Karim BENALI',
+            site: 'ZAC Littoral Sète',
+            size: 4,
+            schedule: [
+                { id: 'tsk_201', day: 'Lundi', task: 'Aiguillage fourreaux TPC Ø110 Fibre', project: 'ZAC Littoral Sète', color: '#10b981', hours: '08h00 - 16h30', volume: '350 ml', progress: 100, team: 'K. Benali + 3 ouvriers', gear: 'Aiguille fibre 150m, Compresseur', safety: 'Balisage chantier mobile classe A.' },
+                { id: 'tsk_202', day: 'Mardi', task: 'Tirage câbles éclairage public LED', project: 'ZAC Littoral Sète', color: '#10b981', hours: '08h00 - 16h30', volume: '180 ml', progress: 90, team: 'K. Benali + 3 ouvriers', gear: 'Dérouleuse touret', safety: 'Habilitation électrique H0B0 requise.' },
+                { id: 'tsk_203', day: 'Mercredi', task: 'Scellement massifs candélabres 1.00m', project: 'ZAC Littoral Sète', color: '#38bdf8', hours: '08h00 - 16h30', volume: '8 massifs', progress: 50, team: 'K. Benali + 3 ouvriers', gear: 'Mini-pelle Mecalac 6MCR', safety: 'Manutention élingues conformes CMU 1T.' },
+                { id: 'tsk_204', day: 'Jeudi', task: 'Raccordement coffret télégestion C100', project: 'ZAC Littoral Sète', color: '#38bdf8', hours: '08h00 - 16h30', volume: '2 armoires', progress: 20, team: 'K. Benali', gear: 'Valise électricien normée', safety: 'Cadenassage consignation BT.' },
+                { id: 'tsk_205', day: 'Vendredi', task: 'Essais diélectriques & Récolement DAO', project: 'ZAC Littoral Sète', color: '#c084fc', hours: '08h00 - 15h30', volume: '1 dossier', progress: 0, team: 'K. Benali + Topographe', gear: 'Contrôleur Fluke, Canne GPS RTK', safety: 'Contrôle APAVE validé.' }
+            ]
+        },
+        {
+            team_id: 'team_c',
+            team_name: 'Équipe Enrobés C (Patrick Durand)',
+            chief: 'Patrick DURAND',
+            site: 'Centre Ancien Pézenas',
+            size: 6,
+            schedule: [
+                { id: 'tsk_301', day: 'Lundi', task: 'Rabotage enrobés existants prof 5cm', project: 'Centre Ancien Pézenas', color: '#f59e0b', hours: '07h00 - 16h00', volume: '1 200 m²', progress: 100, team: 'P. Durand + 5 ouvriers', gear: 'Raboteuse Wirtgen 1m, Camion 8x4', safety: 'Arrosage anti-poussière continue.' },
+                { id: 'tsk_302', day: 'Mardi', task: 'Application émulsion d\'accrochage C65B4', project: 'Centre Ancien Pézenas', color: '#f59e0b', hours: '07h00 - 16h00', volume: '1 200 m²', progress: 100, team: 'P. Durand + 2 ouvriers', gear: 'Bouille d\'émulsion automatique', safety: 'Masque à cartouche vapeurs bitume.' },
+                { id: 'tsk_303', day: 'Mercredi', task: 'Mise en œuvre BBSG 0/10 à 160°C', project: 'Centre Ancien Pézenas', color: '#ef4444', hours: '06h30 - 16h30', volume: '180 tonnes', progress: 75, team: 'P. Durand + 5 ouvriers', gear: 'Finisseur Vögele, Compacteur Tandem', safety: 'Vêtements thermiques et gants haute T°.' },
+                { id: 'tsk_304', day: 'Jeudi', task: 'Compactage de finition & Joints chanfrein', project: 'Centre Ancien Pézenas', color: '#ef4444', hours: '07h00 - 16h00', volume: '1 200 m²', progress: 40, team: 'P. Durand + 3 ouvriers', gear: 'Compacteur vibrant Bomag BW 120', safety: 'Contrôle température thermomètre IR.' },
+                { id: 'tsk_305', day: 'Vendredi', task: 'Nettoyage balayeuse & Libération voie', project: 'Centre Ancien Pézenas', color: '#10b981', hours: '07h00 - 14h00', volume: '1 site', progress: 0, team: 'P. Durand + 2 ouvriers', gear: 'Balayeuse aspiratrice Ravo', safety: 'Dépose de la signalisation OPBTP.' }
+            ]
+        },
+        {
+            team_id: 'team_topo',
+            team_name: 'Cellule Topo (David Lemoine)',
+            chief: 'David LEMOINE',
+            site: 'Voie Verte Montpellier',
+            size: 2,
+            schedule: [
+                { id: 'tsk_401', day: 'Lundi', task: 'Implantation bornes GPS RTK Voie Verte', project: 'Voie Verte Montpellier', color: '#c084fc', hours: '08h00 - 16h30', volume: '12 bornes', progress: 100, team: 'D. Lemoine + 1 aide', gear: 'Canne GPS RTK Leica', safety: 'Gilet classe 3 et casque obligatoire.' },
+                { id: 'tsk_402', day: 'Mardi', task: 'Vol drone photogrammétrie MNT bassin', project: 'Voie Verte Montpellier', color: '#c084fc', hours: '08h00 - 16h30', volume: '1 mission', progress: 100, team: 'D. Lemoine', gear: 'Drone DJI Matrice RTK', safety: 'Protocole DGAC & zone sécurisée.' },
+                { id: 'tsk_403', day: 'Mercredi', task: 'Contrôle altimétrique pentes noues', project: 'Voie Verte Montpellier', color: '#38bdf8', hours: '08h00 - 16h30', volume: '450 ml', progress: 70, team: 'D. Lemoine', gear: 'Niveau optique Leica NA2', safety: 'Tolérance ±5mm respectée.' },
+                { id: 'tsk_404', day: 'Jeudi', task: 'Levé de récolement classe A réseaux', project: 'Voie Verte Montpellier', color: '#38bdf8', hours: '08h00 - 16h30', volume: '1 dossier', progress: 30, team: 'D. Lemoine', gear: 'GPS Leica GS18 T', safety: 'Marquage piquetage vérifié.' },
+                { id: 'tsk_405', day: 'Vendredi', task: 'Compilation DAO et export format IFC', project: 'Voie Verte Montpellier', color: '#10b981', hours: '08h00 - 15h30', volume: '1 maquette', progress: 0, team: 'D. Lemoine', gear: 'Station DAO Covadis', safety: 'DOE prêt pour MOE.' }
+            ]
         }
-    }
+    ];
 
     function renderPlanningAgenda() {
         const container = document.getElementById('planning-agenda-view');
@@ -619,93 +925,62 @@ def get_js_part1_continued():
         const projFilter = document.getElementById('planning-project-select')?.value || 'all';
         const teamFilter = document.getElementById('planning-team-select')?.value || 'all';
 
-        const baseDate = new Date(2026, 8, 21); // Monday Sept 21 2026
-        baseDate.setDate(baseDate.getDate() + (currentAgendaWeekOffset * 7));
+        const filteredTeams = agendaTeamsData.filter(t => {
+            if (teamFilter !== 'all' && t.team_id !== teamFilter) return false;
+            return true;
+        });
 
-        const dayNames = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-        const weekDays = [];
-        for (let i = 0; i < 5; i++) {
-            const d = new Date(baseDate);
-            d.setDate(baseDate.getDate() + i);
-            weekDays.push({
-                name: dayNames[i],
-                dateStr: d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
-                fullDate: d
-            });
-        }
-
-        const teams = [
-            { id: 'team_a', name: 'Équipe VRD A (M. Traoré - 6 ouvriers)', icon: '🚜' },
-            { id: 'team_b', name: 'Équipe Réseaux Secs B (K. Benali - 4 ouvriers)', icon: '⚡' },
-            { id: 'team_c', name: 'Équipe Enrobés & Voirie C (P. Durand - 5 ouvriers)', icon: '🛣️' },
-            { id: 'team_topo', name: 'Cellule Topo / Contrôle (D. Lemoine)', icon: '🛰️' }
-        ].filter(t => teamFilter === 'all' || t.id === teamFilter);
-
-        const agendaTasks = [
-            { teamId: 'team_a', dayIdx: 0, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Pose Bordures T2 & Cunette', progress: 85, color: '#0284c7' },
-            { teamId: 'team_a', dayIdx: 1, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Bétonnage Calage Bordures', progress: 60, color: '#0284c7' },
-            { teamId: 'team_a', dayIdx: 2, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Blindage Tranchée Rue Centrale', progress: 40, color: '#10b981' },
-            { teamId: 'team_a', dayIdx: 3, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Pose Tuyaux Fonte DN400', progress: 20, color: '#10b981' },
-            { teamId: 'team_a', dayIdx: 4, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Remblaiement & Essai Compactage', progress: 0, color: '#10b981' },
-
-            { teamId: 'team_b', dayIdx: 0, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Tirage Câbles HTA & Fourreaux', progress: 95, color: '#f59e0b' },
-            { teamId: 'team_b', dayIdx: 1, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Raccordement Postes Élec', progress: 80, color: '#f59e0b' },
-            { teamId: 'team_b', dayIdx: 2, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Pose Chambres Télécom L2T', progress: 50, color: '#f59e0b' },
-            { teamId: 'team_b', dayIdx: 3, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Pose Candelabres Éclairage', progress: 10, color: '#0284c7' },
-            { teamId: 'team_b', dayIdx: 4, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Contrôle Continuité & Essais', progress: 0, color: '#0284c7' },
-
-            { teamId: 'team_c', dayIdx: 0, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Rabotage Ancien Revêtement', progress: 100, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 1, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Application Couche d’Accrochage', progress: 75, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 2, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Mise en oeuvre BBSG 0/10 (350t)', progress: 30, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 3, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Compactage de Finition & Joints', progress: 0, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 4, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Nettoyage & Levée Réserves', progress: 0, color: '#8b5cf6' },
-
-            { teamId: 'team_topo', dayIdx: 0, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Implantation Axes Voirie', progress: 100, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 1, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Relevé Tranchée Ouverte As-Built', progress: 90, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 2, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Géoréférencement Réseaux Classe A', progress: 60, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 3, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Contrôle Altimétrique Couche Roulement', progress: 10, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 4, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Édition Plans de Récolement DAO', progress: 0, color: '#ec4899' }
-        ];
-
-        const filteredTasks = agendaTasks.filter(t => projFilter === 'all' || t.projId === projFilter);
+        const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+        const baseDate = new Date(2026, 4, 18 + currentAgendaWeekOffset * 7);
+        const weekDates = days.map((d, i) => {
+            const dt = new Date(baseDate);
+            dt.setDate(dt.getDate() + i);
+            return `${d} ${dt.getDate().toString().padStart(2, '0')}/${(dt.getMonth() + 1).toString().padStart(2, '0')}`;
+        });
 
         container.innerHTML = `
-            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(51,65,85,0.6); border-radius:10px; overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; min-width:900px;">
+            <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 900px;">
                     <thead>
-                        <tr style="background:rgba(30,41,59,0.9); border-bottom:2px solid var(--border);">
-                            <th style="padding:1rem; text-align:left; width:220px; color:#cbd5e1; font-weight:800;">ÉQUIPES & RESSOURCES</th>
-                            ${weekDays.map(d => `
-                                <th style="padding:1rem; text-align:center; color:#f8fafc; font-weight:700; border-left:1px solid rgba(51,65,85,0.4);">
-                                    <div>${d.name}</div>
-                                    <div style="font-size:0.8rem; font-family:'JetBrains Mono'; color:#38bdf8; font-weight:400; margin-top:2px;">${d.dateStr}</div>
-                                </th>
-                            `).join('')}
+                        <tr style="background: rgba(30,41,59,0.9); color: #94a3b8; font-size: 0.8rem; text-align: center;">
+                            <th style="padding: 0.75rem; text-align: left; width: 220px;">ÉQUIPE & EFFECTIF</th>
+                            ${weekDates.map(wd => `<th style="padding: 0.75rem; width: 180px; border-left: 1px solid rgba(51,65,85,0.5);">${wd}</th>`).join('')}
                         </tr>
                     </thead>
                     <tbody>
-                        ${teams.map(team => `
-                            <tr style="border-bottom:1px solid rgba(51,65,85,0.4);">
-                                <td style="padding:1rem; background:rgba(30,41,59,0.4); vertical-align:top;">
-                                    <div style="font-weight:800; color:#f8fafc; font-size:0.9rem;">${team.icon} ${team.name}</div>
-                                    <div style="font-size:0.75rem; color:#64748b; margin-top:0.25rem;">Affectation & Supervision</div>
+                        ${filteredTeams.map(t => `
+                            <tr style="border-top: 1px solid rgba(51,65,85,0.5);">
+                                <td style="padding: 0.75rem; vertical-align: top; background: rgba(30,41,59,0.3);">
+                                    <div style="font-weight: 800; font-size: 0.85rem; color: #38bdf8;">${t.team_name}</div>
+                                    <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Chef: <strong>${t.chief}</strong></div>
+                                    <span class="badge badge-success" style="font-size: 0.65rem; margin-top: 4px;">👥 ${t.size} Compagnons</span>
                                 </td>
-                                ${[0, 1, 2, 3, 4].map(dayIdx => {
-                                    const tasks = filteredTasks.filter(t => t.teamId === team.id && t.dayIdx === dayIdx);
+                                ${days.map((d, dayIdx) => {
+                                    const tsk = (t.schedule || []).find(s => s.day === d);
+                                    if (!tsk) return `<td style="padding: 0.5rem; border-left: 1px solid rgba(51,65,85,0.5); background: rgba(15,23,42,0.4); text-align: center; color: #64748b; font-size: 0.75rem;">Repos / Transfert</td>`;
+                                    
+                                    if (projFilter !== 'all' && !tsk.project.toLowerCase().includes(projFilter.replace('projet_', ''))) {
+                                        return `<td style="padding: 0.5rem; border-left: 1px solid rgba(51,65,85,0.5); background: rgba(15,23,42,0.4); text-align: center; color: #64748b; font-size: 0.75rem;">Autre chantier</td>`;
+                                    }
+
                                     return `
-                                        <td style="padding:0.6rem; vertical-align:top; border-left:1px solid rgba(51,65,85,0.3); background:rgba(15,23,42,0.3);">
-                                            ${tasks.length === 0 ? '<div style="font-size:0.75rem; color:#475569; text-align:center; padding:1rem 0;">Aucune tâche</div>' : ''}
-                                            ${tasks.map(tsk => `
-                                                <div style="background:rgba(30,41,59,0.85); border-left:3px solid ${tsk.color}; border-radius:4px; padding:0.5rem; margin-bottom:0.4rem; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
-                                                    <div style="font-size:0.7rem; font-weight:700; color:${tsk.color}; text-transform:uppercase;">${tsk.projName}</div>
-                                                    <div style="font-size:0.8rem; font-weight:700; color:#f8fafc; margin:0.2rem 0;">${tsk.task}</div>
-                                                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#94a3b8; margin-top:0.3rem;">
-                                                        <span>Progression</span>
-                                                        <span style="font-family:'JetBrains Mono'; font-weight:700; color:${tsk.progress === 100 ? 'var(--emerald)' : '#38bdf8'};">${tsk.progress}%</span>
-                                                    </div>
-                                                    <div class="progress-bar" style="height:4px; margin-top:3px;"><div class="progress-fill" style="width:${tsk.progress}%; background:${tsk.color};"></div></div>
+                                        <td style="padding: 0.5rem; border-left: 1px solid rgba(51,65,85,0.5); vertical-align: top;">
+                                            <div onclick="openTaskDetailModal('${tsk.id}', '${t.team_id}', ${dayIdx})" style="background: rgba(15,23,42,0.95); border: 1px solid ${tsk.color}; border-left: 4px solid ${tsk.color}; border-radius: 6px; padding: 0.5rem; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px;">
+                                                    <span style="font-size: 0.65rem; font-family: 'JetBrains Mono'; color: ${tsk.color}; font-weight: 700;">${tsk.hours}</span>
+                                                    <span class="badge badge-info" style="font-size: 0.6rem; padding: 1px 4px;">${tsk.progress}%</span>
                                                 </div>
-                                            `).join('')}
+                                                <div style="font-size: 0.75rem; font-weight: 800; color: #f8fafc; line-height: 1.25; margin-bottom: 4px;">
+                                                    ${tsk.task}
+                                                </div>
+                                                <div style="font-size: 0.68rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    📍 ${tsk.project}
+                                                </div>
+                                                <div style="margin-top: 4px; display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b;">
+                                                    <span>Vol: ${tsk.volume}</span>
+                                                    <span style="color: #38bdf8;">🔍 Inspecter</span>
+                                                </div>
+                                            </div>
                                         </td>
                                     `;
                                 }).join('')}
@@ -717,55 +992,154 @@ def get_js_part1_continued():
         `;
     }
 
+    // COMPAGNON DEDICATED DIRECT PLANNING RENDERER
+    function renderCompagnonPlanning() {
+        const container = document.getElementById('compagnon-planning-container');
+        if (!container) return;
+
+        const teamSelect = document.getElementById('compagnon-team-select');
+        const teamId = teamSelect ? teamSelect.value : 'team_a';
+        const team = agendaTeamsData.find(t => t.team_id === teamId) || agendaTeamsData[0];
+
+        const siteLabel = document.getElementById('compagnon-current-site');
+        if (siteLabel) siteLabel.textContent = team.site;
+
+        const todayTask = (team.schedule || [])[0]; // Monday / Today
+        const nextTasks = (team.schedule || []).slice(1);
+
+        container.innerHTML = `
+            <!-- TODAY'S ACTIVE MISSION -->
+            <div style="background: rgba(15,23,42,0.95); border: 2px solid #38bdf8; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 15px rgba(56,189,248,0.15);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                    <span class="badge badge-success" style="font-size:0.75rem;">🚀 MA MISSION DU JOUR (${todayTask.day})</span>
+                    <span style="font-family:'JetBrains Mono'; font-weight:700; color:#38bdf8; font-size:0.8rem;">${todayTask.hours}</span>
+                </div>
+                <h3 style="font-size:1.15rem; font-weight:900; color:#f8fafc; margin-bottom:0.4rem;">${todayTask.task}</h3>
+                <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:0.6rem;">📍 Chantier : <strong>${todayTask.project}</strong> • Objectif : <strong style="color:var(--emerald);">${todayTask.volume}</strong></div>
+
+                <div style="background:rgba(30,41,59,0.6); padding:0.6rem; border-radius:6px; font-size:0.75rem; margin-bottom:0.75rem;">
+                    <div>🚜 <strong>Engins & Outils :</strong> ${todayTask.gear}</div>
+                    <div style="margin-top:2px; color:#facc15;">🦺 <strong>Sécurité AIPR :</strong> ${todayTask.safety}</div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <button class="btn btn-primary" style="font-size:0.8rem;" onclick="openTaskDetailModal('${todayTask.id}', '${team.team_id}', 0)">🔍 Détails & Pointer Avancement</button>
+                    <span class="badge badge-info" style="font-size:0.75rem;">Avancement : ${todayTask.progress}%</span>
+                </div>
+            </div>
+
+            <!-- WEEKLY UPCOMING SCHEDULE -->
+            <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; padding: 0.85rem;">
+                <div style="font-size:0.8rem; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:0.5rem;">📅 Suite du Planning cette Semaine (${team.team_name}) :</div>
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    ${nextTasks.map((tsk, idx) => `
+                        <div onclick="openTaskDetailModal('${tsk.id}', '${team.team_id}', ${idx+1})" style="background:rgba(30,41,59,0.5); border-left:3px solid ${tsk.color}; padding:0.5rem 0.75rem; border-radius:4px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                            <div>
+                                <span style="font-weight:800; font-size:0.8rem; color:#f8fafc;">${tsk.day} : ${tsk.task}</span>
+                                <div style="font-size:0.7rem; color:#94a3b8;">${tsk.hours} • ${tsk.volume}</div>
+                            </div>
+                            <span class="badge ${tsk.progress === 100 ? 'badge-success' : 'badge-warning'}" style="font-size:0.65rem;">${tsk.progress}%</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function openTaskDetailModal(taskId, teamId, dayIdx) {
+        let foundTask = null;
+        let foundTeam = null;
+
+        for (const tm of agendaTeamsData) {
+            const t = (tm.schedule || []).find(s => s.id === taskId);
+            if (t) {
+                foundTask = t;
+                foundTeam = tm;
+                break;
+            }
+        }
+
+        if (!foundTask) return;
+
+        const body = document.getElementById('task-modal-body');
+        if (!body) return;
+
+        body.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid rgba(51,65,85,0.7); padding-bottom: 0.75rem;">
+                <div>
+                    <span class="badge badge-info" style="font-family: 'JetBrains Mono'; font-size: 0.75rem;">ID: ${foundTask.id} • ${foundTask.day}</span>
+                    <h2 style="font-size: 1.3rem; font-weight: 900; color: #38bdf8; margin-top: 4px;">${foundTask.task}</h2>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">📍 Chantier : <strong>${foundTask.project}</strong></div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="badge badge-warning" style="font-size: 0.8rem;">Horaires : ${foundTask.hours}</span>
+                    <div style="font-size: 0.8rem; color: var(--emerald); font-weight: 700; margin-top: 4px;">Objectif : ${foundTask.volume}</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div style="background: rgba(30,41,59,0.6); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(51,65,85,0.6);">
+                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">ÉQUIPE AFFECTÉE</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #f8fafc; margin-top: 2px;">${foundTeam ? foundTeam.team_name : 'Équipe VRD'}</div>
+                    <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">Personnel : ${foundTask.team}</div>
+                </div>
+
+                <div style="background: rgba(30,41,59,0.6); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(51,65,85,0.6);">
+                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700;">ENGINS & OUTILLAGE DÉPLOYÉS</div>
+                    <div style="font-size: 0.85rem; font-weight: 800; color: var(--amber); margin-top: 2px;">🚜 ${foundTask.gear}</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">Vérification VGP & calage laser OK</div>
+                </div>
+            </div>
+
+            <!-- SAFETY & OPBTP INSTRUCTIONS -->
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.85rem; border-radius: 6px; margin-bottom: 1.25rem;">
+                <div style="font-size: 0.8rem; font-weight: 800; color: #ef4444; margin-bottom: 4px;">🦺 Consignes Sécurité & AIPR Spécifiques à la Tâche :</div>
+                <div style="font-size: 0.85rem; color: #f8fafc;">${foundTask.safety}</div>
+            </div>
+
+            <!-- INTERACTIVE PROGRESS SLIDER -->
+            <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(51,65,85,0.7); padding: 1rem; border-radius: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 0.85rem; font-weight: 800; color: #f8fafc;">Ajustement de l'Avancement Réel :</span>
+                    <span style="font-size: 1rem; font-weight: 900; color: var(--emerald); font-family: 'JetBrains Mono';" id="task-modal-progress-val">${foundTask.progress}%</span>
+                </div>
+                <input type="range" min="0" max="100" value="${foundTask.progress}" class="input-field" style="width: 100%; cursor: pointer;" oninput="document.getElementById('task-modal-progress-val').textContent = this.value + '%'; foundTask.progress = parseInt(this.value); if (currentNav === 'compagnon_mobile') renderCompagnonPlanning(); else renderPlanningAgenda();">
+            </div>
+        `;
+
+        openModal('task-details-modal');
+    }
+
     function renderPlanningGantt() {
         const container = document.getElementById('planning-gantt-view');
         if (!container) return;
 
-        const projFilter = document.getElementById('planning-project-select')?.value || 'all';
-        const tasks = [
-            { id: 't1', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Terrassement en déblai & Purge', start: 1, dur: 3, progress: 100, team: 'Équipe A' },
-            { id: 't2', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Pose Réseau Assainissement EU', start: 3, dur: 4, progress: 80, team: 'Équipe A' },
-            { id: 't3', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Pose Fourreaux Réseaux Secs', start: 6, dur: 3, progress: 40, team: 'Équipe B' },
-            { id: 't4', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Pose Bordures & Trottoirs', start: 8, dur: 4, progress: 15, team: 'Équipe A' },
-            { id: 't5', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Couche de Forme & Enrobés', start: 11, dur: 3, progress: 0, team: 'Équipe C' },
-
-            { id: 't6', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Sciage & Démolition Chaussée', start: 1, dur: 2, progress: 100, team: 'Équipe A' },
-            { id: 't7', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Blindage & Pose Fonte DN400', start: 3, dur: 5, progress: 65, team: 'Équipe A' },
-            { id: 't8', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Remblaiement & Essais Dynamiques', start: 7, dur: 3, progress: 20, team: 'Équipe A' },
-            { id: 't9', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Réfection Enrobé à Chaud', start: 9, dur: 3, progress: 0, team: 'Équipe C' },
-
-            { id: 't10', projId: 'projet_pezenas', proj: 'Centre Ancien Pézenas', task: 'Tranchée Commune VRD', start: 2, dur: 4, progress: 90, team: 'Équipe B' },
-            { id: 't11', projId: 'projet_pezenas', proj: 'Centre Ancien Pézenas', task: 'Raccordement Haute Tension & Fibre', start: 5, dur: 4, progress: 50, team: 'Équipe B' },
-            { id: 't12', projId: 'projet_montpellier', proj: 'Voie Verte Montpellier', task: 'Aménagements Paysagers & Bordures', start: 8, dur: 4, progress: 10, team: 'Équipe C' }
-        ].filter(t => projFilter === 'all' || t.projId === projFilter);
-
-        const totalWeeks = 14;
+        const projects = companyData.projects || [];
+        const weeks = Array.from({ length: 12 }, (_, i) => `S${i + 20}`);
 
         container.innerHTML = `
-            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(51,65,85,0.6); border-radius:10px; padding:1rem; overflow-x:auto;">
-                <div style="min-width:850px;">
-                    <div style="display:grid; grid-template-columns: 240px repeat(${totalWeeks}, 1fr); gap:4px; font-weight:800; font-size:0.75rem; color:#94a3b8; margin-bottom:0.75rem; border-bottom:1px solid rgba(51,65,85,0.6); padding-bottom:0.5rem;">
-                        <div>TÂCHES / PHASES DE TRAVAUX</div>
-                        ${Array.from({ length: totalWeeks }).map((_, i) => `<div style="text-align:center;">S${i + 1}</div>`).join('')}
+            <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(51,65,85,0.7); border-radius: 8px; padding: 1rem; overflow-x: auto;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-bottom: 1rem; text-transform: uppercase;">
+                    📊 Chronogramme Gantt Consolidé (Mai - Octobre 2026)
+                </div>
+
+                <div style="min-width: 800px;">
+                    <div style="display: grid; grid-template-columns: 240px repeat(12, 1fr); gap: 4px; margin-bottom: 8px; font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-align: center;">
+                        <div style="text-align: left;">CHANTIER & LOTS</div>
+                        ${weeks.map(w => `<div style="background: rgba(30,41,59,0.8); padding: 4px 0; border-radius: 4px;">${w}</div>`).join('')}
                     </div>
 
-                    ${tasks.map(t => {
-                        const colStart = t.start + 1;
-                        const colSpan = t.dur;
+                    ${projects.map((p, idx) => {
+                        const startCol = (idx * 2) + 1;
+                        const spanCols = Math.min(12 - startCol, 6);
                         return `
-                            <div style="display:grid; grid-template-columns: 240px repeat(${totalWeeks}, 1fr); gap:4px; align-items:center; margin-bottom:0.6rem; font-size:0.8rem;">
-                                <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${t.proj} - ${t.task}">
-                                    <strong style="color:#f8fafc;">${t.task}</strong><br>
-                                    <span style="font-size:0.7rem; color:#64748b;">${t.proj} • ${t.team}</span>
+                            <div style="display: grid; grid-template-columns: 240px repeat(12, 1fr); gap: 4px; margin-bottom: 8px; align-items: center; font-size: 0.75rem;">
+                                <div style="font-weight: 700; color: #f8fafc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    ${p.name}
                                 </div>
-                                <div style="grid-column: ${colStart} / span ${colSpan};">
-                                    <div style="background:rgba(30,41,59,0.9); border:1px solid #38bdf8; border-radius:4px; padding:4px 8px; position:relative; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.3);">
-                                        <div style="position:absolute; top:0; left:0; bottom:0; width:${t.progress}%; background:linear-gradient(90deg, rgba(2,132,199,0.7), rgba(56,189,248,0.9)); z-index:1;"></div>
-                                        <div style="position:relative; z-index:2; display:flex; justify-content:space-between; font-size:0.7rem; font-weight:700; color:#ffffff;">
-                                            <span>${t.task}</span>
-                                            <span style="font-family:'JetBrains Mono';">${t.progress}%</span>
-                                        </div>
-                                    </div>
+                                <div style="grid-column: ${startCol + 1} / span ${spanCols}; background: linear-gradient(90deg, #0284c7, #10b981); height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; color: #fff; font-weight: 800; font-size: 0.7rem; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                                    <span>${p.progress}%</span>
+                                    <span>${p.end}</span>
                                 </div>
                             </div>
                         `;
