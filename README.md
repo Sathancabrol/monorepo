@@ -15,7 +15,8 @@ monorepo/
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
-│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  ├─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  └─ btp-conduite-travaux/     BTP Copilot OS & Multi-Agents (154 sources, 28 SDP, index.html)
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
@@ -57,6 +58,8 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
     - `proto-cognitorium` → `dist/index.html` (frontend statique ; `server.ts` Express non exécuté dans l'iframe)
     - `COGNITORIUM` → `learning/index.html` + `watchtower-mods/`
     - `ETAT-…` → `output/visual/index.html` + `d3_interactive.html` + `taxonomy_graph.html`
+    - `frontignan` → `index.html` (vision 2026-2040)
+    - `btp-conduite-travaux` → `index.html` (BTP Copilot OS & Multi-Agent Operations)
     - `HCSM` / `reaserch-engine` / `Language-decoder` → code seul + README
   - Servie via `GET /preview/{project}/{path}` (FileResponse, pas de `X-Frame-Options` côté monorepo ; `watchtower` buildée sans en-têtes DENY).
 
