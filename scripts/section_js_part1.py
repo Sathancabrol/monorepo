@@ -2,15 +2,141 @@ def get_js_part1():
     return """
 <script>
     // ==========================================
-    // 1. DATASETS INJECTION
+    // 1. DATASETS INJECTION & ROBUST NORMALIZATION
     // ==========================================
-    const inventoryData = __INVENTORY_JSON__;
-    const syntheseData = __SYNTHESE_JSON__;
-    const confrontationData = __CONFRONTATION_JSON__;
-    const ledgerData = __LEDGER_JSON__;
-    const reportsData = __REPORTS_JSON__;
-    const obsidianData = __OBSIDIAN_JSON__;
-    const companyData = __EXTRA_DATA_JSON__;
+    const rawInventoryData = __INVENTORY_JSON__;
+    const rawSyntheseData = __SYNTHESE_JSON__;
+    const rawConfrontationData = __CONFRONTATION_JSON__;
+    const rawLedgerData = __LEDGER_JSON__;
+    const rawReportsData = __REPORTS_JSON__;
+    const rawObsidianData = __OBSIDIAN_JSON__;
+    const rawCompanyData = __EXTRA_DATA_JSON__;
+
+    const inventoryData = rawInventoryData || {};
+    const syntheseData = rawSyntheseData || { dqe_items: [] };
+    const confrontationData = rawConfrontationData || {};
+    const ledgerData = Array.isArray(rawLedgerData) ? { blocks: rawLedgerData } : (rawLedgerData || { blocks: [] });
+    const reportsData = rawReportsData || { rdc_entries: [] };
+    const obsidianData = rawObsidianData || { nodes: [], links: [] };
+    const companyData = rawCompanyData || {};
+
+    // Normalize projects
+    companyData.projects = (companyData.projects || []).map(p => ({
+        id: p.id || 'PRJ_01',
+        name: p.name || 'Projet BTP',
+        client: p.client || 'Maître d\\'Ouvrage Public',
+        location: p.location || 'Occitanie (34)',
+        budget: Number(p.budget_total || p.budget || 500000),
+        progress: Number(p.avancement_physique_pct || p.progress || 50),
+        status: p.statut || p.status || 'En cours',
+        manager: p.conducteur || p.manager || 'Sylvain CABROL',
+        site_chief: p.chef_chantier || p.site_chief || 'Alain MARTIN',
+        start: p.date_debut || p.start || '2026-05-15',
+        end: p.date_fin_prevue || p.end || '2026-10-30',
+        lots: p.lots || [
+            { lot: '01', name: 'Terrassement & Déblais', budget: (p.budget_total || 500000) * 0.25, progress: p.avancement_physique_pct || 75, status: 'En cours' },
+            { lot: '02', name: 'Assainissement EU/EP', budget: (p.budget_total || 500000) * 0.35, progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.9)), status: 'En cours' },
+            { lot: '03', name: 'Réseaux Secs & Élec', budget: (p.budget_total || 500000) * 0.2, progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.7)), status: 'En cours' },
+            { lot: '04', name: 'Voirie & Enrobés', budget: (p.budget_total || 500000) * 0.2, progress: Math.min(100, Math.round((p.avancement_physique_pct || 75) * 0.4)), status: 'Préparation' }
+        ],
+        docs: [
+            { name: 'CCTP_Voirie_Réseaux', type: 'pdf' },
+            { name: 'BPU_DQE_Signé', type: 'pdf' },
+            { name: 'Plan_Implantation_DAO', type: 'dwg' },
+            { name: 'DICT_Récépissés_Valides', type: 'pdf' },
+            { name: 'PGCSPS_Sécurité', type: 'pdf' }
+        ]
+    }));
+
+    // Normalize fleet
+    companyData.fleet = (companyData.fleet || []).map(f => ({
+        id: f.id || 'EQ_01',
+        name: f.name || 'Engin Chantier',
+        type: f.type || 'Engin TP',
+        category: f.category || 'excavator',
+        status: f.status || f.statut || 'En opération',
+        assigned: f.current_project ? f.current_project.replace('projet_', '').toUpperCase() : (f.assigned || 'ZAC des Pins'),
+        operator: f.operator || 'M. Lopez',
+        hours: Number(f.horametre || f.hours || 1850),
+        vgp: f.vgp_date || f.vgp || '2026-11-15',
+        caces: f.caces_req || f.caces || 'CACES R482 Cat B1'
+    }));
+
+    // Normalize catalog (merge tools + materials)
+    const rawCatalog = [
+        ...(companyData.materials_catalog || []),
+        ...(companyData.tool_catalog || []),
+        ...(companyData.catalog || [])
+    ];
+
+    if (rawCatalog.length === 0) {
+        companyData.catalog = [
+            { id: 'mat_01', name: 'Bordures Béton Type T2 (100x20x28 cm)', category: 'materials', supplier: 'Bétons Occitanie', unit_price: 14.50, unit: 'ml', stock: 450, norm: 'NF EN 1340' },
+            { id: 'mat_02', name: 'Tampon Fonte Ductile D400 PAM REXEL Ø600', category: 'materials', supplier: 'Saint-Gobain PAM', unit_price: 145.00, unit: 'u', stock: 28, norm: 'NF EN 124 / 400 kN' },
+            { id: 'mat_03', name: 'Tuyau Fonte Ductile DN400 Integral (6m)', category: 'materials', supplier: 'Saint-Gobain PAM', unit_price: 115.00, unit: 'ml', stock: 180, norm: 'Fascicule 70-1' },
+            { id: 'mat_04', name: 'Grave Non Traitée GNT 0/31.5 Classe A', category: 'materials', supplier: 'Carrières Languedoc', unit_price: 16.50, unit: 'tonne', stock: 1250, norm: 'NF EN 13285' },
+            { id: 'tool_01', name: 'Laser Canalisateur Piper 200 Automatique', category: 'tools', supplier: 'Leica Geosystems', unit_price: 45.00, unit: 'jour', stock: 3, norm: 'Précision ±1.5mm' },
+            { id: 'tool_02', name: 'Découpeuse Béton Thermique Stihl TS800', category: 'tools', supplier: 'Stihl Pro BTP', unit_price: 35.00, unit: 'jour', stock: 6, norm: 'Disque Ø400 Diamant' },
+            { id: 'tool_03', name: 'Pénétromètre Dynamique Léger PANDA', category: 'tools', supplier: 'Sol Solution TP', unit_price: 80.00, unit: 'jour', stock: 2, norm: 'Norme NF P 94-105' },
+            { id: 'epi_01', name: 'Pack EPI Haute Visibilité & Casque Réfléchissant', category: 'safety', supplier: 'Protect BTP', unit_price: 85.00, unit: 'kit', stock: 45, norm: 'Classe 3 EN 20471' }
+        ];
+    } else {
+        companyData.catalog = rawCatalog.map((c, idx) => ({
+            id: c.id || `mat_${idx + 1}`,
+            name: c.name || 'Article BTP',
+            category: (c.category && c.category.includes('Engin')) ? 'tools' : (c.category || 'materials'),
+            supplier: c.fournisseur || c.supplier || 'Fournisseur Agréé TP',
+            unit_price: Number(c.prix_unitaire || (parseFloat((c.tarif_location_jour || '45').replace(/[^0-9.]/g, '')) || 45)),
+            unit: c.unit || (c.tarif_location_jour ? 'jour' : 'u'),
+            stock: c.stock ? (parseInt(c.stock) || 50) : 50,
+            norm: c.norme || c.caces || 'NF EN 1340 / CE'
+        }));
+    }
+
+    // Normalize suppliers
+    if (!companyData.suppliers || companyData.suppliers.length === 0) {
+        companyData.suppliers = [
+            { id: 'sup_01', name: 'Carrières & Granulats du Languedoc', specialty: 'Grave GNT 0/31.5, Gravillons 4/10', location: 'Frontignan (34)', distance_km: 14, quality_rating: 4.8 },
+            { id: 'sup_02', name: 'Bétons Occitanie Méditerranée', specialty: 'Bétons Prêts à l\\'Emploi C25/30 XF1', location: 'Sète / ZI Eaux Blanches', distance_km: 6, quality_rating: 4.9 },
+            { id: 'sup_03', name: 'Saint-Gobain PAM Canalisation', specialty: 'Tuyaux Fonte DN400, Tampons D400', location: 'Montpellier / Vendargues', distance_km: 28, quality_rating: 5.0 },
+            { id: 'sup_04', name: 'PUM Plastiques Sète', specialty: 'Tubes PVC CR8 Ø200, PEHD Gaz', location: 'Sète / Zone d\\'Activité', distance_km: 4, quality_rating: 4.7 },
+            { id: 'sup_05', name: 'Enrobés Bitumineux du Sud (Alès)', specialty: 'Enrobé BBSG 0/10 Classe 3', location: 'Alès / Gard', distance_km: 18, quality_rating: 4.8 }
+        ];
+    }
+
+    // Normalize HR hierarchy
+    companyData.hr_hierarchy = {
+        director: { name: "Laurent VIALA", role: "Directeur Général / Gérant TP", cert: "AIPR Concepteur • Ingénieur ESTP" },
+        conducteurs: [
+            {
+                name: "Sylvain CABROL",
+                role: "Conducteur de Travaux Principal VRD",
+                assigned: ["Giratoire RD906 Alès", "ZAC Littoral Sète"],
+                chefs: [
+                    { name: "Alain MARTIN", site: "Giratoire RD906 Alès", workers: ["M. Lopez (Pelle 24t)", "R. Garcia (Chargeur)", "P. Durand (Maçon VRD)", "T. Faure (Manoeuvre)"] },
+                    { name: "Marc GOMEZ", site: "ZAC Littoral Sète", workers: ["D. Blanc (Mecalac)", "P. Mercier (8x4)", "K. Benali (Canalisateur)", "A. Traoré (Poseur)"] }
+                ]
+            },
+            {
+                name: "Sophie LACOMBE",
+                role: "Conductrice de Travaux VRD & Aménagements",
+                assigned: ["Centre Ancien Pézenas", "Voie Verte Montpellier"],
+                chefs: [
+                    { name: "Karim BENALI", site: "Centre Ancien Pézenas", workers: ["S. Petit (Minipelle)", "T. Vidal (Hydrocureur)", "N. Roux (Paveur)", "J. Fabre (Manoeuvre)"] },
+                    { name: "David LEMOINE", site: "Voie Verte Montpellier", workers: ["F. Dumas (Compacteur)", "M. Giraud (Régleur Enrobé)", "L. Morin (Applicateur)"] }
+                ]
+            }
+        ]
+    };
+
+    // RDC entries
+    if (!reportsData.rdc_entries || reportsData.rdc_entries.length === 0) {
+        reportsData.rdc_entries = [
+            { id: 'RDC-0892', project: 'Giratoire RD906 Alès', date: '2026-09-18', chief: 'A. Martin', weather: 'Ensoleillé (24°C)', notes: 'Pose de 85 ml de bordures T2 et calage béton. Aucun aléa.', hours_mo: 35, hours_engins: 14 },
+            { id: 'RDC-0891', project: 'ZAC Littoral Sète', date: '2026-09-18', chief: 'M. Gomez', weather: 'Vent modéré (21°C)', notes: 'Blindage tranchée profonde 3.20m et pose 36 ml fonte DN400.', hours_mo: 42, hours_engins: 16 },
+            { id: 'RDC-0890', project: 'Centre Ancien Pézenas', date: '2026-09-17', chief: 'S. Lacombe', weather: 'Ensoleillé (25°C)', notes: 'Épreuves de pression collecteur PVC et remblaiement soigné.', hours_mo: 28, hours_engins: 7 }
+        ];
+    }
 
     // GLOBAL APP STATE
     let currentPerspective = 'patron';
@@ -23,8 +149,8 @@ def get_js_part1():
     let currentScenarioId = 'scen_tranchee_vrd';
     let activeScenarioStepIdx = 0;
     let fleetFilter = 'all';
-    let catalogFilter = 'materials';
-    let obsidianHeuristic = 'domains';
+    let catalogFilter = 'all';
+    let obsidianHeuristic = 'all';
     let sdpViewMode = 'dqe_tcd';
     let radarCanvas, radarCtx, radarAnimId;
     let cameraRotX = 30, cameraRotY = -45, cameraZoom = 1.0;
@@ -35,7 +161,7 @@ def get_js_part1():
     // ==========================================
     function getVehicleSVG(typeStr, nameStr) {
         const t = (typeStr + ' ' + (nameStr || '')).toLowerCase();
-        if (t.includes('pelle') || t.includes('excavat') || t.includes('cat') || t.includes('liebherr')) {
+        if (t.includes('pelle') || t.includes('excavat') || t.includes('cat') || t.includes('liebherr') || t.includes('mecalac') || t.includes('kubota')) {
             return `<svg viewBox="0 0 300 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <line x1="10" y1="145" x2="290" y2="145" stroke="#334155" stroke-width="2"/>
                 <rect x="40" y="115" width="130" height="28" rx="14" fill="#334155" stroke="#0f172a" stroke-width="2"/>
@@ -49,8 +175,8 @@ def get_js_part1():
                 <path d="M 195 40 L 245 95 L 235 102 L 188 47 Z" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
                 <path d="M 240 98 L 270 115 L 260 140 L 232 132 Z" fill="#334155" stroke="#1e293b" stroke-width="2"/>
                 <circle cx="118" cy="50" r="3" fill="#ef4444"/>
-                <text x="60" y="105" fill="#1e293b" font-family="system-ui" font-weight="900" font-size="10">PELLE 24T</text>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Pelle Hydraulique Chenilles</text>
+                <text x="60" y="105" fill="#1e293b" font-family="system-ui" font-weight="900" font-size="10">PELLE HYDRAULIQUE</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Pelle Chenilles / Pneus TP</text>
             </svg>`;
         } else if (t.includes('cylindre') || t.includes('compacteur') || t.includes('bomag')) {
             return `<svg viewBox="0 0 300 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
@@ -61,10 +187,10 @@ def get_js_part1():
                 <rect x="105" y="60" width="40" height="40" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
                 <rect x="100" y="32" width="60" height="5" rx="2" fill="#ca8a04"/>
                 <circle cx="130" cy="28" r="3" fill="#f97316"/>
-                <text x="150" y="95" fill="#1e293b" font-family="system-ui" font-weight="900" font-size="10">BOMAG BW</text>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Compacteur Tandem Vibrant</text>
+                <text x="150" y="95" fill="#1e293b" font-family="system-ui" font-weight="900" font-size="10">COMPACTEUR</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Compacteur Tandem Vibrant V5</text>
             </svg>`;
-        } else if (t.includes('camion') || t.includes('8x4') || t.includes('scania') || t.includes('volvo')) {
+        } else if (t.includes('camion') || t.includes('8x4') || t.includes('scania') || t.includes('volvo') || t.includes('porteur') || t.includes('hydrocureur')) {
             return `<svg viewBox="0 0 300 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <line x1="10" y1="145" x2="290" y2="145" stroke="#334155" stroke-width="2"/>
                 <rect x="30" y="115" width="235" height="10" fill="#1e293b"/>
@@ -75,20 +201,8 @@ def get_js_part1():
                 <path d="M 30 115 L 30 65 L 70 60 L 85 85 L 85 115 Z" fill="#0284c7" stroke="#075985" stroke-width="2"/>
                 <path d="M 90 80 L 255 65 L 260 115 L 90 115 Z" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
                 <circle cx="55" cy="57" r="3" fill="#f97316"/>
-                <text x="115" y="100" fill="#0f172a" font-family="system-ui" font-weight="900" font-size="10">8x4 HARDOX 32T</text>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Porteur Bi-Benne 8x4</text>
-            </svg>`;
-        } else if (t.includes('drone') || t.includes('matrice') || t.includes('dji')) {
-            return `<svg viewBox="0 0 300 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
-                <ellipse cx="150" cy="75" rx="32" ry="16" fill="#1e293b" stroke="#06b6d4" stroke-width="2"/>
-                <line x1="125" y1="70" x2="60" y2="45" stroke="#0f172a" stroke-width="5"/>
-                <line x1="175" y1="70" x2="240" y2="45" stroke="#0f172a" stroke-width="5"/>
-                <line x1="130" y1="80" x2="70" y2="110" stroke="#0f172a" stroke-width="5"/>
-                <line x1="170" y1="80" x2="230" y2="110" stroke="#0f172a" stroke-width="5"/>
-                <ellipse cx="60" cy="45" rx="30" ry="5" fill="#38bdf8" fill-opacity="0.4" stroke="#0284c7"/>
-                <ellipse cx="240" cy="45" rx="30" ry="5" fill="#38bdf8" fill-opacity="0.4" stroke="#0284c7"/>
-                <polygon points="150,90 80,145 220,145" fill="#10b981" fill-opacity="0.15"/>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Drone Topographique LiDAR RTK</text>
+                <text x="115" y="100" fill="#0f172a" font-family="system-ui" font-weight="900" font-size="10">PORTEUR TP 32T</text>
+                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Camion Bi-Benne / Citerne 8x4</text>
             </svg>`;
         } else {
             return `<svg viewBox="0 0 300 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
@@ -110,7 +224,7 @@ def get_js_part1():
                 <polygon points="170,95 220,50 220,80 170,125" fill="#475569" stroke="#1e293b" stroke-width="2"/>
                 <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Bordure Béton T2 / A2 NF</text>
             </svg>`;
-        } else if (id.includes('tampon') || id.includes('fonte') || id.includes('mat_03')) {
+        } else if (id.includes('tampon') || id.includes('fonte') || id.includes('mat_03') || id.includes('mat_04')) {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
                 <rect x="45" y="15" width="170" height="110" rx="8" fill="#1e293b" stroke="#475569" stroke-width="2"/>
                 <circle cx="130" cy="70" r="42" fill="#0f172a" stroke="#94a3b8" stroke-width="3"/>
@@ -137,13 +251,6 @@ def get_js_part1():
                 <rect x="40" y="55" width="80" height="35" rx="5" fill="#ea580c" stroke="#c2410c" stroke-width="2"/>
                 <circle cx="175" cy="72" r="35" fill="#475569" stroke="#94a3b8" stroke-width="2"/>
                 <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Découpeuse Diamant Stihl</text>
-            </svg>`;
-        } else if (id.includes('epi') || id.includes('pack')) {
-            return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
-                <path d="M 40 55 C 40 30 95 30 95 55 Z" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
-                <path d="M 120 40 L 180 40 L 195 105 L 105 105 Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
-                <line x1="115" y1="70" x2="185" y2="70" stroke="#f8fafc" stroke-width="5"/>
-                <text x="15" y="20" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="700">Pack EPI Normé BTP</text>
             </svg>`;
         } else {
             return `<svg viewBox="0 0 260 140" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#090d16; border-radius:8px;">
@@ -245,16 +352,34 @@ def get_js_part1():
 
         currentNav = tabId;
 
-        if (tabId === 'obsidian') setTimeout(initObsidianGraph, 50);
-        if (tabId === 'simulator') {
-            setTimeout(() => {
-                initWatchtowerRadar();
-                drawStepVisual(activeScenarioStepIdx);
-            }, 50);
+        // Auto-render tab contents on switch
+        try {
+            if (tabId === 'projects_hub') renderProjectsHub();
+            if (tabId === 'planning') {
+                if (planningViewMode.startsWith('agenda')) renderPlanningAgenda();
+                else renderPlanningGantt();
+            }
+            if (tabId === 'fleet') renderFleetGrid();
+            if (tabId === 'catalog') renderCatalogGrid();
+            if (tabId === 'obsidian') setTimeout(initObsidianGraph, 50);
+            if (tabId === 'simulator') {
+                setTimeout(() => {
+                    initWatchtowerRadar();
+                    drawStepVisual(activeScenarioStepIdx);
+                }, 50);
+            }
+            if (tabId === 'hr') setTimeout(initHrTree, 50);
+            if (tabId === 'sdp') {
+                if (sdpViewMode === 'dqe_tcd') renderDQEPivotTable();
+                else renderSdpCards();
+            }
+            if (tabId === 'opbtp') calculateSignage();
+            if (tabId === 'rdc') renderRdcTable();
+            if (tabId === 'procurement') renderProcurement();
+            if (tabId === 'ledger') renderLedger();
+        } catch (e) {
+            console.error('Error switching tab to ' + tabId + ':', e);
         }
-        if (tabId === 'hr') setTimeout(initHrTree, 50);
-        if (tabId === 'sdp' && sdpViewMode === 'dqe_tcd') setTimeout(renderDQEPivotTable, 50);
-        if (tabId === 'opbtp') setTimeout(calculateSignage, 50);
     }
 
     function scrollNav(offset) {
@@ -311,7 +436,7 @@ def get_js_part1_continued():
                 <div>
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
                         <span class="badge ${p.status === 'En cours' ? 'badge-success' : (p.status === 'Préparation' ? 'badge-warning' : 'badge-info')}">${p.status}</span>
-                        <span style="font-family:'JetBrains Mono'; font-weight:700; font-size:1.1rem; color:var(--emerald);">${p.budget.toLocaleString()} € HT</span>
+                        <span style="font-family:'JetBrains Mono'; font-weight:700; font-size:1.1rem; color:var(--emerald);">${(p.budget || 500000).toLocaleString()} € HT</span>
                     </div>
                     <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:0.25rem; color:#f8fafc;">${p.name}</h3>
                     <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">📍 ${p.location} &nbsp;|&nbsp; 🏢 Client : <strong style="color:#e2e8f0;">${p.client}</strong></div>
@@ -356,7 +481,7 @@ def get_js_part1_continued():
     }
 
     function openProjectModal(projectId) {
-        const p = (companyData.projects || []).find(x => x.id === projectId);
+        const p = (companyData.projects || []).find(x => x.id === projectId) || companyData.projects[0];
         if (!p) return;
 
         const body = document.getElementById('project-modal-body');
@@ -371,7 +496,7 @@ def get_js_part1_continued():
                 </div>
                 <div style="text-align:right;">
                     <div style="font-size:0.8rem; color:#94a3b8;">Montant du Marché HT</div>
-                    <div style="font-size:1.75rem; font-weight:900; color:var(--emerald); font-family:'JetBrains Mono';">${p.budget.toLocaleString()} €</div>
+                    <div style="font-size:1.75rem; font-weight:900; color:var(--emerald); font-family:'JetBrains Mono';">${(p.budget || 500000).toLocaleString()} €</div>
                 </div>
             </div>
 
@@ -408,10 +533,10 @@ def get_js_part1_continued():
                     </thead>
                     <tbody>
                         ${(p.lots || [
-                            { lot: '01', name: 'Terrassement & Déblais', budget: p.budget * 0.25, progress: p.progress, status: 'En cours' },
-                            { lot: '02', name: 'Assainissement EU/EP', budget: p.budget * 0.35, progress: Math.min(100, Math.round(p.progress * 0.9)), status: 'En cours' },
-                            { lot: '03', name: 'Réseaux Secs (AEP / Élec / Télécom)', budget: p.budget * 0.2, progress: Math.min(100, Math.round(p.progress * 0.7)), status: 'En cours' },
-                            { lot: '04', name: 'Voirie & Enrobés', budget: p.budget * 0.2, progress: Math.min(100, Math.round(p.progress * 0.4)), status: 'Préparation' }
+                            { lot: '01', name: 'Terrassement & Déblais', budget: (p.budget || 500000) * 0.25, progress: p.progress, status: 'En cours' },
+                            { lot: '02', name: 'Assainissement EU/EP', budget: (p.budget || 500000) * 0.35, progress: Math.min(100, Math.round(p.progress * 0.9)), status: 'En cours' },
+                            { lot: '03', name: 'Réseaux Secs (AEP / Élec / Télécom)', budget: (p.budget || 500000) * 0.2, progress: Math.min(100, Math.round(p.progress * 0.7)), status: 'En cours' },
+                            { lot: '04', name: 'Voirie & Enrobés', budget: (p.budget || 500000) * 0.2, progress: Math.min(100, Math.round(p.progress * 0.4)), status: 'Préparation' }
                         ]).map(l => `
                             <tr style="border-top:1px solid rgba(51,65,85,0.3);">
                                 <td style="padding:0.75rem; font-weight:700; color:#38bdf8;">Lot ${l.lot}</td>
@@ -456,8 +581,10 @@ def get_js_part1_continued():
         document.querySelectorAll('.planning-mode-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`btn-plan-${mode}`)?.classList.add('active');
 
-        document.getElementById('planning-agenda-view').style.display = (mode.startsWith('agenda')) ? 'block' : 'none';
-        document.getElementById('planning-gantt-view').style.display = (mode === 'gantt') ? 'block' : 'none';
+        const agendaEl = document.getElementById('planning-agenda-view');
+        const ganttEl = document.getElementById('planning-gantt-view');
+        if (agendaEl) agendaEl.style.display = (mode.startsWith('agenda')) ? 'block' : 'none';
+        if (ganttEl) ganttEl.style.display = (mode === 'gantt') ? 'block' : 'none';
 
         if (mode.startsWith('agenda')) {
             renderPlanningAgenda();
@@ -492,7 +619,6 @@ def get_js_part1_continued():
         const projFilter = document.getElementById('planning-project-select')?.value || 'all';
         const teamFilter = document.getElementById('planning-team-select')?.value || 'all';
 
-        // Calculate base date for current week offset
         const baseDate = new Date(2026, 8, 21); // Monday Sept 21 2026
         baseDate.setDate(baseDate.getDate() + (currentAgendaWeekOffset * 7));
 
@@ -516,29 +642,29 @@ def get_js_part1_continued():
         ].filter(t => teamFilter === 'all' || t.id === teamFilter);
 
         const agendaTasks = [
-            { teamId: 'team_a', dayIdx: 0, projId: 'PRJ_01', projName: 'ZAC des Pins', task: 'Pose Bordures T2 & Cunette', progress: 85, color: '#0284c7' },
-            { teamId: 'team_a', dayIdx: 1, projId: 'PRJ_01', projName: 'ZAC des Pins', task: 'Bétonnage Calage Bordures', progress: 60, color: '#0284c7' },
-            { teamId: 'team_a', dayIdx: 2, projId: 'PRJ_02', projName: 'Boulevard Haussmann', task: 'Blindage Tranchée Rue Centrale', progress: 40, color: '#10b981' },
-            { teamId: 'team_a', dayIdx: 3, projId: 'PRJ_02', projName: 'Boulevard Haussmann', task: 'Pose Tuyaux Fonte DN400', progress: 20, color: '#10b981' },
-            { teamId: 'team_a', dayIdx: 4, projId: 'PRJ_02', projName: 'Boulevard Haussmann', task: 'Remblaiement & Essai Compactage', progress: 0, color: '#10b981' },
+            { teamId: 'team_a', dayIdx: 0, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Pose Bordures T2 & Cunette', progress: 85, color: '#0284c7' },
+            { teamId: 'team_a', dayIdx: 1, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Bétonnage Calage Bordures', progress: 60, color: '#0284c7' },
+            { teamId: 'team_a', dayIdx: 2, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Blindage Tranchée Rue Centrale', progress: 40, color: '#10b981' },
+            { teamId: 'team_a', dayIdx: 3, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Pose Tuyaux Fonte DN400', progress: 20, color: '#10b981' },
+            { teamId: 'team_a', dayIdx: 4, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Remblaiement & Essai Compactage', progress: 0, color: '#10b981' },
 
-            { teamId: 'team_b', dayIdx: 0, projId: 'PRJ_03', projName: 'Écoquartier Rive Gauche', task: 'Tirage Câbles HTA & Fourreaux', progress: 95, color: '#f59e0b' },
-            { teamId: 'team_b', dayIdx: 1, projId: 'PRJ_03', projName: 'Écoquartier Rive Gauche', task: 'Raccordement Postes Élec', progress: 80, color: '#f59e0b' },
-            { teamId: 'team_b', dayIdx: 2, projId: 'PRJ_03', projName: 'Écoquartier Rive Gauche', task: 'Pose Chambres Télécom L2T', progress: 50, color: '#f59e0b' },
-            { teamId: 'team_b', dayIdx: 3, projId: 'PRJ_01', projName: 'ZAC des Pins', task: 'Pose Candelabres Éclairage', progress: 10, color: '#0284c7' },
-            { teamId: 'team_b', dayIdx: 4, projId: 'PRJ_01', projName: 'ZAC des Pins', task: 'Contrôle Continuité & Essais', progress: 0, color: '#0284c7' },
+            { teamId: 'team_b', dayIdx: 0, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Tirage Câbles HTA & Fourreaux', progress: 95, color: '#f59e0b' },
+            { teamId: 'team_b', dayIdx: 1, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Raccordement Postes Élec', progress: 80, color: '#f59e0b' },
+            { teamId: 'team_b', dayIdx: 2, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Pose Chambres Télécom L2T', progress: 50, color: '#f59e0b' },
+            { teamId: 'team_b', dayIdx: 3, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Pose Candelabres Éclairage', progress: 10, color: '#0284c7' },
+            { teamId: 'team_b', dayIdx: 4, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Contrôle Continuité & Essais', progress: 0, color: '#0284c7' },
 
-            { teamId: 'team_c', dayIdx: 0, projId: 'PRJ_04', projName: 'Zone Industrielle Nord', task: 'Rabotage Ancien Revêtement', progress: 100, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 1, projId: 'PRJ_04', projName: 'Zone Industrielle Nord', task: 'Application Couche d’Accrochage', progress: 75, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 2, projId: 'PRJ_04', projName: 'Zone Industrielle Nord', task: 'Mise en oeuvre BBSG 0/10 (350t)', progress: 30, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 3, projId: 'PRJ_04', projName: 'Zone Industrielle Nord', task: 'Compactage de Finition & Joints', progress: 0, color: '#8b5cf6' },
-            { teamId: 'team_c', dayIdx: 4, projId: 'PRJ_04', projName: 'Zone Industrielle Nord', task: 'Nettoyage & Levée Réserves', progress: 0, color: '#8b5cf6' },
+            { teamId: 'team_c', dayIdx: 0, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Rabotage Ancien Revêtement', progress: 100, color: '#8b5cf6' },
+            { teamId: 'team_c', dayIdx: 1, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Application Couche d’Accrochage', progress: 75, color: '#8b5cf6' },
+            { teamId: 'team_c', dayIdx: 2, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Mise en oeuvre BBSG 0/10 (350t)', progress: 30, color: '#8b5cf6' },
+            { teamId: 'team_c', dayIdx: 3, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Compactage de Finition & Joints', progress: 0, color: '#8b5cf6' },
+            { teamId: 'team_c', dayIdx: 4, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Nettoyage & Levée Réserves', progress: 0, color: '#8b5cf6' },
 
-            { teamId: 'team_topo', dayIdx: 0, projId: 'PRJ_01', projName: 'ZAC des Pins', task: 'Implantation Axes Voirie', progress: 100, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 1, projId: 'PRJ_02', projName: 'Boulevard Haussmann', task: 'Relevé Tranchée Ouverte As-Built', progress: 90, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 2, projId: 'PRJ_03', projName: 'Écoquartier Rive Gauche', task: 'Géoréférencement Réseaux Classe A', progress: 60, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 3, projId: 'PRJ_04', projName: 'Zone Industrielle Nord', task: 'Contrôle Altimétrique Couche Roulement', progress: 10, color: '#ec4899' },
-            { teamId: 'team_topo', dayIdx: 4, projId: 'PRJ_01', projName: 'ZAC des Pins', task: 'Édition Plans de Récolement DAO', progress: 0, color: '#ec4899' }
+            { teamId: 'team_topo', dayIdx: 0, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Implantation Axes Voirie', progress: 100, color: '#ec4899' },
+            { teamId: 'team_topo', dayIdx: 1, projId: 'projet_sete', projName: 'ZAC Littoral Sète', task: 'Relevé Tranchée Ouverte As-Built', progress: 90, color: '#ec4899' },
+            { teamId: 'team_topo', dayIdx: 2, projId: 'projet_pezenas', projName: 'Centre Ancien Pézenas', task: 'Géoréférencement Réseaux Classe A', progress: 60, color: '#ec4899' },
+            { teamId: 'team_topo', dayIdx: 3, projId: 'projet_montpellier', projName: 'Voie Verte Montpellier', task: 'Contrôle Altimétrique Couche Roulement', progress: 10, color: '#ec4899' },
+            { teamId: 'team_topo', dayIdx: 4, projId: 'projet_ales', projName: 'Giratoire RD906 Alès', task: 'Édition Plans de Récolement DAO', progress: 0, color: '#ec4899' }
         ];
 
         const filteredTasks = agendaTasks.filter(t => projFilter === 'all' || t.projId === projFilter);
@@ -597,20 +723,20 @@ def get_js_part1_continued():
 
         const projFilter = document.getElementById('planning-project-select')?.value || 'all';
         const tasks = [
-            { id: 't1', projId: 'PRJ_01', proj: 'ZAC des Pins', task: 'Terrassement en déblai & Purge', start: 1, dur: 3, progress: 100, team: 'Équipe A' },
-            { id: 't2', projId: 'PRJ_01', proj: 'ZAC des Pins', task: 'Pose Réseau Assainissement EU', start: 3, dur: 4, progress: 80, team: 'Équipe A' },
-            { id: 't3', projId: 'PRJ_01', proj: 'ZAC des Pins', task: 'Pose Fourreaux Réseaux Secs', start: 6, dur: 3, progress: 40, team: 'Équipe B' },
-            { id: 't4', projId: 'PRJ_01', proj: 'ZAC des Pins', task: 'Pose Bordures & Trottoirs', start: 8, dur: 4, progress: 15, team: 'Équipe A' },
-            { id: 't5', projId: 'PRJ_01', proj: 'ZAC des Pins', task: 'Couche de Forme & Enrobés', start: 11, dur: 3, progress: 0, team: 'Équipe C' },
+            { id: 't1', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Terrassement en déblai & Purge', start: 1, dur: 3, progress: 100, team: 'Équipe A' },
+            { id: 't2', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Pose Réseau Assainissement EU', start: 3, dur: 4, progress: 80, team: 'Équipe A' },
+            { id: 't3', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Pose Fourreaux Réseaux Secs', start: 6, dur: 3, progress: 40, team: 'Équipe B' },
+            { id: 't4', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Pose Bordures & Trottoirs', start: 8, dur: 4, progress: 15, team: 'Équipe A' },
+            { id: 't5', projId: 'projet_ales', proj: 'Giratoire RD906 Alès', task: 'Couche de Forme & Enrobés', start: 11, dur: 3, progress: 0, team: 'Équipe C' },
 
-            { id: 't6', projId: 'PRJ_02', proj: 'Boulevard Haussmann', task: 'Sciage & Démolition Chaussée', start: 1, dur: 2, progress: 100, team: 'Équipe A' },
-            { id: 't7', projId: 'PRJ_02', proj: 'Boulevard Haussmann', task: 'Blindage & Pose Fonte DN400', start: 3, dur: 5, progress: 65, team: 'Équipe A' },
-            { id: 't8', projId: 'PRJ_02', proj: 'Boulevard Haussmann', task: 'Remblaiement & Essais Dynamiques', start: 7, dur: 3, progress: 20, team: 'Équipe A' },
-            { id: 't9', projId: 'PRJ_02', proj: 'Boulevard Haussmann', task: 'Réfection Enrobé à Chaud', start: 9, dur: 3, progress: 0, team: 'Équipe C' },
+            { id: 't6', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Sciage & Démolition Chaussée', start: 1, dur: 2, progress: 100, team: 'Équipe A' },
+            { id: 't7', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Blindage & Pose Fonte DN400', start: 3, dur: 5, progress: 65, team: 'Équipe A' },
+            { id: 't8', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Remblaiement & Essais Dynamiques', start: 7, dur: 3, progress: 20, team: 'Équipe A' },
+            { id: 't9', projId: 'projet_sete', proj: 'ZAC Littoral Sète', task: 'Réfection Enrobé à Chaud', start: 9, dur: 3, progress: 0, team: 'Équipe C' },
 
-            { id: 't10', projId: 'PRJ_03', proj: 'Écoquartier Rive Gauche', task: 'Tranchée Commune VRD', start: 2, dur: 4, progress: 90, team: 'Équipe B' },
-            { id: 't11', projId: 'PRJ_03', proj: 'Écoquartier Rive Gauche', task: 'Raccordement Haute Tension & Fibre', start: 5, dur: 4, progress: 50, team: 'Équipe B' },
-            { id: 't12', projId: 'PRJ_03', proj: 'Écoquartier Rive Gauche', task: 'Aménagements Paysagers & Bordures', start: 8, dur: 4, progress: 10, team: 'Équipe C' }
+            { id: 't10', projId: 'projet_pezenas', proj: 'Centre Ancien Pézenas', task: 'Tranchée Commune VRD', start: 2, dur: 4, progress: 90, team: 'Équipe B' },
+            { id: 't11', projId: 'projet_pezenas', proj: 'Centre Ancien Pézenas', task: 'Raccordement Haute Tension & Fibre', start: 5, dur: 4, progress: 50, team: 'Équipe B' },
+            { id: 't12', projId: 'projet_montpellier', proj: 'Voie Verte Montpellier', task: 'Aménagements Paysagers & Bordures', start: 8, dur: 4, progress: 10, team: 'Équipe C' }
         ].filter(t => projFilter === 'all' || t.projId === projFilter);
 
         const totalWeeks = 14;
