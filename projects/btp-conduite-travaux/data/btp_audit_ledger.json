@@ -1,0 +1,261 @@
+[
+  {
+    "index": 1,
+    "timestamp": "2026-09-09T04:18:41.756404Z",
+    "agent_id": "AGENT_LEGAL",
+    "action": "DCE_PARSED_AND_VALIDATED",
+    "status": "SUCCESS",
+    "details": {
+      "project": "Giratoire Barbazan RD33/RD33D",
+      "ccag_version": "CCAG-Travaux 2021 actualisé",
+      "clauses_conformity": {
+        "art_20_4_environnement": "CONFORME - SOGED + SOPAQ exigés",
+        "art_19_2_2_penalites": "CONFORME - Plafonnement à 10% HT actif (26 850 € max)",
+        "avance_pme": "20% validée (53 700 € HT)",
+        "delai_paiement": "30 jours via Chorus Pro"
+      },
+      "administrative_forms_generated": [
+        "DC1_Lettre_Candidature.pdf",
+        "DC2_Declaration_Candidat.pdf",
+        "DC4_Sous_Traitance.pdf"
+      ]
+    },
+    "prev_hash": "GENESIS_BLOCK_BTP_2026",
+    "hash": "f7e2fdc173cb20d701160e6dd5c2807520d86c52fb6303371c0de0e1a11d5d16"
+  },
+  {
+    "index": 2,
+    "timestamp": "2026-09-09T04:18:41.756651Z",
+    "agent_id": "AGENT_BUDGET",
+    "action": "SDP_CALCULATED",
+    "status": "SUCCESS",
+    "details": {
+      "total_items": 28,
+      "debourse_sec_total": 214800.0,
+      "k_coefficient": 1.25,
+      "prix_vente_ht": 268500.0,
+      "indexation_recommandee": "TP08 (Travaux routiers et enrobés)",
+      "empreinte_carbone_estimee_tco2": 42.8
+    },
+    "prev_hash": "f7e2fdc173cb20d701160e6dd5c2807520d86c52fb6303371c0de0e1a11d5d16",
+    "hash": "7b32af2ebd8007f808b75659851b724240e335c5bc47c7075a62f20ea3913aec"
+  },
+  {
+    "index": 3,
+    "timestamp": "2026-09-09T04:18:41.758188Z",
+    "agent_id": "AGENT_DICT_SAFETY",
+    "action": "DICT_AND_PERMITS_ISSUED",
+    "status": "SUCCESS",
+    "details": {
+      "guichet_unique_status": "VALIDATED",
+      "dict_cerfa_14434": "Généré automatiquement",
+      "arrete_circulation_cerfa_14024": "Déposé en préfecture / CD31",
+      "permission_voirie_cerfa_14023": "Délivrée",
+      "classes_reseaux_reconnues": {
+        "A": 5,
+        "B": 3,
+        "C": 2
+      },
+      "alertes": "2 réseaux d'eau potable en classe C -> Prescription terrassement doux / aspiratrice de déblais"
+    },
+    "prev_hash": "7b32af2ebd8007f808b75659851b724240e335c5bc47c7075a62f20ea3913aec",
+    "hash": "fba4b0032dbe800be13e1adf4b37da9624de641a3c2fa9b326dcdc06b63d07e6"
+  },
+  {
+    "index": 4,
+    "timestamp": "2026-09-09T04:18:41.758525Z",
+    "agent_id": "AGENT_PROCUREMENT",
+    "action": "PROCUREMENT_ORDERS_ISSUED",
+    "status": "SUCCESS",
+    "details": {
+      "rfq_sent": [
+        {
+          "fournisseur": "Centrale Enrobés Villeneuve",
+          "produit": "GB3 (1800t) + BBSG 0/14 (500t)",
+          "status": "CONFIRMED"
+        },
+        {
+          "fournisseur": "Carrières du Comminges",
+          "produit": "GNT 0/20 concassée (300m3)",
+          "status": "CONFIRMED"
+        },
+        {
+          "fournisseur": "Plattard TP",
+          "produit": "Bordures P2 (60ml), I1 (181ml), CC1 (10ml)",
+          "status": "DISPATCHED"
+        }
+      ],
+      "trackdechets_registry": "Bordereau BSD-2026-0909-001 émis pour 3100 m2 de décapage terre végétale"
+    },
+    "prev_hash": "fba4b0032dbe800be13e1adf4b37da9624de641a3c2fa9b326dcdc06b63d07e6",
+    "hash": "70af6bb24d5a2df671a5037e79e8d90fe5097b48e4fd6093de643612a7a8109e"
+  },
+  {
+    "index": 5,
+    "timestamp": "2026-09-09T04:18:41.758785Z",
+    "agent_id": "AGENT_PLANNING_LEAN",
+    "action": "SCHEDULE_INITIALIZED",
+    "status": "SUCCESS",
+    "details": {
+      "total_duration_weeks": 8,
+      "critical_path": [
+        "Décapage",
+        "GNT 0/20",
+        "Bordures P2/I1",
+        "GB3 Fondation",
+        "BBSG Roulement",
+        "Finition"
+      ],
+      "ppc_target": "92%",
+      "intemperies_buffer_days": 4
+    },
+    "prev_hash": "70af6bb24d5a2df671a5037e79e8d90fe5097b48e4fd6093de643612a7a8109e",
+    "hash": "82cca0c2508a89a0313b6c73ce7cdd22114d596f3f4510cd7a590fe7b62631d9"
+  },
+  {
+    "index": 6,
+    "timestamp": "2026-09-09T04:18:41.759108Z",
+    "agent_id": "AGENT_TELEMETRY_VISION",
+    "action": "THERMAL_DEFECT_DETECTED",
+    "status": "WARNING",
+    "details": {
+      "temp_c": 118,
+      "data": {
+        "temperature_c": 118,
+        "truck_id": "CAM-04"
+      }
+    },
+    "prev_hash": "82cca0c2508a89a0313b6c73ce7cdd22114d596f3f4510cd7a590fe7b62631d9",
+    "hash": "70bafc28b7475d1a62778928c2d54affcaad92f6570aa8e76de873df247deff2"
+  },
+  {
+    "index": 7,
+    "timestamp": "2026-09-09T04:19:13.405751Z",
+    "agent_id": "AGENT_TELEMETRY_VISION",
+    "action": "THERMAL_DEFECT_DETECTED",
+    "status": "WARNING",
+    "details": {
+      "temp_c": 115,
+      "data": {
+        "temperature_c": 115,
+        "truck_id": "CAMION-08",
+        "location": "RD33 Giratoire PR 9+978"
+      }
+    },
+    "prev_hash": "70bafc28b7475d1a62778928c2d54affcaad92f6570aa8e76de873df247deff2",
+    "hash": "2a424905ffe949dcfa03233c6d9f2d99302c498204724265dfa25ac8bf260b10"
+  },
+  {
+    "index": 8,
+    "timestamp": "2026-09-09T04:25:41.885924Z",
+    "agent_id": "AGENT_LEGAL",
+    "action": "DCE_PARSED_AND_VALIDATED",
+    "status": "SUCCESS",
+    "details": {
+      "project": "Giratoire Barbazan RD33/RD33D",
+      "ccag_version": "CCAG-Travaux 2021 actualisé",
+      "clauses_conformity": {
+        "art_20_4_environnement": "CONFORME - SOGED + SOPAQ exigés",
+        "art_19_2_2_penalites": "CONFORME - Plafonnement à 10% HT actif (26 850 € max)",
+        "avance_pme": "20% validée (53 700 € HT)",
+        "delai_paiement": "30 jours via Chorus Pro"
+      },
+      "administrative_forms_generated": [
+        "DC1_Lettre_Candidature.pdf",
+        "DC2_Declaration_Candidat.pdf",
+        "DC4_Sous_Traitance.pdf"
+      ]
+    },
+    "prev_hash": "2a424905ffe949dcfa03233c6d9f2d99302c498204724265dfa25ac8bf260b10",
+    "hash": "1d55c4d21e6e043b529cd56735cc95253d6acce720d73396c9c3063749a47585"
+  },
+  {
+    "index": 9,
+    "timestamp": "2026-09-09T04:25:41.886590Z",
+    "agent_id": "AGENT_BUDGET",
+    "action": "SDP_CALCULATED",
+    "status": "SUCCESS",
+    "details": {
+      "total_items": 28,
+      "debourse_sec_total": 214800.0,
+      "k_coefficient": 1.25,
+      "prix_vente_ht": 268500.0,
+      "indexation_recommandee": "TP08 (Travaux routiers et enrobés)",
+      "empreinte_carbone_estimee_tco2": 42.8
+    },
+    "prev_hash": "1d55c4d21e6e043b529cd56735cc95253d6acce720d73396c9c3063749a47585",
+    "hash": "5c36b1c249e1df4cbd0b681f3f22ed8edec1e0a73072c41f21809404c3745af9"
+  },
+  {
+    "index": 10,
+    "timestamp": "2026-09-09T04:25:41.887045Z",
+    "agent_id": "AGENT_DICT_SAFETY",
+    "action": "DICT_AND_PERMITS_ISSUED",
+    "status": "SUCCESS",
+    "details": {
+      "guichet_unique_status": "VALIDATED",
+      "dict_cerfa_14434": "Généré automatiquement",
+      "arrete_circulation_cerfa_14024": "Déposé en préfecture / CD31",
+      "permission_voirie_cerfa_14023": "Délivrée",
+      "classes_reseaux_reconnues": {
+        "A": 5,
+        "B": 3,
+        "C": 2
+      },
+      "alertes": "2 réseaux d'eau potable en classe C -> Prescription terrassement doux / aspiratrice de déblais"
+    },
+    "prev_hash": "5c36b1c249e1df4cbd0b681f3f22ed8edec1e0a73072c41f21809404c3745af9",
+    "hash": "50c3e232ef689a0a23467d3cf2faa636add07d2909d03bf0bd6bc9dc78c94753"
+  },
+  {
+    "index": 11,
+    "timestamp": "2026-09-09T04:25:41.887480Z",
+    "agent_id": "AGENT_PROCUREMENT",
+    "action": "PROCUREMENT_ORDERS_ISSUED",
+    "status": "SUCCESS",
+    "details": {
+      "rfq_sent": [
+        {
+          "fournisseur": "Centrale Enrobés Villeneuve",
+          "produit": "GB3 (1800t) + BBSG 0/14 (500t)",
+          "status": "CONFIRMED"
+        },
+        {
+          "fournisseur": "Carrières du Comminges",
+          "produit": "GNT 0/20 concassée (300m3)",
+          "status": "CONFIRMED"
+        },
+        {
+          "fournisseur": "Plattard TP",
+          "produit": "Bordures P2 (60ml), I1 (181ml), CC1 (10ml)",
+          "status": "DISPATCHED"
+        }
+      ],
+      "trackdechets_registry": "Bordereau BSD-2026-0909-001 émis pour 3100 m2 de décapage terre végétale"
+    },
+    "prev_hash": "50c3e232ef689a0a23467d3cf2faa636add07d2909d03bf0bd6bc9dc78c94753",
+    "hash": "dbf12e8205936d298c26ef951fca405a4fe0491379ac0b10759f1547d00d6a5d"
+  },
+  {
+    "index": 12,
+    "timestamp": "2026-09-09T04:25:41.887926Z",
+    "agent_id": "AGENT_PLANNING_LEAN",
+    "action": "SCHEDULE_INITIALIZED",
+    "status": "SUCCESS",
+    "details": {
+      "total_duration_weeks": 8,
+      "critical_path": [
+        "Décapage",
+        "GNT 0/20",
+        "Bordures P2/I1",
+        "GB3 Fondation",
+        "BBSG Roulement",
+        "Finition"
+      ],
+      "ppc_target": "92%",
+      "intemperies_buffer_days": 4
+    },
+    "prev_hash": "dbf12e8205936d298c26ef951fca405a4fe0491379ac0b10759f1547d00d6a5d",
+    "hash": "ea9ddc058541b15f690ecd7d0ea65580f60bb10d1f7ee94a7974049671913375"
+  }
+]

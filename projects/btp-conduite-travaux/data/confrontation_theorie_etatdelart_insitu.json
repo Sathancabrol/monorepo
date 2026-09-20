@@ -1,0 +1,207 @@
+{
+  "domaines_analyse": [
+    {
+      "domaine": "Cadre Juridique et Marches Publics",
+      "theorie_cours": {
+        "points_cles": [
+          "Marche base sur CCAG-Travaux 2009/2014 et Code des Marches Publics 2006/2016",
+          "DCE type: RC, AE (DC3), CCAP, CCTP, BPU, DQE",
+          "Retenue de garantie classique de 5% ou caution bancaire",
+          "Penalites de retard journalieres calculees par formule type sans plafond explicite"
+        ],
+        "limites": "Absence de clauses environnementales contraignantes, gestion des reclamations souvent theorique"
+      },
+      "etat_de_l_art_2026": {
+        "referentiels": [
+          "Code de la Commande Publique (2019/2026)",
+          "CCAG-Travaux 2021 actualise (Arrete du 30 mars 2021)",
+          "Loi Climat et Resilience / Loi AGEC"
+        ],
+        "innovations": [
+          "Clause environnementale obligatoire (Art. 20.4 CCAG 2021): SOGED, SOPAQ, PAE, tracabilite des dechets",
+          "Plafonnement des penalites de retard a 10% du montant total HT du marche (Art. 19.2.2)",
+          "Avance financiere portee a 20% minimum pour les PME sur marches de l Etat et collectivites",
+          "Facturation dematerialisee obligatoire Chorus Pro et decomptes mensuels numerises",
+          "Gestion stricte des memoires de reclamation sous 30 jours (Art. 55 CCAG) avec recours au CCIRA"
+        ]
+      },
+      "realite_in_situ_terrain": {
+        "retours_experience": [
+          "Persistance de CCAP obsoletes dans les petites collectivites (delais de paiement depasses > 30j)",
+          "Ordres de Service (OS) modificatifs souvent notifies avec plusieurs semaines de retard sur les travaux",
+          "Volatilite extreme des matieres premieres (bitume, acier, carburant) necessitant l application rigoureuse des index TP01/TP08",
+          "Negociation contractuelle quotidienne entre Conducteur de Travaux et MOE via constats contradictoires"
+        ]
+      }
+    },
+    {
+      "domaine": "Etude de Prix, Sous-Details (SDP) et Rendements",
+      "theorie_cours": {
+        "points_cles": [
+          "Formule standard du Debourse Sec: DS = Main d Oeuvre + Fournitures + Materiel + Sous-Traitance",
+          "Application d un coefficient unique K = 1.250 (Frais Generaux 15% + Benefices/Aleas 10%)",
+          "Calcul des temps unitaires ouvriers (TUO) et du Taux Horaire Moyen Ouvrier (THMO ~ 22-35 E/h)",
+          "Rendements lineaires fixes (15 ml/j bordure, 20 t/j enrobe, 235 m2/j decapage)"
+        ],
+        "limites": "Rendements en conditions ideales hors intemperies, pertes logistiques et coactivite"
+      },
+      "etat_de_l_art_2026": {
+        "referentiels": [
+          "Logiciels d etude de prix BIM (Mensura, Onaya, Optima, Attic+)",
+          "Grilles salariales FNTP Occitanie/National 2026",
+          "Indexation TP (INSEE TP01, TP08, TP02)"
+        ],
+        "innovations": [
+          "Calcul dynamique du THMO charge incluant charges sociales (45-52%), CNETP (19.7%), OPPBTP, IPD (panier/trajet)",
+          "THMO reel 2026: 38-48 E/h pour ouvrier qualifie, 58-75 E/h pour encadrement de chantier",
+          "Integration du cout carbone (E/tCO2eq) dans les debourses secs de chaque tache",
+          "Simulations parametriques des rotations d engins et approvisionnements en temps reel"
+        ]
+      },
+      "realite_in_situ_terrain": {
+        "retours_experience": [
+          "Chute de rendement de 25% a 40% en milieu urbain sous circulation maintenue ou alternat",
+          "Surconsommation d enrobe (+5% a +12%) liee aux irregularites de rabotage et pertes thermiques",
+          "Immobilisation couteuse des engins de terrassement en cas de pluie bloquant l arase de terrassement",
+          "Arbitrage quotidien entre location d engins courte duree vs materiel propre de l entreprise"
+        ]
+      }
+    },
+    {
+      "domaine": "Technique Routiere, VRD et Terrassements",
+      "theorie_cours": {
+        "points_cles": [
+          "Structures de chaussees: GNT 0/20, Grave Bitume GB3 (12cm), Enrobe BBSG 0/14 (6cm)",
+          "Pose manuelle traditionnelle des bordures beton P1/P2/I1/CC1 sur lit de beton C16/20",
+          "Pose de canalisations d assainissement PVC O300 CR4 sur lit de sable ou gravillon",
+          "Dimensionnement hydraulique des caniveaux et bassins d orage a ciel ouvert"
+        ],
+        "limites": "Materiaux conventionnels 100% neufs sans prise en compte du reemploi ou des enrobes tiedes"
+      },
+      "etat_de_l_art_2026": {
+        "referentiels": [
+          "Norme NF P 98-086 (Dimensionnement des chaussees)",
+          "Fascicule 70 Titres I et II / Fascicule 29",
+          "Guides CEREMA / IDRRIM (Enrobes Tiedes BBT & Agregats Recycles AE)"
+        ],
+        "innovations": [
+          "Enrobes tiedes (BBT) fabriques a 110-130 deg C avec liants biosources et taux d AE recycles jusqu a 50-70%",
+          "Graves recyclees GNT de classe B issues du concassage de beton et deblais de demolition",
+          "Gestion integree des eaux pluviales a la source: noues paysageres, chaussees reservoirs, SAUL",
+          "Guidage 3D GNSS et stations totales robotisees sur pelles, niveleuses et finisseurs (Trimble, Leica)"
+        ]
+      },
+      "realite_in_situ_terrain": {
+        "retours_experience": [
+          "Non-conformite de fabrication en centrale d enrobes (ex. surdosage bitume 5.3% a Barbazan) provoquant litige de 202 kE",
+          "Essais de plaque Westergaard / Dynaplaque montrant une chute de portance (EV2 < 50 MPa) apres un episode pluvieux",
+          "Risque de descellement hivernal des bordures si le beton de calage est coule trop sec ou gele avant prise",
+          "Refroidissement premature des enrobes en fond de benne lors des trajets de plus de 45 minutes sans bache thermique"
+        ]
+      }
+    },
+    {
+      "domaine": "Reglementation DT-DICT, AIPR et Securite Routiere",
+      "theorie_cours": {
+        "points_cles": [
+          "Dispositif anti-endommagement: Teleservice Guichet Unique, Cerfa 14434*03",
+          "Classes de precision cartographique: A (<=40-50cm), B (<=1.5m), C (>1.5m)",
+          "Competences AIPR (Concepteur, Encadrant, Operateur) verifiees par QCM",
+          "Signalisation temporaire de chantier: alternat manuel K10, feux KR11j, panneaux AK5/AK17/BK14",
+          "Autorisations administratives: Cerfa 14023 (Voirie) et Cerfa 14024 (Circulation)"
+        ],
+        "limites": "Cas d ecole supposant des plans de reseaux fiables et des delais de reponse respectes"
+      },
+      "etat_de_l_art_2026": {
+        "referentiels": [
+          "Arrete du 15 fevrier 2012 modifie",
+          "Arrete du 29 octobre 2018 (AIPR)",
+          "Instruction Interministerielle sur la Signalisation Routiere (IISR - Livre 1 8e partie)",
+          "Code du Travail Art. R4532 (SPS)"
+        ],
+        "innovations": [
+          "Obligation stricte AIPR avec tracabilite numerique des attestations de competences (renouvellement 5 ans)",
+          "Detection non destructive haute performance: Georadar 3D multibandes, radiodetection electromagnetique",
+          "Utilisation systematique des aspiratrices de deblais pour fouilles en zone sensible (classe C ou gaz/HTA)",
+          "Signalisation connectee intelligente: feux temporaires synchronises asservis par radar, balisage LED defilant",
+          "Dispositifs anticollision IA et cameras 360 deg pour engins de chantier (detection pietons Blaxtair/Brigade)"
+        ]
+      },
+      "realite_in_situ_terrain": {
+        "retours_experience": [
+          "Plus de 40% des reseaux d eau et d eclairage public en zone rurale sont en classe C (incertitude > 1.5m)",
+          "Decouverte inopinee de reseaux non repertories necessitant un constat immediat d arret/sursis pour bloquer le delai contractuel",
+          "Non-respect recurrent des limitations de vitesse par les usagers de la route aux abords de l alternat de chantier",
+          "Marquage-piquetage a la bombe de peinture souvent efface par la pluie ou le passage des engins avant l ouverture des fouilles"
+        ]
+      }
+    },
+    {
+      "domaine": "Pilotage d Execution, Suivi de Reunions et Gestion des Litiges",
+      "theorie_cours": {
+        "points_cles": [
+          "Reunions de chantier hebdomadaires avec Maitre d Ouvrage, Maitre d OEuvre et Entreprises",
+          "Redaction d un Compte-Rendu (CR) contradictoire valant notification sous 8 jours",
+          "Gestion des Ordres de Service (OS de demarrage, OS de suspension, OS d arret)",
+          "Planification par diagramme de Gantt et planning chemin de fer"
+        ],
+        "limites": "Vision lineaire ignorant les frottements relationnels et les strategies d avenants"
+      },
+      "etat_de_l_art_2026": {
+        "referentiels": [
+          "Lean Construction & Last Planner System (LPS)",
+          "Applications mobiles de suivi de chantier (Kizeo, Dalux, Fieldwire, BulldozAIR)",
+          "Management contractuel CCAG 2021 Art. 55"
+        ],
+        "innovations": [
+          "Planification collaborative inversee (Pull Planning) a 6 semaines et mesure hebdomadaire du PPC (Promesses Tenues)",
+          "Rapports de chantier mobiles dematerialises avec geolocalisation des reserves et photos horodatees",
+          "Signature electronique instantanee des comptes-rendus et constats sur tablette",
+          "Analyse retrospective des retards par la methode du chemin critique As-Built vs As-Planned"
+        ]
+      },
+      "realite_in_situ_terrain": {
+        "retours_experience": [
+          "Autopsie Barbazan CR 1 a 9: blocage pendant 3 semaines par les concessionnaires EDF/Orange sans indemnisation immediate",
+          "Gestion de crise suite a non-conformite de Grave Bitume: choix entre refection totale (202 kE) vs refaction et suivi decennal",
+          "Difficulte d obtenir la signature des constats de travaux supplementaires (TS) par le MOE avant realisation",
+          "Necessite vitale de formaliser chaque fait generateur de retard par courrier RAR pour fonder le memoire de reclamation futur"
+        ]
+      }
+    },
+    {
+      "domaine": "Reception, Cloture, DOE et Transition Numerique (BIM/SIG)",
+      "theorie_cours": {
+        "points_cles": [
+          "Standard DOE (ex. Standard Aeroports de Lyon SI 022 - 37 pages)",
+          "Composition du DOE: plans de recolement X, Y, Z, fiches techniques, PV d essais, ITV assainissement, notices entretien",
+          "Remise du DOE dans le mois suivant la notification de reception",
+          "Transmission des pieces au Coordonnateur SPS pour le DIUO (Dossier d Intervention Ulterieure)"
+        ],
+        "limites": "Production tardive et fastidieuse de classeurs papier entrainant des retards de paiement du DGD"
+      },
+      "etat_de_l_art_2026": {
+        "referentiels": [
+          "Normes ISO 19650 (BIM)",
+          "Standard IFC 4.3 (OpenBIM Infrastructure - IfcRoad, IfcDrainage)",
+          "Plateforme Nationale Trackdechets & REP PMCB",
+          "PCRS (Plan de Corps de Rue Simplifie)"
+        ],
+        "innovations": [
+          "DOE numerique et Jumeau Numerique (Digital Twin) interconnecte aux SIG des collectivites",
+          "Recolement automatique en tranchee ouverte par GNSS RTK centimetrique et photogrammetrie par drone",
+          "Diagnostic PEMD (Produits, Equipements, Materiaux, Dechets) et bordereaux dematerialises sur Trackdechets",
+          "Cloture financiere acceleree avec validation dematerialisee du Decompte General et Definitif (DGD) sur Chorus Pro"
+        ]
+      },
+      "realite_in_situ_terrain": {
+        "retours_experience": [
+          "Le syndrome de fin de chantier: equipes deja demobilisees rendant la collecte des fiches et PV laborieuse",
+          "Retard de plusieurs mois dans la levee des reserves bloquant la liberation de la caution de retenue de garantie (5%)",
+          "Omission frequente de releve de reseaux avant remblaiement, imposant des reperages couteux a posteriori",
+          "L archivage numerique structure des le demarrage du chantier est l unique rempart contre les penalites de DOE"
+        ]
+      }
+    }
+  ]
+}
