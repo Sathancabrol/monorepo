@@ -24,7 +24,7 @@ def get_js_part3():
         const height = obsidianCanvas.height;
 
         obsidianNodes = rawNodes.map((n, i) => {
-            const angle = (i / rawNodes.length) * Math.PI * 2;
+            const angle = (i / (rawNodes.length || 1)) * Math.PI * 2;
             const radius = 120 + (i % 3) * 60;
             return {
                 id: n.id,
@@ -177,8 +177,10 @@ def get_js_part3():
         document.querySelectorAll('.sdp-view-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`btn-sdp-${mode}`)?.classList.add('active');
 
-        document.getElementById('sdp-dqe-tcd-view').style.display = (mode === 'dqe_tcd') ? 'block' : 'none';
-        document.getElementById('sdp-cards-view').style.display = (mode === 'cards') ? 'block' : 'none';
+        const tcdEl = document.getElementById('sdp-dqe-tcd-view');
+        const cardsEl = document.getElementById('sdp-cards-view');
+        if (tcdEl) tcdEl.style.display = (mode === 'dqe_tcd') ? 'block' : 'none';
+        if (cardsEl) cardsEl.style.display = (mode === 'cards') ? 'block' : 'none';
 
         if (mode === 'dqe_tcd') renderDQEPivotTable();
         else renderSdpCards();
@@ -192,7 +194,7 @@ def get_js_part3():
         const projectFilter = document.getElementById('dqe-project-select')?.value || 'all';
 
         let items = syntheseData.dqe_items;
-        if (lotFilter !== 'all') items = items.filter(i => i.lot.toLowerCase().includes(lotFilter.toLowerCase()));
+        if (lotFilter !== 'all') items = items.filter(i => (i.lot || '').toLowerCase().includes(lotFilter.toLowerCase()));
         if (projectFilter !== 'all') items = items.filter(i => (i.project_id || '').toLowerCase() === projectFilter.toLowerCase());
 
         let totalDS = 0, totalMO = 0, totalMat = 0, totalEq = 0, totalST = 0, totalPV = 0;
@@ -313,7 +315,7 @@ def get_js_part3():
     }
 
     function openSdpDetailModal(code) {
-        const item = (syntheseData.dqe_items || []).find(x => x.code === code);
+        const item = (syntheseData.dqe_items || []).find(x => x.code === code) || syntheseData.dqe_items[0];
         if (!item) return;
 
         const body = document.getElementById('sdp-detail-modal-body');
@@ -417,7 +419,7 @@ def get_js_part3_continued():
                     <span style="font-family:'JetBrains Mono'; font-size:0.75rem; color:#38bdf8; font-weight:700;">BLOC #${tx.index} • ${tx.timestamp}</span>
                     <span class="badge badge-success" style="font-size:0.65rem;">SHA-256 SCELLÉ</span>
                 </div>
-                <div style="font-size:0.9rem; font-weight:700; color:#f8fafc; margin-bottom:0.25rem;">${tx.data ? tx.data.event || tx.data.type || 'Événement Certifié BTP' : 'Transaction'}</div>
+                <div style="font-size:0.9rem; font-weight:700; color:#f8fafc; margin-bottom:0.25rem;">${tx.details ? (tx.details.project || tx.action || 'Événement BTP') : (tx.action || 'Transaction')}</div>
                 <div style="font-family:'JetBrains Mono'; font-size:0.7rem; color:#64748b; word-break:break-all; background:rgba(0,0,0,0.3); padding:0.4rem; border-radius:4px;">
                     HASH: <span style="color:#10b981;">${tx.hash}</span>
                 </div>
@@ -431,6 +433,10 @@ def get_js_part3_continued():
     function renderCompanyMetrics() {
         const caisseEl = document.getElementById('company-caisse-val');
         if (caisseEl) caisseEl.textContent = `${caisseBalance.toLocaleString()} €`;
+        const caisseTop = document.getElementById('caisse-balance-top');
+        if (caisseTop) caisseTop.textContent = `${caisseBalance.toLocaleString()} €`;
+        const kpiTreasury = document.getElementById('kpi-treasury-val');
+        if (kpiTreasury) kpiTreasury.textContent = `${caisseBalance.toLocaleString()} €`;
     }
 """
 
@@ -680,23 +686,39 @@ def get_js_helpers_and_actions():
     function resetObsidianView() { initObsidianGraph(); }
 
     // ==========================================
-    // 24. APPLICATION INITIALIZATION
+    // 24. COMPLETE APPLICATION PRE-RENDERING & INIT
     // ==========================================
+    function initAllTabsAndViews() {
+        try { renderNavForRole(); } catch (e) { console.error('Error renderNavForRole:', e); }
+        try { renderProjectsHub(); } catch (e) { console.error('Error renderProjectsHub:', e); }
+        try { renderPlanningAgenda(); } catch (e) { console.error('Error renderPlanningAgenda:', e); }
+        try { renderPlanningGantt(); } catch (e) { console.error('Error renderPlanningGantt:', e); }
+        try { renderFleetGrid(); } catch (e) { console.error('Error renderFleetGrid:', e); }
+        try { renderCatalogGrid(); } catch (e) { console.error('Error renderCatalogGrid:', e); }
+        try { initHrTree(); } catch (e) { console.error('Error initHrTree:', e); }
+        try { calculateSignage(); } catch (e) { console.error('Error calculateSignage:', e); }
+        try { renderRdcTable(); } catch (e) { console.error('Error renderRdcTable:', e); }
+        try { renderDQEPivotTable(); } catch (e) { console.error('Error renderDQEPivotTable:', e); }
+        try { renderSdpCards(); } catch (e) { console.error('Error renderSdpCards:', e); }
+        try { renderProcurement(); } catch (e) { console.error('Error renderProcurement:', e); }
+        try { renderLedger(); } catch (e) { console.error('Error renderLedger:', e); }
+        try { renderCompanyMetrics(); } catch (e) { console.error('Error renderCompanyMetrics:', e); }
+        try { updateFormulaCalculator(); } catch (e) { console.error('Error updateFormulaCalculator:', e); }
+        try { loadScenario('scen_tranchee_vrd'); } catch (e) { console.error('Error loadScenario:', e); }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         logCockpit('Initialisation du Cockpit Conduite de Travaux BTP...', 'info');
 
-        renderNavForRole();
-        renderProjectsHub();
-        renderFleetGrid();
-        renderCatalogGrid();
-        renderProcurement();
-        renderLedger();
-        renderCompanyMetrics();
-
-        loadScenario('scen_tranchee_vrd');
+        initAllTabsAndViews();
         switchNav('cockpit');
 
         logCockpit('Système prêt. Base de données synchronisée.', 'ok');
     });
+
+    // Execute immediately in case DOMContentLoaded already fired
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        initAllTabsAndViews();
+    }
 </script>
 """
