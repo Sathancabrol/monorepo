@@ -535,7 +535,8 @@ def get_js_part3():
             dir: dir,
             lane: dir === 1 ? 1 : 2,
             x: dir === 1 ? -40 : 760,
-            y: 0
+            y: 0,
+            angle: Math.random() * Math.PI * 2
         });
         logCockpit(`Véhicule ${type} injecté dans la simulation de trafic.`, 'info');
     }
@@ -544,7 +545,7 @@ def get_js_part3():
         isOpbtpTrafficRunning = false;
         const btn = document.getElementById('btn-opbtp-sim-play');
         if (btn) btn.textContent = '▶️ Lancer Simulation Trafic';
-        drawSignageDiagram(50, 30, 24, document.getElementById('opbtp-task-type')?.value || 'tranchee_traversee', 50, true);
+        drawSignageDiagram();
     }
 
     function updateOpbtpSubdomainOptions() {
@@ -558,7 +559,6 @@ def get_js_part3():
     }
 
     function calculateSignage() {
-        const taskType = document.getElementById('opbtp-task-type')?.value || 'tranchee_traversee';
         const speed = Number(document.getElementById('opbtp-speed-range')?.value || 50);
         const length = Number(document.getElementById('opbtp-length-range')?.value || 120);
 
@@ -568,7 +568,7 @@ def get_js_part3():
         let coneQty = Math.max(16, Math.round(length / k5aSpacing));
 
         let biseauLen = Math.round((speed * 3.5) / 1.6);
-        let clearanceTime = Math.round(length / (speed / 3.6));
+        let clearanceTime = Math.round(length / (speed / 3.6)) + 4;
 
         const res = document.getElementById('opbtp-results');
         if (res) {
@@ -590,10 +590,24 @@ def get_js_part3():
         }
 
         initRealisticVehicles();
-        drawSignageDiagram(ak5Dist, b14Dist, coneQty, taskType, speed);
+        if (opbtpTrafficAnimId) cancelAnimationFrame(opbtpTrafficAnimId);
+        drawSignageDiagram();
     }
 
     function initRealisticVehicles() {
+        const taskType = document.getElementById('opbtp-task-type')?.value || 'tranchee_traversee';
+
+        if (taskType === 'rond_point') {
+            const rCars = [
+                { type: 'VL', label: 'Citadine', w: 22, h: 12, speed: 1.4, color: '#38bdf8', angle: 0.3 },
+                { type: 'PL', label: 'Benne 8x4', w: 36, h: 14, speed: 1.0, color: '#f59e0b', angle: 1.8 },
+                { type: 'BUS', label: 'Bus Urbain', w: 42, h: 14, speed: 0.9, color: '#10b981', angle: 3.2 },
+                { type: 'MOTO', label: 'Moto', w: 14, h: 8, speed: 1.8, color: '#c084fc', angle: 4.6 }
+            ];
+            opbtpCars = opbtpDensity === 2 ? rCars.slice(0, 2) : rCars;
+            return;
+        }
+
         const base = [
             { type: 'VL', label: 'Citadine', w: 26, h: 12, speed: 1.4, color: '#38bdf8', dir: 1, lane: 1, x: 20, y: 0 },
             { type: 'PL', label: 'Benne 8x4', w: 45, h: 16, speed: 1.1, color: '#f59e0b', dir: 1, lane: 1, x: 170, y: 0 },
@@ -618,13 +632,14 @@ def get_js_part3():
         isOpbtpTrafficRunning = !isOpbtpTrafficRunning;
         const btn = document.getElementById('btn-opbtp-sim-play');
         if (btn) btn.textContent = isOpbtpTrafficRunning ? '⏸️ Pause Trafic' : '▶️ Lancer Simulation Trafic';
+        if (isOpbtpTrafficRunning) drawSignageDiagram();
     }
 
     function switchTrafficLightState() {
         trafficLightState = trafficLightState === 'green' ? 'red' : 'green';
     }
 
-    function drawSignageDiagram(ak5Dist, b14Dist, coneQty, taskType, speedLimit, singleStep = false) {
+    function drawSignageDiagram() {
         const canvas = document.getElementById('opbtp-signage-canvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -633,166 +648,253 @@ def get_js_part3():
         canvas.width = w;
         canvas.height = h;
 
+        const taskType = document.getElementById('opbtp-task-type')?.value || 'tranchee_traversee';
+        const speedLimit = Number(document.getElementById('opbtp-speed-range')?.value || 50);
+        const cycleLen = Number(document.getElementById('opbtp-cycle-range')?.value || 30);
+
         ctx.fillStyle = '#070b14';
         ctx.fillRect(0, 0, w, h);
 
         const roadTopY = h * 0.22;
         const roadH = h * 0.56;
         const roadMidY = roadTopY + roadH * 0.5;
-        const lane1Y = roadTopY + roadH * 0.75;
-        const lane2Y = roadTopY + roadH * 0.25;
+        const lane1Y = roadTopY + roadH * 0.75; // South lane (Eastbound dir = 1)
+        const lane2Y = roadTopY + roadH * 0.25; // North lane (Westbound dir = -1)
 
-        const trenchX1 = w * 0.35;
-        const trenchX2 = w * 0.65;
+        const trenchX1 = w * 0.34;
+        const trenchX2 = w * 0.66;
         const trenchW = trenchX2 - trenchX1;
 
-        // Custom Geometries Rendering:
-        if (taskType === 'rond_point') {
-            // ROUNDABOUT GEOMETRY
-            const rCenter = { x: w / 2, y: h / 2 };
-            const rOut = 85, rIn = 42;
+        // Dynamic Traffic Light Cycle
+        const nowSec = Date.now() / 1000;
+        const cyclePos = (nowSec % (cycleLen * 2));
+        let curLightState = 'all_red'; // 'east_green', 'west_green', 'all_red'
+        if (cyclePos < cycleLen - 4) {
+            curLightState = 'east_green';
+            trafficLightState = 'green';
+        } else if (cyclePos < cycleLen) {
+            curLightState = 'all_red';
+            trafficLightState = 'red';
+        } else if (cyclePos < (cycleLen * 2) - 4) {
+            curLightState = 'west_green';
+            trafficLightState = 'red';
+        } else {
+            curLightState = 'all_red';
+            trafficLightState = 'red';
+        }
 
-            // Road ring
+        // =====================================
+        // SCENARIO 1: GIRATOIRE / ROND-POINT
+        // =====================================
+        if (taskType === 'rond_point') {
+            const rCenter = { x: w / 2, y: h / 2 };
+            const rOut = Math.min(85, h * 0.42);
+            const rIn = Math.min(42, h * 0.21);
+            const rMid = (rOut + rIn) / 2;
+
+            // 4 Approaching Roads
             ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, rCenter.y - 18, w, 36); // East-West
+            ctx.fillRect(rCenter.x - 18, 0, 36, h); // North-South
+
+            // Road Ring
             ctx.beginPath(); ctx.arc(rCenter.x, rCenter.y, rOut, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#0f172a';
+            ctx.fillStyle = '#070b14';
             ctx.beginPath(); ctx.arc(rCenter.x, rCenter.y, rIn, 0, Math.PI * 2); ctx.fill();
 
-            // Central island landscaping
+            // Central island (Landscaping)
             ctx.fillStyle = '#065f46';
-            ctx.beginPath(); ctx.arc(rCenter.x, rCenter.y, rIn - 6, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 9px system-ui';
+            ctx.beginPath(); ctx.arc(rCenter.x, rCenter.y, rIn - 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 8.5px JetBrains Mono';
             ctx.fillText('GIRATOIRE RD906', rCenter.x - 38, rCenter.y + 3);
 
-            // Blocked quadrant (Top-Right)
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+            // Blocked Quadrant (Top-Right: angle -PI/2 to 0)
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.45)';
             ctx.beginPath();
-            ctx.arc(rCenter.x, rCenter.y, rOut, -Math.PI / 2, 0);
-            ctx.arc(rCenter.x, rCenter.y, rIn, 0, -Math.PI / 2, true);
+            ctx.arc(rCenter.x, rCenter.y, rOut + 2, -Math.PI / 2, 0);
+            ctx.arc(rCenter.x, rCenter.y, rIn - 2, 0, -Math.PI / 2, true);
             ctx.closePath();
             ctx.fill();
-            ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 2; ctx.stroke();
+            ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 3; ctx.stroke();
 
-            // Cones K16 on quadrant
+            // Work Zone warning hatch
+            ctx.fillStyle = '#ea580c'; ctx.font = 'bold 8px monospace';
+            ctx.fillText('🚧 ZONE CHANTIER 1/4', rCenter.x + 12, rCenter.y - 25);
+
+            // K16 Safety Cones & Beacons on Quadrant Boundary
             ctx.fillStyle = '#ea580c';
-            for (let a = -Math.PI / 2; a <= 0; a += 0.3) {
-                const cx = rCenter.x + Math.cos(a) * (rOut - 10);
-                const cy = rCenter.y + Math.sin(a) * (rOut - 10);
+            for (let a = -Math.PI / 2; a <= 0.05; a += 0.25) {
+                const cx = rCenter.x + Math.cos(a) * (rOut - 6);
+                const cy = rCenter.y + Math.sin(a) * (rOut - 6);
                 ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
             }
 
-            // Circulating vehicles
-            opbtpCars.forEach((car, i) => {
-                const angle = ((Date.now() * 0.001 * opbtpSpeedFactor + i * 1.5) % (Math.PI * 2));
-                // avoid blocked quadrant (-PI/2 to 0) by wrapping
-                const safeAngle = (angle > -Math.PI / 2 && angle < 0) ? 0.2 : angle;
-                const rad = (rOut + rIn) / 2;
-                const cx = rCenter.x + Math.cos(safeAngle) * rad;
-                const cy = rCenter.y + Math.sin(safeAngle) * rad;
+            // Circulating Vehicles (STRICTLY STAY ON OPEN 3/4 RING AND NEVER ENTER BLOCKED ZONE)
+            opbtpCars.forEach((car) => {
+                if (isOpbtpTrafficRunning) {
+                    car.angle = (car.angle + 0.015 * (speedLimit / 50) * opbtpSpeedFactor * car.speed) % (Math.PI * 2);
+                }
 
+                // If approaching blocked quadrant [-PI/2, 0] (which is [3*PI/2, 2*PI] in [0, 2*PI])
+                // Smoothly steer or wrap around the safe arc [0, 3*PI/2]
+                let renderAngle = car.angle;
+                if (renderAngle > 1.5 * Math.PI) {
+                    renderAngle = 0.1 + (renderAngle - 1.5 * Math.PI) * 0.3; // safe diversion
+                }
+
+                const cx = rCenter.x + Math.cos(renderAngle) * rMid;
+                const cy = rCenter.y + Math.sin(renderAngle) * rMid;
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(renderAngle + Math.PI / 2);
                 ctx.fillStyle = car.color;
-                ctx.fillRect(cx - car.w / 2, cy - car.h / 2, car.w, car.h);
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 8px system-ui';
-                ctx.fillText(car.type, cx - 6, cy - car.h / 2 - 2);
+                ctx.fillRect(-car.w / 2, -car.h / 2, car.w, car.h);
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px system-ui';
+                ctx.fillText(car.type, -car.w / 2 + 2, 2);
+                ctx.restore();
             });
 
             ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 9px JetBrains Mono';
-            ctx.fillText('CONFIGURATION : GIRATOIRE 1/4 ANNEAU NEUTRALISÉ (BALISES K16 + FLÈCHES K8)', 10, h - 10);
+            ctx.fillText(`GIRATOIRE 1/4 ANNEAU NEUTRALISÉ • VITESSE : ${opbtpSpeedFactor}x • FLUX : ${speedLimit} km/h`, 10, h - 10);
+
+            if (currentNav === 'opbtp' && isOpbtpTrafficRunning) {
+                opbtpTrafficAnimId = requestAnimationFrame(drawSignageDiagram);
+            }
             return;
         }
 
+        // =====================================
+        // SCENARIO 2: PETIT PONT ÉTROIT
+        // =====================================
         if (taskType === 'petit_pont') {
-            // BRIDGE GEOMETRY
-            // River blue background
-            ctx.fillStyle = '#0369a1';
-            ctx.fillRect(trenchX1 - 30, 0, trenchW + 60, h);
+            // River Blue Background
+            ctx.fillStyle = '#0284c7';
+            ctx.fillRect(trenchX1 - 40, 0, trenchW + 80, h);
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.fillRect(trenchX1 - 40, h * 0.15, trenchW + 80, 2);
+            ctx.fillRect(trenchX1 - 40, h * 0.85, trenchW + 80, 2);
 
-            // Water ripples
-            ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(trenchX1 - 20, h * 0.15); ctx.lineTo(trenchX2 + 20, h * 0.15); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(trenchX1 - 20, h * 0.85); ctx.lineTo(trenchX2 + 20, h * 0.85); ctx.stroke();
-
-            // Bridge deck
+            // Bridge Deck
             ctx.fillStyle = '#334155';
             ctx.fillRect(0, roadTopY, w, roadH);
 
-            // Bridge Parapets (Stone/Concrete walls)
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillRect(trenchX1 - 30, roadTopY - 6, trenchW + 60, 6);
-            ctx.fillRect(trenchX1 - 30, roadTopY + roadH, trenchW + 60, 6);
+            // Parapets
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(trenchX1 - 40, roadTopY - 6, trenchW + 80, 6);
+            ctx.fillRect(trenchX1 - 40, roadTopY + roadH, trenchW + 80, 6);
 
-            // Single Lane constriction on bridge (Lane 2 blocked)
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+            // Blocked North Half on Bridge (Lane 2 closed)
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
             ctx.fillRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
-            ctx.strokeStyle = '#ea580c'; ctx.strokeRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 9px system-ui';
-            ctx.fillText('🌉 OUVRAGE D\'ART : CIRCULATION ALTERNÉE (LIMITATION B13 19t)', trenchX1 + 10, roadTopY + 20);
-        } else if (taskType === 'intra_urbain') {
-            // INTRA-URBAIN GEOMETRY
-            // Buildings facades
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, w, roadTopY - 20);
-            ctx.fillRect(0, roadTopY + roadH + 20, w, h - (roadTopY + roadH + 20));
+            ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 2;
+            ctx.strokeRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
+            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 8.5px JetBrains Mono';
+            ctx.fillText('🚧 PONT RÉTRÉCI : TRAVAUX D\'ÉTANCHÉITÉ', trenchX1 + 10, roadTopY + 18);
+        } else if (taskType === 'intra_urbain' || taskType === 'tranchee_trottoir' || taskType === 'piste_cyclable') {
+            // =====================================
+            // SCENARIO 3: INTRA-URBAIN & TROTTOIR
+            // =====================================
+            ctx.fillStyle = '#0f172a'; // Buildings
+            ctx.fillRect(0, 0, w, roadTopY - 22);
+            ctx.fillRect(0, roadTopY + roadH + 22, w, h);
 
             // Sidewalks
             ctx.fillStyle = '#475569';
-            ctx.fillRect(0, roadTopY - 20, w, 20);
-            ctx.fillRect(0, roadTopY + roadH, w, 20);
+            ctx.fillRect(0, roadTopY - 22, w, 22);
+            ctx.fillRect(0, roadTopY + roadH, w, 22);
 
             // Road
             ctx.fillStyle = '#1e293b';
             ctx.fillRect(0, roadTopY, w, roadH);
 
-            // Trench on sidewalk + Protected pedestrian corridor
+            // Trench on sidewalk
             ctx.fillStyle = '#3f1c10';
-            ctx.fillRect(trenchX1, roadTopY - 20, trenchW, 20);
+            ctx.fillRect(trenchX1, roadTopY - 22, trenchW, 22);
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+            ctx.fillRect(trenchX1, roadTopY - 22, trenchW, 22);
+
+            // Protected Yellow Pedestrian Corridor on Roadway
             ctx.fillStyle = '#eab308';
-            ctx.fillRect(trenchX1, roadTopY, trenchW, 10); // Yellow pedestrian lane on roadway
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 8px system-ui';
-            ctx.fillText('🚶‍♂️ COULOIR PIÉTONS PMR PROTÉGÉ PAR BARRIÈRES K2', trenchX1 + 10, roadTopY + 8);
-        } else {
-            // STANDARD ROADWAY
+            ctx.fillRect(trenchX1, roadTopY, trenchW, 12);
+            ctx.fillStyle = '#000'; ctx.font = 'bold 7.5px system-ui';
+            ctx.fillText('🚶‍♂️ COULOIR PMR PROTÉGÉ K2', trenchX1 + 10, roadTopY + 9);
+        } else if (taskType === 'emprise_accotement' || taskType === 'implantation_poteau_elec' || taskType === 'neutralisation_bau') {
+            // =====================================
+            // SCENARIO 4: ACCOTEMENT / BAU
+            // =====================================
+            ctx.fillStyle = '#14532d'; // Grass
+            ctx.fillRect(0, 0, w, roadTopY);
+            ctx.fillRect(0, roadTopY + roadH, w, h);
+
             ctx.fillStyle = '#1e293b';
             ctx.fillRect(0, roadTopY, w, roadH);
 
-            // Trench on Lane 2
+            // Work Zone on North Shoulder
+            ctx.fillStyle = '#ea580c';
+            ctx.fillRect(trenchX1, roadTopY - 20, trenchW, 18);
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 8px system-ui';
+            ctx.fillText('⚡ CHANTIER MOBILE FLR ACCOTEMENT (ENEDIS)', trenchX1 + 10, roadTopY - 8);
+        } else {
+            // =====================================
+            // SCENARIO 5: STANDARD ROAD ALTERNAT (TRANCHÉE)
+            // =====================================
+            ctx.fillStyle = '#14532d'; // Grass
+            ctx.fillRect(0, 0, w, roadTopY);
+            ctx.fillRect(0, roadTopY + roadH, w, h);
+
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, roadTopY, w, roadH);
+
+            // Open Trench on Lane 2 (Upper Lane)
             ctx.fillStyle = '#3f1c10';
+            ctx.fillRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.45)';
             ctx.fillRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
             ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 2;
             ctx.strokeRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
-            ctx.fillRect(trenchX1, roadTopY, trenchW, roadH * 0.5);
-            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 9px monospace';
-            ctx.fillText('🚧 ZONE CHANTIER / TRANCHÉE OUVERTE', trenchX1 + 15, roadTopY + 20);
+
+            ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 8.5px JetBrains Mono';
+            ctx.fillText('🚧 ZONE CHANTIER / TRANCHÉE OUVERTE', trenchX1 + 15, roadTopY + 18);
         }
 
-        // Centerline Dashed
+        // Roadway Centerline
         ctx.strokeStyle = '#f8fafc'; ctx.lineWidth = 2; ctx.setLineDash([12, 12]);
         ctx.beginPath(); ctx.moveTo(0, roadMidY); ctx.lineTo(w, roadMidY); ctx.stroke();
         ctx.setLineDash([]);
 
-        // Taper / Biseau K5a Cones
-        ctx.fillStyle = '#ea580c';
-        for (let x = trenchX1 - 60; x <= trenchX1; x += 15) {
-            const frac = (x - (trenchX1 - 60)) / 60;
-            const cy = roadTopY + frac * (roadH * 0.5);
-            ctx.beginPath(); ctx.arc(x, cy, 4, 0, Math.PI * 2); ctx.fill();
-        }
-        for (let x = trenchX2; x <= trenchX2 + 60; x += 15) {
-            const frac = 1 - (x - trenchX2) / 60;
-            const cy = roadTopY + frac * (roadH * 0.5);
-            ctx.beginPath(); ctx.arc(x, cy, 4, 0, Math.PI * 2); ctx.fill();
+        // Taper K5a Cones (Guiding Westbound cars smoothly down to Lane 1)
+        if (taskType !== 'emprise_accotement' && taskType !== 'implantation_poteau_elec' && taskType !== 'neutralisation_bau') {
+            ctx.fillStyle = '#ea580c';
+            // Westbound entry taper (right side of trench)
+            for (let x = trenchX2 + 70; x >= trenchX2; x -= 14) {
+                const frac = (trenchX2 + 70 - x) / 70;
+                const cy = roadTopY + frac * (roadH * 0.5 + 4);
+                ctx.beginPath(); ctx.arc(x, cy, 4, 0, Math.PI * 2); ctx.fill();
+            }
+            // Westbound return taper (left side of trench)
+            for (let x = trenchX1; x >= trenchX1 - 70; x -= 14) {
+                const frac = (x - (trenchX1 - 70)) / 70;
+                const cy = roadTopY + frac * (roadH * 0.5 + 4);
+                ctx.beginPath(); ctx.arc(x, cy, 4, 0, Math.PI * 2); ctx.fill();
+            }
         }
 
-        // Vehicles Kinematics
-        if (isOpbtpTrafficRunning || singleStep) {
+        // =====================================
+        // VEHICLES KINEMATICS (STRICT ZERO CHANTIER OVERLAP)
+        // =====================================
+        if (isOpbtpTrafficRunning) {
             opbtpCars.forEach((car, cIdx) => {
                 const spd = car.speed * (speedLimit / 50) * opbtpSpeedFactor;
 
-                if (car.dir === 1) { // Eastbound
+                if (car.dir === 1) { // EASTBOUND (Lane 1 - Lower Lane)
                     let shouldStop = false;
-                    if (trafficLightState === 'red' && car.x > w * 0.16 && car.x < w * 0.26) shouldStop = true;
-                    const ahead = opbtpCars.find((other, oIdx) => oIdx !== cIdx && other.dir === 1 && other.x > car.x && (other.x - car.x) < 42);
+                    const stopLineX = w * 0.20;
+
+                    if (curLightState !== 'east_green' && car.x > stopLineX - 45 && car.x <= stopLineX) {
+                        shouldStop = true;
+                    }
+                    const ahead = opbtpCars.find((other, oIdx) => oIdx !== cIdx && other.dir === 1 && other.x > car.x && (other.x - car.x) < 45);
                     if (ahead) shouldStop = true;
 
                     if (!shouldStop) {
@@ -800,23 +902,38 @@ def get_js_part3():
                         car.y = lane1Y;
                         if (car.x > w + 60) car.x = -50;
                     }
-                } else { // Westbound
+                } else { // WESTBOUND (Lane 2 - Upper Lane with Obstacle avoidance)
                     let shouldStop = false;
-                    if (trafficLightState === 'green' && car.x > w * 0.70 && car.x < w * 0.80) shouldStop = true;
-                    const ahead = opbtpCars.find((other, oIdx) => oIdx !== cIdx && other.dir === -1 && other.x < car.x && (car.x - other.x) < 42);
+                    const stopLineX = w * 0.80;
+
+                    if (curLightState !== 'west_green' && car.x < stopLineX + 45 && car.x >= stopLineX) {
+                        shouldStop = true;
+                    }
+                    const ahead = opbtpCars.find((other, oIdx) => oIdx !== cIdx && other.dir === -1 && other.x < car.x && (car.x - other.x) < 45);
                     if (ahead) shouldStop = true;
 
                     if (!shouldStop) {
                         car.x -= spd;
-                        if (car.x > trenchX2 + 25) {
+
+                        if (taskType === 'emprise_accotement' || taskType === 'implantation_poteau_elec' || taskType === 'neutralisation_bau') {
                             car.y = lane2Y;
-                        } else if (car.x >= trenchX1 - 25 && car.x <= trenchX2 + 25) {
-                            const progress = (trenchX2 + 25 - car.x) / (trenchW + 50);
-                            const t = Math.sin(progress * Math.PI);
-                            car.y = lane2Y + t * (lane1Y - lane2Y);
                         } else {
-                            car.y = lane2Y;
+                            // Smooth avoidance of trench: shift completely down to Lane 1 before trenchX2
+                            if (car.x > trenchX2 + 70) {
+                                car.y = lane2Y;
+                            } else if (car.x >= trenchX2) {
+                                const frac = (trenchX2 + 70 - car.x) / 70;
+                                car.y = lane2Y + frac * (lane1Y - lane2Y);
+                            } else if (car.x >= trenchX1) {
+                                car.y = lane1Y; // Stays on Lane 1 throughout the entire length of the trench!
+                            } else if (car.x >= trenchX1 - 70) {
+                                const frac = (car.x - (trenchX1 - 70)) / 70;
+                                car.y = lane2Y + frac * (lane1Y - lane2Y);
+                            } else {
+                                car.y = lane2Y;
+                            }
                         }
+
                         if (car.x < -60) car.x = w + 50;
                     }
                 }
@@ -824,34 +941,45 @@ def get_js_part3():
         }
 
         // Temporary Traffic Lights KR11
-        const tl1X = w * 0.22, tl1Y = roadTopY + roadH + 15;
-        const tl2X = w * 0.78, tl2Y = roadTopY - 20;
+        const tl1X = w * 0.20, tl1Y = roadTopY + roadH + 16;
+        const tl2X = w * 0.80, tl2Y = roadTopY - 20;
 
         ctx.fillStyle = '#0f172a'; ctx.fillRect(tl1X - 6, tl1Y - 14, 12, 28);
-        ctx.fillStyle = trafficLightState === 'green' ? '#10b981' : '#ef4444';
-        ctx.beginPath(); ctx.arc(tl1X, tl1Y, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = (curLightState === 'east_green') ? '#10b981' : '#ef4444';
+        ctx.beginPath(); ctx.arc(tl1X, tl1Y, 4.5, 0, Math.PI * 2); ctx.fill();
 
         ctx.fillStyle = '#0f172a'; ctx.fillRect(tl2X - 6, tl2Y - 14, 12, 28);
-        ctx.fillStyle = trafficLightState === 'red' ? '#10b981' : '#ef4444';
-        ctx.beginPath(); ctx.arc(tl2X, tl2Y, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = (curLightState === 'west_green') ? '#10b981' : '#ef4444';
+        ctx.beginPath(); ctx.arc(tl2X, tl2Y, 4.5, 0, Math.PI * 2); ctx.fill();
 
         // Draw Vehicles
         opbtpCars.forEach(c => {
             const cy = c.y - c.h / 2;
             ctx.fillStyle = c.color;
             ctx.fillRect(c.x, cy, c.w, c.h);
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(c.x + (c.dir === 1 ? c.w - 8 : 2), cy + 2, 6, c.h - 4);
-            ctx.fillStyle = '#fff'; ctx.font = 'bold 8px system-ui';
-            ctx.fillText(c.type, c.x + 2, cy - 2);
+
+            // Headlights
+            ctx.fillStyle = '#fef08a';
+            if (c.dir === 1) {
+                ctx.fillRect(c.x + c.w - 3, cy + 2, 3, 3);
+                ctx.fillRect(c.x + c.w - 3, cy + c.h - 5, 3, 3);
+            } else {
+                ctx.fillRect(c.x, cy + 2, 3, 3);
+                ctx.fillRect(c.x, cy + c.h - 5, 3, 3);
+            }
+
+            // Badge
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px system-ui';
+            ctx.fillText(c.type, c.x + 3, cy - 2);
         });
 
         // HUD Telemetry
         ctx.font = 'bold 9px JetBrains Mono'; ctx.fillStyle = '#38bdf8';
-        ctx.fillText(`VITESSE : ${opbtpSpeedFactor}x • FLUX : ${speedLimit} km/h • FEUX KR11 : ${trafficLightState.toUpperCase()} • CONFIG : ${taskType.toUpperCase()}`, 10, h - 10);
+        const lightStatusText = curLightState === 'east_green' ? '🟢 FEU EST VERT' : (curLightState === 'west_green' ? '🟢 FEU OUEST VERT' : '🔴 TOUT-ROUGE DÉGAGEMENT');
+        ctx.fillText(`VITESSE : ${opbtpSpeedFactor}x • FLUX : ${speedLimit} km/h • KR11 : ${lightStatusText} • CONFIG : ${taskType.toUpperCase()}`, 10, h - 10);
 
         if (currentNav === 'opbtp' && isOpbtpTrafficRunning) {
-            opbtpTrafficAnimId = requestAnimationFrame(() => drawSignageDiagram(ak5Dist, b14Dist, coneQty, taskType, speedLimit));
+            opbtpTrafficAnimId = requestAnimationFrame(drawSignageDiagram);
         }
     }
 
@@ -952,6 +1080,20 @@ def get_js_part3():
 
     function setAiprTaskPhase(phase) {
         aiprCurrentTaskPhase = phase;
+        const sel = document.getElementById('aipr-task-phase-select');
+        if (sel) sel.value = phase;
+
+        // Auto-adapt tool / machine if suited
+        if (phase === 'phase_7_sondage_aspiration') {
+            const m = document.getElementById('aipr-machine-type');
+            const t = document.getElementById('aipr-tool-type');
+            if (m) m.value = 'aspiratrice_tp';
+            if (t) t.value = 'aspiration';
+        } else if (phase === 'phase_1_terrassement') {
+            const t = document.getElementById('aipr-tool-type');
+            if (t) t.value = 'godet_curage';
+        }
+
         updateAiprPhaseDetails();
         renderAiprCanvas();
     }
@@ -1027,46 +1169,170 @@ def get_js_part3():
         ctx.strokeStyle = '#10b981'; ctx.lineWidth = 4;
         ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(w, groundY); ctx.stroke();
 
-        // Trench Excavation
-        const tX1 = 200, tX2 = 360, tDepth = 120;
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(tX1, groundY, tX2 - tX1, tDepth);
-        ctx.strokeStyle = '#475569'; ctx.lineWidth = 2;
-        ctx.strokeRect(tX1, groundY, tX2 - tX1, tDepth);
+        const tX1 = 200, tX2 = 360;
 
-        // Blindage Caissons if active
-        if (aiprIsBlindageActive) {
-            ctx.fillStyle = 'rgba(234, 179, 8, 0.7)';
-            ctx.fillRect(tX1 + 4, groundY + 4, 12, tDepth - 8);
-            ctx.fillRect(tX2 - 16, groundY + 4, 12, tDepth - 8);
+        // ==========================================
+        // DYNAMIC PHASE-SPECIFIC RENDERING IN CANVASS
+        // ==========================================
+        if (aiprCurrentTaskPhase === 'phase_1_terrassement') {
+            // PHASE 1: DÉCAPAGE 30cm + PIQUETAGE DICT CLASSE A
+            ctx.fillStyle = '#451a03';
+            ctx.fillRect(160, groundY, 260, 20); // 30cm stripped layer
 
-            ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 4;
+            // Fluorescent markings on ground
+            ctx.strokeStyle = '#eab308'; ctx.lineWidth = 3; // Yellow Gas
+            ctx.beginPath(); ctx.moveTo(130, groundY); ctx.lineTo(150, groundY); ctx.stroke();
+            ctx.fillStyle = '#eab308'; ctx.font = 'bold 8px system-ui';
+            ctx.fillText('GAZ MPB ±40cm (Cl. A)', 110, groundY - 8);
+
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; // Red HTA
+            ctx.beginPath(); ctx.moveTo(410, groundY); ctx.lineTo(430, groundY); ctx.stroke();
+            ctx.fillStyle = '#ef4444';
+            ctx.fillText('HTA 20kV (Cl. A)', 400, groundY - 8);
+
+            ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 3; // Blue Water
+            ctx.beginPath(); ctx.moveTo(435, groundY); ctx.lineTo(455, groundY); ctx.stroke();
+
+            // Surveyor RTK GNSS rod
+            ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(140, groundY); ctx.lineTo(140, groundY - 35); ctx.stroke();
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath(); ctx.arc(140, groundY - 37, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillText('GNSS RTK', 148, groundY - 32);
+        } else if (aiprCurrentTaskPhase === 'phase_5_remblai_compactage') {
+            // PHASE 5: REMBLAIEMENT GTR & COMPACTAGE EV2
+            const tDepth = 120;
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(tX1, groundY, tX2 - tX1, tDepth);
+
+            // Compacted GTR layers
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(tX1 + 2, groundY + 40, tX2 - tX1 - 4, 80);
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(tX1 + 2, groundY + 10, tX2 - tX1 - 4, 30);
+
+            ctx.strokeStyle = '#38bdf8'; ctx.setLineDash([4, 4]);
             ctx.beginPath();
-            ctx.moveTo(tX1 + 16, groundY + 30); ctx.lineTo(tX2 - 16, groundY + 30);
-            ctx.moveTo(tX1 + 16, groundY + 80); ctx.lineTo(tX2 - 16, groundY + 80);
+            ctx.moveTo(tX1, groundY + 40); ctx.lineTo(tX2, groundY + 40);
+            ctx.moveTo(tX1, groundY + 80); ctx.lineTo(tX2, groundY + 80);
             ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 8px monospace';
+            ctx.fillText('Couche 2 GTR 0/31.5', tX1 + 10, groundY + 30);
+            ctx.fillText('Couche 1 GTR (Compactée)', tX1 + 10, groundY + 65);
+
+            // EV2 Dynamic plate test
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(tX1 + 60, groundY + 6, 40, 4);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('EV2 = 88 MPa (OK)', tX1 + 45, groundY - 4);
+        } else if (aiprCurrentTaskPhase === 'phase_6_voirie_enrobes') {
+            // PHASE 6: BORDURES T2 & ENROBÉS BBSG
+            const tDepth = 120;
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(tX1, groundY, tX2 - tX1, tDepth);
+
+            // Curb T2
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(tX1 - 15, groundY - 14, 15, 20);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(tX1 - 25, groundY - 4, 10, 10); // concrete backing
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px system-ui';
+            ctx.fillText('Bordure T2', tX1 - 32, groundY - 18);
+
+            // Asphalt Layers
+            ctx.fillStyle = '#1e293b'; // GB3 Base
+            ctx.fillRect(tX1, groundY, tX2 - tX1 + 50, 14);
+            ctx.fillStyle = '#0f172a'; // BBSG 0/10 Roulement
+            ctx.fillRect(tX1, groundY - 8, tX2 - tX1 + 50, 8);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillText('BBSG 0/10 (145°C)', tX1 + 20, groundY - 12);
+        } else {
+            // PHASES 2, 3, 4, 7: TRANCHÉE PROFONDE AVEC RÉSEAUX ET BLINDAGE
+            const tDepth = 120;
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(tX1, groundY, tX2 - tX1, tDepth);
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 2;
+            ctx.strokeRect(tX1, groundY, tX2 - tX1, tDepth);
+
+            // Blindage Caissons if active
+            if (aiprIsBlindageActive) {
+                ctx.fillStyle = 'rgba(234, 179, 8, 0.75)';
+                ctx.fillRect(tX1 + 4, groundY + 4, 12, tDepth - 8);
+                ctx.fillRect(tX2 - 16, groundY + 4, 12, tDepth - 8);
+
+                ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(tX1 + 16, groundY + 30); ctx.lineTo(tX2 - 16, groundY + 30);
+                ctx.moveTo(tX1 + 16, groundY + 80); ctx.lineTo(tX2 - 16, groundY + 80);
+                ctx.stroke();
+
+                // Safety ladder with 1m extension over crest
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(tX2 - 24, groundY - 25); ctx.lineTo(tX2 - 24, groundY + tDepth - 5);
+                ctx.moveTo(tX2 - 32, groundY - 25); ctx.lineTo(tX2 - 32, groundY + tDepth - 5);
+                for (let ly = groundY - 20; ly < groundY + tDepth - 5; ly += 12) {
+                    ctx.moveTo(tX2 - 32, ly); ctx.lineTo(tX2 - 24, ly);
+                }
+                ctx.stroke();
+            }
+
+            // Phase 3: Sand bedding + Piper laser
+            if (aiprCurrentTaskPhase === 'phase_3_pose_canalisations') {
+                // Sand 0/4
+                ctx.fillStyle = '#ca8a04';
+                ctx.fillRect(tX1 + 16, groundY + tDepth - 10, tX2 - tX1 - 32, 10);
+
+                // Piper Laser red beam
+                ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(tX1 + 20, groundY + tDepth - 22); ctx.lineTo(tX2 - 20, groundY + tDepth - 22); ctx.stroke();
+                ctx.fillStyle = '#ef4444'; ctx.font = 'bold 7.5px monospace';
+                ctx.fillText('🔴 LASER PIPER (Pente 0.8%)', tX1 + 25, groundY + tDepth - 26);
+            }
+
+            // Pipe inside trench
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath(); ctx.arc((tX1 + tX2) / 2, groundY + tDepth - 22, 16, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 8px monospace';
+            ctx.fillText('Ø400 BA', (tX1 + tX2) / 2 - 14, groundY + tDepth - 19);
+
+            // Phase 4: Dry conduits & Warning mesh
+            if (aiprCurrentTaskPhase === 'phase_4_reseaux_secs') {
+                ctx.fillStyle = '#ef4444'; // Electric TPC
+                ctx.beginPath(); ctx.arc((tX1 + tX2) / 2 - 25, groundY + 60, 6, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#10b981'; // Telecom
+                ctx.beginPath(); ctx.arc((tX1 + tX2) / 2 + 25, groundY + 60, 6, 0, Math.PI * 2); ctx.fill();
+
+                // Warning meshes NF P98-332
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(tX1 + 25, groundY + 40, 40, 3);
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(tX2 - 65, groundY + 40, 40, 3);
+            }
         }
 
-        // Pipe inside trench
-        ctx.fillStyle = '#38bdf8';
-        ctx.beginPath(); ctx.arc((tX1 + tX2) / 2, groundY + tDepth - 20, 18, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 8px monospace';
-        ctx.fillText('Ø400', (tX1 + tX2) / 2 - 10, groundY + tDepth - 18);
-
-        // Underground Networks
+        // Underground Networks in surrounding soil
         // Gaz Jaune
-        ctx.fillStyle = '#eab308';
+        const isGazActive = currentAiprSituation === 'gaz' || currentAiprSituation === 'all_networks';
+        ctx.fillStyle = isGazActive ? '#eab308' : '#713f12';
         ctx.beginPath(); ctx.arc(140, groundY + 45, 10, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px system-ui';
         ctx.fillText('GAZ 4B', 125, groundY + 42);
 
         // Élec Rouge HTA
-        ctx.fillStyle = '#ef4444';
+        const isHtaActive = currentAiprSituation === 'hta' || currentAiprSituation === 'all_networks';
+        ctx.fillStyle = isHtaActive ? '#ef4444' : '#7f1d1d';
         ctx.beginPath(); ctx.arc(420, groundY + 30, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff';
         ctx.fillText('HTA 20kV', 405, groundY + 28);
 
         // Eau Bleu
-        ctx.fillStyle = '#3b82f6';
+        const isEauActive = currentAiprSituation === 'fibre_aep' || currentAiprSituation === 'all_networks';
+        ctx.fillStyle = isEauActive ? '#3b82f6' : '#1e3a8a';
         ctx.beginPath(); ctx.arc(440, groundY + 75, 12, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff';
         ctx.fillText('AEP Fonte', 420, groundY + 72);
 
         // Excavator Kinematic Rendering
@@ -1098,7 +1364,7 @@ def get_js_part3():
         ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 6;
         ctx.beginPath(); ctx.moveTo(j1X, j1Y); ctx.lineTo(j2X, j2Y); ctx.stroke();
 
-        ctx.fillStyle = aiprToolType === 'godet_dents' ? '#ef4444' : '#475569';
+        ctx.fillStyle = aiprToolType === 'godet_dents' ? '#ef4444' : (aiprToolType === 'aspiration' ? '#10b981' : '#475569');
         ctx.beginPath(); ctx.arc(j2X, j2Y, 12, 0, Math.PI * 2); ctx.fill();
 
         // Render Exterior Elements (Pedestrians, Barriers, Vigie)
@@ -1106,8 +1372,8 @@ def get_js_part3():
             const ey = groundY;
             if (elem.type === 'pieton') {
                 ctx.fillStyle = '#f43f5e';
-                ctx.beginPath(); ctx.arc(elem.x, ey - 22, 6, 0, Math.PI * 2); ctx.fill(); // head
-                ctx.fillRect(elem.x - 4, ey - 16, 8, 16); // body
+                ctx.beginPath(); ctx.arc(elem.x, ey - 22, 6, 0, Math.PI * 2); ctx.fill();
+                ctx.fillRect(elem.x - 4, ey - 16, 8, 16);
                 ctx.fillStyle = '#fff'; ctx.font = 'bold 8px system-ui';
                 ctx.fillText('🚶‍♂️ Passant', elem.x - 14, ey - 26);
             } else if (elem.type === 'barriere') {
@@ -1141,6 +1407,12 @@ def get_js_part3():
         if (dDistEl) {
             dDistEl.textContent = `${distGaz.toFixed(2)} m (${distGaz < 0.5 ? 'DANGER PROXIMITÉ GAZ !' : 'Sécurisé'})`;
             dDistEl.style.color = distGaz < 0.5 ? '#ef4444' : 'var(--emerald)';
+        }
+
+        const hudEl = document.getElementById('aipr-sim-hud');
+        if (hudEl) {
+            const phaseTitle = aiprPhaseGuidelines[aiprCurrentTaskPhase]?.title || aiprCurrentTaskPhase;
+            hudEl.innerHTML = `ÉTAPE : <strong style="color:#f8fafc;">${phaseTitle}</strong> • DISTANCE GAZ : <strong style="color:${distGaz < 0.5 ? '#ef4444' : 'var(--emerald)'};">${distGaz.toFixed(2)} m</strong> • BLINDAGE : ${aiprIsBlindageActive ? '🛡️ CONFORME R4534' : '⚠️ DÉSACTIVÉ'}`;
         }
     }
 
@@ -2323,17 +2595,129 @@ def get_js_part3():
     }
 
     // ==========================================
-    // 21. REGULATORY DOSSIERS (DGD, DUER, PPSPS)
+    // 21. REGULATORY, NORMS & NATIONAL TP TOOLS
     // ==========================================
     const regulatoryDocsList = [
-        { id: "dgd_final", code: "DGD", title: "Décompte Général & Définitif (DGD)", cat: "contractuel", desc: "Projet de décompte final, révision des prix TP08 et mainlevée de retenue de garantie (CCAG 2021).", status: "Conforme CCAG", badge: "Obligatoire Réception" },
-        { id: "duer_2026", code: "DUER", title: "Document Unique d'Évaluation des Risques (DUER)", cat: "securite_rh", desc: "Évaluation des risques par unité de travail (Terrassement, Canalisations, Enrobés, Risque routier).", status: "Actualisé 2026", badge: "Légal Annuel" },
-        { id: "ppsps_chantier", code: "PPSPS", title: "Plan Particulier de Sécurité et Protection de la Santé", cat: "securite_rh", desc: "Plan remis au Coordonnateur SPS (Apave) définissant mesures de secours et habilitations AIPR/CACES.", status: "Validé CSPS", badge: "Pré-Démarrage" },
-        { id: "soged_pre", code: "SOGED", title: "Schéma d'Organisation et de Gestion des Déchets", cat: "technique_doe", desc: "Plan de tri, valorisation matière > 70%, réemploi de graves in-situ et intégration Trackdéchets.", status: "Taux 78% Valide", badge: "Loi AGEC 2021" },
-        { id: "doe_si022", code: "DOE", title: "Dossier des Ouvrages Exécutés (Standard SI 022)", cat: "technique_doe", desc: "Norme SI 022. Plans de récolement géoréférencés Classe A, fiches matériaux et PV d'essais EV2.", status: "Norme SI 022", badge: "Livraison MOA" },
-        { id: "paq_sopaq", code: "PAQ", title: "Plan d'Assurance Qualité & SOPAQ", cat: "technique_doe", desc: "Fiches de contrôle interne/externe, agréments de fournitures et gestion des non-conformités.", status: "Certifié ISO 9001", badge: "Qualité VRD" },
-        { id: "dict_arretes", code: "DICT", title: "Dossier DT / DICT & Arrêtés de Circulation", cat: "securite_rh", desc: "Formulaires Cerfa 14023/14024, récépissés exploitants (Enedis, GRDF, Veolia, Orange) et arrêté municipal.", status: "Guichet Unique OK", badge: "Anti-Endommagement" },
-        { id: "dce_cctp_barbazan", code: "CCTP", title: "CCTP & Mémoire Technique Réel (DCE Barbazan)", cat: "contractuel", desc: "Cahier des Clauses Techniques Particulières du Giratoire Barbazan avec analyse des cadences.", status: "DCE Référence", badge: "Marché Public" }
+        {
+            id: "ccag_travaux_2021",
+            code: "CCAG 2021",
+            title: "CCAG Travaux 2021 (Cahier des Clauses Administratives Générales)",
+            cat: "loi_decret",
+            desc: "Arrêté du 30 mars 2021. Encadre les relations contractuelles MOA/MOE/Entreprise : décomptes mensuels (Art. 12), Ordres de Service (Art. 14), gestion des aléas et intempéries (Art. 18), OPR et DGD (Art. 41).",
+            status: "Légal Obligatoire",
+            badge: "Marchés Publics",
+            content: "# CCAG TRAVAUX 2021 - SYNTHÈSE DES DISPOSITIONS MAJEURES\n\n- **Article 12 - Règlement des comptes :** Transmission du projet de décompte mensuel avant la fin de chaque mois. Décompte Général et Définitif (DGD) à notifier dans les 30 jours après réception.\n- **Article 14 - Ordres de Service (OS) :** L'entreprise doit exécuter les OS sous réserve de réserves écrites motivées sous 15 jours.\n- **Article 18 - Intempéries & Force Majeure :** Prolongation des délais sur constatation contradictoire Météo France.\n- **Article 41 - Opérations Préalables à la Réception (OPR) :** Procès-verbal de réception avec ou sans réserves, point de départ de la Garantie de Parfait Achèvement (GPA 1 an), Biennale (2 ans) et Décennale (10 ans)."
+        },
+        {
+            id: "decret_dict_aipr",
+            code: "DT-DICT 2026",
+            title: "Réforme Anti-Endommagement & Décret DT/DICT (Arrêté 15/02/2012 modifié)",
+            cat: "loi_decret",
+            desc: "Réglementation nationale obligatoire pour la prévention des endommagements de réseaux enterrés et aériens. Classes de précision A (<=40cm), B, C, obligation du marquage-piquetage et compétences AIPR.",
+            status: "Décret d'État",
+            badge: "Sécurité Réseaux",
+            content: "# RÉFORME DT / DICT & DÉCRET ANTI-ENDOMMAGEMENT\n\n- **Guichet Unique Réseaux (reseaux-et-canalisations.ineris.fr) :** Consultation obligatoire avant tout projet (DT) et avant tout chantier (DICT).\n- **Classes de Précision Cartographique :**\n  * **Classe A :** Incertitude maximale $\\le 40\\text{ cm}$ pour réseaux rigides, $\\le 50\\text{ cm}$ pour flexibles.\n  * **Classe B :** Incertitude entre 40cm et 1.50m (nécessite investigations complémentaires ou sondages non destructifs).\n  * **Classe C :** Incertitude supérieure à 1.50m (approche manuelle ou aspiratrice obligatoire).\n- **Habilitations AIPR Obligatoires :** Concepteur (MOA/MOE), Encadrant (Chef de chantier/Conducteur), Opérateur (Chauffeurs d'engins, Canalisateurs)."
+        },
+        {
+            id: "code_travail_r4534",
+            code: "R.4534-24",
+            title: "Code du Travail - Blindage Obligatoire des Tranchées",
+            cat: "loi_decret",
+            desc: "Article R.4534-24 du Code du Travail : obligation stricte de blindage, étrésillonnement ou talutage à 45° pour toute fouille ou tranchée de plus de 1.30 m de profondeur.",
+            status: "Code du Travail",
+            badge: "Sécurité Chantiers",
+            content: "# CODE DU TRAVAIL - SÉCURITÉ DES FOUILLES EN TRANCHÉE\n\n- **Obligation légale :** Dès que la profondeur de la tranchée dépasse $1.30\\text{ m}$ et que la largeur est égale ou inférieure aux deux tiers de la profondeur.\n- **Dispositifs agréés :** Caissons acier grande hauteur, blindage coulissant à double glissière, rideaux de palplanches, ou talutage à pente naturelle $\\le 1/1$.\n- **Moyens d'accès :** Échelles d'accès normalisées avec crosse de dépassement d'au moins $1.00\\text{ m}$ au-dessus du niveau du sol naturel."
+        },
+        {
+            id: "loi_agec_trackdechets",
+            code: "LOI AGEC",
+            title: "Loi AGEC & Traçabilité Trackdéchets (Bordereaux BSDD Déblais TP)",
+            cat: "loi_decret",
+            desc: "Obligation de dématérialisation sur la plateforme d'État Trackdéchets pour tout transport et élimination de terres polluées, amiante-ciment, et registre chronologique des déblais inertes (ISDI).",
+            status: "Code Environnement",
+            badge: "Traçabilité Déchets",
+            content: "# TRAÇABILITÉ DES DÉCHETS DU BTP - LOI AGEC & TRACKDÉCHETS\n\n- **Bordereau de Suivi des Déchets (BSDD) :** Obligation de génération numérique via API Trackdéchets pour déchets dangereux, amiante et hydrocarbures.\n- **Registre Chronologique Sortant :** Tenue obligatoire par le conducteur de travaux avec mention du volume ($m^3$), tonnage ($t$), transporteur agréé et exutoire final (ISDI / ISDND / Plateforme de recyclage).\n- **Objectif National :** Valorisation matière $\\ge 70\\%$ des déchets de déconstruction et de terrassement."
+        },
+        {
+            id: "norme_nfp_98_331",
+            code: "NF P98-331",
+            title: "Norme NF P98-331 - Remblayage des Tranchées & Réfection des Chaussées",
+            cat: "normes_nf",
+            desc: "Norme française homologuée AFNOR. Définit les règles de compactage par zone (Zone 1 remblai, Zone 2 lit de pose, Zone 3 assise, Zone 4 roulement) et objectifs q4 / q3.",
+            status: "Norme AFNOR",
+            badge: "Qualité Compactage",
+            content: "# NORME NF P98-331 - REMBLAYAGE DES TRANCHÉES\n\n- **Découpage des zones de tranchée :**\n  * **Lit de pose (Zone 1) :** Épaisseur 10cm sous la génératrice inférieure (Sable 0/4 ou Gravillon 4/10).\n  * **Enrobage (Zone 2) :** 20 à 30cm au-dessus du tuyau, compactage soigné sans heurt.\n  * **Remblai supérieur (Zone 3) :** GNT 0/31.5 compactée par passes de 30cm avec objectif $q_4$ sous chaussée ou $q_3$ sous trottoir.\n  * **Structure de chaussée (Zone 4) :** Grave Bitume (GB3) + Couche de roulement (BBSG 0/10) avec pontage d'étanchéité au bitume chaud."
+        },
+        {
+            id: "norme_nfp_98_332",
+            code: "NF P98-332",
+            title: "Norme NF P98-332 - Implantation & Grillages Avertisseurs",
+            cat: "normes_nf",
+            desc: "Norme relative aux règles d'implantation des canalisations et fourreaux sous chaussée et trottoirs. Code couleur des dispositifs avertisseurs : Bleu (AEP), Rouge (Élec), Jaune (Gaz), Vert (Télécom/Fibre).",
+            status: "Norme AFNOR",
+            badge: "Implantation VRD",
+            content: "# NORME NF P98-332 - DISPOSITIFS AVERTISSEURS & GÉOMÉTRIE\n\n- **Hauteur de pose du grillage :** Placé à $200\\text{ mm}$ à $300\\text{ mm}$ au-dessus de la génératrice supérieure de l'ouvrage.\n- **Code Couleur Normalisé :**\n  * 🔵 **Bleu :** Eau potable et canalisations sous pression\n  * 🔴 **Rouge :** Câbles électriques BT et HTA\n  * 🟡 **Jaune :** Canalisations de gaz combustibles et hydrocarbures\n  * 🟢 **Vert :** Câbles de télécommunications, vidéo et fibre optique\n  * 🟤 **Marron :** Eaux usées et assainissement gravitaire\n  * 🟣 **Violet :** Eaux recyclées et réseaux d'arrosage urbain."
+        },
+        {
+            id: "norme_nfen_1610",
+            code: "NF EN 1610",
+            title: "Norme NF EN 1610 - Pose & Essais Réseaux d'Assainissement",
+            cat: "normes_nf",
+            desc: "Norme européenne régissant la pose, le lit de pose, le remblaiement et les épreuves d'étanchéité à l'air (Méthode L) ou à l'eau (Méthode W) avant réception des réseaux gravitaires.",
+            status: "Norme Européenne",
+            badge: "Assainissement",
+            content: "# NORME NF EN 1610 - RÉCEPTION DES COLLECTEURS D'ASSAINISSEMENT\n\n- **Essais d'Étanchéité Obligatoires :** Avant remblayage complet et mise en service.\n- **Essai à l'air (Méthode LC/LD) :** Mise sous pression d'air à 100 ou 200 mbar avec mesure du temps de chute de pression $\\Delta p$.\n- **Inspection Télévisée (ITV) :** Passage caméra vidéo robotisée pour détection des ovalisations, contre-pentes et défauts de joints avant DGD."
+        },
+        {
+            id: "cctg_fascicule_70",
+            code: "FASCICULE 70",
+            title: "CCTG Fascicule 70 - Canalisations d'Assainissement & Ouvrages Annexes",
+            cat: "cctg_fascicules",
+            desc: "Cahier des Clauses Techniques Générales applicable aux marchés publics de travaux d'assainissement (Titre I : Réseaux gravitaires, Titre II : Ouvrages de rétention et bassins d'orage).",
+            status: "CCTG Ministériel",
+            badge: "Référentiel Travaux",
+            content: "# FASCICULE 70 DU CCTG - DISPOSITIONS TECHNIQUES\n\n- **Pente minimale d'autocurage :** $I \\ge 0.5\\%$ ($5\\text{ mm/m}$) pour eaux usées et pluviales afin de garantir une vitesse d'écoulement $\\ge 0.70\\text{ m/s}$.\n- **Regards de visite :** Implantation obligatoire à chaque changement de direction, de pente, de diamètre, et au maximum tous les $50\\text{ m}$.\n- **Tolérances de pose :** Tolérance d'alignement $\\pm 10\\text{ mm}$, tolérance de niveau fil d'eau $\\pm 5\\text{ mm}$."
+        },
+        {
+            id: "cctg_fascicule_71",
+            code: "FASCICULE 71",
+            title: "CCTG Fascicule 71 - Canalisations d'Adduction & Distribution d'Eau (AEP)",
+            cat: "cctg_fascicules",
+            desc: "Prescriptions techniques pour la fourniture et la pose de canalisations d'eau potable (Fonte ductile, PEHD, PVC-BO), massifs de butée aux coudes et désinfection obligatoire.",
+            status: "CCTG Ministériel",
+            badge: "Eau Potable AEP",
+            content: "# FASCICULE 71 DU CCTG - RÉSEAUX D'EAU POTABLE\n\n- **Massifs de Butée en Béton :** Dimensionnement obligatoire pour absorber la poussée hydraulique $F = 2 \\cdot P \\cdot S \\cdot \\sin(\\alpha / 2)$ à chaque coude, té et réduction.\n- **Épreuve de Pression :** Pression d'essai $PEA = 1.5 \\times PFA$ maintenue pendant au minimum 2 heures.\n- **Désinfection & Analyses Bactériologiques :** Rinçage à l'eau javellisée (chlore libre $>20\\text{ mg/l}$) et validation par laboratoire agréé ARS avant raccordement."
+        },
+        {
+            id: "guide_setra_gtr",
+            code: "GUIDE GTR",
+            title: "Guide Technique SETRA-LCPC : Remblayage & Compactage (GTR)",
+            cat: "guides_outils",
+            desc: "Guide de référence national pour la classification des sols (A, B, C, D), le choix des engins de compactage (Pilonneuse, Tandem V1 à V5) et la formule de débit journalier Q.",
+            status: "Guide Méthodologique",
+            badge: "Mécanique des Sols",
+            content: "# GUIDE TECHNIQUE GTR - COMPACTAGE ET CONTRÔLE DE DÉBIT\n\n- **Formule de Débit Maximal Compacteur :**\n  $$Q = \\frac{e \\times V \\times L}{N}$$\n  avec $e$ l'épaisseur de la couche (m), $V$ la vitesse de translation (km/h), $L$ la largeur de compactage (m) et $N$ le nombre de passes requises.\n- **Objectif Plateforme Forme / Fond de Forme :** Mesure de portance à la plaque normalisée NF P94-117 : Module $EV_2 \\ge 80\\text{ MPa}$ avec rapport de compactage $k = EV_2 / EV_1 \\le 2.0$."
+        },
+        {
+            id: "guide_cerema_signa",
+            code: "CEREMA SIGNA",
+            title: "Guide CEREMA / IISR 8e Partie - Signalisation Temporaire des Chantiers",
+            cat: "guides_outils",
+            desc: "Manuel national de signalisation temporaire sur routes bidirectionnelles et autoroutes : calcul des biseaux d'approche (AK5, B14, KR11), alternats par feux et temps de tout-rouge.",
+            status: "Instruction Ministérielle",
+            badge: "Signalisation Voirie",
+            content: "# GUIDE CEREMA - SIGNALISATION TEMPORAIRE IISR 8E PARTIE\n\n- **Distance des Panneaux d'Approche :**\n  * En agglomération ($V \\le 50\\text{ km/h}$) : $50\\text{ m}$ d'espacement.\n  * En rase campagne ($V \\le 90\\text{ km/h}$) : $150\\text{ m}$ d'espacement.\n  * Sur autoroute ($V = 110/130\\text{ km/h}$) : $250\\text{ m}$ à $300\\text{ m}$ d'espacement.\n- **Calcul du Temps de Dégagement (Tout-Rouge Feux KR11) :**\n  $$T_r = \\frac{L_{chantier}}{V_{sec}} + 4\\text{ secondes de battement sécurisé}$$\n  Garantit qu'aucun véhicule n'est engagé lors du basculement du feu opposé."
+        },
+        {
+            id: "fntp_outils_index",
+            code: "FNTP INDEX",
+            title: "Outils FNTP : Révision de Prix & Indexation Marchés TP01 / TP08",
+            cat: "guides_outils",
+            desc: "Méthodologie officielle de la Fédération Nationale des Travaux Publics pour l'actualisation et la révision des prix des marchés selon la formule $P = P_0 (0.15 + 0.85 \\times TP / TP_0)$.",
+            status: "Référentiel FNTP",
+            badge: "Économie & Prix",
+            content: "# FORMULE NATIONALE FNTP DE RÉVISION DE PRIX\n\n- **Formule Contractuelle CCAG Travaux :**\n  $$P = P_0 \\left( a + (1 - a) \\frac{\\text{Index } TP_n}{\\text{Index } TP_0} \\right)$$\n  avec $a = 0.15$ (part fixe non révisable) et $(1 - a) = 0.85$ (part révisable indexée).\n- **Index Spécifiques :**\n  * **TP01 :** Index général tous travaux de terrassements et chaussées.\n  * **TP02 :** Ouvrages d'art et génie civil.\n  * **TP08 :** Enrobés et travaux routiers bitumineux."
+        }
     ];
 
     function filterDocsView(cat, btn) {
@@ -2358,8 +2742,8 @@ def get_js_part3():
                     <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.75rem;">${d.desc}</p>
                 </div>
                 <div style="display: flex; gap: 0.4rem;">
-                    <button class="btn btn-primary" style="flex: 1; font-size: 0.75rem;" onclick="openRegulatoryDocModal('${d.id}')">📄 Consulter Dossier</button>
-                    <button class="btn btn-secondary" style="font-size: 0.75rem;" onclick="alert('Dossier ${d.code} exporté.');">📥 Télécharger</button>
+                    <button class="btn btn-primary" style="flex: 1; font-size: 0.75rem;" onclick="openRegulatoryDocModal('${d.id}')">📖 Consulter le Texte & Règles</button>
+                    <button class="btn btn-secondary" style="font-size: 0.75rem;" onclick="alert('Fiche technique et référentiel national ${d.code} téléchargé.');">📥 Télécharger</button>
                 </div>
             </div>
         `).join('');
@@ -2371,8 +2755,8 @@ def get_js_part3():
         const bodyEl = document.getElementById('doc-reader-body');
         if (!titleEl || !bodyEl) return;
 
-        titleEl.textContent = `📋 ${doc.title} (${doc.code})`;
-        bodyEl.textContent = `# ${doc.title}\n**Référence :** ${doc.code}_2026_OCCITANIE\n**Statut :** ${doc.status}\n\nCe document officiel constitue une pièce contractuelle et technique majeure pour la conduite du chantier, validé conformément aux normes NF P et aux prescriptions du CCAG Travaux 2021.`;
+        titleEl.textContent = `⚖️ ${doc.title} (${doc.code})`;
+        bodyEl.textContent = doc.content || `# ${doc.title}\n**Référence :** ${doc.code}_2026_OCCITANIE\n**Statut :** ${doc.status}\n\nCe document officiel constitue un référentiel national majeur pour la conduite du chantier, validé conformément aux normes NF P et aux prescriptions du CCAG Travaux 2021.`;
         openModal('doc-reader-modal');
     }
 

@@ -240,12 +240,17 @@ def get_tab_panels():
             <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                     <span class="card-title">📁 Hub des Chantiers & Marchés Publics en Cours (Occitanie)</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">4 chantiers opérationnels : Alès, Sète, Pézenas et Montpellier</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">4 chantiers opérationnels en cours (Alès, Sète, Pézenas, Montpellier) + 2 DCE d'apprentissage (Barbazan, Aurouer)</div>
                 </div>
-                <button class="btn btn-primary" onclick="alert('Formulaire de création de nouveau marché public ouvert.');">➕ Nouveau Chantier</button>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="btn-secondary project-filter-btn active" onclick="filterProjectsHub('all', this)">Tous les Chantiers (6)</button>
+                    <button class="btn-secondary project-filter-btn" onclick="filterProjectsHub('internal', this)">🏢 Nos Chantiers Entreprise</button>
+                    <button class="btn-secondary project-filter-btn" onclick="filterProjectsHub('dce_ref', this)">📚 Chantiers DCE Référence</button>
+                    <button class="btn btn-primary" onclick="alert('Formulaire de création de nouveau marché public ouvert.');">➕ Nouveau Chantier</button>
+                </div>
             </div>
 
-            <div id="projects-hub-grid" class="grid-2">
+            <div id="projects-grid" class="grid-2">
                 <!-- Populated dynamically by renderProjectsHub() -->
             </div>
         </div>
@@ -1190,25 +1195,26 @@ def get_tab_panels():
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 20: REGULATORY DOSSIERS (DGD, DUER, PPSPS) -->
+    <!-- TAB 20: REGULATORY, NORMS & NATIONAL TOOLS -->
     <!-- ========================================== -->
     <div id="tab-docs" class="tab-panel">
         <div class="card">
             <div class="card-header" style="flex-wrap:wrap; gap:0.5rem;">
                 <div>
-                    <span class="card-title">📚 Dossiers Réglementaires Obligatoires : DGD, DUER, PPSPS, SOGED, DOE SI 022 & CCTP</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Génération, consultation et exportation des pièces maîtresses de la conduite de travaux (CCAG 2021 & Code du Travail)</div>
+                    <span class="card-title">⚖️ Réglementation, Normes & Outils Nationaux TP & VRD</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Référentiel officiel national des textes légaux obligatoires, normes AFNOR/NF, CCTG Fascicules et guides méthodologiques CEREMA/OPPBTP/INRS</div>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <button class="btn-secondary active doc-tab-filter" onclick="filterDocsView('all', this)">Tous les Dossiers (8)</button>
-                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('contractuel', this)">🏛️ Contractuel & DGD</button>
-                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('securite_rh', this)">🦺 Sécurité, DUER & PPSPS</button>
-                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('technique_doe', this)">📐 Technique, SOGED & DOE</button>
+                    <button class="btn-secondary active doc-tab-filter" onclick="filterDocsView('all', this)">Tous les Textes & Normes (12)</button>
+                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('loi_decret', this)">🏛️ Lois, Décrets & CCAG</button>
+                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('normes_nf', this)">📐 Normes NF & AFNOR</button>
+                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('cctg_fascicules', this)">📜 CCTG & Fascicules</button>
+                    <button class="btn-secondary doc-tab-filter" onclick="filterDocsView('guides_outils', this)">🧰 Guides & Outils Méthodologie</button>
                 </div>
             </div>
 
-            <!-- REGULATORY DOSSIERS GRID -->
-            <div id="regulatory-docs-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+            <!-- REGULATORY & NORMS GRID -->
+            <div id="regulatory-docs-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
                 <!-- Populated dynamically by renderRegulatoryDocs() -->
             </div>
         </div>

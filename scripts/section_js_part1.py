@@ -15,6 +15,7 @@ def get_js_part1():
 
     const inventoryData = rawInventoryData || {};
     const syntheseData = rawSyntheseData || { dqe_items: [] };
+    const completeDQEItems = syntheseData.dqe_items || [];
     const confrontationData = rawConfrontationData || {};
     const ledgerData = Array.isArray(rawLedgerData) ? { blocks: rawLedgerData } : (rawLedgerData || { blocks: [] });
     const reportsData = rawReportsData || { rdc_entries: [] };
@@ -310,43 +311,43 @@ def get_js_part1():
         'patron': [
             { id: 'cockpit', label: '🎛️ Cockpit & SIG' },
             { id: 'company', label: '🏢 Entreprise & Caisse' },
-            { id: 'depot', label: '🏭 Dépôt & Entrepôt' },
-            { id: 'projects_hub', label: '📁 Chantiers & Docs' },
+            { id: 'depot', label: '🏭 Dépôt & Inventaire' },
+            { id: 'projects_hub', label: '📁 Chantiers & Marchés' },
             { id: 'planning', label: '📅 Planning Gantt & Agenda' },
             { id: 'simulator', label: '🛰️ Watch Tower 3D' },
             { id: 'fleet', label: '🚜 Flotte Engins' },
             { id: 'catalog', label: '🛒 Outils & Matériaux' },
-            { id: 'hr', label: '👷 Organigramme RH' },
             { id: 'opbtp', label: '🦺 Signalétique OPBTP' },
-            { id: 'safety', label: '🛡️ Sécurité AIPR' },
-            { id: 'rdc', label: '📋 Rapport RDC' },
+            { id: 'safety', label: '🛡️ Sécurité & AIPR' },
             { id: 'sdp', label: '💰 28 SDP & TCD DQE' },
-            { id: 'benchmark', label: '📊 Benchmark & Inventaire' },
-            { id: 'obsidian', label: '📚 Base Obsidian' },
             { id: 'schemas', label: '📐 Technique & Analyse' },
             { id: 'procurement', label: '🛒 Fournisseurs' },
+            { id: 'docs', label: '⚖️ Réglementation, Normes & Outils' },
+            { id: 'benchmark', label: '📊 Benchmark & Inventaire' },
+            { id: 'hr', label: '👷 Organigramme RH' },
+            { id: 'rdc', label: '📋 Rapport RDC' },
+            { id: 'obsidian', label: '📚 Base Obsidian' },
             { id: 'ledger', label: '⛓️ Ledger SHA-256' },
-            { id: 'docs', label: '📚 Dossiers Réglementaires' },
             { id: 'archives', label: '🗄️ Archives & GED' }
         ],
         'conduite': [
             { id: 'cockpit', label: '🎛️ Cockpit' },
+            { id: 'depot', label: '🏭 Dépôt & Inventaire' },
             { id: 'projects_hub', label: '📁 Chantiers en Cours' },
-            { id: 'depot', label: '🏭 Dépôt & Entrepôt' },
             { id: 'planning', label: '📅 Planning & Agenda' },
             { id: 'simulator', label: '🛰️ Watch Tower' },
             { id: 'fleet', label: '🚜 Flotte & Dispatch' },
             { id: 'catalog', label: '🛒 Commandes Matériaux' },
-            { id: 'hr', label: '👷 Équipes & RH' },
             { id: 'opbtp', label: '🦺 Signalétique OPBTP' },
             { id: 'safety', label: '🛡️ Sécurité & AIPR' },
-            { id: 'rdc', label: '📋 Journal RDC' },
             { id: 'sdp', label: '💰 Sous-Détails & DQE' },
-            { id: 'benchmark', label: '📊 Benchmark Prix' },
-            { id: 'obsidian', label: '📚 Base Obsidian' },
             { id: 'schemas', label: '📐 Technique & Analyse' },
             { id: 'procurement', label: '🛒 Fournisseurs' },
-            { id: 'docs', label: '📚 Dossiers Réglementaires' },
+            { id: 'docs', label: '⚖️ Réglementation, Normes & Outils' },
+            { id: 'benchmark', label: '📊 Benchmark Prix' },
+            { id: 'hr', label: '👷 Équipes & RH' },
+            { id: 'rdc', label: '📋 Journal RDC' },
+            { id: 'obsidian', label: '📚 Base Obsidian' },
             { id: 'archives', label: '🗄️ Archives & GED' }
         ],
         'compagnon': [
@@ -355,9 +356,9 @@ def get_js_part1():
             { id: 'planning', label: '📅 Planning Général' },
             { id: 'opbtp', label: '🦺 Balisage OPBTP' },
             { id: 'safety', label: '🛡️ Règles Sécurité' },
-            { id: 'rdc', label: '📋 Saisie RDC' },
             { id: 'schemas', label: '📐 Technique' },
-            { id: 'docs', label: '📚 Dossiers' },
+            { id: 'docs', label: '⚖️ Réglementation & Normes' },
+            { id: 'rdc', label: '📋 Saisie RDC' },
             { id: 'archives', label: '🗄️ Archives' }
         ]
     };
@@ -442,13 +443,16 @@ def get_js_part1():
                 renderTeamsBenchmarkTable();
             }
             if (tabId === 'opbtp') {
-                updateOpbtpSubdomainOptions();
-                calculateSignage();
+                setTimeout(() => {
+                    updateOpbtpSubdomainOptions();
+                    calculateSignage();
+                }, 50);
             }
             if (tabId === 'safety') {
                 setTimeout(() => {
                     updateAiprPhaseDetails();
                     setAiprSituation('gaz');
+                    renderAiprCanvas();
                 }, 50);
             }
             if (tabId === 'rdc') renderRdcTable();
@@ -462,8 +466,16 @@ def get_js_part1():
                 setTimeout(initSuppliersMap, 50);
             }
             if (tabId === 'ledger') renderLedger();
-            if (tabId === 'docs') renderRegulatoryDocs();
-            if (tabId === 'archives') renderArchives();
+            if (tabId === 'docs') {
+                setTimeout(() => {
+                    if (typeof renderRegulatoryDocs === 'function') renderRegulatoryDocs();
+                }, 50);
+            }
+            if (tabId === 'archives') {
+                setTimeout(() => {
+                    if (typeof renderArchives === 'function') renderArchives();
+                }, 50);
+            }
         } catch (e) {
             console.error('Error switching tab to ' + tabId + ':', e);
         }
@@ -1048,7 +1060,7 @@ def get_js_part1():
     }
 
     function renderProjectsHub() {
-        const grid = document.getElementById('projects-grid');
+        const grid = document.getElementById('projects-grid') || document.getElementById('projects-hub-grid');
         if (!grid) return;
 
         const projects = companyData.projects || [];
