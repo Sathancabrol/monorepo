@@ -26,9 +26,12 @@ def get_js_part1():
         id: p.id || 'PRJ_01',
         name: p.name || 'Projet BTP',
         client: p.client || 'Maître d\'Ouvrage Public',
+        ownership: p.ownership || '🏢 Notre Entreprise (En cours)',
         location: p.location || 'Occitanie (34)',
         budget: Number(p.budget_total || p.budget || 500000),
+        budget_used: Number(p.depense_reelle || p.budget_used || (p.budget_total || 500000) * 0.72),
         progress: Number(p.avancement_physique_pct || p.progress || 50),
+        delai_consomme_pct: Number(p.delai_consomme_pct || 48),
         status: p.statut || p.status || 'En cours',
         manager: p.conducteur || p.manager || 'Sylvain CABROL',
         site_chief: p.chef_chantier || p.site_chief || 'Alain MARTIN',
@@ -154,9 +157,13 @@ def get_js_part1():
     let currentScenarioId = 'scen_tranchee_vrd';
     let activeScenarioStepIdx = 0;
     let fleetFilter = 'all';
+    let fleetPresentationMode = 'grid';
     let catalogFilter = 'all';
+    let catalogPresentationMode = 'grid';
     let obsidianHeuristic = 'all';
     let sdpViewMode = 'dqe_tcd';
+    let showSdpFormulas = false;
+    let showCashflowFormulas = false;
     let activeGisLayer = 'dict';
     let activeProjectModalId = 'projet_ales';
     let activeProjectModalLotIdx = 0;
@@ -164,6 +171,10 @@ def get_js_part1():
     let cameraRotX = 30, cameraRotY = -45, cameraZoom = 1.0;
     let isDragging3D = false, lastMouseX = 0, lastMouseY = 0;
     let webcamStream = null;
+    let currentMapFilter = 'all';
+    let mapZoom = 1.0, mapPanX = 0, mapPanY = 0;
+    let isDraggingMap = false, lastMapMouseX = 0, lastMapMouseY = 0;
+    let selectedMapPoint = null;
 
     // ==========================================
     // 2. TECHNICAL SVG VECTOR ILLUSTRATIONS
@@ -297,8 +308,9 @@ def get_js_part1():
     // ==========================================
     const roleTabs = {
         'patron': [
-            { id: 'cockpit', label: '🎛️ Cockpit' },
+            { id: 'cockpit', label: '🎛️ Cockpit & SIG' },
             { id: 'company', label: '🏢 Entreprise & Caisse' },
+            { id: 'depot', label: '🏭 Dépôt & Entrepôt' },
             { id: 'projects_hub', label: '📁 Chantiers & Docs' },
             { id: 'planning', label: '📅 Planning Gantt & Agenda' },
             { id: 'simulator', label: '🛰️ Watch Tower 3D' },
@@ -309,15 +321,18 @@ def get_js_part1():
             { id: 'safety', label: '🛡️ Sécurité AIPR' },
             { id: 'rdc', label: '📋 Rapport RDC' },
             { id: 'sdp', label: '💰 28 SDP & TCD DQE' },
-            { id: 'obsidian', label: '🕸️ Graphe Obsidian' },
-            { id: 'schemas', label: '📐 Schémas A-Z' },
+            { id: 'benchmark', label: '📊 Benchmark & Inventaire' },
+            { id: 'obsidian', label: '📚 Base Obsidian' },
+            { id: 'schemas', label: '📐 Technique & Analyse' },
             { id: 'procurement', label: '🛒 Fournisseurs' },
             { id: 'ledger', label: '⛓️ Ledger SHA-256' },
-            { id: 'docs', label: '📚 Rapports CCTP' }
+            { id: 'docs', label: '📚 Dossiers Réglementaires' },
+            { id: 'archives', label: '🗄️ Archives & GED' }
         ],
         'conduite': [
             { id: 'cockpit', label: '🎛️ Cockpit' },
             { id: 'projects_hub', label: '📁 Chantiers en Cours' },
+            { id: 'depot', label: '🏭 Dépôt & Entrepôt' },
             { id: 'planning', label: '📅 Planning & Agenda' },
             { id: 'simulator', label: '🛰️ Watch Tower' },
             { id: 'fleet', label: '🚜 Flotte & Dispatch' },
@@ -327,14 +342,23 @@ def get_js_part1():
             { id: 'safety', label: '🛡️ Sécurité & AIPR' },
             { id: 'rdc', label: '📋 Journal RDC' },
             { id: 'sdp', label: '💰 Sous-Détails & DQE' },
-            { id: 'procurement', label: '🛒 Fournisseurs' }
+            { id: 'benchmark', label: '📊 Benchmark Prix' },
+            { id: 'obsidian', label: '📚 Base Obsidian' },
+            { id: 'schemas', label: '📐 Technique & Analyse' },
+            { id: 'procurement', label: '🛒 Fournisseurs' },
+            { id: 'docs', label: '📚 Dossiers Réglementaires' },
+            { id: 'archives', label: '🗄️ Archives & GED' }
         ],
         'compagnon': [
             { id: 'compagnon_mobile', label: '📱 Mode Terrain & Mon Planning' },
+            { id: 'depot', label: '🏭 Dépôt Matériel' },
             { id: 'planning', label: '📅 Planning Général' },
             { id: 'opbtp', label: '🦺 Balisage OPBTP' },
             { id: 'safety', label: '🛡️ Règles Sécurité' },
-            { id: 'rdc', label: '📋 Saisie RDC' }
+            { id: 'rdc', label: '📋 Saisie RDC' },
+            { id: 'schemas', label: '📐 Technique' },
+            { id: 'docs', label: '📚 Dossiers' },
+            { id: 'archives', label: '🗄️ Archives' }
         ]
     };
 
@@ -371,6 +395,14 @@ def get_js_part1():
         currentNav = tabId;
 
         try {
+            if (tabId === 'cockpit') setTimeout(initCockpitOsmMap, 50);
+            if (tabId === 'company') renderCompanyCashflowTable();
+            if (tabId === 'depot') {
+                setTimeout(() => {
+                    initDepotCanvas();
+                    renderDepotInventory();
+                }, 50);
+            }
             if (tabId === 'projects_hub') renderProjectsHub();
             if (tabId === 'planning') {
                 if (planningViewMode.startsWith('agenda')) renderPlanningAgenda();
@@ -379,23 +411,59 @@ def get_js_part1():
             if (tabId === 'compagnon_mobile') renderCompagnonPlanning();
             if (tabId === 'fleet') renderFleetGrid();
             if (tabId === 'catalog') renderCatalogGrid();
-            if (tabId === 'obsidian') setTimeout(initObsidianGraph, 50);
+            if (tabId === 'obsidian') {
+                setTimeout(() => {
+                    renderObsidianFolderTree();
+                    initObsidianGraph();
+                }, 50);
+            }
             if (tabId === 'simulator') {
                 setTimeout(() => {
+                    init3DCanvas();
                     initWatchtowerRadar();
+                    renderWatchtowerActors();
                     drawStepVisual(activeScenarioStepIdx);
                 }, 50);
             }
-            if (tabId === 'hr') setTimeout(initHrTree, 50);
+            if (tabId === 'hr') {
+                setTimeout(() => {
+                    initHrTree();
+                    renderHrPartners();
+                }, 50);
+            }
             if (tabId === 'sdp') {
                 if (sdpViewMode === 'dqe_tcd') renderDQEPivotTable();
-                else renderSdpCards();
+                else if (sdpViewMode === 'cards') renderSdpCards();
+                else renderEnterprisePriceComparison();
             }
-            if (tabId === 'opbtp') calculateSignage();
-            if (tabId === 'safety') setTimeout(() => setAiprSituation('gaz'), 50);
+            if (tabId === 'benchmark') {
+                renderBenchmarkTable();
+                renderInventoryTable();
+                renderTeamsBenchmarkTable();
+            }
+            if (tabId === 'opbtp') {
+                updateOpbtpSubdomainOptions();
+                calculateSignage();
+            }
+            if (tabId === 'safety') {
+                setTimeout(() => {
+                    updateAiprPhaseDetails();
+                    setAiprSituation('gaz');
+                }, 50);
+            }
             if (tabId === 'rdc') renderRdcTable();
-            if (tabId === 'procurement') renderProcurement();
+            if (tabId === 'schemas') {
+                updateFormulaCalculator();
+                renderTaskSheet();
+                setTimeout(initCompactageCutCanvas, 50);
+            }
+            if (tabId === 'procurement') {
+                renderProcurement();
+                setTimeout(initSuppliersMap, 50);
+            }
             if (tabId === 'ledger') renderLedger();
+            if (tabId === 'docs') renderRegulatoryDocs();
+            if (tabId === 'archives') renderArchives();
         } catch (e) {
             console.error('Error switching tab to ' + tabId + ':', e);
         }
@@ -437,30 +505,579 @@ def get_js_part1():
     }
 
     // ==========================================
-    // 5. PROJECTS HUB & DETAILED PROJECT MODAL
+    // 5. COCKPIT GIS / OPENSTREETMAP INTERACTIVE MAP
     // ==========================================
+    let activeRenderedMapPoints = [];
+
+    function initCockpitOsmMap() {
+        const canvas = document.getElementById('cockpit-osm-map-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.parentElement.clientWidth || 700;
+        const h = canvas.parentElement.clientHeight || 420;
+        canvas.width = w;
+        canvas.height = h;
+
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            let clicked = null;
+            for (const pt of activeRenderedMapPoints) {
+                if (Math.hypot(pt.drawX - mx, pt.drawY - my) < 18) {
+                    clicked = pt;
+                    break;
+                }
+            }
+
+            if (clicked) {
+                selectCockpitMapPoint(clicked);
+            } else {
+                isDraggingMap = true;
+                lastMapMouseX = e.clientX;
+                lastMapMouseY = e.clientY;
+            }
+        };
+
+        window.onmouseup = () => { isDraggingMap = false; };
+
+        canvas.onmousemove = (e) => {
+            if (isDraggingMap) {
+                mapPanX += e.clientX - lastMapMouseX;
+                mapPanY += e.clientY - lastMapMouseY;
+                lastMapMouseX = e.clientX;
+                lastMapMouseY = e.clientY;
+                renderCockpitOsmMap();
+            }
+        };
+
+        canvas.onwheel = (e) => {
+            e.preventDefault();
+            const factor = e.deltaY < 0 ? 1.1 : 0.9;
+            mapZoom = Math.max(0.6, Math.min(3.0, mapZoom * factor));
+            renderCockpitOsmMap();
+        };
+
+        renderCockpitOsmMap();
+    }
+
+    function getFilteredMapPoints() {
+        const list = companyData.map_locations || [];
+        if (currentMapFilter === 'all') return list;
+        return list.filter(p => p.category === currentMapFilter);
+    }
+
+    function getScreenCoord(lat, lng, w, h) {
+        // High-precision geographic projection centered on Occitanie (43.70° N, 3.65° E)
+        const centerLat = 43.70;
+        const centerLng = 3.65;
+        const scaleX = (w / 1.55) * mapZoom;
+        const scaleY = (h / 1.25) * mapZoom;
+
+        const x = (w / 2) + (lng - centerLng) * scaleX + mapPanX;
+        const y = (h / 2) - (lat - centerLat) * scaleY + mapPanY;
+        return { x, y };
+    }
+
+    function renderCockpitOsmMap() {
+        const canvas = document.getElementById('cockpit-osm-map-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.fillStyle = '#060a12';
+        ctx.fillRect(0, 0, w, h);
+
+        // Grid Lines (Lambert 93 / WGS84 coordinates)
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 40) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += 40) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+
+        // --- 1. ACCURATE OCCITANIE COASTLINE & WATER BODIES ---
+        // Mediterranean Sea
+        const pCamargue = getScreenCoord(43.45, 4.45, w, h);
+        const pPalavas = getScreenCoord(43.53, 3.93, w, h);
+        const pFrontignan = getScreenCoord(43.45, 3.75, w, h);
+        const pSete = getScreenCoord(43.40, 3.69, w, h);
+        const pAgde = getScreenCoord(43.28, 3.50, w, h);
+        const pValras = getScreenCoord(43.24, 3.29, w, h);
+        const pLeucate = getScreenCoord(42.90, 3.03, w, h);
+
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.12)';
+        ctx.beginPath();
+        ctx.moveTo(pLeucate.x, pLeucate.y);
+        ctx.lineTo(pValras.x, pValras.y);
+        ctx.lineTo(pAgde.x, pAgde.y);
+        ctx.lineTo(pSete.x, pSete.y);
+        ctx.lineTo(pFrontignan.x, pFrontignan.y);
+        ctx.lineTo(pPalavas.x, pPalavas.y);
+        ctx.lineTo(pCamargue.x, pCamargue.y);
+        ctx.lineTo(w + 50, h + 50);
+        ctx.lineTo(-50, h + 50);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Étang de Thau (Between Sète and Balaruc/Mèze)
+        const pThau = getScreenCoord(43.43, 3.62, w, h);
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
+        ctx.beginPath();
+        ctx.ellipse(pThau.x, pThau.y, 24 * mapZoom, 12 * mapZoom, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.5)';
+        ctx.stroke();
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '8px monospace';
+        ctx.fillText('Étang de Thau', pThau.x - 22, pThau.y + 3);
+
+        // --- 2. CEVENNES RELIEF / MOUNTAINS ---
+        const pCevennes = getScreenCoord(44.25, 3.60, w, h);
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.08)';
+        ctx.beginPath();
+        ctx.arc(pCevennes.x, pCevennes.y, 50 * mapZoom, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'italic 9px system-ui';
+        ctx.fillText('⛰️ Massif des Cévennes', pCevennes.x - 45, pCevennes.y);
+
+        // --- 3. MAJOR TRANSPORT ARTERIES (A9, A750, N106, D613) ---
+        const pAles = getScreenCoord(44.1284, 4.0833, w, h);
+        const pNimes = getScreenCoord(43.8367, 4.3600, w, h);
+        const pMontpellier = getScreenCoord(43.6108, 3.8767, w, h);
+        const pBeziers = getScreenCoord(43.3442, 3.2158, w, h);
+        const pPezenas = getScreenCoord(43.4600, 3.4230, w, h);
+        const pNarbonne = getScreenCoord(43.1833, 3.0000, w, h);
+
+        // Autoroute A9 (La Languedocienne)
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(pNimes.x, pNimes.y);
+        ctx.lineTo(pMontpellier.x, pMontpellier.y);
+        ctx.lineTo(pSete.x - 5, pSete.y - 10);
+        ctx.lineTo(pBeziers.x, pBeziers.y);
+        ctx.lineTo(pNarbonne.x, pNarbonne.y);
+        ctx.stroke();
+
+        // Route Nationale N106 (Alès - Nîmes)
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(pAles.x, pAles.y);
+        ctx.lineTo(pNimes.x, pNimes.y);
+        ctx.stroke();
+
+        // Autoroute A750 / A75 (Gignac - Pézenas - Béziers)
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pMontpellier.x, pMontpellier.y);
+        ctx.lineTo(pPezenas.x, pPezenas.y);
+        ctx.lineTo(pBeziers.x, pBeziers.y);
+        ctx.stroke();
+
+        // City Dots & Names
+        const cities = [
+            { name: "MONTPELLIER", pt: pMontpellier },
+            { name: "NÎMES", pt: pNimes },
+            { name: "ALÈS", pt: pAles },
+            { name: "SÈTE", pt: pSete },
+            { name: "BÉZIERS", pt: pBeziers },
+            { name: "PÉZENAS", pt: pPezenas }
+        ];
+        cities.forEach(c => {
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath(); ctx.arc(c.pt.x, c.pt.y, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 8px system-ui';
+            ctx.fillText(c.name, c.pt.x + 5, c.pt.y - 4);
+        });
+
+        // --- 4. ANTI-COLLISION CLUSTERING & SPIDERFYING PINS ---
+        const rawPoints = getFilteredMapPoints();
+        const clusters = [];
+
+        rawPoints.forEach(pt => {
+            const screen = getScreenCoord(pt.lat, pt.lng, w, h);
+            let cl = clusters.find(c => Math.hypot(c.cx - screen.x, c.cy - screen.y) < 26);
+            if (!cl) {
+                cl = { cx: screen.x, cy: screen.y, pts: [] };
+                clusters.push(cl);
+            }
+            cl.pts.push({ ...pt, screenX: screen.x, screenY: screen.y });
+        });
+
+        activeRenderedMapPoints = [];
+
+        clusters.forEach(cl => {
+            const n = cl.pts.length;
+            if (n === 1) {
+                const p = cl.pts[0];
+                p.drawX = cl.cx;
+                p.drawY = cl.cy;
+                activeRenderedMapPoints.push(p);
+            } else {
+                // Multiple points close to each other -> Disperse radially
+                const radius = Math.min(38, 20 + n * 4);
+                cl.pts.forEach((p, idx) => {
+                    const angle = (idx / n) * Math.PI * 2 - Math.PI / 2;
+                    p.drawX = cl.cx + Math.cos(angle) * radius;
+                    p.drawY = cl.cy + Math.sin(angle) * radius;
+
+                    // Leader dashed line from actual location to dispersed pin
+                    ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 2]);
+                    ctx.beginPath();
+                    ctx.moveTo(cl.cx, cl.cy);
+                    ctx.lineTo(p.drawX, p.drawY);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    activeRenderedMapPoints.push(p);
+                });
+
+                // Center origin hub dot
+                ctx.fillStyle = '#64748b';
+                ctx.beginPath();
+                ctx.arc(cl.cx, cl.cy, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+
+        // Draw all dispersed pins with ZERO overlap
+        activeRenderedMapPoints.forEach(pt => {
+            const posX = pt.drawX;
+            const posY = pt.drawY;
+
+            // Pulsing Ring
+            ctx.strokeStyle = pt.color || '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(posX, posY, 13, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Pin Center Circle
+            ctx.fillStyle = pt.color || '#38bdf8';
+            ctx.beginPath();
+            ctx.arc(posX, posY, 9, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Emoji Icon
+            ctx.font = '11px system-ui';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(pt.icon || '📍', posX, posY);
+
+            // Label Text with Background Pill
+            const label = pt.name;
+            ctx.font = 'bold 8.5px system-ui';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
+            const txtWidth = ctx.measureText(label).width;
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.fillRect(posX + 12, posY - 8, txtWidth + 6, 12);
+            ctx.strokeStyle = 'rgba(51, 65, 85, 0.6)';
+            ctx.lineWidth = 0.8;
+            ctx.strokeRect(posX + 12, posY - 8, txtWidth + 6, 12);
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillText(label, posX + 15, posY + 1);
+        });
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+    }
+
+    function filterCockpitMap(category, btn) {
+        currentMapFilter = category;
+        document.querySelectorAll('.map-filter-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderCockpitOsmMap();
+    }
+
+    function zoomCockpitMap(factor) {
+        mapZoom = Math.max(0.6, Math.min(3.0, mapZoom * factor));
+        renderCockpitOsmMap();
+    }
+
+    function resetCockpitMap() {
+        mapZoom = 1.0;
+        mapPanX = 0;
+        mapPanY = 0;
+        renderCockpitOsmMap();
+    }
+
+    function selectCockpitMapPoint(pt) {
+        selectedMapPoint = pt;
+        const bCat = document.getElementById('pin-badge-cat');
+        const bName = document.getElementById('pin-name-val');
+        const bDesc = document.getElementById('pin-desc-val');
+        const bMetrics = document.getElementById('pin-metrics-box');
+
+        if (bCat) bCat.textContent = (pt.category || 'ENTITÉ TP').toUpperCase();
+        if (bName) bName.textContent = pt.name;
+        if (bDesc) bDesc.textContent = pt.desc || pt.ownership || 'Point stratégique opérationnel du réseau BTP Occitanie.';
+
+        if (bMetrics) {
+            if (pt.category === 'chantier') {
+                bMetrics.innerHTML = `
+                    <div>Budget Initial : <strong style="color: #f8fafc;">${(pt.budget_ini || 500000).toLocaleString('fr-FR')} €</strong></div>
+                    <div>Budget Utilisé : <strong style="color: var(--emerald);">${(pt.budget_used || 350000).toLocaleString('fr-FR')} €</strong></div>
+                    <div>Avancement : <strong style="color: #38bdf8;">${pt.progress || 50}%</strong></div>
+                    <div>Chef de Chantier : <strong>${pt.chef || 'A. Martin'}</strong></div>
+                `;
+            } else if (pt.category === 'marche_public_ref') {
+                bMetrics.innerHTML = `
+                    <div>Type de Marché : <strong style="color: #a855f7;">DCE Public Réel</strong></div>
+                    <div>Budget Réalisé : <strong style="color: var(--emerald);">${(pt.budget_used || 900000).toLocaleString('fr-FR')} €</strong></div>
+                    <div>Statut : <strong style="color: var(--emerald);">Achevé (100%)</strong></div>
+                    <div>Rôle : <strong>Étalon Cadences & Prix</strong></div>
+                `;
+            } else if (pt.category === 'fournisseur') {
+                bMetrics.innerHTML = `
+                    <div>Produit Fourni : <strong style="color: #ec4899;">${pt.product || 'Matériaux'}</strong></div>
+                    <div>Distance Siège : <strong>${pt.distance || '10 km'}</strong></div>
+                    <div>Contrat-Cadre : <strong style="color: var(--emerald);">Agréé 2026</strong></div>
+                    <div>Délai Livraison : <strong>H+2 sur site</strong></div>
+                `;
+            } else if (pt.category === 'depot') {
+                bMetrics.innerHTML = `
+                    <div>Valeur Stock : <strong style="color: var(--amber);">${pt.stock_val || '300 000 €'}</strong></div>
+                    <div>Téléphone : <strong>${pt.contact || '04 67 00 00 00'}</strong></div>
+                    <div>Horaires : <strong>06h30 - 18h00</strong></div>
+                    <div>Atelier Engins : <strong style="color: var(--emerald);">Opérationnel</strong></div>
+                `;
+            } else {
+                bMetrics.innerHTML = `
+                    <div>Responsable : <strong style="color: #38bdf8;">${pt.leader || pt.rep || 'Contact'}</strong></div>
+                    <div>Canal Radio : <strong style="color: var(--amber);">${pt.radio || 'Canal TP'}</strong></div>
+                    <div>Statut : <strong style="color: var(--emerald);">En Poste Actif</strong></div>
+                    <div>Localisation : <strong>Occitanie</strong></div>
+                `;
+            }
+        }
+
+        renderCockpitOsmMap();
+    }
+
+    // ==========================================
+    // 5b. MULTI-ENTERPRISE PROFILES SWITCHER
+    // ==========================================
+    let currentCompanyProfile = 'occitanie_tp';
+
+    const companyProfiles = {
+        'occitanie_tp': {
+            id: 'occitanie_tp',
+            name: 'Occitanie TP & VRD SAS',
+            type: 'PME Établie Régionale',
+            caisse: 485200,
+            bfr: 142800,
+            capital: '500 000 €',
+            siren: '849 321 654',
+            desc: 'Entreprise générale de VRD et terrassement en Occitanie. Flotte complète 6 engins, marchés publics Alès, Sète, Pézenas, Montpellier.',
+            projects_count: 4,
+            fleet_count: 6,
+            effectif_count: 24,
+            margin: 14.2
+        },
+        'compte_neuf': {
+            id: 'compte_neuf',
+            name: 'Nouvelle Entreprise TP (Démarrage Zéro)',
+            type: 'Compte Vierge / Typique',
+            caisse: 0,
+            bfr: 0,
+            capital: '10 000 €',
+            siren: '912 456 789',
+            desc: 'Profil vierge sans fond ni chantier engagé. Idéal pour configurer et chiffrer une nouvelle entreprise TP à partir d\'une page blanche.',
+            projects_count: 0,
+            fleet_count: 0,
+            effectif_count: 1,
+            margin: 0
+        },
+        'stagiaire_tp': {
+            id: 'stagiaire_tp',
+            name: 'Stagiaire TP & Conduite de Travaux (Études M4-L)',
+            type: 'Dossiers de Cours & Formation',
+            caisse: 150000,
+            bfr: 45000,
+            capital: '150 000 €',
+            siren: '775 889 123',
+            desc: 'Simulation basée sur les cours et dossiers réels du repo : DCE Giratoire Barbazan M4-L, Lotissement Aurouer 2021, Déviation Noé, fiches de tâches et ratios FNTP.',
+            projects_count: 3,
+            fleet_count: 3,
+            effectif_count: 9,
+            margin: 12.8
+        },
+        'artisan_2k': {
+            id: 'artisan_2k',
+            name: 'Artisan TP Sud VRD (Perso 2k€ + Bureau + EPI)',
+            type: 'Amorçage Artisanal 2 000 €',
+            caisse: 2000,
+            bfr: 1800,
+            capital: '2 000 €',
+            siren: '883 456 123',
+            desc: 'Démarrage avec 2 000 € de capital, bureau loué en pépinière, lot complet d\'EPI certifiés (Casques, gilets Cl.2, chaussures S3), outillage laser et réfection tranchée.',
+            projects_count: 1,
+            fleet_count: 0,
+            effectif_count: 2,
+            margin: 18.5
+        }
+    };
+
+    function switchCompanyProfile(profileId) {
+        const prof = companyProfiles[profileId] || companyProfiles['occitanie_tp'];
+        currentCompanyProfile = profileId;
+        caisseBalance = prof.caisse;
+
+        // Update active badges in modal
+        document.querySelectorAll('.company-profile-card').forEach(c => {
+            c.classList.remove('active');
+            c.style.border = '1px solid rgba(51,65,85,0.8)';
+        });
+        const activeCard = document.getElementById('prof-card-' + profileId);
+        if (activeCard) {
+            activeCard.classList.add('active');
+            activeCard.style.border = '2px solid var(--cyan)';
+        }
+
+        ['occitanie_tp', 'compte_neuf', 'stagiaire_tp', 'artisan_2k'].forEach(id => {
+            const badge = document.getElementById('prof-active-badge-' + id);
+            if (badge) badge.style.display = (id === profileId) ? 'inline-block' : 'none';
+        });
+
+        // Update Top HUD
+        const topName = document.getElementById('active-company-name-top');
+        const topCaisse = document.getElementById('caisse-balance-top');
+        const compCaisse = document.getElementById('company-caisse-val');
+        const kpiTreasury = document.getElementById('kpi-treasury-val');
+
+        if (topName) topName.textContent = prof.name + ' ▾';
+        if (topCaisse) topCaisse.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
+        if (compCaisse) compCaisse.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
+        if (kpiTreasury) kpiTreasury.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
+
+        logCockpit('🏢 Profil entreprise activé : ' + prof.name, 'ok');
+        closeModal('company-switch-modal');
+
+        // Re-render active views
+        try {
+            if (currentNav === 'cockpit') renderCockpitOsmMap();
+            if (currentNav === 'company') renderCompanyCashflowTable();
+            if (currentNav === 'projects_hub') renderProjectsHub();
+            if (currentNav === 'fleet') renderFleetGrid();
+            if (currentNav === 'hr') { initHrTree(); renderHrPartners(); }
+            if (currentNav === 'benchmark') { renderBenchmarkTable(); renderInventoryTable(); renderTeamsBenchmarkTable(); }
+        } catch (e) {
+            console.error('Error re-rendering after company profile switch:', e);
+        }
+    }
+
+    // ==========================================
+    // 6. COMPANY CASHFLOW TCD TABLE & FORMULAS
+    // ==========================================
+    function toggleCashflowFormulas() {
+        showCashflowFormulas = !showCashflowFormulas;
+        const box = document.getElementById('cashflow-formulas-box');
+        if (box) box.style.display = showCashflowFormulas ? 'block' : 'none';
+    }
+
+    let cashflowSortKey = 'date';
+    let cashflowSortAsc = false;
+
+    function sortCashflowTable(key) {
+        if (key === cashflowSortKey) {
+            cashflowSortAsc = !cashflowSortAsc;
+        } else {
+            cashflowSortKey = key;
+            cashflowSortAsc = true;
+        }
+        renderCompanyCashflowTable();
+    }
+
+    function renderCompanyCashflowTable() {
+        const tbody = document.getElementById('company-cashflow-tbody') || document.getElementById('company-cashflow-table-body');
+        if (!tbody) return;
+
+        const txs = companyData.cashflow_transactions || [];
+        const sorted = [...txs].sort((a, b) => {
+            let valA = a[cashflowSortKey] !== undefined ? a[cashflowSortKey] : '';
+            let valB = b[cashflowSortKey] !== undefined ? b[cashflowSortKey] : '';
+            if (cashflowSortKey === 'amount') { valA = a.amount || 0; valB = b.amount || 0; }
+            if (typeof valA === 'string') {
+                return cashflowSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
+            return cashflowSortAsc ? (valA - valB) : (valB - valA);
+        });
+
+        tbody.innerHTML = sorted.map(t => {
+            const isPositive = t.amount > 0;
+            const amtColor = isPositive ? 'var(--emerald)' : '#fb7185';
+            const amtSign = isPositive ? '+' : '';
+            return `
+                <tr style="border-top: 1px solid rgba(51,65,85,0.4);">
+                    <td style="padding: 0.55rem; font-family: 'JetBrains Mono'; color: #94a3b8;">${t.date}</td>
+                    <td style="padding: 0.55rem;"><span class="badge ${isPositive ? 'badge-success' : 'badge-warning'}">${t.type}</span></td>
+                    <td style="padding: 0.55rem; font-weight: 700; color: #f8fafc;">${t.label}</td>
+                    <td style="padding: 0.55rem; text-align: right; font-weight: 800; font-family: 'JetBrains Mono'; color: ${amtColor};">${amtSign}${t.amount.toLocaleString('fr-FR')} €</td>
+                    <td style="padding: 0.55rem; text-align: center;"><span class="badge badge-success">${t.status}</span></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // ==========================================
+    // 7. PROJECTS HUB & OWNERSHIP COMPARISON
+    // ==========================================
+    let currentProjectFilter = 'all';
+
+    function filterProjectsHub(f, btn) {
+        currentProjectFilter = f;
+        document.querySelectorAll('.project-filter-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderProjectsHub();
+    }
+
     function renderProjectsHub() {
         const grid = document.getElementById('projects-grid');
         if (!grid) return;
 
         const projects = companyData.projects || [];
-        grid.innerHTML = projects.map(p => `
+        const filtered = projects.filter(p => {
+            if (currentProjectFilter === 'internal') return !p.ownership.includes('DCE');
+            if (currentProjectFilter === 'dce_ref') return p.ownership.includes('DCE');
+            return true;
+        });
+
+        grid.innerHTML = filtered.map(p => `
             <div class="card" style="border: 1px solid rgba(51,65,85,0.8); background: rgba(15,23,42,0.95); display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                         <div>
-                            <span class="badge badge-info" style="font-size: 0.7rem; font-family: 'JetBrains Mono';">${p.id}</span>
-                            <h3 style="font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin-top: 4px;">${p.name}</h3>
+                            <div style="display: flex; gap: 0.4rem; align-items: center; margin-bottom: 4px;">
+                                <span class="badge badge-info" style="font-size: 0.7rem; font-family: 'JetBrains Mono';">${p.id}</span>
+                                <span class="badge badge-warning" style="font-size: 0.65rem;">${p.ownership || '🏢 Notre Entreprise'}</span>
+                            </div>
+                            <h3 style="font-size: 1.15rem; font-weight: 800; color: #f8fafc;">${p.name}</h3>
                             <div style="font-size: 0.8rem; color: #94a3b8;">📍 ${p.location} • MOA: <strong>${p.client}</strong></div>
                         </div>
                         <span class="badge badge-success">${p.status}</span>
                     </div>
 
-                    <!-- PROGRESS BAR -->
-                    <div style="margin: 0.75rem 0;">
+                    <!-- FINANCIAL VS PHYSICAL PROGRESS DOUBLE JAUGE -->
+                    <div style="margin: 0.75rem 0; background: rgba(30,41,59,0.5); padding: 0.6rem; border-radius: 6px;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; margin-bottom: 3px;">
-                            <span>Avancement Global</span>
-                            <span style="font-weight: 700; color: var(--emerald);">${p.progress}%</span>
+                            <span>Avancement Physique : <strong style="color:#38bdf8;">${p.progress}%</strong></span>
+                            <span>Budget Consommé : <strong style="color:var(--emerald);">${(p.budget_used || p.budget * 0.7).toLocaleString('fr-FR')} € / ${(p.budget).toLocaleString('fr-FR')} € (${Math.round(((p.budget_used || p.budget * 0.7) / p.budget) * 100)}%)</strong></span>
                         </div>
                         <div class="progress-bar-bg" style="height: 8px;">
                             <div class="progress-bar-fill" style="width: ${p.progress}%;"></div>
@@ -469,9 +1086,9 @@ def get_js_part1():
 
                     <!-- KEY METRICS -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; background: rgba(30,41,59,0.5); padding: 0.6rem; border-radius: 6px; font-size: 0.75rem; margin-bottom: 0.75rem;">
-                        <div><span style="color: #64748b;">Budget Total:</span> <strong style="color: var(--amber);">${(p.budget).toLocaleString('fr-FR')} €</strong></div>
                         <div><span style="color: #64748b;">Conducteur:</span> <strong>${p.manager}</strong></div>
                         <div><span style="color: #64748b;">Chef Chantier:</span> <strong>${p.site_chief}</strong></div>
+                        <div><span style="color: #64748b;">Délai Consommé:</span> <strong>${p.delai_consomme_pct || 75}%</strong></div>
                         <div><span style="color: #64748b;">Livraison:</span> <strong>${p.end}</strong></div>
                     </div>
 
@@ -518,13 +1135,16 @@ def get_js_part1():
             <!-- HEADER -->
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(51,65,85,0.7); padding-bottom: 0.75rem;">
                 <div>
-                    <span class="badge badge-info" style="font-size: 0.75rem; font-family: 'JetBrains Mono';">${project.id}</span>
-                    <h2 style="font-size: 1.4rem; font-weight: 900; color: #38bdf8; margin-top: 4px;">${project.name}</h2>
-                    <div style="font-size: 0.85rem; color: #94a3b8;">📍 ${project.location} • Client : <strong>${project.client}</strong> • Budget : <strong>${(project.budget).toLocaleString('fr-FR')} € HT</strong></div>
+                    <div style="display:flex; gap:0.4rem; align-items:center; margin-bottom:4px;">
+                        <span class="badge badge-info" style="font-size: 0.75rem; font-family: 'JetBrains Mono';">${project.id}</span>
+                        <span class="badge badge-warning" style="font-size: 0.7rem;">${project.ownership || '🏢 Notre Entreprise'}</span>
+                    </div>
+                    <h2 style="font-size: 1.4rem; font-weight: 900; color: #38bdf8; margin-top: 2px;">${project.name}</h2>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">📍 ${project.location} • Client : <strong>${project.client}</strong> • Budget Initial : <strong>${(project.budget).toLocaleString('fr-FR')} € HT</strong></div>
                 </div>
                 <div style="text-align: right;">
                     <span class="badge badge-success" style="font-size: 0.85rem;">Statut : ${project.status}</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Livraison prévue : <strong>${project.end}</strong></div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Budget Utilisé : <strong style="color:var(--emerald);">${(project.budget_used || project.budget * 0.7).toLocaleString('fr-FR')} €</strong></div>
                 </div>
             </div>
 
@@ -534,7 +1154,7 @@ def get_js_part1():
                     <div style="font-size: 0.85rem; font-weight: 800; color: #f8fafc; text-transform: uppercase;">
                         ⏳ Progression Chronologique & Nœuds d'Étapes VRD
                     </div>
-                    <span class="badge badge-success" style="font-size: 0.8rem;">Avancement Global : ${project.progress}%</span>
+                    <span class="badge badge-success" style="font-size: 0.8rem;">Avancement Physique : ${project.progress}%</span>
                 </div>
 
                 <!-- HORIZONTAL NODE TIMELINE -->
@@ -576,7 +1196,7 @@ def get_js_part1():
                         <div style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; text-transform: uppercase;">
                             🗺️ SIG Chantier : Image Satellite HD & Calques Réglementaires
                         </div>
-                        <div style="font-size: 0.75rem; color: #94a3b8;">Délimitation géoréférencée, réseaux DICT classe A et points d'intérêt</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Délimitation géoréférencée, réseaux DICT classe A et simulation 3D/4D</div>
                     </div>
 
                     <!-- GIS LAYER BUTTONS -->
@@ -829,7 +1449,43 @@ def get_js_part1():
     }
 
     // ==========================================
-    // 6. PLANNING ENGINE (AGENDA & GANTT & COMPAGNON)
+    // 8. AI AGENTS HUB MODAL
+    // ==========================================
+    function openAiAgentModal() {
+        const body = document.getElementById('employee-modal-body');
+        if (!body) return;
+
+        const agents = companyData.ai_agents || [];
+        body.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid rgba(51,65,85,0.7); padding-bottom: 0.75rem;">
+                <div>
+                    <span class="badge badge-success" style="font-size: 0.75rem;">Système Multi-Agents Autonomes TP</span>
+                    <h2 style="font-size: 1.3rem; font-weight: 900; color: var(--emerald); margin-top: 4px;">🤖 Hub d'Intelligence Artificielle & Recommandations Temps Réel</h2>
+                </div>
+                <button class="btn btn-secondary" style="padding: 0.2rem 0.5rem;" onclick="closeModal('employee-detail-modal')">✕</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 480px; overflow-y: auto;">
+                ${agents.map(a => `
+                    <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(56,189,248,0.3); border-left: 4px solid ${a.color || '#38bdf8'}; border-radius: 6px; padding: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 800; font-size: 0.95rem; color: ${a.color || '#38bdf8'};">🤖 ${a.name}</span>
+                            <span class="badge badge-success" style="font-size: 0.65rem;">${a.status || 'Actif'}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 6px;">${a.desc}</div>
+                        <div style="background: rgba(30,41,59,0.6); padding: 0.5rem; border-radius: 4px; font-size: 0.75rem; color: #facc15;">
+                            💡 <strong>Recommandation Active :</strong> ${a.recommendation || 'Paramètres nominaux optimaux.'}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        openModal('employee-detail-modal');
+    }
+
+    // ==========================================
+    // 9. PLANNING ENGINE (AGENDA & GANTT & COMPAGNON)
     // ==========================================
     function setPlanningViewMode(mode) {
         planningViewMode = mode;

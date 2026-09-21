@@ -11,8 +11,13 @@ def get_company_data():
             "carnet_commandes_12m": 5890000,
             "tresorerie_actuelle": 485200,
             "bfr": 142800,
+            "dso_days": 52,
+            "dpo_days": 45,
             "situations_en_attente": 318450,
             "retenues_garantie_5pct": 138200,
+            "index_tp01_base": 128.4,
+            "index_tp01_actuel": 136.2,
+            "formule_revision": "P = P0 * (0.15 + 0.85 * (TP01 / TP01_0))",
             "depenses_mois": {
                 "salaires_charges": 112000,
                 "fournisseurs_materiaux": 68400,
@@ -23,6 +28,29 @@ def get_company_data():
             "taux_frequence_accidents": 0,
             "taux_gravite": 0
         },
+        "map_locations": [
+            { "id": "ch_01", "name": "Giratoire RD906 Alès", "category": "chantier", "lat": 44.1284, "lng": 4.0833, "color": "#38bdf8", "icon": "🏗️", "ownership": "Interne Entreprise (En cours)", "budget_ini": 850000, "budget_used": 612000, "progress": 80, "chef": "Alain Martin", "desc": "Giratoire RD906, réseaux pluviaux Ø400 et couche BBSG." },
+            { "id": "ch_02", "name": "ZAC Littoral Sète", "category": "chantier", "lat": 43.4075, "lng": 3.6928, "color": "#38bdf8", "icon": "🏗️", "ownership": "Interne Entreprise (En cours)", "budget_ini": 1450000, "budget_used": 435000, "progress": 38, "chef": "Marc Gomez", "desc": "Viabilisation lourde, collecteur Fonte DN400 sous nappe." },
+            { "id": "ch_03", "name": "Centre Ancien Pézenas", "category": "chantier", "lat": 43.4600, "lng": 3.4230, "color": "#38bdf8", "icon": "🏗️", "ownership": "Interne Entreprise (En cours)", "budget_ini": 480000, "budget_used": 210000, "progress": 52, "chef": "Karim Benali", "desc": "Renouvellement AEP Ø150 et pavage granit patrimoine." },
+            { "id": "ch_04", "name": "Voie Verte Montpellier", "category": "chantier", "lat": 43.6108, "lng": 3.8767, "color": "#38bdf8", "icon": "🏗️", "ownership": "Interne Entreprise (En cours)", "budget_ini": 620000, "budget_used": 124000, "progress": 25, "chef": "David Lemoine", "desc": "Aménagement voie cyclable 3.00m et bassin rétention." },
+            { "id": "ref_01", "name": "Giratoire Barbazan (DCE Public)", "category": "marche_public_ref", "lat": 44.1120, "lng": 4.0950, "color": "#a855f7", "icon": "🏛️", "ownership": "Marché Public Réel DCE Référence", "budget_ini": 920000, "budget_used": 918500, "progress": 100, "chef": "Référence Étalon DCE", "desc": "Marché public départemental achevé - Utilisé pour étalonnage des cadences." },
+            { "id": "ref_02", "name": "Lotissement Aurouer (DCE Public)", "category": "marche_public_ref", "lat": 46.6800, "lng": 3.3000, "color": "#a855f7", "icon": "🏛️", "ownership": "Marché Public Réel DCE Référence", "budget_ini": 1150000, "budget_used": 1145000, "progress": 100, "chef": "Référence Étalon DCE", "desc": "Lotissement 42 parcelles - Référence viabilisation et métrés." },
+            { "id": "ref_03", "name": "Aménagement Saint-Nicolas (DCE)", "category": "marche_public_ref", "lat": 44.0600, "lng": 1.0200, "color": "#a855f7", "icon": "🏛️", "ownership": "Marché Public Réel DCE Référence", "budget_ini": 530000, "budget_used": 528000, "progress": 100, "chef": "Référence Étalon DCE", "desc": "Voirie urbaine et pluvial - Référence ratio prix et déboursés." },
+            { "id": "dep_01", "name": "Dépôt Central Sète Littoral", "category": "depot", "lat": 43.4150, "lng": 3.7100, "color": "#f59e0b", "icon": "🏢", "stock_val": "420 000 €", "contact": "04 67 11 22 33", "desc": "Stock principal bordures, fontes, caissons blindage et atelier engins." },
+            { "id": "dep_02", "name": "Dépôt Logistique Alès Grand Centre", "category": "depot", "lat": 44.1350, "lng": 4.0750, "color": "#f59e0b", "icon": "🏢", "stock_val": "280 000 €", "contact": "04 66 88 99 00", "desc": "Stockage graves GNT, tuyaux bétons et base vie Gard." },
+            { "id": "eq_01", "name": "Équipe 1 - Terrassement & Plateforme", "category": "equipe", "lat": 44.1284, "lng": 4.0833, "color": "#10b981", "icon": "👷‍♂️", "leader": "Alain Martin (6 compagnons)", "radio": "Canal 4 TP", "desc": "Pelle Liebherr 24t + Chargeuse Volvo + 2 Camions 8x4." },
+            { "id": "eq_02", "name": "Équipe 2 - Réseaux Profonds & Blindage", "category": "equipe", "lat": 43.4075, "lng": 3.6928, "color": "#10b981", "icon": "👷‍♂️", "leader": "Marc Gomez (5 compagnons)", "radio": "Canal 2 TP", "desc": "Pelle 24t + Mecalac 12MTX + Poseurs canalisations fontes." },
+            { "id": "eq_03", "name": "Équipe 3 - Pavage & VRD Patrimoine", "category": "equipe", "lat": 43.4600, "lng": 3.4230, "color": "#10b981", "icon": "👷‍♂️", "leader": "Karim Benali (4 compagnons)", "radio": "Canal 3 TP", "desc": "Mini-pelle Kubota 5.5t + Poseurs pavés granit et résine." },
+            { "id": "eq_04", "name": "Équipe 4 - Topographie & Drone 3D", "category": "equipe", "lat": 43.6108, "lng": 3.8767, "color": "#10b981", "icon": "🛰️", "leader": "David Lemoine (2 techniciens)", "radio": "Canal 1 TP", "desc": "Station totale Leica + Canne GPS RTK + Drone DJI RTK." },
+            { "id": "fourn_01", "name": "Carrières du Languedoc", "category": "fournisseur", "lat": 43.5500, "lng": 3.5200, "color": "#ec4899", "icon": "🏭", "product": "Grave GNT 0/31.5 & Concassés", "distance": "14 km", "desc": "Fournisseur agréé matériaux granulaires et graves routières." },
+            { "id": "fourn_02", "name": "Bétons Occitanie (Centrales BPE)", "category": "fournisseur", "lat": 43.4200, "lng": 3.6600, "color": "#ec4899", "icon": "🏭", "product": "Bétons C25/30 & Désactivés", "distance": "8 km", "desc": "Centrale certifiée NF Béton prêt à l'emploi et bordures NF." },
+            { "id": "fourn_03", "name": "PAM Saint-Gobain Canalisation", "category": "fournisseur", "lat": 43.6500, "lng": 3.9000, "color": "#ec4899", "icon": "🏭", "product": "Tuyaux Fonte & Fontes Voirie", "distance": "22 km", "desc": "Fabricant fonte ductile DN100 à DN600 et tampons D400." },
+            { "id": "fourn_04", "name": "Négoce TP Littoral", "category": "fournisseur", "lat": 43.4300, "lng": 3.7000, "color": "#ec4899", "icon": "🏭", "product": "Bordures T2, Caniveaux CC1, TPC", "distance": "6 km", "desc": "Distribution négoce outillage, EPI et signalisation OPBTP." },
+            { "id": "moa_01", "name": "Conseil Départemental du Gard (MOA)", "category": "moa_moe", "lat": 43.8367, "lng": 4.3600, "color": "#8b5cf6", "icon": "🏛️", "contact": "Direction des Routes & Mobilités", "desc": "Maître d'Ouvrage du Giratoire RD906 Alès." },
+            { "id": "moa_02", "name": "Sète Agglopôle Méditerranée (MOA)", "category": "moa_moe", "lat": 43.4000, "lng": 3.6900, "color": "#8b5cf6", "icon": "🏛️", "contact": "Direction Aménagement & Eau", "desc": "Maître d'Ouvrage de la ZAC Littoral Sète." },
+            { "id": "moe_01", "name": "BET VRD Occitanie Ingénierie (MOE)", "category": "moa_moe", "lat": 43.6000, "lng": 3.8700, "color": "#6366f1", "icon": "📐", "contact": "Ingénieur Maître d'Œuvre", "desc": "Maîtrise d'Œuvre et contrôle d'exécution chantiers VRD." },
+            { "id": "csps_01", "name": "APAVE / Bureau Veritas (CSPS & CT)", "category": "moa_moe", "lat": 43.6200, "lng": 3.8500, "color": "#f97316", "icon": "🦺", "contact": "Coordonnateur SPS Niv. 1", "desc": "Coordination Sécurité et Protection de la Santé & Contrôle Technique." }
+        ],
         "hierarchy": {
             "direction": [
                 {
@@ -32,7 +60,8 @@ def get_company_data():
                     "salary_bracket": "Direction Générale",
                     "cert": "AIPR Concepteur • Ingénieur ESTP",
                     "secu": "100%",
-                    "rate": "85 €/h"
+                    "rate": "85 €/h",
+                    "color": "#38bdf8"
                 }
             ],
             "conduite": [
@@ -44,6 +73,7 @@ def get_company_data():
                     "cert": "AIPR Encadrant • Master Génie Civil",
                     "secu": "99%",
                     "rate": "55 €/h",
+                    "color": "#0284c7",
                     "assigned": ["Giratoire RD906 Alès", "ZAC Littoral Sète"]
                 },
                 {
@@ -54,6 +84,7 @@ def get_company_data():
                     "cert": "AIPR Encadrant • Ingénieure BTP",
                     "secu": "100%",
                     "rate": "52 €/h",
+                    "color": "#0284c7",
                     "assigned": ["Centre Ancien Pézenas", "Voie Verte Montpellier"]
                 }
             ],
@@ -65,7 +96,8 @@ def get_company_data():
                     "salary_bracket": "ETAM Niveau G",
                     "site": "Giratoire RD906 Alès",
                     "caces": "CACES R482 B1/C1 • AIPR Encadrant",
-                    "secu": "100%"
+                    "secu": "100%",
+                    "color": "#10b981"
                 },
                 {
                     "id": "emp_05",
@@ -74,7 +106,8 @@ def get_company_data():
                     "salary_bracket": "ETAM Niveau F",
                     "site": "Giratoire RD906 Alès",
                     "caces": "CACES R482 Cat B1 • AIPR Encadrant",
-                    "secu": "100%"
+                    "secu": "100%",
+                    "color": "#10b981"
                 },
                 {
                     "id": "emp_06",
@@ -83,7 +116,8 @@ def get_company_data():
                     "salary_bracket": "ETAM Niveau G",
                     "site": "ZAC Littoral Sète",
                     "caces": "AIPR Encadrant • CATEC Espace Confiné",
-                    "secu": "98%"
+                    "secu": "98%",
+                    "color": "#10b981"
                 },
                 {
                     "id": "emp_07",
@@ -92,7 +126,8 @@ def get_company_data():
                     "salary_bracket": "ETAM Niveau F",
                     "site": "ZAC Littoral Sète",
                     "caces": "AIPR Encadrant • H0B0 Élec",
-                    "secu": "100%"
+                    "secu": "100%",
+                    "color": "#10b981"
                 },
                 {
                     "id": "emp_08",
@@ -101,7 +136,8 @@ def get_company_data():
                     "salary_bracket": "ETAM Niveau E",
                     "site": "Centre Ancien Pézenas",
                     "caces": "CACES R482 Cat D/E",
-                    "secu": "100%"
+                    "secu": "100%",
+                    "color": "#f59e0b"
                 },
                 {
                     "id": "emp_09",
@@ -110,7 +146,42 @@ def get_company_data():
                     "salary_bracket": "ETAM Niveau F",
                     "site": "Voie Verte Montpellier",
                     "caces": "Télépilote Drone Pro DGAC • GPS RTK",
-                    "secu": "100%"
+                    "secu": "100%",
+                    "color": "#f59e0b"
+                }
+            ],
+            "partenaires_moa_moe": [
+                {
+                    "id": "part_01",
+                    "name": "Conseil Départemental du Gard",
+                    "category": "MOA (Maître d'Ouvrage)",
+                    "rep": "M. Bernard DUPUIS (Directeur des Routes)",
+                    "role": "Commanditaire public & Validation Situations",
+                    "color": "#a855f7"
+                },
+                {
+                    "id": "part_02",
+                    "name": "Sète Agglopôle Méditerranée",
+                    "category": "MOA (Maître d'Ouvrage)",
+                    "rep": "Mme Claire MÉRIDIER (Chef de Projet ZAC)",
+                    "role": "Commanditaire public & Décisions Travaux",
+                    "color": "#a855f7"
+                },
+                {
+                    "id": "part_03",
+                    "name": "Cabinet VRD Ingénierie Occitanie",
+                    "category": "MOE (Maître d'Œuvre)",
+                    "rep": "Ing. Marc VALENTIN",
+                    "role": "Visa des plans, validation récolements & OPR",
+                    "color": "#6366f1"
+                },
+                {
+                    "id": "part_04",
+                    "name": "APAVE Sécurité & Prévention",
+                    "category": "CSPS (Coordination Sécurité)",
+                    "rep": "M. Luc CHABERT (CSPS Niveau 1)",
+                    "role": "Audit PPSPS, DICT, conformité blindage et balisage",
+                    "color": "#f97316"
                 }
             ]
         },
@@ -120,42 +191,92 @@ def get_company_data():
                 "tier": "direction",
                 "name": "BTP-Nexus (Direction & Trésorerie)",
                 "role": "Agent IA Gouvernance & Trésorerie",
-                "desc": "Surveillance prédictive BFR, arbitrage situations de travaux Chorus Pro, respect CCAG 2021 et alertes trésorerie."
+                "status": "Actif • 1.2% CPU • Latence 4ms",
+                "recommendation": "Situation de travaux ZAC n°2 validée à 125k€. Prévoir émission sous Chorus Pro sous 48h.",
+                "desc": "Surveillance prédictive BFR, arbitrage situations de travaux Chorus Pro, respect CCAG 2021 et alertes trésorerie.",
+                "color": "#34d399"
             },
             {
                 "id": "ai_optichantier",
                 "tier": "conduite",
                 "name": "OptiChantier-AI (Méthodes & Planif)",
                 "role": "Agent IA Méthodes & Logistique",
-                "desc": "Optimisation des cadences de rotation d'engins, synchronisation 4D des phases et gestion des flux de trafic résiduel."
+                "status": "Actif • 3.5% CPU • 4D Synchro OK",
+                "recommendation": "Optimiser la rotation des 2 camions 8x4 sur Alès pour réduire l'attente pelle de 18 minutes.",
+                "desc": "Optimisation des cadences de rotation d'engins, synchronisation 4D des phases et gestion des flux de trafic résiduel.",
+                "color": "#38bdf8"
             },
             {
                 "id": "ai_kestimator",
                 "tier": "conduite",
                 "name": "K-Estimator (Étude de Prix)",
                 "role": "Agent IA Étude de Prix & SDP",
-                "desc": "Contrôle en continu du ratio Déboursé Sec vs Prix de Vente, analyse des écarts et recalcul dynamique du coefficient K."
+                "status": "Actif • Marge Réelle K=1.354",
+                "recommendation": "Gain d'achat de 4.2% sur les bordures T2 négocié auprès de Bétons Occitanie. Marge brute +1.1%.",
+                "desc": "Contrôle en continu du ratio Déboursé Sec vs Prix de Vente, analyse des écarts et recalcul dynamique du coefficient K.",
+                "color": "#38bdf8"
             },
             {
                 "id": "ai_safetysentinel",
                 "tier": "terrain",
                 "name": "SafetySentinel (AIPR & Sécurité)",
                 "role": "Agent IA Prévention des Risques",
-                "desc": "Vérification continue des distances d'approche DICT, des hauteurs de blindage de tranchée et de la conformité des EPI."
+                "status": "Actif • 0 Alerte Critique en cours",
+                "recommendation": "Vérifier le piquetage jaune gaz MPB à l'avancement du PK 0+240 avant reprise terrassement demain matin.",
+                "desc": "Vérification continue des distances d'approche DICT, des hauteurs de blindage de tranchée et de la conformité des EPI.",
+                "color": "#facc15"
             },
             {
                 "id": "ai_topobot",
                 "tier": "terrain",
                 "name": "TopoBot (Contrôle Altimétrique)",
                 "role": "Agent IA Nivellement & Guidage 3D",
-                "desc": "Contrôle altimétrique temps réel des pentes de canalisation (tolérance ±5mm) et guidage automatique des engins par GPS RTK."
+                "status": "Actif • Précision RTK ±4mm",
+                "recommendation": "Nivellement radier pluvial BA Ø400 à -1.82m conforme au CCTP. Pente 1.52% validée.",
+                "desc": "Contrôle altimétrique temps réel des pentes de canalisation (tolérance ±5mm) et guidage automatique des engins par GPS RTK.",
+                "color": "#34d399"
             }
+        ],
+        "cashflow_transactions": [
+            { "id": "tx_01", "date": "2026-09-02", "type": "Encaissement Client", "label": "Situation n°4 Giratoire RD906 Alès", "project": "Giratoire RD906 Alès", "tier": "Client MOA", "amount": 142000, "category": "Entrée CA", "status": "Encaissé", "details": "Validation MOE + Chorus Pro" },
+            { "id": "tx_02", "date": "2026-09-05", "type": "Décaissement Salaires", "label": "Salaires & Charges Équipes Terrain (18 ouvriers + 4 cadres)", "project": "Siège & Chantiers", "tier": "Salariés / URSSAF", "amount": -112000, "category": "Main d'Œuvre", "status": "Payé", "details": "Virement SEPA direct" },
+            { "id": "tx_03", "date": "2026-09-08", "type": "Décaissement Fournisseur", "label": "Achat 1800t GNT 0/31.5 Classe A", "project": "Giratoire RD906 Alès", "tier": "Carrières du Languedoc", "amount": -29700, "category": "Matériaux", "status": "Payé", "details": "Facture F-8842 à 30 jours" },
+            { "id": "tx_04", "date": "2026-09-12", "type": "Encaissement Client", "label": "Acompte Démarrage Voie Verte Montpellier", "project": "Voie Verte Montpellier", "tier": "Client MOA", "amount": 62000, "category": "Entrée CA", "status": "Encaissé", "details": "Avance forfaitaire CCAG 10%" },
+            { "id": "tx_05", "date": "2026-09-15", "type": "Décaissement Fournisseur", "label": "Fourniture Tuyaux Fonte DN400 Integral", "project": "ZAC Littoral Sète", "tier": "Saint-Gobain PAM", "amount": -40250, "category": "Matériaux", "status": "Payé", "details": "Bordereau de livraison 340m" },
+            { "id": "tx_06", "date": "2026-09-18", "type": "Décaissement Carburant", "label": "Gazole Non Routier (GNR) Engins TP & Camions", "project": "Flotte Totale", "tier": "TotalEnergies Pro", "amount": -18200, "category": "Énergie / Carburant", "status": "Payé", "details": "Livraison cuve Sète & Alès" },
+            { "id": "tx_07", "date": "2026-09-20", "type": "Encaissement Client", "label": "Situation n°2 ZAC Littoral Sète", "project": "ZAC Littoral Sète", "tier": "Client MOA", "amount": 125000, "category": "Entrée CA", "status": "Encaissé", "details": "Tranchée profonde et blindage" }
+        ],
+        "benchmark_data": [
+            { "code": "TERR_01", "designation": "Décapage terre végétale e=20cm (m²)", "unit": "m²", "cost_internal": 1.45, "pv_internal": 1.96, "ref_dce_barbazan": 2.10, "ref_dce_aurouer": 1.90, "fntp_regional_avg": 2.05, "variance_pct": -4.4, "status": "Très Compétitif" },
+            { "code": "TERR_02", "designation": "Déblais grande masse en pleine masse (m³)", "unit": "m³", "cost_internal": 5.80, "pv_internal": 7.83, "ref_dce_barbazan": 8.20, "ref_dce_aurouer": 7.95, "fntp_regional_avg": 8.10, "variance_pct": -3.3, "status": "Optimisé Pelle 24t" },
+            { "code": "BORD_01", "designation": "Bordures béton T2 sur semelle (ml)", "unit": "ml", "cost_internal": 18.20, "pv_internal": 24.57, "ref_dce_barbazan": 25.50, "ref_dce_aurouer": 24.00, "fntp_regional_avg": 25.00, "variance_pct": -1.7, "status": "Conforme Marché" },
+            { "code": "CAN_01", "designation": "Caniveaux béton CC1 avec calage (ml)", "unit": "ml", "cost_internal": 28.50, "pv_internal": 38.48, "ref_dce_barbazan": 39.50, "ref_dce_aurouer": 37.80, "fntp_regional_avg": 39.00, "variance_pct": -1.3, "status": "Conforme Marché" },
+            { "code": "ASSAIN_01", "designation": "Collecteur Pluvial Béton Armé Ø400 (ml)", "unit": "ml", "cost_internal": 72.00, "pv_internal": 97.20, "ref_dce_barbazan": 102.00, "ref_dce_aurouer": 98.50, "fntp_regional_avg": 100.00, "variance_pct": -2.8, "status": "Très Rentable" },
+            { "code": "ASSAIN_02", "designation": "Collecteur Fonte Ductile DN400 Integral (ml)", "unit": "ml", "cost_internal": 145.00, "pv_internal": 195.75, "ref_dce_barbazan": 205.00, "ref_dce_aurouer": 198.00, "fntp_regional_avg": 202.00, "variance_pct": -3.1, "status": "Rentabilité Maîtrisée" },
+            { "code": "VOIR_01", "designation": "GNT 0/31.5 compactée e=25cm (m²)", "unit": "m²", "cost_internal": 8.10, "pv_internal": 10.94, "ref_dce_barbazan": 11.20, "ref_dce_aurouer": 10.80, "fntp_regional_avg": 11.10, "variance_pct": -1.4, "status": "Marge Optimisée" },
+            { "code": "VOIR_02", "designation": "Enrobé BBSG 0/10 e=6cm appliqué chaud (m²)", "unit": "m²", "cost_internal": 14.80, "pv_internal": 19.98, "ref_dce_barbazan": 20.80, "ref_dce_aurouer": 19.50, "fntp_regional_avg": 20.20, "variance_pct": -1.1, "status": "Standard Régional" }
+        ],
+        "inventory_assets": [
+            { "id": "ast_01", "name": "Pelle Hydraulique Liebherr R924 G8 (24t)", "category": "Engin de Production", "year": 2023, "purchase_val": 285000, "book_val": 218000, "hourly_cost": 52.50, "hours": 1420, "next_maint": "14/11/2026 (VGP)", "location": "Giratoire RD906 Alès" },
+            { "id": "ast_02", "name": "Pelleteuse Urbaine Mecalac 12MTX", "category": "Engin Polyvalent", "year": 2024, "purchase_val": 195000, "book_val": 165000, "hourly_cost": 38.00, "hours": 890, "next_maint": "08/10/2026 (VGP)", "location": "ZAC Littoral Sète" },
+            { "id": "ast_03", "name": "Compacteur Tandem Bomag BW 154 AP-5", "category": "Compacteur Lourd", "year": 2023, "purchase_val": 145000, "book_val": 110000, "hourly_cost": 29.50, "hours": 620, "next_maint": "22/12/2026", "location": "Giratoire RD906 Alès" },
+            { "id": "ast_04", "name": "Camion Porteur 8x4 Scania G450 XT (32t)", "category": "Transport Lourd", "year": 2022, "purchase_val": 210000, "book_val": 145000, "hourly_cost": 44.00, "hours": 2150, "next_maint": "15/01/2027", "location": "Alès & Sète" },
+            { "id": "ast_05", "name": "Camion Hydrocureur Renault K480 (10m³)", "category": "Assainissement", "year": 2023, "purchase_val": 380000, "book_val": 305000, "hourly_cost": 65.00, "hours": 1100, "next_maint": "05/02/2027", "location": "Pézenas Centre" },
+            { "id": "ast_06", "name": "Lot 6 Caissons Blindage Acier Krings R4534", "category": "Sécurité Tranchée", "year": 2024, "purchase_val": 64000, "book_val": 56000, "hourly_cost": 8.00, "hours": 450, "next_maint": "Contrôle trimestriel", "location": "ZAC Littoral Sète" },
+            { "id": "ast_07", "name": "Station Topo Totale & Canne GPS RTK Leica", "category": "Topographie Guidage", "year": 2024, "purchase_val": 32000, "book_val": 28000, "hourly_cost": 5.50, "hours": 780, "next_maint": "Étalonnage annuel", "location": "Voie Verte Montpellier" }
+        ],
+        "benchmark_teams": [
+            { "team_name": "Équipe 1 : Terrassement Grande Masse & Purges", "composition": "1 Chef de chantier + 2 Conducteurs engins B1/C1 + 1 Chauffeur PL 8x4 + 1 Manœuvre VRD", "hourly_cost_team": 185.00, "daily_yield_our": "420 m³/jour", "fntp_ref_yield": "380 m³/jour", "diff_yield": "+10.5%", "safety_score": "100% AIPR", "main_equipment": "Liebherr R924 (24t) + Scania 8x4" },
+            { "team_name": "Équipe 2 : Pose Canalisations Pluviales & EU", "composition": "1 Chef d'équipe + 1 Canalisateur qualifié + 1 Chauffeur mini-pelle + 1 Aide poseur", "hourly_cost_team": 145.00, "daily_yield_our": "28 ml/jour (BA Ø400)", "fntp_ref_yield": "24 ml/jour", "diff_yield": "+16.7%", "safety_score": "100% AIPR", "main_equipment": "Mecalac 12MTX + Laser Piper + Caisson R4534" },
+            { "team_name": "Équipe 3 : Pose Bordures, Caniveaux & Trottoirs", "composition": "1 Chef d'équipe + 2 Poseurs qualifiés + 1 Manœuvre régleur", "hourly_cost_team": 135.00, "daily_yield_our": "68 ml/jour (Bordures T2)", "fntp_ref_yield": "58 ml/jour", "diff_yield": "+17.2%", "safety_score": "100% CACES", "main_equipment": "Pince hydraulique + Scie thermique Stihl" },
+            { "team_name": "Équipe 4 : Application Chaussées & Enrobés", "composition": "1 Chef d'application + 1 Régleur finisseur + 2 Cylindreurs + 2 Tireurs au râteau", "hourly_cost_team": 220.00, "daily_yield_our": "185 t/jour (BBSG)", "fntp_ref_yield": "160 t/jour", "diff_yield": "+15.6%", "safety_score": "100% CACES R482", "main_equipment": "Finisseur Vögele + Bomag BW154 + Bi-benne" }
         ],
         "projects": [
             {
                 "id": "projet_ales",
                 "name": "Aménagement Giratoire RD906 & Voie Verte",
                 "client": "Conseil Départemental du Gard / Ville d'Alès",
+                "ownership": "🏢 Notre Entreprise (En cours)",
                 "location": "Alès / Barbazan (30)",
                 "conducteur": "Sylvain CABROL",
                 "chef_chantier": "Alain MARTIN",
@@ -276,6 +397,7 @@ def get_company_data():
                 "id": "projet_sete",
                 "name": "Viabilisation & Réseaux Profonds ZAC Littoral",
                 "client": "Sète Agglopôle Méditerranée",
+                "ownership": "🏢 Notre Entreprise (En cours)",
                 "location": "Sète / Entrée Est (34)",
                 "conducteur": "Sylvain CABROL",
                 "chef_chantier": "Marc GOMEZ",
@@ -351,6 +473,7 @@ def get_company_data():
                 "id": "projet_pezenas",
                 "name": "Rénovation Réseaux & Voirie Centre Ancien",
                 "client": "Ville de Pézenas (34)",
+                "ownership": "🏢 Notre Entreprise (En cours)",
                 "location": "Pézenas / Centre Historique (34)",
                 "conducteur": "Sophie LACOMBE",
                 "chef_chantier": "Karim BENALI",
@@ -406,6 +529,7 @@ def get_company_data():
                 "id": "projet_montpellier",
                 "name": "Création Voie Verte & Réseaux Pluviaux",
                 "client": "Montpellier Méditerranée Métropole",
+                "ownership": "🏢 Notre Entreprise (En cours)",
                 "location": "Montpellier / Grabels (34)",
                 "conducteur": "Sophie LACOMBE",
                 "chef_chantier": "David LEMOINE",
@@ -610,4 +734,4 @@ def get_company_data():
 
 if __name__ == "__main__":
     data = get_company_data()
-    print(f"Company data loaded successfully. Projects: {len(data['projects'])}, Fleet: {len(data['fleet'])}, Hierarchy: {len(data['hierarchy']['chefs'])}")
+    print(f"Company data loaded successfully. Projects: {len(data['projects'])}, Map points: {len(data['map_locations'])}, Benchmark: {len(data['benchmark_data'])}")

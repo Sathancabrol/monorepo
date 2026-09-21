@@ -505,6 +505,83 @@ def get_head_and_styles():
             text-align: left;
         }
         .wheel-item:hover { background: rgba(6,182,212,0.15); color: var(--cyan); }
+
+        /* FOLDER TREE VIEW (OBSIDIAN ALTERNATIVE) */
+        .folder-tree-container {
+            background: rgba(15,23,42,0.9);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            overflow-y: auto;
+            max-height: 520px;
+        }
+        .folder-category-header {
+            font-weight: 800;
+            color: #38bdf8;
+            padding: 0.4rem 0.5rem;
+            background: rgba(30,41,59,0.7);
+            border-radius: 6px;
+            margin: 0.4rem 0 0.2rem 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .folder-category-header:hover { background: rgba(56,189,248,0.2); }
+        .folder-file-link {
+            padding: 0.35rem 0.6rem 0.35rem 1.4rem;
+            color: #cbd5e1;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+        .folder-file-link:hover, .folder-file-link.active {
+            background: rgba(6,182,212,0.15);
+            color: var(--cyan);
+            font-weight: 700;
+        }
+
+        /* BENCHMARK COMPARATOR BAR */
+        .benchmark-bar-row {
+            display: grid;
+            grid-template-columns: 160px 1fr 90px 80px;
+            gap: 0.75rem;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(51,65,85,0.3);
+            font-size: 0.8rem;
+        }
+        .bar-track {
+            background: rgba(30,41,59,0.8);
+            border-radius: 4px;
+            height: 14px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* DEPOT & ZONES */
+        .depot-zone-card {
+            background: rgba(15,23,42,0.9);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .depot-zone-card:hover, .depot-zone-card.active {
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(6,182,212,0.3);
+        }
     </style>
 </head>
 <body>
@@ -528,6 +605,10 @@ def get_head_and_styles():
 
         <!-- HUD ITEMS -->
         <div class="hud-items">
+            <div class="hud-pill" id="hud-company-selector" style="border:1px solid var(--cyan); cursor:pointer; background:rgba(6,182,212,0.15);" onclick="openModal('company-switch-modal')" title="Changer de profil d'entreprise">
+                <span style="color:var(--cyan);">🏢 Société :</span>
+                <b id="active-company-name-top" style="color:#f8fafc;">Occitanie TP & VRD ▾</b>
+            </div>
             <div class="hud-pill" id="hud-treasury">
                 <span style="color:var(--emerald);">💶 Caisse :</span>
                 <b id="caisse-balance-top" style="color:#fff;">485 200 €</b>

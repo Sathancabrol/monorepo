@@ -144,6 +144,90 @@ def get_modals():
         </div>
     </div>
 
+    <!-- 8. COMPANY SWITCHER MODAL (MULTI-PROFILES) -->
+    <div class="modal-backdrop" id="company-switch-modal">
+        <div class="modal-box" style="max-width:900px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid rgba(51,65,85,0.7); padding-bottom:0.75rem;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:1.3rem; font-weight:900;">🏢 Sélecteur d'Entreprise TP & Profils d'Exploitation</h3>
+                    <div style="font-size:0.8rem; color:#94a3b8;">Basculez instantanément l'environnement, la trésorerie, la flotte, les équipes et les chantiers</div>
+                </div>
+                <button class="btn btn-secondary" style="padding:0.2rem 0.5rem;" onclick="closeModal('company-switch-modal')">✕</button>
+            </div>
+
+            <div class="grid-2" style="gap:1rem;">
+                <!-- 1. OCCITANIE TP (ESTABLISHED) -->
+                <div class="card company-profile-card active" id="prof-card-occitanie_tp" style="border:2px solid var(--cyan); background:rgba(15,23,42,0.95); cursor:pointer; padding:1.1rem; border-radius:8px;" onclick="switchCompanyProfile('occitanie_tp')">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+                        <span class="badge badge-info">PME Établie Régionale</span>
+                        <span class="badge badge-success" id="prof-active-badge-occitanie_tp">Active</span>
+                    </div>
+                    <h4 style="font-size:1.05rem; font-weight:900; color:#f8fafc; margin-bottom:0.3rem;">🏢 1. Occitanie Travaux Publics & VRD SAS</h4>
+                    <p style="font-size:0.78rem; color:#cbd5e1; line-height:1.4; margin-bottom:0.75rem;">Entreprise générale de VRD et terrassement en Occitanie. Flotte complète 6 engins, marchés publics Alès, Sète, Pézenas, Montpellier.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:0.75rem; background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                        <div>Trésorerie Caisse : <strong style="color:var(--emerald);">485 200 €</strong></div>
+                        <div>Chantiers Actifs : <strong style="color:#38bdf8;">4 Chantiers (3.4 M€)</strong></div>
+                        <div>Flotte Engins : <strong style="color:var(--amber);">6 Engins lourds</strong></div>
+                        <div>Effectif : <strong>24 Collaborateurs</strong></div>
+                    </div>
+                </div>
+
+                <!-- 2. VIERGE / COMPTE NEUF -->
+                <div class="card company-profile-card" id="prof-card-compte_neuf" style="border:1px solid rgba(51,65,85,0.8); background:rgba(15,23,42,0.95); cursor:pointer; padding:1.1rem; border-radius:8px;" onclick="switchCompanyProfile('compte_neuf')">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+                        <span class="badge badge-warning">Compte Vierge / Typique</span>
+                        <span class="badge" id="prof-active-badge-compte_neuf" style="display:none; background:var(--emerald);">Active</span>
+                    </div>
+                    <h4 style="font-size:1.05rem; font-weight:900; color:#f8fafc; margin-bottom:0.3rem;">📄 2. Nouvelle Entreprise TP (Démarrage Zéro)</h4>
+                    <p style="font-size:0.78rem; color:#cbd5e1; line-height:1.4; margin-bottom:0.75rem;">Profil vierge sans fond ni chantier engagé. Idéal pour configurer et chiffrer une nouvelle entreprise TP à partir d'une page blanche.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:0.75rem; background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                        <div>Trésorerie Caisse : <strong style="color:#94a3b8;">0 €</strong></div>
+                        <div>Chantiers Actifs : <strong style="color:#94a3b8;">0 Chantier</strong></div>
+                        <div>Flotte Engins : <strong style="color:#94a3b8;">0 (Location)</strong></div>
+                        <div>Effectif : <strong>1 Dirigeant</strong></div>
+                    </div>
+                </div>
+
+                <!-- 3. STAGIAIRE TP / COURS CONDUITE TRAVAUX -->
+                <div class="card company-profile-card" id="prof-card-stagiaire_tp" style="border:1px solid rgba(51,65,85,0.8); background:rgba(15,23,42,0.95); cursor:pointer; padding:1.1rem; border-radius:8px;" onclick="switchCompanyProfile('stagiaire_tp')">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+                        <span class="badge" style="background:rgba(168,85,247,0.2); color:#c084fc;">Dossiers de Cours & Formation</span>
+                        <span class="badge" id="prof-active-badge-stagiaire_tp" style="display:none; background:var(--emerald);">Active</span>
+                    </div>
+                    <h4 style="font-size:1.05rem; font-weight:900; color:#f8fafc; margin-bottom:0.3rem;">🎓 3. Stagiaire TP & Conduite de Travaux (Études M4-L)</h4>
+                    <p style="font-size:0.78rem; color:#cbd5e1; line-height:1.4; margin-bottom:0.75rem;">Simulation basée sur les dossiers réels du repo : DCE Giratoire Barbazan M4-L, Lotissement Aurouer 2021, Déviation Noé, fiches de tâches et ratios FNTP.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:0.75rem; background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                        <div>Trésorerie Caisse : <strong style="color:var(--emerald);">150 000 €</strong></div>
+                        <div>Chantiers Référence : <strong style="color:#c084fc;">3 Dossiers Réels</strong></div>
+                        <div>Flotte Engins : <strong style="color:var(--amber);">3 Engins École</strong></div>
+                        <div>Effectif : <strong>1 Stagiaire + 8 Comp.</strong></div>
+                    </div>
+                </div>
+
+                <!-- 4. ARTISAN PERSO (2k€ + BUREAU + EPI) -->
+                <div class="card company-profile-card" id="prof-card-artisan_2k" style="border:1px solid rgba(51,65,85,0.8); background:rgba(15,23,42,0.95); cursor:pointer; padding:1.1rem; border-radius:8px;" onclick="switchCompanyProfile('artisan_2k')">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+                        <span class="badge badge-warning">Amorçage Artisanal 2 000 €</span>
+                        <span class="badge" id="prof-active-badge-artisan_2k" style="display:none; background:var(--emerald);">Active</span>
+                    </div>
+                    <h4 style="font-size:1.05rem; font-weight:900; color:#f8fafc; margin-bottom:0.3rem;">🦺 4. Artisan TP Sud VRD (Perso 2k€ + Bureau + EPI)</h4>
+                    <p style="font-size:0.78rem; color:#cbd5e1; line-height:1.4; margin-bottom:0.75rem;">Démarrage avec 2 000 € de capital, bureau loué en pépinière, lot complet d'EPI certifiés (Casques, gilets Cl.2, chaussures S3), outillage laser et réfection tranchée.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:0.75rem; background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                        <div>Fonds de Départ : <strong style="color:var(--emerald);">2 000 €</strong></div>
+                        <div>Actifs : <strong style="color:#38bdf8;">Bureau + Lot EPI + Laser</strong></div>
+                        <div>Chantier Actuel : <strong style="color:var(--amber);">1 Tranchée Pézenas (6.5k€)</strong></div>
+                        <div>Effectif : <strong>1 Artisan AIPR + 1 Aide</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:1.25rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(51,65,85,0.5); padding-top:0.75rem;">
+                <span style="font-size:0.78rem; color:#94a3b8;">Cliquez sur une entreprise pour charger immédiatement son écosystème complet.</span>
+                <button class="btn btn-secondary" onclick="closeModal('company-switch-modal')">Fermer</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TACTICAL WHEEL POPUP -->
     <div id="tactical-wheel-menu" style="display:none; position:fixed; bottom:90px; right:25px; z-index:9999; background:rgba(15,23,42,0.95); backdrop-filter:blur(16px); border:1px solid var(--border); border-radius:12px; padding:1rem; box-shadow:0 10px 30px rgba(0,0,0,0.6); min-width:220px;">
         <div style="font-size:0.8rem; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:0.75rem; border-bottom:1px solid rgba(51,65,85,0.5); padding-bottom:0.4rem;">
