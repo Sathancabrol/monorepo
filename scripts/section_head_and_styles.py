@@ -639,7 +639,26 @@ def get_head_and_styles():
     <div class="nav-dock-container">
         <button class="btn-secondary" style="padding:0.25rem 0.5rem; margin-right:0.3rem;" onclick="scrollNav(-200)">◀</button>
         <nav class="nav-dock" id="main-nav-dock">
-            <!-- Populated dynamically based on role -->
+            <button class="nav-item active" onclick="switchNav('cockpit', this)">🎛️ Cockpit & SIG</button>
+            <button class="nav-item" onclick="switchNav('company', this)">🏢 Entreprise & Caisse</button>
+            <button class="nav-item" onclick="switchNav('depot', this)">🏭 Dépôt & Inventaire</button>
+            <button class="nav-item" onclick="switchNav('projects_hub', this)">📁 Chantiers & Marchés</button>
+            <button class="nav-item" onclick="switchNav('planning', this)">📅 Planning Gantt & Agenda</button>
+            <button class="nav-item" onclick="switchNav('simulator', this)">🛰️ Watch Tower 3D</button>
+            <button class="nav-item" onclick="switchNav('fleet', this)">🚜 Flotte Engins</button>
+            <button class="nav-item" onclick="switchNav('catalog', this)">🛒 Outils & Matériaux</button>
+            <button class="nav-item" onclick="switchNav('opbtp', this)">🦺 Signalétique OPBTP</button>
+            <button class="nav-item" onclick="switchNav('safety', this)">🛡️ Sécurité & AIPR</button>
+            <button class="nav-item" onclick="switchNav('sdp', this)">💰 28 SDP & TCD DQE</button>
+            <button class="nav-item" onclick="switchNav('schemas', this)">📐 Technique & Analyse</button>
+            <button class="nav-item" onclick="switchNav('procurement', this)">🛒 Fournisseurs</button>
+            <button class="nav-item" onclick="switchNav('docs', this)">⚖️ Réglementation, Normes & Outils</button>
+            <button class="nav-item" onclick="switchNav('benchmark', this)">📊 Benchmark & Inventaire</button>
+            <button class="nav-item" onclick="switchNav('hr', this)">👷 Organigramme RH</button>
+            <button class="nav-item" onclick="switchNav('rdc', this)">📋 Rapport RDC</button>
+            <button class="nav-item" onclick="switchNav('obsidian', this)">📚 Base Obsidian</button>
+            <button class="nav-item" onclick="switchNav('ledger', this)">⛓️ Ledger SHA-256</button>
+            <button class="nav-item" onclick="switchNav('archives', this)">🗄️ Archives & GED</button>
         </nav>
         <button class="btn-secondary" style="padding:0.25rem 0.5rem; margin-left:0.3rem;" onclick="scrollNav(200)">▶</button>
     </div>

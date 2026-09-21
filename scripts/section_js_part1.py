@@ -829,6 +829,10 @@ def get_js_part1():
         renderCockpitOsmMap();
     }
 
+    function resetCockpitMapZoom() {
+        resetCockpitMap();
+    }
+
     function selectCockpitMapPoint(pt) {
         selectedMapPoint = pt;
         const bCat = document.getElementById('pin-badge-cat');
@@ -1302,6 +1306,10 @@ def get_js_part1():
             renderGisCanvas();
             selectProjectModalLot(0);
         }, 50);
+    }
+
+    function openProjectDetailsModal(projectId) {
+        openProjectModal(projectId);
     }
 
     function switchGisLayer(layerName) {

@@ -41,12 +41,21 @@ def get_tab_panels():
         <!-- GIS INTERACTIVE MAP & AUTOPILOT -->
         <div class="grid-split-60-40" style="margin-top: 1rem;">
             <div class="card">
-                <div class="card-header">
-                    <span class="card-title">🗺️ Cartographie SIG des Chantiers & Flotte (Occitanie)</span>
-                    <span class="badge badge-info">OpenStreetMap Live</span>
+                <div class="card-header" style="flex-wrap: wrap; gap: 0.4rem;">
+                    <div>
+                        <span class="card-title">🗺️ Cartographie SIG des Chantiers & Flotte (Occitanie)</span>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Déclic anti-collision radial, filtres d'affichage et géolocalisation live</div>
+                    </div>
+                    <div style="display: flex; gap: 0.3rem; align-items: center;">
+                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('all', this)">Tous</button>
+                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('chantier', this)">Chantiers</button>
+                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('engin', this)">Engins</button>
+                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('depot', this)">Dépôt</button>
+                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="resetCockpitMapZoom()">🔍 Reset</button>
+                    </div>
                 </div>
-                <div class="map-container" style="height: 380px;" id="cockpit-map-container">
-                    <canvas id="cockpit-osm-canvas" style="width: 100%; height: 100%;"></canvas>
+                <div class="map-container" style="height: 380px; position: relative; overflow: hidden;" id="cockpit-map-container">
+                    <canvas id="cockpit-osm-map-canvas" style="width: 100%; height: 100%; cursor: grab;"></canvas>
                 </div>
             </div>
 
@@ -69,7 +78,7 @@ def get_tab_panels():
                         <button class="btn btn-secondary" onclick="switchNav('schemas')">📐 Technique & Analyse</button>
                         <button class="btn btn-secondary" onclick="switchNav('procurement')">🛒 Fournisseurs</button>
                         <button class="btn btn-secondary" onclick="switchNav('archives')">🗄️ Archives & GED</button>
-                        <button class="btn btn-secondary" onclick="switchNav('docs')">📚 Dossiers Réglementaires</button>
+                        <button class="btn btn-secondary" onclick="switchNav('docs')">⚖️ Réglementation & Normes</button>
                     </div>
 
                     <div style="margin-top: 0.5rem; background: rgba(30,41,59,0.5); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);">
@@ -264,17 +273,23 @@ def get_tab_panels():
             <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                     <span class="card-title">📅 Planning Directeur, Gantt 4D & Agenda Hebdomadaire</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Planification des équipes, phasage des travaux et jalons de réception</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Planification des équipes, phasage des travaux par lot et jalons de réception</div>
                 </div>
-                <div style="display: flex; gap: 0.4rem;">
-                    <button class="btn-secondary planning-mode-btn active" onclick="setPlanningViewMode('agenda_week')">📅 Semaine</button>
-                    <button class="btn-secondary planning-mode-btn" onclick="setPlanningViewMode('agenda_month')">🗓️ Mois</button>
-                    <button class="btn-secondary planning-mode-btn" onclick="setPlanningViewMode('gantt')">📊 Diagramme Gantt</button>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="btn-secondary planning-mode-btn active" id="btn-plan-agenda_week" onclick="setPlanningViewMode('agenda_week')">📅 Vue Hebdomadaire</button>
+                    <button class="btn-secondary planning-mode-btn" id="btn-plan-agenda_month" onclick="setPlanningViewMode('agenda_month')">🗓️ Vue Mensuelle</button>
+                    <button class="btn-secondary planning-mode-btn" id="btn-plan-gantt" onclick="setPlanningViewMode('gantt')">📊 Chronogramme Gantt</button>
                 </div>
             </div>
 
-            <div id="planning-content-view">
-                <!-- Populated dynamically by renderPlanningAgenda() or renderPlanningGantt() -->
+            <!-- AGENDA VIEW CONTAINER -->
+            <div id="planning-agenda-view">
+                <!-- Populated dynamically by renderPlanningAgenda() -->
+            </div>
+
+            <!-- GANTT VIEW CONTAINER -->
+            <div id="planning-gantt-view" style="display: none;">
+                <!-- Populated dynamically by renderPlanningGantt() -->
             </div>
         </div>
     </div>

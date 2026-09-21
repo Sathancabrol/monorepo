@@ -599,10 +599,10 @@ def get_js_part3():
 
         if (taskType === 'rond_point') {
             const rCars = [
-                { type: 'VL', label: 'Citadine', w: 22, h: 12, speed: 1.4, color: '#38bdf8', angle: 0.3 },
-                { type: 'PL', label: 'Benne 8x4', w: 36, h: 14, speed: 1.0, color: '#f59e0b', angle: 1.8 },
-                { type: 'BUS', label: 'Bus Urbain', w: 42, h: 14, speed: 0.9, color: '#10b981', angle: 3.2 },
-                { type: 'MOTO', label: 'Moto', w: 14, h: 8, speed: 1.8, color: '#c084fc', angle: 4.6 }
+                { type: 'VL', label: 'Citadine', w: 22, h: 12, speed: 1.2, color: '#38bdf8', route: 'west_to_east', progress: 0.1 },
+                { type: 'PL', label: 'Benne 8x4', w: 34, h: 14, speed: 0.9, color: '#f59e0b', route: 'north_to_south', progress: 0.4 },
+                { type: 'BUS', label: 'Bus Urbain', w: 40, h: 14, speed: 0.8, color: '#10b981', route: 'south_to_west', progress: 0.65 },
+                { type: 'MOTO', label: 'Moto', w: 14, h: 8, speed: 1.5, color: '#c084fc', route: 'west_to_east', progress: 0.85 }
             ];
             opbtpCars = opbtpDensity === 2 ? rCars.slice(0, 2) : rCars;
             return;
@@ -709,13 +709,23 @@ def get_js_part3():
             ctx.fillText('GIRATOIRE RD906', rCenter.x - 38, rCenter.y + 3);
 
             // Blocked Quadrant (Top-Right: angle -PI/2 to 0)
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.45)';
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.5)';
             ctx.beginPath();
             ctx.arc(rCenter.x, rCenter.y, rOut + 2, -Math.PI / 2, 0);
             ctx.arc(rCenter.x, rCenter.y, rIn - 2, 0, -Math.PI / 2, true);
             ctx.closePath();
             ctx.fill();
             ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 3; ctx.stroke();
+
+            // Diagonal hazard hatching in the blocked work zone
+            ctx.strokeStyle = 'rgba(234, 88, 12, 0.4)';
+            ctx.lineWidth = 2;
+            for (let d = 0; d < rOut; d += 12) {
+                ctx.beginPath();
+                ctx.moveTo(rCenter.x + d, rCenter.y);
+                ctx.lineTo(rCenter.x, rCenter.y - d);
+                ctx.stroke();
+            }
 
             // Work Zone warning hatch
             ctx.fillStyle = '#ea580c'; ctx.font = 'bold 8px monospace';
@@ -724,33 +734,94 @@ def get_js_part3():
             // K16 Safety Cones & Beacons on Quadrant Boundary
             ctx.fillStyle = '#ea580c';
             for (let a = -Math.PI / 2; a <= 0.05; a += 0.25) {
-                const cx = rCenter.x + Math.cos(a) * (rOut - 6);
-                const cy = rCenter.y + Math.sin(a) * (rOut - 6);
+                const cx = rCenter.x + Math.cos(a) * (rOut - 4);
+                const cy = rCenter.y + Math.sin(a) * (rOut - 4);
                 ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
             }
 
-            // Circulating Vehicles (STRICTLY STAY ON OPEN 3/4 RING AND NEVER ENTER BLOCKED ZONE)
+            // Circulating Vehicles (STRICTLY STAY ON OPEN ROADS AND NEVER ENTER BLOCKED QUADRANT)
             opbtpCars.forEach((car) => {
                 if (isOpbtpTrafficRunning) {
-                    car.angle = (car.angle + 0.015 * (speedLimit / 50) * opbtpSpeedFactor * car.speed) % (Math.PI * 2);
+                    if (!car.progress && car.progress !== 0) car.progress = 0.2;
+                    car.progress = (car.progress + 0.003 * (speedLimit / 50) * opbtpSpeedFactor * (car.speed || 1.0));
+                    if (car.progress > 1) car.progress -= 1;
                 }
 
-                // If approaching blocked quadrant [-PI/2, 0] (which is [3*PI/2, 2*PI] in [0, 2*PI])
-                // Smoothly steer or wrap around the safe arc [0, 3*PI/2]
-                let renderAngle = car.angle;
-                if (renderAngle > 1.5 * Math.PI) {
-                    renderAngle = 0.1 + (renderAngle - 1.5 * Math.PI) * 0.3; // safe diversion
-                }
+                let px = 0, py = 0, angle = 0;
+                const p = car.progress || 0;
+                const route = car.route || 'west_to_east';
 
-                const cx = rCenter.x + Math.cos(renderAngle) * rMid;
-                const cy = rCenter.y + Math.sin(renderAngle) * rMid;
+                if (route === 'west_to_east') {
+                    // Path: West road (p in [0, 0.25]) -> Bottom arc [PI -> 0] (p in [0.25, 0.75]) -> East road (p in [0.75, 1.0])
+                    if (p < 0.25) {
+                        const s = p / 0.25;
+                        px = -30 + s * (rCenter.x - rMid + 30);
+                        py = rCenter.y + 6;
+                        angle = 0;
+                    } else if (p < 0.75) {
+                        const s = (p - 0.25) / 0.5;
+                        const arcAngle = Math.PI - s * Math.PI; // from PI down to 0 (counter-clockwise)
+                        px = rCenter.x + Math.cos(arcAngle) * rMid;
+                        py = rCenter.y + Math.sin(arcAngle) * rMid; // Y >= rCenter.y (always strictly in bottom half!)
+                        angle = arcAngle - Math.PI / 2;
+                    } else {
+                        const s = (p - 0.75) / 0.25;
+                        px = (rCenter.x + rMid) + s * (w + 40 - (rCenter.x + rMid));
+                        py = rCenter.y + 6;
+                        angle = 0;
+                    }
+                } else if (route === 'north_to_south') {
+                    // Path: North road (p in [0, 0.25]) -> West arc [-PI/2 -> -PI -> -1.5*PI] (p in [0.25, 0.75]) -> South road (p in [0.75, 1.0])
+                    if (p < 0.25) {
+                        const s = p / 0.25;
+                        px = rCenter.x - 6;
+                        py = -30 + s * (rCenter.y - rMid + 30);
+                        angle = Math.PI / 2;
+                    } else if (p < 0.75) {
+                        const s = (p - 0.25) / 0.5;
+                        const arcAngle = -Math.PI / 2 - s * Math.PI; // from -PI/2 to -1.5*PI (left half: X <= rCenter.x)
+                        px = rCenter.x + Math.cos(arcAngle) * rMid;
+                        py = rCenter.y + Math.sin(arcAngle) * rMid;
+                        angle = arcAngle - Math.PI / 2;
+                    } else {
+                        const s = (p - 0.75) / 0.25;
+                        px = rCenter.x - 6;
+                        py = (rCenter.y + rMid) + s * (h + 40 - (rCenter.y + rMid));
+                        angle = Math.PI / 2;
+                    }
+                } else { // 'south_to_west'
+                    // Path: South road (p in [0, 0.3]) -> Bottom-left quadrant [PI/2 -> PI] (p in [0.3, 0.7]) -> West road (p in [0.7, 1.0])
+                    if (p < 0.3) {
+                        const s = p / 0.3;
+                        px = rCenter.x + 6;
+                        py = (h + 30) - s * (h + 30 - (rCenter.y + rMid));
+                        angle = -Math.PI / 2;
+                    } else if (p < 0.7) {
+                        const s = (p - 0.3) / 0.4;
+                        const arcAngle = Math.PI / 2 + s * (Math.PI / 2); // from PI/2 to PI (bottom-left quadrant X <= rCenter.x, Y >= rCenter.y)
+                        px = rCenter.x + Math.cos(arcAngle) * rMid;
+                        py = rCenter.y + Math.sin(arcAngle) * rMid;
+                        angle = arcAngle + Math.PI / 2;
+                    } else {
+                        const s = (p - 0.7) / 0.3;
+                        px = (rCenter.x - rMid) - s * (rCenter.x - rMid + 40);
+                        py = rCenter.y - 6;
+                        angle = Math.PI;
+                    }
+                }
 
                 ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(renderAngle + Math.PI / 2);
-                ctx.fillStyle = car.color;
+                ctx.translate(px, py);
+                ctx.rotate(angle);
+                ctx.fillStyle = car.color || '#38bdf8';
                 ctx.fillRect(-car.w / 2, -car.h / 2, car.w, car.h);
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px system-ui';
+
+                // Headlights
+                ctx.fillStyle = '#fef08a';
+                ctx.fillRect(car.w / 2 - 2, -car.h / 2 + 2, 2, 2);
+                ctx.fillRect(car.w / 2 - 2, car.h / 2 - 4, 2, 2);
+
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 7px system-ui';
                 ctx.fillText(car.type, -car.w / 2 + 2, 2);
                 ctx.restore();
             });
@@ -1147,9 +1218,65 @@ def get_js_part3():
         renderAiprCanvas();
     }
 
+    let aiprDraggedTarget = null;
+    let aiprCanvasEventsBound = false;
+
+    function initAiprCanvasMouseEvents() {
+        const canvas = document.getElementById('aipr-simulation-canvas');
+        if (!canvas || aiprCanvasEventsBound) return;
+        aiprCanvasEventsBound = true;
+
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+            const groundY = canvas.height * 0.45;
+
+            // Check if clicked near an exterior element
+            for (let i = aiprExteriorElements.length - 1; i >= 0; i--) {
+                const elem = aiprExteriorElements[i];
+                if (Math.abs(mx - elem.x) < 25 && Math.abs(my - (groundY - 15)) < 35) {
+                    aiprDraggedTarget = { type: 'exterior', item: elem };
+                    return;
+                }
+            }
+
+            // Check if clicked near excavator track / base
+            if (Math.abs(mx - aiprExcavatorTrackX) < 50 && Math.abs(my - (groundY - 20)) < 45) {
+                aiprDraggedTarget = { type: 'excavator' };
+                return;
+            }
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            if (!aiprDraggedTarget) return;
+            const canvas = document.getElementById('aipr-simulation-canvas');
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+
+            if (aiprDraggedTarget.type === 'exterior') {
+                aiprDraggedTarget.item.x = Math.max(10, Math.min(canvas.width - 10, Math.round(mx)));
+                renderAiprCanvas();
+            } else if (aiprDraggedTarget.type === 'excavator') {
+                aiprExcavatorTrackX = Math.max(20, Math.min(360, Math.round(mx)));
+                const sl = document.getElementById('aipr-track-x-range');
+                if (sl) sl.value = aiprExcavatorTrackX;
+                const lbl = document.getElementById('aipr-pos-x-label');
+                if (lbl) lbl.textContent = `PK 0+240 (x=${aiprExcavatorTrackX}px)`;
+                renderAiprCanvas();
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            aiprDraggedTarget = null;
+        });
+    }
+
     function renderAiprCanvas() {
         const canvas = document.getElementById('aipr-simulation-canvas');
         if (!canvas) return;
+        initAiprCanvasMouseEvents();
         const ctx = canvas.getContext('2d');
         const w = canvas.parentElement.clientWidth || 500;
         const h = canvas.parentElement.clientHeight || 360;
