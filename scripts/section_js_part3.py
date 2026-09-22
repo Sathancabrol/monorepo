@@ -358,7 +358,7 @@ def get_js_part3():
         }
     };
 
-    const depotInventoryData = [
+    let depotInventoryData = [
         { id: "ENG-001", name: "Pelle Chenilles 24t Liebherr R924", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - Emplacement P1", status: "Sur Chantier Alès", val: 185000, vgp: "14/10/2026", icon: "🚜" },
         { id: "ENG-002", name: "Pelleteuse Urbaine Mecalac 12MTX", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - Emplacement P2", status: "Au Dépôt", val: 125000, vgp: "05/11/2026", icon: "🚜" },
         { id: "ENG-003", name: "Camion Benne 8x4 Scania G450", cat: "Poids Lourd", zone: "parking", loc: "Parc Engins - Emplacement P3", status: "Au Dépôt", val: 145000, vgp: "22/12/2026", icon: "🚛" },
@@ -3359,6 +3359,7 @@ def get_js_part3():
     window.onload = function() {
         try {
             renderNavForRole();
+            if (typeof switchCompanyProfile === 'function') switchCompanyProfile('occitanie_tp');
             switchNav('cockpit');
             logCockpit('🚀 Suite BTP Autonomous Command v5.0 initialisée avec succès.', 'ok');
         } catch (e) {

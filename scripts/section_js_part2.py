@@ -722,6 +722,18 @@ def get_js_part2():
             return fleetSortAsc ? (valA - valB) : (valB - valA);
         });
 
+        if (sorted.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; background: rgba(15,23,42,0.85); border: 2px dashed rgba(51,65,85,0.8); border-radius: 8px; padding: 2.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚜</div>
+                    <h3 style="color: #f8fafc; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">Aucun Engin en Propriété</h3>
+                    <p style="color: #94a3b8; font-size: 0.85rem; max-width: 500px; margin: 0 auto 1.2rem;">En phase de démarrage, l'entreprise fonctionne sans parc matériel lourd en propriété et privilégie la location ponctuelle (Kiloutou / Loxam TP) pour préserver la trésorerie.</p>
+                    <button class="btn btn-primary" onclick="alert('Module de réservation matériel en location partenaire.');">🚜 Réserver un Engin en Location</button>
+                </div>
+            `;
+            return;
+        }
+
         grid.innerHTML = sorted.map(v => {
             const currentView = fleetAssetsState[v.id] || 'schema';
             let visualContent = '';
@@ -806,6 +818,11 @@ def get_js_part2():
             return (v.type || '').toLowerCase().includes(fleetFilter);
         });
 
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="padding: 1.5rem; text-align: center; color: #94a3b8;">Aucun engin dans le parc pour ce profil.</td></tr>`;
+            return;
+        }
+
         tbody.innerHTML = filtered.map(v => `
             <tr style="border-top: 1px solid rgba(51,65,85,0.4);">
                 <td style="padding: 0.6rem; font-weight: 800; color: #f8fafc;">
@@ -830,6 +847,11 @@ def get_js_part2():
         if (!cont) return;
 
         const fleet = companyData.fleet || [];
+        if (fleet.length === 0) {
+            cont.innerHTML = `<div style="padding: 2.5rem; text-align: center; color: #94a3b8; background: rgba(15,23,42,0.85); border-radius: 8px;">Aucun flux télémétrique actif. Aucun engin en propriété.</div>`;
+            return;
+        }
+
         cont.innerHTML = `
             <div class="grid-3">
                 ${fleet.map(v => `

@@ -18,23 +18,23 @@ def get_tab_panels():
         <div class="grid-4">
             <div class="card kpi-card">
                 <div class="kpi-label">Trésorerie & Caisse Active</div>
-                <div class="kpi-val text-cyan" id="kpi-treasury-val">184 500 €</div>
-                <div class="kpi-sub">BFR Couvert : 42 jours d'exploitation</div>
+                <div class="kpi-val text-cyan" id="kpi-treasury-val">485 200 €</div>
+                <div class="kpi-sub" id="kpi-treasury-sub">BFR Couvert : 42 jours d'exploitation</div>
             </div>
             <div class="card kpi-card">
                 <div class="kpi-label">Chantiers en Cours</div>
-                <div class="kpi-val text-emerald">4 Actifs</div>
-                <div class="kpi-sub">Alès, Sète, Pézenas, Montpellier</div>
+                <div class="kpi-val text-emerald" id="kpi-active-projects-val">4 Actifs</div>
+                <div class="kpi-sub" id="kpi-active-projects-sub">Alès, Sète, Pézenas, Montpellier</div>
             </div>
             <div class="card kpi-card">
                 <div class="kpi-label">Effectif VRD Engagé</div>
-                <div class="kpi-val" style="color:var(--amber);">18 Salariés</div>
-                <div class="kpi-sub">100% CACES & AIPR à jour</div>
+                <div class="kpi-val" style="color:var(--amber);" id="kpi-effectif-val">24 Salariés</div>
+                <div class="kpi-sub" id="kpi-effectif-sub">100% CACES & AIPR à jour</div>
             </div>
             <div class="card kpi-card">
                 <div class="kpi-label">Conformité Sécurité / DICT</div>
-                <div class="kpi-val" style="color:#a855f7;">100% Validé</div>
-                <div class="kpi-sub">0 Incident • Audit SHA-256 Actif</div>
+                <div class="kpi-val" style="color:#a855f7;" id="kpi-safety-val">100% Validé</div>
+                <div class="kpi-sub" id="kpi-safety-sub">0 Incident • Audit SHA-256 Actif</div>
             </div>
         </div>
 
@@ -188,13 +188,13 @@ def get_tab_panels():
             <div style="background: rgba(15,23,42,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <span class="badge badge-info" id="company-profile-badge">PME Établie TP</span>
-                    <h2 style="font-size: 1.3rem; font-weight: 900; color: #f8fafc; margin-top: 4px;" id="company-profile-title">Occitanie Travaux Publics SAS</h2>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">SIRET : 842 190 345 00021 • Capital : 150 000 € • Siège : Sète (34)</div>
+                    <h2 style="font-size: 1.3rem; font-weight: 900; color: #f8fafc; margin-top: 4px;" id="company-profile-title">Occitanie TP & VRD SAS</h2>
+                    <div style="font-size: 0.8rem; color: #94a3b8;" id="company-profile-sub">SIRET : 849 321 654 00018 • Capital : 500 000 € • Siège : Sète / Montpellier (34)</div>
                 </div>
                 <div style="display: flex; gap: 1.5rem;">
                     <div>
                         <div style="font-size: 0.75rem; color: #94a3b8;">SOLDE CAISSE DISPONIBLE</div>
-                        <div style="font-size: 1.6rem; font-weight: 900; color: var(--emerald);" id="company-caisse-val">184 500 €</div>
+                        <div style="font-size: 1.6rem; font-weight: 900; color: var(--emerald);" id="company-caisse-val">485 200 €</div>
                     </div>
                     <div>
                         <div style="font-size: 0.75rem; color: #94a3b8;">CHIFFRE D'AFFAIRES 2026</div>

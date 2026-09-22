@@ -396,7 +396,11 @@ def get_js_part1():
         currentNav = tabId;
 
         try {
-            if (tabId === 'cockpit') setTimeout(initCockpitOsmMap, 50);
+            if (tabId === 'cockpit') {
+                renderCockpitAiAgents();
+                renderCockpitProjectsSummary();
+                setTimeout(initCockpitOsmMap, 50);
+            }
             if (tabId === 'company') renderCompanyCashflowTable();
             if (tabId === 'depot') {
                 setTimeout(() => {
@@ -913,75 +917,919 @@ def get_js_part1():
     }
 
     // ==========================================
-    // 5b. MULTI-ENTERPRISE PROFILES SWITCHER
+    // 5b. MULTI-ENTERPRISE PROFILES SWITCHER & MASTER DATASETS
     // ==========================================
     let currentCompanyProfile = 'occitanie_tp';
 
-    const companyProfiles = {
+    const companyProfilesData = {
         'occitanie_tp': {
             id: 'occitanie_tp',
             name: 'Occitanie TP & VRD SAS',
             type: 'PME Établie Régionale',
+            siret: '849 321 654 00018',
+            capital: '500 000 €',
+            siege: 'Sète / Montpellier (34)',
             caisse: 485200,
             bfr: 142800,
-            capital: '500 000 €',
-            siren: '849 321 654',
-            desc: 'Entreprise générale de VRD et terrassement en Occitanie. Flotte complète 6 engins, marchés publics Alès, Sète, Pézenas, Montpellier.',
-            projects_count: 4,
-            fleet_count: 6,
+            ca_annuel: 1850000,
+            ca_prev: 4250000,
+            margin: 14.2,
             effectif_count: 24,
-            margin: 14.2
+            fleet_count: 6,
+            projects_count: 4,
+            safety_status: '100% Conforme',
+            safety_sub: '0 Incident • CSPS & DICT Validés',
+            treasury_sub: 'BFR Couvert : 42 jours d\'exploitation',
+            projects_sub: 'Alès, Sète, Pézenas, Montpellier',
+            effectif_sub: '24 Salariés • CACES & AIPR à jour',
+            desc: 'Entreprise générale de VRD et terrassement en Occitanie. Flotte lourde de 6 engins, 4 marchés publics en cours, dépôt central de 1200m².',
+            
+            projects: [
+                {
+                    id: "p-01",
+                    code: "CH-2026-001",
+                    name: "Giratoire RD906 Alès & Voie Nouvelle",
+                    type: "internal",
+                    ownership: "🏢 Notre Entreprise (En cours)",
+                    badge_type: "Marché Public Actif",
+                    loc: "Alès (30)",
+                    location: "Alès (30)",
+                    client: "Conseil Départemental du Gard (MOA)",
+                    moe: "Cabinet Sud Ingénierie",
+                    budget: 845000,
+                    spent: 574600,
+                    budget_used: 574600,
+                    progress: 68,
+                    status: "En cours",
+                    manager: "Jean-Pierre Fabre",
+                    site_chief: "Alain Martin",
+                    chef: "Alain Martin (Conducteur: J-P. Fabre)",
+                    workers_count: 6,
+                    delai_consomme_pct: 70,
+                    start_date: "12/01/2026",
+                    end_date: "30/06/2026",
+                    end: "30/06/2026",
+                    desc: "Création d'un giratoire 4 branches RD906, décaissement 4 200 m³, pose de 850 ml de bordures T2/CS2, réseau pluvial béton Ø400 et 1 400 t de BBSG 0/14.",
+                    assigned_machinery: [{ name: "Pelle Chenilles 24t Liebherr R924" }, { name: "Camion Benne 8x4 Scania G450" }],
+                    assigned_tools: [{ name: "Laser Piper 200" }, { name: "Plaque Bomag BVP" }],
+                    docs: [{ name: "CCTP_Ales", type: "pdf" }, { name: "PPSPS_Signe", type: "pdf" }, { name: "Plans_EXE", type: "dwg" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Terrassement & Déblais (4 200 m³)", budget: 210000, progress: 100, ds: 142000, pv: 210000 },
+                        { name: "Lot 2 : Assainissement Pluvial Ø400 (620 ml)", budget: 245000, progress: 85, ds: 168000, pv: 245000 },
+                        { name: "Lot 3 : Bordures & Caniveaux T2/CS2 (850 ml)", budget: 115000, progress: 60, ds: 78000, pv: 115000 },
+                        { name: "Lot 4 : Chaussée BBSG 0/14 & GNT (1 400 t)", budget: 275000, progress: 35, ds: 186000, pv: 275000 }
+                    ],
+                    steps: [
+                        { name: "Piquetage & DICT / AIPR", progress: 100 },
+                        { name: "Terrassement général & fond de forme", progress: 100 },
+                        { name: "Pose collecteur pluvial Ø400", progress: 85 },
+                        { name: "Pose bordures T2 et îlots", progress: 60 },
+                        { name: "Enrobé BBSG 0/14 de roulement", progress: 0 }
+                    ]
+                },
+                {
+                    id: "p-02",
+                    code: "CH-2026-002",
+                    name: "Réseau Assainissement EU/EP & AEP Quai d'Alger",
+                    type: "internal",
+                    ownership: "🏢 Notre Entreprise (En cours)",
+                    badge_type: "Marché Public Actif",
+                    loc: "Sète (34)",
+                    location: "Sète (34)",
+                    client: "Sète Agglopôle Méditerranée",
+                    moe: "Direction des Eaux du Bassin de Thau",
+                    budget: 420000,
+                    spent: 176400,
+                    budget_used: 176400,
+                    progress: 42,
+                    status: "En cours",
+                    manager: "Sophie Martinez",
+                    site_chief: "Bruno Dupuis",
+                    chef: "Bruno Dupuis (Conductrice: S. Martinez)",
+                    workers_count: 4,
+                    delai_consomme_pct: 45,
+                    start_date: "01/02/2026",
+                    end_date: "15/07/2026",
+                    end: "15/07/2026",
+                    desc: "Renouvellement en site maritime sensible du collecteur Fonte DN400 sous nappe avec caissons de blindage et rabattement de nappe par pointes filtrantes.",
+                    assigned_machinery: [{ name: "Compacteur Tandem Bomag BW120" }, { name: "Mecalac 12MTX" }],
+                    assigned_tools: [{ name: "Laser Piper 200" }, { name: "Pompe de rabattement" }],
+                    docs: [{ name: "PAQ_Sète", type: "pdf" }, { name: "Note_Calcul_Blindage", type: "pdf" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Rabattement de nappe & Blindage", budget: 120000, progress: 70, ds: 82000, pv: 120000 },
+                        { name: "Lot 2 : Pose Canalisation Fonte DN400 (450 ml)", budget: 210000, progress: 45, ds: 145000, pv: 210000 },
+                        { name: "Lot 3 : Réfection chaussée quai maritime", budget: 90000, progress: 10, ds: 61000, pv: 90000 }
+                    ],
+                    steps: [
+                        { name: "Installation chantier & pompage", progress: 100 },
+                        { name: "Fouille blindée sous nappe", progress: 60 },
+                        { name: "Pose Fonte DN400 & branchements", progress: 40 },
+                        { name: "Remblai GNT & Réfection quai", progress: 0 }
+                    ]
+                },
+                {
+                    id: "p-03",
+                    code: "CH-2026-003",
+                    name: "Aménagement Zone Artisanale & Plateforme Voirie",
+                    type: "internal",
+                    ownership: "🏢 Notre Entreprise (En cours)",
+                    badge_type: "Marché Public Actif",
+                    loc: "Pézenas (34)",
+                    location: "Pézenas (34)",
+                    client: "Communauté de Communes Hérault Méditerranée",
+                    moe: "Territoires & Projets 34",
+                    budget: 310000,
+                    spent: 263500,
+                    budget_used: 263500,
+                    progress: 85,
+                    status: "Finition",
+                    manager: "Jean-Pierre Fabre",
+                    site_chief: "Christian Lambert",
+                    chef: "Christian Lambert",
+                    workers_count: 3,
+                    delai_consomme_pct: 88,
+                    start_date: "15/11/2025",
+                    end_date: "15/04/2026",
+                    end: "15/04/2026",
+                    desc: "Viabilisation de 14 parcelles artisanales, réseau pluvial bassin de rétention, bordures hautes A2 et voirie lourde 12t/essieu.",
+                    assigned_machinery: [{ name: "Télescopique Manitou MT625" }],
+                    assigned_tools: [{ name: "Niveau Optique Leica" }, { name: "Scie Thermique Stihl" }],
+                    docs: [{ name: "CCTP_Pezenas", type: "pdf" }, { name: "Plan_Masse_ZA", type: "dwg" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Plateforme & VRD Primaires", budget: 180000, progress: 100, ds: 124000, pv: 180000 },
+                        { name: "Lot 2 : Bassin d'orage & Enrochement", budget: 75000, progress: 90, ds: 51000, pv: 75000 },
+                        { name: "Lot 3 : Couche de roulement & Signalisation", budget: 55000, progress: 60, ds: 37000, pv: 55000 }
+                    ],
+                    steps: [
+                        { name: "Terrassement & réseaux EU/EP", progress: 100 },
+                        { name: "Bordures A2 et trottoirs", progress: 100 },
+                        { name: "Bassin d'orage enroché", progress: 90 },
+                        { name: "Enrobés & récolement EXE", progress: 50 }
+                    ]
+                },
+                {
+                    id: "p-04",
+                    code: "CH-2026-004",
+                    name: "Piste Cyclable & Réseaux Secs Tram Ligne 5",
+                    type: "internal",
+                    ownership: "🏢 Notre Entreprise (En cours)",
+                    badge_type: "Marché Public Actif",
+                    loc: "Montpellier (34)",
+                    location: "Montpellier (34)",
+                    client: "Montpellier Méditerranée Métropole / TaM",
+                    moe: "Ingérop Conseil",
+                    budget: 275000,
+                    spent: 41250,
+                    budget_used: 41250,
+                    progress: 15,
+                    status: "Démarrage",
+                    manager: "Sophie Martinez",
+                    site_chief: "David Roux",
+                    chef: "David Roux",
+                    workers_count: 4,
+                    delai_consomme_pct: 18,
+                    start_date: "01/03/2026",
+                    end_date: "30/09/2026",
+                    end: "30/09/2026",
+                    desc: "Aménagement de 1.8 km de voie verte cyclable le long de la ligne 5 de tramway, pose de chambres de tirage L2T et 3 600 ml de fourreaux TPC Ø110/Ø160.",
+                    assigned_machinery: [{ name: "Camionnette Atelier Renault Master" }],
+                    assigned_tools: [{ name: "Aiguille de tirage 150m" }, { name: "Laser Rotatif" }],
+                    docs: [{ name: "CCTP_Tram5", type: "pdf" }, { name: "Profils_Travers", type: "pdf" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Terrassement & Décapage 1.8km", budget: 85000, progress: 35, ds: 58000, pv: 85000 },
+                        { name: "Lot 2 : Réseaux Secs & Éclairage L2T", budget: 110000, progress: 10, ds: 75000, pv: 110000 },
+                        { name: "Lot 3 : Enrobé grenaillé & Bordures T2", budget: 80000, progress: 0, ds: 54000, pv: 80000 }
+                    ],
+                    steps: [
+                        { name: "Piquetage & Décapage terre végétale", progress: 40 },
+                        { name: "Tranchée réseaux secs & chambres L2T", progress: 15 },
+                        { name: "Grave non traitée & Bordures", progress: 0 },
+                        { name: "Revêtement grenaillé et plantations", progress: 0 }
+                    ]
+                }
+            ],
+
+            fleet: [
+                { id: "ENG-001", name: "Pelle Chenilles 24t Liebherr R924", cat: "Engin Lourd", type: "Pelle sur chenilles", brand: "Liebherr", loc: "Chantier Alès (RD906)", status: "Sur Chantier", val: 185000, price: 185000, hourly_cost: 95, vgp: "14/10/2026", immat: "CH-924-LB", fuel: 78, hours: 2840, weight: "24t", power: "129 kW", capacity: "1.4 m³", project: "Giratoire RD906 Alès", icon: "🚜" },
+                { id: "ENG-002", name: "Pelleteuse Urbaine Mecalac 12MTX", cat: "Engin Lourd", type: "Pelle sur pneus", brand: "Mecalac", loc: "Dépôt Central Sète", status: "Disponible", val: 125000, price: 125000, hourly_cost: 80, vgp: "05/11/2026", immat: "MC-120-TX", fuel: 92, hours: 1420, weight: "10t", power: "85 kW", capacity: "0.8 m³", project: "Dépôt Sète", icon: "🚜" },
+                { id: "ENG-003", name: "Camion Benne 8x4 Scania G450", cat: "Poids Lourd", type: "Camion benne 32t", brand: "Scania", loc: "Dépôt Central Sète", status: "Disponible", val: 145000, price: 145000, hourly_cost: 75, vgp: "22/12/2026", immat: "SC-450-TP", fuel: 65, hours: 3950, weight: "32t", power: "331 kW", capacity: "18 t", project: "Dépôt Sète", icon: "🚛" },
+                { id: "ENG-004", name: "Compacteur Tandem Bomag BW120", cat: "Engin Lourd", type: "Compacteur vibrant", brand: "Bomag", loc: "Chantier Sète (Quai)", status: "Sur Chantier", val: 45000, price: 45000, hourly_cost: 45, vgp: "18/09/2026", immat: "BG-120-AD", fuel: 84, hours: 960, weight: "2.7t", power: "25 kW", capacity: "1.20 m", project: "Quai d'Alger Sète", icon: "🚜" },
+                { id: "ENG-005", name: "Camionnette Atelier Renault Master", cat: "Utilitaire", type: "Fourgon atelier", brand: "Renault", loc: "Dépôt Central Sète", status: "Disponible", val: 38000, price: 38000, hourly_cost: 30, vgp: "30/08/2026", immat: "RN-380-AT", fuel: 90, hours: 1800, weight: "3.5t", power: "110 kW", capacity: "12 m³", project: "Dépôt Sète", icon: "🚐" },
+                { id: "ENG-006", name: "Télescopique Manitou MT625", cat: "Engin Lourd", type: "Chariot tout-terrain", brand: "Manitou", loc: "Chantier Pézenas (ZA)", status: "Sur Chantier", val: 62000, price: 62000, hourly_cost: 55, vgp: "11/12/2026", immat: "MN-625-TP", fuel: 70, hours: 1230, weight: "4.8t", power: "55 kW", capacity: "2.5 t", project: "ZA Pézenas", icon: "🚜" }
+            ],
+
+            depot_inventory: [
+                { id: "ENG-001", name: "Pelle Chenilles 24t Liebherr R924", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - P1", status: "Sur Chantier Alès", val: 185000, vgp: "14/10/2026", icon: "🚜" },
+                { id: "ENG-002", name: "Pelleteuse Urbaine Mecalac 12MTX", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - P2", status: "Au Dépôt", val: 125000, vgp: "05/11/2026", icon: "🚜" },
+                { id: "ENG-003", name: "Camion Benne 8x4 Scania G450", cat: "Poids Lourd", zone: "parking", loc: "Parc Engins - P3", status: "Au Dépôt", val: 145000, vgp: "22/12/2026", icon: "🚛" },
+                { id: "ENG-004", name: "Compacteur Tandem Bomag BW120", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - P4", status: "Sur Chantier Sète", val: 45000, vgp: "18/09/2026", icon: "🚜" },
+                { id: "MAT-001", name: "Grave GNT 0/31.5A Non Traitée", cat: "Granulat", zone: "casiers", loc: "Casier Extérieur n°1", status: "Stock : 65 Tonnes", val: 1170, vgp: "Conforme NF", icon: "🧱" },
+                { id: "MAT-002", name: "Sable de Pose 0/4 Alluvionnaire", cat: "Granulat", zone: "casiers", loc: "Casier Extérieur n°2", status: "Stock : 45 Tonnes", val: 990, vgp: "Conforme NF", icon: "🏖️" },
+                { id: "MAT-003", name: "Enrobé à Froid Noir en Seaux (25kg)", cat: "Enrobé", zone: "casiers", loc: "Casier Extérieur n°3", status: "Stock : 40 Seaux (1t)", val: 880, vgp: "Utilisable", icon: "🛢️" },
+                { id: "CAN-001", name: "Tuyaux Fonte Intégral DN400 (L=6m)", cat: "Canalisation", zone: "racks", loc: "Rack Extérieur R1", status: "Stock : 180 ml", val: 19800, vgp: "Certifié AEP", icon: "🪵" },
+                { id: "CAN-002", name: "Tubes PVC Assainissement CR8 Ø200", cat: "Canalisation", zone: "racks", loc: "Rack Extérieur R2", status: "Stock : 120 ml", val: 3240, vgp: "NF EN 1401", icon: "🪵" },
+                { id: "OUT-001", name: "Laser de Canalisateur Piper 200", cat: "Topographie", zone: "atelier", loc: "Atelier - Armoire A1", status: "Au Dépôt (Chargé)", val: 3800, vgp: "Étalonné 2026", icon: "🔴" },
+                { id: "OUT-002", name: "Scie Thermique à Sol Stihl TS800", cat: "Petit Outillage", zone: "atelier", loc: "Atelier - Étagère B2", status: "Au Dépôt (Révisée)", val: 1650, vgp: "02/08/2026", icon: "🪚" },
+                { id: "OUT-003", name: "Plaque Vibrante 100kg Bomag BVP", cat: "Compactage", zone: "atelier", loc: "Atelier - Zone Sol", status: "Au Dépôt", val: 2400, vgp: "12/09/2026", icon: "🔨" },
+                { id: "ADM-001", name: "Station Totale Robotisée Leica TS16", cat: "Topographie", zone: "bureaux", loc: "Bureaux CT - Salle DAO", status: "Au Dépôt", val: 22000, vgp: "Certifié Topo", icon: "📐" },
+                { id: "ADM-002", name: "Drone DJI Matrice 300 RTK + LiDAR", cat: "Aérien", zone: "bureaux", loc: "Bureaux CT - Mallette", status: "Prêt au Vol", val: 18500, vgp: "DGAC Validé", icon: "🛰️" },
+                { id: "ENV-001", name: "Séparateur Hydrocarbures 10 L/s", cat: "Environnement", zone: "lavage", loc: "Aire de Lavage - Dalle", status: "En Service (Vidangé)", val: 8500, vgp: "Conforme 2026", icon: "🚿" }
+            ],
+
+            cashflow_transactions: [
+                { date: "18/04/2026", type: "Situation MOA", label: "Acompte Situation n°4 - CD30 Giratoire Alès", amount: 142500, status: "Encaissé" },
+                { date: "15/04/2026", type: "Fournisseur", label: "Fourniture Tuyaux Fonte DN400 - PAM Saint-Gobain", amount: -28400, status: "Payé" },
+                { date: "10/04/2026", type: "Situation MOA", label: "Acompte Situation n°2 - Sète Agglopôle Quai Alger", amount: 68900, status: "Encaissé" },
+                { date: "31/03/2026", type: "Salaires", label: "Masse Salariale 24 Salariés & Charges URSSAF", amount: -112000, status: "Payé" },
+                { date: "25/03/2026", type: "Carburant", label: "Approvisionnement GNR Cuve Dépôt 5000L - Total", amount: -7200, status: "Payé" },
+                { date: "20/03/2026", type: "Location", label: "Location BRH & Raboteuse de sol - Loxam TP", amount: -6400, status: "Payé" }
+            ],
+
+            documents: [
+                { id: "DOC-01", title: "PPSPS Alès - Plan Particulier Sécurité & Santé", cat: "Sécurité CSPS", chantier: "Giratoire RD906 Alès", date: "15/01/2026", format: "PDF (Signé)", size: "2.4 Mo" },
+                { id: "DOC-02", title: "PAQ Sète - Plan d'Assurance Qualité Assainissement", cat: "Qualité ISO", chantier: "Quai d'Alger Sète", date: "02/02/2026", format: "PDF", size: "3.1 Mo" },
+                { id: "DOC-03", title: "DICT Réseau Gaz & Élec Conjointe Pézenas", cat: "Réglementaire", chantier: "ZA Pézenas", date: "10/11/2025", format: "PDF (Récépissé)", size: "1.2 Mo" },
+                { id: "DOC-04", title: "CCTP Lot 2 VRD Tram Ligne 5 Montpellier", cat: "Technique MOE", chantier: "Voie Verte Montpellier", date: "20/02/2026", format: "PDF", size: "4.8 Mo" },
+                { id: "DOC-05", title: "Plan de Récolement EXE Giratoire Alès (DWG/PDF)", cat: "Topographie", chantier: "Giratoire RD906 Alès", date: "10/04/2026", format: "DWG/PDF", size: "8.5 Mo" }
+            ],
+
+            map_locations: [
+                { id: "ch_01", name: "Giratoire RD906 Alès", category: "chantier", lat: 44.1284, lng: 4.0833, color: "#38bdf8", icon: "🏗️", ownership: "Interne Entreprise (En cours)", budget_ini: 845000, budget_used: 574600, progress: 68, chef: "Alain Martin", desc: "Giratoire RD906, réseaux pluviaux Ø400 et couche BBSG." },
+                { id: "ch_02", name: "Quai d'Alger Sète", category: "chantier", lat: 43.4075, lng: 3.6928, color: "#38bdf8", icon: "🏗️", ownership: "Interne Entreprise (En cours)", budget_ini: 420000, budget_used: 176400, progress: 42, chef: "Bruno Dupuis", desc: "Assainissement maritime sous nappe Fonte DN400." },
+                { id: "ch_03", name: "ZA Pézenas Voirie", category: "chantier", lat: 43.4600, lng: 3.4230, color: "#38bdf8", icon: "🏗️", ownership: "Interne Entreprise (En cours)", budget_ini: 310000, budget_used: 263500, progress: 85, chef: "Christian Lambert", desc: "Plateforme artisanale & voirie lourde 12t/essieu." },
+                { id: "ch_04", name: "Voie Verte Tram 5 Montpellier", category: "chantier", lat: 43.6108, lng: 3.8767, color: "#38bdf8", icon: "🏗️", ownership: "Interne Entreprise (En cours)", budget_ini: 275000, budget_used: 41250, progress: 15, chef: "David Roux", desc: "Voie cyclable 1.8km et réseaux secs L2T." },
+                { id: "dep_01", name: "Dépôt Central Sète Littoral (1200m²)", category: "depot", lat: 43.4150, lng: 3.7100, color: "#f59e0b", icon: "🏢", stock_val: "420 000 €", contact: "04 67 11 22 33", desc: "Bureaux 120m², Atelier 80m², Casiers 140t, Parc 6 engins." },
+                { id: "eq_01", name: "Équipe 1 - Terrassement Alès", category: "equipe", lat: 44.1284, lng: 4.0833, color: "#10b981", icon: "👷‍♂️", leader: "A. Martin (6 ouvriers)", radio: "Canal 4 TP", desc: "Pelle Liebherr 24t + Scania 8x4." },
+                { id: "eq_02", name: "Équipe 2 - Réseaux Maritimes Sète", category: "equipe", lat: 43.4075, lng: 3.6928, color: "#10b981", icon: "👷‍♂️", leader: "B. Dupuis (4 ouvriers)", radio: "Canal 2 TP", desc: "Blindage & rabattement de nappe." },
+                { id: "fourn_01", name: "Carrières du Languedoc", category: "fournisseur", lat: 43.5500, lng: 3.5200, color: "#ec4899", icon: "🏭", product: "GNT 0/31.5 & Concassés", distance: "14 km", desc: "Fournisseur agréé matériaux routiers." },
+                { id: "fourn_02", name: "Bétons Occitanie (BPE)", category: "fournisseur", lat: 43.4200, lng: 3.6600, color: "#ec4899", icon: "🏭", product: "Béton C25/30 & Bordures NF", distance: "8 km", desc: "Centrale béton prêt à l'emploi." },
+                { id: "fourn_03", name: "PAM Saint-Gobain Canalisation", category: "fournisseur", lat: 43.6500, lng: 3.9000, color: "#ec4899", icon: "🏭", product: "Tuyaux Fonte DN400", distance: "22 km", desc: "Fabricant fontes et raccords AEP." }
+            ],
+
+            hr_employees: [
+                { id: "HR-001", name: "Jean-Pierre Fabre", role: "Conducteur de Travaux Principal", cat: "Cadre", site: "Chantiers Alès & Pézenas", phone: "06 12 34 56 78", email: "jp.fabre@occitanietp.fr", caces: "AIPR Concepteur • SST", exp: "14 ans", icon: "👷‍♂️" },
+                { id: "HR-002", name: "Sophie Martinez", role: "Conductrice de Travaux VRD", cat: "Cadre", site: "Chantiers Sète & Montpellier", phone: "06 23 45 67 89", email: "s.martinez@occitanietp.fr", caces: "AIPR Concepteur • CSPS", exp: "9 ans", icon: "👷‍♀️" },
+                { id: "HR-003", name: "Alain Martin", role: "Chef de Chantier Terrassement", cat: "Maîtrise", site: "Chantier Alès (RD906)", phone: "06 34 56 78 90", email: "a.martin@occitanietp.fr", caces: "AIPR Encadrant • CACES R482", exp: "18 ans", icon: "👷‍♂️" },
+                { id: "HR-004", name: "Bruno Dupuis", role: "Chef de Chantier Canalisateur", cat: "Maîtrise", site: "Chantier Sète (Quai)", phone: "06 45 67 89 01", email: "b.dupuis@occitanietp.fr", caces: "AIPR Encadrant • CACES A/B", exp: "12 ans", icon: "👷‍♂️" },
+                { id: "HR-005", name: "Thibault Blanc", role: "Géomètre-Topographe VRD", cat: "Technicien", site: "Studio DAO & Chantiers", phone: "06 56 78 90 12", email: "t.blanc@occitanietp.fr", caces: "Télépilote Drone DGAC • Topo", exp: "7 ans", icon: "📐" },
+                { id: "HR-006", name: "19 Compagnons & Chauffeurs", role: "Maçons VRD, Poseurs, Chauffeurs PL", cat: "Ouvriers", site: "Ensemble des chantiers", phone: "Standard Dépôt", email: "equipe@occitanietp.fr", caces: "CACES R482 A/B/C/F • AIPR Opérateur", exp: "Moyenne 8 ans", icon: "👷‍♂️" }
+            ],
+
+            hr_hierarchy: {
+                name: "Jean-Pierre Fabre",
+                role: "Conducteur de Travaux Principal / Direction Exploitation",
+                rank: "direction",
+                tel: "06 12 34 56 78",
+                aipr: "Concepteur / Encadrant",
+                caces: "Tous R482",
+                badge: "Direction TP",
+                children: [
+                    {
+                        name: "Antoine Martin",
+                        role: "Chef de Chantier Travaux Publics (RD906 Alès)",
+                        rank: "chef_chantier",
+                        tel: "06 23 45 67 89",
+                        aipr: "Encadrant",
+                        caces: "R482 Cat B1 / C1",
+                        badge: "Chantier Alès",
+                        children: [
+                            {
+                                name: "Mamadou Traoré",
+                                role: "Chef d'Équipe Canalisateurs & VRD",
+                                rank: "chef_equipe",
+                                tel: "06 45 67 89 01",
+                                aipr: "Opérateur",
+                                caces: "R482 Cat A",
+                                badge: "Équipe 1 VRD",
+                                children: [
+                                    { name: "Karim Benali", role: "Conducteur d'Engins Pelle 24t", rank: "compagnon", tel: "06 56 78 90 12", aipr: "Opérateur", caces: "R482 Cat B1", badge: "Pelle R924" },
+                                    { name: "Youssef Idrissi", role: "Canalisateur Qualifié", rank: "compagnon", tel: "06 78 90 12 34", aipr: "Opérateur", caces: "Pose Tuyaux", badge: "Canalisateur" },
+                                    { name: "Marc Delmas", role: "Poseur de Bordures / Manœuvre VRD", rank: "compagnon", tel: "06 89 01 23 45", aipr: "Opérateur", caces: "Petit Outillage", badge: "Poseur" }
+                                ]
+                            },
+                            {
+                                name: "Patrick Durand",
+                                role: "Chef d'Équipe Application Enrobés (Pézenas)",
+                                rank: "chef_equipe",
+                                tel: "06 90 12 34 56",
+                                aipr: "Opérateur",
+                                caces: "R482 Cat D",
+                                badge: "Équipe 2 Enrobés",
+                                children: [
+                                    { name: "Thomas Roussel", role: "Chauffeur PL 8x4 / FIMO FCO", rank: "compagnon", tel: "06 67 89 01 23", aipr: "Sensibilisé", caces: "Permis EC", badge: "Camion 8x4" },
+                                    { name: "Jean-Paul Sartre", role: "Régleur Finisseur / Cylindreur", rank: "compagnon", tel: "06 01 23 45 67", aipr: "Opérateur", caces: "R482 Cat D", badge: "Finisseur" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "Sophie Martinez",
+                        role: "Conductrice de Travaux VRD (Sète & Montpellier)",
+                        rank: "direction",
+                        tel: "06 34 56 78 90",
+                        aipr: "Concepteur / Encadrant",
+                        caces: "AIPR CSPS",
+                        badge: "Sète & Tram 5",
+                        children: [
+                            {
+                                name: "Bruno Dupuis",
+                                role: "Chef de Chantier Réseaux Maritimes",
+                                rank: "chef_chantier",
+                                tel: "06 45 67 89 01",
+                                aipr: "Encadrant",
+                                caces: "R482 Cat A/B",
+                                badge: "Quai d'Alger",
+                                children: [
+                                    { name: "David Roux", role: "Poseur Réseaux Secs & Tramway", rank: "compagnon", tel: "06 78 90 12 34", aipr: "Opérateur", caces: "Habilitation H0B0", badge: "Tram L5" }
+                                ]
+                            },
+                            {
+                                name: "Thibault Blanc",
+                                role: "Géomètre-Topographe VRD & Télépilote LiDAR",
+                                rank: "expert_tech",
+                                tel: "06 56 78 90 12",
+                                aipr: "Concepteur",
+                                caces: "Drone DGAC / GNSS",
+                                badge: "Studio DAO / Topo",
+                                children: [
+                                    { name: "David Lemoine", role: "Technicien DAO / BIM Infra IFC", rank: "compagnon", tel: "06 11 22 33 44", aipr: "Sensibilisé", caces: "Mensura / Covadis", badge: "BIM Infra" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+
+            ai_agents: [
+                { id: "agent-treso", name: "Agent IA Trésorerie & BFR", avatar: "💰", role: "Finances TP", status: "Optimal", text: "Trésorerie saine (485 200 €). BFR couvert à 42 jours. Situation n°4 Alès (142.5k€) validée par la MOE." },
+                { id: "agent-securite", name: "Agent IA Sécurité CSPS / DICT", avatar: "🦺", role: "Prévention", status: "Conforme", text: "0 accident du travail. Tous les PPSPS et récépissés DICT sont validés et archivés." },
+                { id: "agent-planning", name: "Agent IA Planning & Cadences", avatar: "📅", role: "Ordonnancement", status: "Dans les temps", text: "Avancement global à 68% sur Alès. Livraison BBSG confirmée pour demain 08h00." }
+            ]
         },
+
         'compte_neuf': {
             id: 'compte_neuf',
             name: 'Nouvelle Entreprise TP (Démarrage Zéro)',
             type: 'Compte Vierge / Typique',
+            siret: '912 456 789 00012 (En immatriculation)',
+            capital: '10 000 € (Bloqué notaire)',
+            siege: 'Montpellier Millénaire (Pépinière)',
             caisse: 0,
             bfr: 0,
-            capital: '10 000 €',
-            siren: '912 456 789',
-            desc: 'Profil vierge sans fond ni chantier engagé. Idéal pour configurer et chiffrer une nouvelle entreprise TP à partir d\'une page blanche.',
-            projects_count: 0,
-            fleet_count: 0,
+            ca_annuel: 0,
+            ca_prev: 180000,
+            margin: 0,
             effectif_count: 1,
-            margin: 0
+            fleet_count: 0,
+            projects_count: 0,
+            safety_status: 'En configuration',
+            safety_sub: 'Compte Vierge • Prêt pour 1er Marché',
+            treasury_sub: '0€ Disponible • Capital souscrit en attente',
+            projects_sub: '0 Marché engagé • Lancez votre 1er DCE',
+            effectif_sub: '1 Salarié Fondateur • Recrutements ouverts',
+            desc: 'Profil vierge sans passif ni engagement. Conçu pour créer, chiffrer et planifier votre entreprise TP étape par étape à partir d\'une page blanche.',
+
+            projects: [],
+
+            fleet: [],
+
+            depot_inventory: [
+                { id: "INIT-001", name: "Box de Stockage Loué 30 m²", cat: "Immobilier", zone: "bureaux", loc: "Pépinière d'Entreprises TP", status: "Actif (Loué)", val: 0, vgp: "Bail en cours", icon: "🏢" },
+                { id: "INIT-002", name: "Kit de Balisage Urgence (6 cônes K5a + 2 AK5)", cat: "Sécurité", zone: "atelier", loc: "Magasin Outillage", status: "Disponible", val: 350, vgp: "NF Équipement", icon: "🚧" },
+                { id: "INIT-003", name: "Caisse à Outils Complète Maçonnerie TP", cat: "Petit Outillage", zone: "atelier", loc: "Établi Mobile", status: "Disponible", val: 450, vgp: "Conforme CE", icon: "🧰" }
+            ],
+
+            cashflow_transactions: [
+                { date: "01/04/2026", type: "Capital Initial", label: "Dépôt de capital social souscrit (compte bloqué notaire)", amount: 10000, status: "Bloqué Banque" }
+            ],
+
+            documents: [
+                { id: "DOC-NEW-01", title: "Statuts constitutifs SASU TP & VRD", cat: "Juridique", chantier: "Siège Entreprise", date: "01/04/2026", format: "PDF (Signé)", size: "1.1 Mo" },
+                { id: "DOC-NEW-02", title: "Attestation RC Décennale & Responsabilité Civile (En cours)", cat: "Assurance", chantier: "Siège Entreprise", date: "05/04/2026", format: "PDF", size: "0.8 Mo" },
+                { id: "DOC-NEW-03", title: "Modèle Vierge Devis Déboursé Sec & Bordereau de Prix", cat: "Chiffrage", chantier: "Modèle Type", date: "10/04/2026", format: "XLSX/PDF", size: "1.5 Mo" }
+            ],
+
+            map_locations: [
+                { id: "siege_01", name: "Pépinière Entreprises TP (Siège)", category: "siege", lat: 43.6050, lng: 3.9100, color: "#38bdf8", icon: "🏢", ownership: "Siège Social (Création)", budget_ini: 0, budget_used: 0, progress: 0, chef: "Alexandre Durand", desc: "Bureau de démarrage et domiciliation juridique." },
+                { id: "fourn_loc", name: "Point P Travaux Publics Montpellier", category: "fournisseur", lat: 43.5900, lng: 3.8800, color: "#ec4899", icon: "🏭", product: "Matériaux VRD & Outillage", distance: "4 km", desc: "Partenaire négoce matériaux pour nouvelles entreprises." },
+                { id: "dce_test", name: "DCE Barbazan (Chantier d'Entraînement)", category: "marche_public_ref", lat: 44.1120, lng: 4.0950, color: "#a855f7", icon: "🏛️", ownership: "DCE Référence Étalon", budget_ini: 920000, budget_used: 0, progress: 0, chef: "Support Pédagogique", desc: "Dossier type pour s'entraîner au chiffrage déboursé sec." }
+            ],
+
+            hr_employees: [
+                { id: "HR-DIR", name: "Alexandre Durand", role: "Président / Conducteur de Travaux", cat: "Direction", site: "Siège & Études de Prix", phone: "06 00 11 22 33", email: "contact@nouvelle-tp.fr", caces: "AIPR Concepteur • Bac+5 TP", exp: "Créateur d'entreprise", icon: "👷‍♂️" }
+            ],
+
+            hr_hierarchy: {
+                name: "Alexandre Durand",
+                role: "Fondateur & Président SASU / Conducteur de Travaux",
+                rank: "direction",
+                tel: "06 00 11 22 33",
+                aipr: "Concepteur",
+                caces: "Bac+5 TP & CACES",
+                badge: "Fondateur Gérant",
+                children: [
+                    {
+                        name: "Poste à Pourvoir (Recrutement)",
+                        role: "Chef de Chantier VRD / Travaux Publics",
+                        rank: "chef_chantier",
+                        tel: "En cours...",
+                        aipr: "Encadrant requis",
+                        caces: "R482 Cat B1",
+                        badge: "Poste Ouvert",
+                        children: [
+                            { name: "Poste à Pourvoir", role: "Maçon VRD / Canalisateur Qualifié", rank: "compagnon", tel: "En cours...", aipr: "Opérateur", caces: "Pose Tuyaux", badge: "Poste Ouvert" },
+                            { name: "Poste à Pourvoir", role: "Chauffeur Poids Lourds Benne 8x4", rank: "compagnon", tel: "En cours...", aipr: "Sensibilisé", caces: "Permis EC / FIMO", badge: "Poste Ouvert" }
+                        ]
+                    }
+                ]
+            },
+
+            ai_agents: [
+                { id: "agent-setup", name: "Agent IA Démarrage & Amorçage", avatar: "🚀", role: "Conseil Création", status: "Prêt", text: "Compte vierge prêt. Utilisez le module Technique & Analyse pour chiffrer vos premières fiches de tâches ou lancez un premier appel d'offres." },
+                { id: "agent-finances", name: "Agent IA Finances & Trésorerie", avatar: "📊", role: "Gestion BFR", status: "En attente", text: "0€ engagé. Privilégiez la location courte durée d'engins (Kiloutou/Loxam) sur vos 2 premiers chantiers pour préserver le BFR." }
+            ]
         },
+
         'stagiaire_tp': {
             id: 'stagiaire_tp',
-            name: 'Stagiaire TP & Conduite de Travaux (Études M4-L)',
+            name: 'Stagiaire TP & Conduite de Travaux (Études M4-L & Barbazan)',
             type: 'Dossiers de Cours & Formation',
+            siret: '775 889 123 00045 (Formation)',
+            capital: '150 000 €',
+            siege: 'École Nationale TP / ESTP / ESTPO Occitanie',
             caisse: 150000,
             bfr: 45000,
-            capital: '150 000 €',
-            siren: '775 889 123',
-            desc: 'Simulation basée sur les cours et dossiers réels du repo : DCE Giratoire Barbazan M4-L, Lotissement Aurouer 2021, Déviation Noé, fiches de tâches et ratios FNTP.',
-            projects_count: 3,
-            fleet_count: 3,
+            ca_annuel: 890000,
+            ca_prev: 1200000,
+            margin: 12.8,
             effectif_count: 9,
-            margin: 12.8
+            fleet_count: 3,
+            projects_count: 3,
+            safety_status: 'Conforme Pédagogique',
+            safety_sub: 'Exercices CSPS & Fiches Ratios FNTP',
+            treasury_sub: 'Budget d\'Études & DCE en cours',
+            projects_sub: 'Giratoire Barbazan, Aurouer, Béziers',
+            effectif_sub: '9 Collaborateurs & Stagiaires d\'Étude',
+            desc: 'Profil pédagogique basé sur les dossiers réels d\'apprentissage : DCE Giratoire Barbazan M4-L, Lotissement Aurouer 2021, Déviation Noé, fiches de cadences et calculs de prix de revient.',
+
+            projects: [
+                {
+                    id: "dce-01",
+                    code: "DCE-BARBAZAN",
+                    name: "Aménagement Giratoire Barbazan (DCE M4-L)",
+                    type: "dce_ref",
+                    ownership: "🏛️ Marché Public Réel DCE Étalon",
+                    badge_type: "Marché Public DCE Référence",
+                    loc: "Barbazan-Debat / Tarbes (65)",
+                    location: "Barbazan-Debat / Tarbes (65)",
+                    client: "Conseil Départemental (Maîtrise d'Ouvrage Publique)",
+                    moe: "Direction des Infrastructures & Routes",
+                    budget: 920000,
+                    spent: 506000,
+                    budget_used: 506000,
+                    progress: 55,
+                    status: "Étude & Exécution",
+                    manager: "Michel Tuteur",
+                    site_chief: "Éric Lefebvre",
+                    chef: "M. Tuteur ESTP (Stagiaire: Éric L.)",
+                    workers_count: 5,
+                    delai_consomme_pct: 60,
+                    start_date: "01/02/2026",
+                    end_date: "31/07/2026",
+                    end: "31/07/2026",
+                    desc: "Dossier de consultation d'apprentissage M4-L : Giratoire 3 branches, déviation Noé, DQE 45 lignes, dimensionnement chaussée GNT 0/31.5 et enrobé BBSG.",
+                    assigned_machinery: [{ name: "Pelleteuse 14t Caterpillar 314E" }, { name: "Camion Bi-benne 6x4 MAN TGS" }],
+                    assigned_tools: [{ name: "Laser de Canalisateur Piper 100" }, { name: "Niveau Leica Sprinter" }],
+                    docs: [{ name: "CCTP_Barbazan", type: "pdf" }, { name: "Memoire_Technique_20_20", type: "pdf" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Terrassement & Déblais (5 400 m³)", budget: 280000, progress: 100, ds: 195000, pv: 280000 },
+                        { name: "Lot 2 : Assainissement & Bassin d'orage", budget: 310000, progress: 60, ds: 218000, pv: 310000 },
+                        { name: "Lot 3 : Chaussée & Giratoire Béton / Enrobé", budget: 330000, progress: 20, ds: 232000, pv: 330000 }
+                    ],
+                    steps: [
+                        { name: "Étude DCE & Mémoire Technique", progress: 100 },
+                        { name: "Piquetage & Balisage Déviation Noé", progress: 100 },
+                        { name: "Terrassement & Déblais généraux", progress: 100 },
+                        { name: "Pose collecteur pluvial Ø500", progress: 50 },
+                        { name: "Bordures T2 & Couche BBSG", progress: 0 }
+                    ]
+                },
+                {
+                    id: "dce-02",
+                    code: "DCE-AUROUER",
+                    name: "Lotissement Résidentiel Les Chênes (Aurouer 2021)",
+                    type: "dce_ref",
+                    ownership: "🏛️ Marché Public Réel DCE Étalon",
+                    badge_type: "Marché Public DCE Référence",
+                    loc: "Aurouer (03)",
+                    location: "Aurouer (03)",
+                    client: "Société d'Aménagement Foncier",
+                    moe: "Bureau d'Études VRD Centre",
+                    budget: 380000,
+                    spent: 304000,
+                    budget_used: 304000,
+                    progress: 80,
+                    status: "En cours",
+                    manager: "Michel Tuteur",
+                    site_chief: "Laurent Vasseur",
+                    chef: "L. Formateur VRD",
+                    workers_count: 3,
+                    delai_consomme_pct: 82,
+                    start_date: "10/10/2025",
+                    end_date: "30/04/2026",
+                    end: "30/04/2026",
+                    desc: "Viabilisation complète de 42 lots pavillonnaires : réseaux EU/EP séparatifs, voirie partagée calcaire et noue paysagère.",
+                    assigned_machinery: [{ name: "Compacteur Mixte Hamm HD14" }],
+                    assigned_tools: [{ name: "Théodolite Topcon DT-200" }],
+                    docs: [{ name: "CCTP_Aurouer", type: "pdf" }, { name: "SOPRE_Dechets", type: "pdf" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Terrassement & Voirie Primaire", budget: 140000, progress: 100, ds: 98000, pv: 140000 },
+                        { name: "Lot 2 : Réseaux Eaux Usées & Eau Potable", budget: 150000, progress: 90, ds: 105000, pv: 150000 },
+                        { name: "Lot 3 : Finitions & Noues Paysagères", budget: 90000, progress: 45, ds: 62000, pv: 90000 }
+                    ],
+                    steps: [
+                        { name: "Terrassement des voiries", progress: 100 },
+                        { name: "Pose tuyaux PVC CR8 Ø200", progress: 100 },
+                        { name: "Branchements particuliers", progress: 80 },
+                        { name: "Enrobé trottoirs & noues", progress: 40 }
+                    ]
+                },
+                {
+                    id: "dce-03",
+                    code: "DCE-BEZIERS",
+                    name: "Plateforme Logistique & Déboursé Sec (Béziers)",
+                    type: "dce_ref",
+                    ownership: "🏛️ Projet d'Étude Cadences",
+                    badge_type: "Étude de Prix Étalon",
+                    loc: "Béziers Ouest (34)",
+                    location: "Béziers Ouest (34)",
+                    client: "Investisseur Privé Logistique",
+                    moe: "Ingénierie BTP Méditerranée",
+                    budget: 210000,
+                    spent: 52500,
+                    budget_used: 52500,
+                    progress: 25,
+                    status: "En cours",
+                    manager: "Michel Tuteur",
+                    site_chief: "Paul Ingénieur",
+                    chef: "P. Ingénieur TP",
+                    workers_count: 3,
+                    delai_consomme_pct: 28,
+                    start_date: "01/03/2026",
+                    end_date: "30/08/2026",
+                    end: "30/08/2026",
+                    desc: "Plateforme 15 000 m² : calculs de cadences pelles 24t, temps unitaires de compactage et prix de revient déboursé sec.",
+                    assigned_machinery: [{ name: "Pelleteuse 14t Caterpillar 314E" }],
+                    assigned_tools: [{ name: "Station CAO Mensura" }],
+                    docs: [{ name: "Etude_Debourse_Excel", type: "xlsx" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Décapage & Traitement chaux/ciment", budget: 120000, progress: 40, ds: 84000, pv: 120000 },
+                        { name: "Lot 2 : Réseau eaux pluviales lourdes", budget: 90000, progress: 0, ds: 62000, pv: 90000 }
+                    ],
+                    steps: [
+                        { name: "Décapage 15 000 m²", progress: 60 },
+                        { name: "Traitement de sol chaux", progress: 15 },
+                        { name: "Pose collecteurs EP béton", progress: 0 }
+                    ]
+                }
+            ],
+
+            fleet: [
+                { id: "ENG-ST01", name: "Pelleteuse 14t Caterpillar 314E", cat: "Engin Didactique", type: "Pelle moyenne", brand: "Caterpillar", loc: "Chantier Barbazan (M4-L)", status: "Sur Chantier", val: 110000, price: 110000, hourly_cost: 75, vgp: "01/10/2026", immat: "CAT-314-E", fuel: 80, hours: 2100, weight: "14t", power: "75 kW", capacity: "0.7 m³", project: "Giratoire Barbazan", icon: "🚜" },
+                { id: "ENG-ST02", name: "Compacteur Mixte Hamm HD14", cat: "Engin Didactique", type: "Compacteur mixte", brand: "Hamm", loc: "Chantier Aurouer", status: "Sur Chantier", val: 35000, price: 35000, hourly_cost: 40, vgp: "15/11/2026", immat: "HM-140-TP", fuel: 88, hours: 1250, weight: "4.5t", power: "35 kW", capacity: "1.38 m", project: "Lotissement Aurouer", icon: "🚜" },
+                { id: "ENG-ST03", name: "Camion Bi-benne 6x4 MAN TGS", cat: "Poids Lourd", type: "Porteur 26t", brand: "MAN", loc: "Plateforme Béziers", status: "Disponible", val: 95000, price: 95000, hourly_cost: 65, vgp: "05/12/2026", immat: "MAN-626-TP", fuel: 75, hours: 2400, weight: "26t", power: "294 kW", capacity: "14 t", project: "Béziers", icon: "🚛" }
+            ],
+
+            depot_inventory: [
+                { id: "ST-001", name: "Niveau Numérique Leica Sprinter 250M", cat: "Topographie", zone: "bureaux", loc: "Studio Topo Étudiants", status: "Au Dépôt", val: 2400, vgp: "Calibré 2026", icon: "📐" },
+                { id: "ST-002", name: "Théodolite Électronique Topcon DT-200", cat: "Topographie", zone: "bureaux", loc: "Studio Topo Étudiants", status: "Au Dépôt", val: 1800, vgp: "Calibré 2026", icon: "📐" },
+                { id: "ST-003", name: "Laser de Canalisateur Piper 100", cat: "Topographie", zone: "atelier", loc: "Magasin didactique", status: "Au Dépôt", val: 2900, vgp: "Étalonné", icon: "🔴" },
+                { id: "ST-004", name: "Casier d'Apprentissage GNT 0/31.5 (40t)", cat: "Granulat", zone: "casiers", loc: "Casier d'Essais n°1", status: "Stock : 40 Tonnes", val: 720, vgp: "Conforme NF", icon: "🧱" },
+                { id: "ST-005", name: "Station CAO Mensura Genius & Civil 3D", cat: "DAO", zone: "bureaux", loc: "Salle informatique", status: "En service", val: 6500, vgp: "Licence Éducation", icon: "💻" }
+            ],
+
+            cashflow_transactions: [
+                { date: "15/04/2026", type: "Situation DCE", label: "Acompte Situation n°3 - Giratoire Barbazan DCE", amount: 180000, status: "Encaissé (Simulé)" },
+                { date: "10/04/2026", type: "Matériaux", label: "Fourniture GNT 0/31.5A Calcaire - Carrière Cemex", amount: -32400, status: "Payé" },
+                { date: "01/04/2026", type: "Location", label: "Location Pelle 14t & Compacteur Hamm HD14", amount: -12500, status: "Payé" },
+                { date: "20/03/2026", type: "Subvention", label: "Subvention Région Formation Conduite de Travaux", amount: 14900, status: "Encaissé" }
+            ],
+
+            documents: [
+                { id: "DOC-DCE-01", title: "CCTP Complet Giratoire Barbazan (DCE M4-L)", cat: "DCE Référence", chantier: "Giratoire Barbazan", date: "12/01/2026", format: "PDF", size: "6.2 Mo" },
+                { id: "DOC-DCE-02", title: "Mémoire Technique d'Appel d'Offres VRD (Exemple 20/20)", cat: "Mémoire AO", chantier: "Giratoire Barbazan", date: "20/01/2026", format: "PDF", size: "4.5 Mo" },
+                { id: "DOC-DCE-03", title: "Fichier Excel Déboursé Sec & Ratios Temps Unitaires", cat: "Chiffrage", chantier: "Plateforme Béziers", date: "05/03/2026", format: "XLSX", size: "3.1 Mo" },
+                { id: "DOC-DCE-04", title: "SOPRE - Schéma Organisationnel Gestion des Déchets", cat: "Environnement", chantier: "Lotissement Aurouer", date: "15/02/2026", format: "PDF", size: "1.9 Mo" }
+            ],
+
+            map_locations: [
+                { id: "dce_barb", name: "Giratoire Barbazan (DCE M4-L)", category: "marche_public_ref", lat: 44.1120, lng: 4.0950, color: "#a855f7", icon: "🏛️", ownership: "Marché Public Réel DCE Étalon", budget_ini: 920000, budget_used: 506000, progress: 55, chef: "M. Tuteur ESTP", desc: "Dossier consultation de référence, déviation Noé, DQE 45 lignes." },
+                { id: "dce_auro", name: "Lotissement Aurouer (DCE Public)", category: "marche_public_ref", lat: 46.6800, lng: 3.3000, color: "#a855f7", icon: "🏛️", ownership: "Marché Public Réel DCE Étalon", budget_ini: 380000, budget_used: 304000, progress: 80, chef: "L. Formateur VRD", desc: "Viabilisation 42 lots et assainissement EU/EP." },
+                { id: "dce_beziers", name: "Plateforme Logistique Béziers", category: "chantier", lat: 43.3400, lng: 3.2200, color: "#38bdf8", icon: "🏗️", ownership: "Projet d'Étude Cadences", budget_ini: 210000, budget_used: 52500, progress: 25, chef: "P. Ingénieur TP", desc: "Terrassement grande masse et étude de prix." },
+                { id: "centre_forma", name: "Centre de Formation Conduite Travaux", category: "siege", lat: 43.6200, lng: 3.8600, color: "#f59e0b", icon: "🎓", stock_val: "150 000 €", contact: "04 67 99 88 77", desc: "Plateforme pédagogique, studio DAO et parc matériel école." }
+            ],
+
+            hr_employees: [
+                { id: "HR-TUT", name: "Michel Tuteur", role: "Conducteur de Travaux Principal (Tuteur)", cat: "Encadrement", site: "Chantier Barbazan & École", phone: "06 88 77 66 55", email: "m.tuteur@formation-tp.fr", caces: "AIPR Concepteur • ESTP 1998", exp: "28 ans", icon: "👨‍🏫" },
+                { id: "HR-STAG", name: "Éric Lefebvre", role: "Stagiaire Assistant Conducteur de Travaux", cat: "Étudiant", site: "Chantier Barbazan & Aurouer", phone: "06 11 22 33 44", email: "eric.lefebvre@formation-tp.fr", caces: "AIPR Encadrant • En cours", exp: "Licence Pro TP", icon: "👷‍♂️" },
+                { id: "HR-CHEF1", name: "Laurent Vasseur", role: "Chef de Chantier Formateur", cat: "Maîtrise", site: "Chantier Aurouer", phone: "06 22 33 44 55", email: "l.vasseur@formation-tp.fr", caces: "AIPR Encadrant • CACES A/B", exp: "16 ans", icon: "👷‍♂️" },
+                { id: "HR-COMP4", name: "6 Compagnons en Formation", role: "Maçons VRD & Canalisateurs Apprenants", cat: "Stagiaires", site: "Ensemble des sites didactiques", phone: "Standard Formation", email: "groupe@formation-tp.fr", caces: "CACES R482 • AIPR Opérateur", exp: "Formation active", icon: "👷‍♂️" }
+            ],
+
+            hr_hierarchy: {
+                name: "Michel Tuteur",
+                role: "Conducteur de Travaux Senior (Tuteur Pédagogique)",
+                rank: "direction",
+                tel: "06 88 77 66 55",
+                aipr: "Concepteur / Encadrant",
+                caces: "ESTP 1998 • R482",
+                badge: "Tuteur Entreprise",
+                children: [
+                    {
+                        name: "Éric Lefebvre",
+                        role: "Stagiaire Assistant Conducteur de Travaux",
+                        rank: "chef_chantier",
+                        tel: "06 11 22 33 44",
+                        aipr: "Encadrant (En cours)",
+                        caces: "Licence Pro TP",
+                        badge: "DCE Barbazan M4-L",
+                        children: [
+                            {
+                                name: "Laurent Vasseur",
+                                role: "Chef de Chantier Formateur Application",
+                                rank: "chef_equipe",
+                                tel: "06 22 33 44 55",
+                                aipr: "Encadrant",
+                                caces: "R482 Cat A/B",
+                                badge: "Chantier Aurouer",
+                                children: [
+                                    { name: "Groupe 4 Apprenants", role: "Maçons VRD & Canalisateurs Stagiaires", rank: "compagnon", tel: "École TP", aipr: "Opérateur", caces: "CACES R482", badge: "Apprenants TP" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "Céline Dupuy",
+                        role: "Formatrice Topographie & Métrés DQE",
+                        rank: "expert_tech",
+                        tel: "06 33 44 55 66",
+                        aipr: "Concepteur",
+                        caces: "Leica / Mensura",
+                        badge: "Études & Ratios",
+                        children: [
+                            { name: "2 Techniciens d'Études", role: "Chiffrage Déboursé Sec & Plans EXE", rank: "compagnon", tel: "Studio École", aipr: "Sensibilisé", caces: "DAO Covadis", badge: "Études DCE" }
+                        ]
+                    }
+                ]
+            },
+
+            ai_agents: [
+                { id: "agent-cours", name: "Agent IA Tuteur Pédagogique", avatar: "🎓", role: "Méthodes & DCE", status: "Actif", text: "DCE Barbazan M4-L ouvert. Vérifiez les cadences théoriques de pose de bordures (40 ml/j) par rapport aux ratios FNTP." },
+                { id: "agent-debourse", name: "Agent IA Déboursé Sec & Coefficients", avatar: "📐", role: "Étude de Prix", status: "Vérifié", text: "Le coefficient K = 1.34 appliqué sur le giratoire de Barbazan respecte les frais généraux (14%) et l'aléa chantier (3%)." }
+            ]
         },
+
         'artisan_2k': {
             id: 'artisan_2k',
             name: 'Artisan TP Sud VRD (Perso 2k€ + Bureau + EPI)',
             type: 'Amorçage Artisanal 2 000 €',
+            siret: '883 456 123 00019',
+            capital: '2 000 €',
+            siege: 'Frontignan / Sète (34)',
             caisse: 2000,
             bfr: 1800,
-            capital: '2 000 €',
-            siren: '883 456 123',
-            desc: 'Démarrage avec 2 000 € de capital, bureau loué en pépinière, lot complet d\'EPI certifiés (Casques, gilets Cl.2, chaussures S3), outillage laser et réfection tranchée.',
-            projects_count: 1,
-            fleet_count: 0,
+            ca_annuel: 125000,
+            ca_prev: 140000,
+            margin: 18.5,
             effectif_count: 2,
-            margin: 18.5
+            fleet_count: 1,
+            projects_count: 1,
+            safety_status: '100% Équipé EPI',
+            safety_sub: 'Casques, Gilets Cl.2, S3, DICT Validée',
+            treasury_sub: '2 000 € Disponible • Amorçage Proximité',
+            projects_sub: '1 Chantier Actif : Branchement Frontignan',
+            effectif_sub: '2 Personnes : Artisan Gérant + 1 Apprenti',
+            desc: 'Amorçage artisanal avec 2 000 € de capital, bureau compact loué, lot complet d\'EPI certifiés (Casques, gilets Cl.2, chaussures S3), outillage laser et réfection tranchée.',
+
+            projects: [
+                {
+                    id: "art-01",
+                    code: "ART-2026-01",
+                    name: "Branchement Tout-à-l'Égout & Enrobé Allée (Frontignan)",
+                    type: "internal",
+                    ownership: "🔨 Chantier Artisan Proximité",
+                    badge_type: "Chantier Artisan Proximité",
+                    loc: "Frontignan Plage (34)",
+                    location: "Frontignan Plage (34)",
+                    client: "Particulier / Syndic Résidence Les Tamaris",
+                    moe: "Artisan TP Sud VRD (Conception & Réalisation)",
+                    budget: 18500,
+                    spent: 11100,
+                    budget_used: 11100,
+                    progress: 60,
+                    status: "En cours",
+                    manager: "Julien Artisan",
+                    site_chief: "Julien Artisan",
+                    chef: "Julien Artisan (avec Lucas V. Apprenti)",
+                    workers_count: 2,
+                    delai_consomme_pct: 65,
+                    start_date: "08/04/2026",
+                    end_date: "24/04/2026",
+                    end: "24/04/2026",
+                    desc: "Création d'un raccordement assainissement individuel Ø160 PVC CR8 (32 ml), boîte de branchement 400x400 avec tampon fonte C250 et réfection enrobé à chaud 45 m².",
+                    assigned_machinery: [{ name: "Fourgonnette Renault Trafic 145 DCI" }, { name: "Mini-Pelle 2.5t Yanmar (Kiloutou)" }],
+                    assigned_tools: [{ name: "Laser Spectra LL300" }, { name: "Scie Stihl TS420" }, { name: "Pilonneuse Wacker" }],
+                    docs: [{ name: "Devis_Signe_Frontignan", type: "pdf" }, { name: "Facture_Acompte_30", type: "pdf" }],
+                    lots_breakdown: [
+                        { name: "Lot 1 : Tranchée & Pose PVC CR8 Ø160 (32 ml)", budget: 8500, progress: 100, ds: 5100, pv: 8500 },
+                        { name: "Lot 2 : Boîte de branchement & Raccordement EU", budget: 4200, progress: 80, ds: 2400, pv: 4200 },
+                        { name: "Lot 3 : Remblai GNT 0/31.5 & Enrobé Noir (45 m²)", budget: 5800, progress: 20, ds: 3600, pv: 5800 }
+                    ],
+                    steps: [
+                        { name: "Traçage DICT & Découpe enrobé", progress: 100 },
+                        { name: "Tranchée mini-pelle 2.5t", progress: 100 },
+                        { name: "Pose tube PVC Ø160 & lit de sable", progress: 100 },
+                        { name: "Boîte siphoïde & essai d'écoulement", progress: 80 },
+                        { name: "Compactage GNT & Enrobé à chaud", progress: 20 }
+                    ]
+                }
+            ],
+
+            fleet: [
+                { id: "ENG-ART1", name: "Fourgonnette Renault Trafic 145 DCI Atelier", cat: "Utilitaire Aménagé", type: "Fourgonnette artisanale", brand: "Renault", loc: "Chantier Frontignan", status: "En Service", val: 24500, price: 24500, hourly_cost: 25, vgp: "08/11/2026", immat: "TR-145-TP", fuel: 85, hours: 820, weight: "3.0t", power: "107 kW", capacity: "8 m³", project: "Branchement Frontignan", icon: "🚐" },
+                { id: "ENG-ART2", name: "Mini-Pelle 2.5t Yanmar SV26 (Location Kiloutou)", cat: "Engin Loué", type: "Mini-pelle urbaine", brand: "Yanmar", loc: "Chantier Frontignan", status: "Sur Chantier", val: 0, price: 0, hourly_cost: 45, vgp: "Contrat Kiloutou", immat: "LOC-KL-25", fuel: 75, hours: 320, weight: "2.6t", power: "18 kW", capacity: "0.08 m³", project: "Branchement Frontignan", icon: "🚜" }
+            ],
+
+            depot_inventory: [
+                { id: "ART-LOC", name: "Local Artisanal & Bureau Compact (45 m²)", cat: "Immobilier", zone: "bureaux", loc: "Zone Artisanale Frontignan", status: "Loué (450 €/mois)", val: 0, vgp: "Bail 3/6/9", icon: "🏢" },
+                { id: "ART-EPI", name: "Lot Complet EPI Certifiés (2 Casques JSP, 4 Gilets Cl.2, 2 Chaussures S3)", cat: "EPI", zone: "bureaux", loc: "Armoire Vestiaire", status: "100% Neuf Conforme", val: 680, vgp: "Conforme EN 397/20345", icon: "🦺" },
+                { id: "ART-LZR", name: "Niveau Laser Rotatif Spectra Precision LL300", cat: "Topographie", zone: "atelier", loc: "Coffret Fourgonnette", status: "Opérationnel", val: 1200, vgp: "Calibré 2026", icon: "🔴" },
+                { id: "ART-SCI", name: "Découpeuse Thermique Stihl TS420 (Disque 350mm)", cat: "Petit Outillage", zone: "atelier", loc: "Atelier Frontignan", status: "Révisée", val: 1100, vgp: "Conforme CE", icon: "🪚" },
+                { id: "ART-PIL", name: "Pilonneuse Wacker Neuson BS50-2plus", cat: "Compactage", zone: "atelier", loc: "Atelier Frontignan", status: "Opérationnelle", val: 1800, vgp: "VGP valide", icon: "🔨" },
+                { id: "ART-ENR", name: "Enrobé à Froid Noir en Seaux 25kg (2 Seaux)", cat: "Enrobé", zone: "casiers", loc: "Casier Stockage", status: "Stock : 50 kg", val: 50, vgp: "Prêt à l'emploi", icon: "🛢️" },
+                { id: "ART-PEHD", name: "Couronne PEHD Eau Potable Ø32 PN16 (25 ml)", cat: "Canalisation", zone: "racks", loc: "Rack Mural", status: "Stock : 25 ml", val: 85, vgp: "Certifié ACS", icon: "🪵" }
+            ],
+
+            cashflow_transactions: [
+                { date: "12/04/2026", type: "Acompte Client", label: "Acompte 30% Devis Signé - Résidence Les Tamaris Frontignan", amount: 5550, status: "Encaissé" },
+                { date: "09/04/2026", type: "Fournisseur", label: "Achat Lot Complet EPI Professionnels Certifiés (Casques, S3, Gilets)", amount: -680, status: "Payé" },
+                { date: "05/04/2026", type: "Loyer Local", label: "Loyer Mensuel Local Artisanal & Bureau 45m²", amount: -450, status: "Payé" },
+                { date: "08/04/2026", type: "Location Engin", label: "Location Semaine Mini-Pelle 2.5t Yanmar - Kiloutou TP", amount: -980, status: "Payé" }
+            ],
+
+            documents: [
+                { id: "DOC-ART-01", title: "Devis n°2026-014 Signé Bon Pour Accord - Branchement Frontignan", cat: "Commercial", chantier: "Frontignan Plage", date: "05/04/2026", format: "PDF (Signé)", size: "0.9 Mo" },
+                { id: "DOC-ART-02", title: "Facture Acompte 30% FA-2026-008 (5 550 € TTC)", cat: "Comptabilité", chantier: "Frontignan Plage", date: "08/04/2026", format: "PDF", size: "0.6 Mo" },
+                { id: "DOC-ART-03", title: "Attestation Assurance Décennale & Responsabilité Civile Pro (SMA BTP)", cat: "Assurance", chantier: "Siège Frontignan", date: "01/01/2026", format: "PDF", size: "1.4 Mo" },
+                { id: "DOC-ART-04", title: "Récépissé DICT Télé-service Guichet Unique (Réseau Eau/Élec)", cat: "Réglementaire", chantier: "Frontignan Plage", date: "02/04/2026", format: "PDF", size: "1.1 Mo" },
+                { id: "DOC-ART-05", title: "Livret d'Accueil & Consignes Sécurité Apprenti SST", cat: "Sécurité", chantier: "Atelier Frontignan", date: "15/03/2026", format: "PDF", size: "1.8 Mo" }
+            ],
+
+            map_locations: [
+                { id: "siege_art", name: "Atelier & Bureau Artisanal (Frontignan)", category: "siege", lat: 43.4470, lng: 3.7550, color: "#38bdf8", icon: "🏢", ownership: "Siège & Atelier Artisanal", budget_ini: 2000, budget_used: 0, progress: 100, chef: "Julien Artisan", desc: "Local 45m², stock outillage laser, EPI et magasin." },
+                { id: "ch_art", name: "Chantier Branchement Les Tamaris", category: "chantier", lat: 43.4350, lng: 3.7700, color: "#10b981", icon: "🏗️", ownership: "Chantier Actif Particulier", budget_ini: 18500, budget_used: 11100, progress: 60, chef: "Julien Artisan", desc: "Raccordement EU Ø160 et réfection enrobé 45m²." },
+                { id: "fourn_pointp", name: "Point P Travaux Publics Sète", category: "fournisseur", lat: 43.4180, lng: 3.7050, color: "#ec4899", icon: "🏭", product: "Tuyaux PVC, Mortiers, Enrobé froid", distance: "5 km", desc: "Fournisseur négoce de proximité." },
+                { id: "fourn_kilo", name: "Kiloutou TP Sète Littoral", category: "fournisseur", lat: 43.4250, lng: 3.7150, color: "#ec4899", icon: "🏭", product: "Location Mini-Pelle & Pilonneuse", distance: "4 km", desc: "Partenaire location matériel avec contrat pro." }
+            ],
+
+            hr_employees: [
+                { id: "HR-ART", name: "Julien Artisan", role: "Artisan Gérant / Canalisateur Maçon VRD", cat: "Gérant", site: "Chantier Frontignan", phone: "06 77 88 99 00", email: "julien@sudvrd.fr", caces: "AIPR Concepteur & Opérateur • CACES R482 A", exp: "11 ans", icon: "👷‍♂️" },
+                { id: "HR-APP", name: "Lucas Vidal", role: "Apprenti CAP Constructeur de Routes", cat: "Apprenti", site: "Chantier Frontignan", phone: "06 12 00 33 44", email: "lucas@sudvrd.fr", caces: "AIPR Opérateur • SST à jour", exp: "1ère année", icon: "👷‍♂️" }
+            ],
+
+            hr_hierarchy: {
+                name: "Julien Artisan",
+                role: "Artisan Gérant / Canalisateur & Maçon VRD",
+                rank: "direction",
+                tel: "06 77 88 99 00",
+                aipr: "Concepteur & Opérateur",
+                caces: "R482 Cat A (Mini-pelle)",
+                badge: "Artisan Gérant",
+                children: [
+                    {
+                        name: "Lucas Vidal",
+                        role: "Apprenti CAP Constructeur de Routes / VRD",
+                        rank: "compagnon",
+                        tel: "06 12 00 33 44",
+                        aipr: "Opérateur (1ère année)",
+                        caces: "SST & Prévention BTP",
+                        badge: "Apprenti Chantier"
+                    }
+                ]
+            },
+
+            ai_agents: [
+                { id: "agent-artisan", name: "Agent IA Artisan & Micro-Chantier", avatar: "🔨", role: "Gestion Proximité", status: "Actif", text: "Chantier Frontignan en bonne voie (60%). Pensez à facturer le solde de 12 950 € dès la fin de l'application de l'enrobé." },
+                { id: "agent-epi", name: "Agent IA Sécurité EPI & Outillage", avatar: "🦺", role: "Conformité", status: "100% Conforme", text: "Lot EPI certifié actif. Port du casque JSP et gilet classe 2 validé pour l'apprenti sur la voie publique." }
+            ]
         }
     };
 
+    function renderCockpitAiAgents() {
+        const list = document.getElementById('cockpit-ai-agents-list');
+        if (!list) return;
+        const agents = (companyData.ai_agents && companyData.ai_agents.length) ? companyData.ai_agents : [
+            { id: "agent-treso", name: "Agent IA Trésorerie & BFR", avatar: "💰", role: "Finances TP", status: "Optimal", text: "Trésorerie sous surveillance active." }
+        ];
+        list.innerHTML = agents.map(a => `
+            <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(56,189,248,0.25); border-radius: 6px; padding: 0.6rem; display: flex; gap: 0.6rem; align-items: flex-start;">
+                <div style="font-size: 1.4rem; line-height: 1;">${a.avatar}</div>
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                        <strong style="color: #f8fafc; font-size: 0.78rem;">${a.name}</strong>
+                        <span class="badge ${a.status === 'Optimal' || a.status === 'Conforme' || a.status === '100% Conforme' || a.status === '100% Équipé EPI' ? 'badge-success' : 'badge-info'}" style="font-size: 0.65rem;">${a.status}</span>
+                    </div>
+                    <div style="color: #cbd5e1; font-size: 0.72rem; line-height: 1.35;">${a.text}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderCockpitProjectsSummary() {
+        const list = document.getElementById('cockpit-projects-summary-list');
+        if (!list) return;
+        const projects = companyData.projects || [];
+        if (projects.length === 0) {
+            list.innerHTML = `
+                <div style="background: rgba(15,23,42,0.7); border: 1px dashed rgba(51,65,85,0.8); border-radius: 6px; padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.78rem;">
+                    <span style="font-size: 1.3rem;">📁</span><br>
+                    <strong>Aucun chantier engagé pour ce profil.</strong><br>
+                    <span style="font-size: 0.7rem; color: #64748b;">Créez un premier marché ou lancez un devis dans le module Chantiers.</span>
+                </div>
+            `;
+            return;
+        }
+        list.innerHTML = projects.map(p => `
+            <div style="background: rgba(15,23,42,0.8); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 180px;">
+                    <div style="font-weight: 700; font-size: 0.78rem; color: #f8fafc; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>🏗️</span> ${p.name}
+                    </div>
+                    <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.15rem;">${p.loc || p.location} • Chef : ${p.chef || p.site_chief || 'Non assigné'}</div>
+                    <div style="margin-top: 0.35rem; width: 100%; background: #1e293b; height: 6px; border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; width: ${p.progress}%; background: linear-gradient(90deg, var(--cyan), var(--emerald)); border-radius: 3px;"></div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.78rem; font-weight: 800; color: var(--emerald);">${p.budget.toLocaleString('fr-FR')} €</div>
+                    <div style="font-size: 0.7rem; color: #38bdf8; font-weight: 700;">${p.progress}% achevé</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function switchCompanyProfile(profileId) {
-        const prof = companyProfiles[profileId] || companyProfiles['occitanie_tp'];
+        const prof = companyProfilesData[profileId] || companyProfilesData['occitanie_tp'];
         currentCompanyProfile = profileId;
         caisseBalance = prof.caisse;
 
-        // Update active badges in modal
+        // 1. Update companyData master object with profile data
+        companyData.company = {
+            name: prof.name,
+            capital: prof.capital,
+            siren: prof.siret,
+            siege: prof.siege,
+            tresorerie_actuelle: prof.caisse,
+            bfr: prof.bfr,
+            ca_annuel_prev: prof.ca_prev,
+            marge_nette_moyenne: prof.margin
+        };
+        companyData.projects = (prof.projects || []).map(p => ({
+            ...p,
+            location: p.loc || p.location,
+            budget_used: p.spent || p.budget_used,
+            manager: p.manager || (p.chef ? p.chef.split('(')[0].trim() : 'Conducteur TP'),
+            site_chief: p.chef || p.site_chief || 'Chef de Chantier',
+            delai_consomme_pct: p.delai_consomme_pct || p.progress,
+            end: p.end_date || p.end || '30/06/2026',
+            assigned_machinery: p.assigned_machinery || [{ name: "Pelle TP", type: "Pelle" }],
+            assigned_tools: p.assigned_tools || [{ name: "Laser de chantier", type: "Topo" }],
+            docs: p.docs || [{ name: "CCTP", type: "pdf" }]
+        }));
+        companyData.fleet = (prof.fleet || []).map(v => ({
+            ...v,
+            brand: v.brand || v.name.split(' ')[0],
+            price: v.val || v.price || 50000,
+            hourly_cost: v.hourly_cost || 85,
+            project: v.project || (v.status.includes('Chantier') ? v.loc : 'Disponible'),
+            weight: v.weight || '12t',
+            power: v.power || '120 kW',
+            capacity: v.capacity || '1.2 m³'
+        }));
+        companyData.hr_employees = prof.hr_employees || [];
+        companyData.hr_hierarchy = prof.hr_hierarchy || null;
+        companyData.cashflow_transactions = prof.cashflow_transactions || [];
+        companyData.documents = prof.documents || [];
+        companyData.map_locations = prof.map_locations || [];
+        companyData.ai_agents = prof.ai_agents || [];
+
+        // 2. Update depot inventory
+        if (typeof depotInventoryData !== 'undefined' && Array.isArray(depotInventoryData)) {
+            depotInventoryData.length = 0;
+            (prof.depot_inventory || []).forEach(item => depotInventoryData.push(item));
+        }
+
+        // 3. Update modal and quick button styling
         document.querySelectorAll('.company-profile-card').forEach(c => {
             c.classList.remove('active');
             c.style.border = '1px solid rgba(51,65,85,0.8)';
@@ -995,30 +1843,82 @@ def get_js_part1():
         ['occitanie_tp', 'compte_neuf', 'stagiaire_tp', 'artisan_2k'].forEach(id => {
             const badge = document.getElementById('prof-active-badge-' + id);
             if (badge) badge.style.display = (id === profileId) ? 'inline-block' : 'none';
+            const qBtn = document.getElementById('btn-quick-' + id);
+            if (qBtn) {
+                if (id === profileId) {
+                    qBtn.classList.add('active');
+                    qBtn.style.border = '2px solid var(--cyan)';
+                    qBtn.style.background = 'rgba(56,189,248,0.15)';
+                } else {
+                    qBtn.classList.remove('active');
+                    qBtn.style.border = '1px solid rgba(51,65,85,0.8)';
+                    qBtn.style.background = 'rgba(30,41,59,0.5)';
+                }
+            }
         });
 
-        // Update Top HUD
+        // 4. Update Top HUD
         const topName = document.getElementById('active-company-name-top');
         const topCaisse = document.getElementById('caisse-balance-top');
-        const compCaisse = document.getElementById('company-caisse-val');
-        const kpiTreasury = document.getElementById('kpi-treasury-val');
-
         if (topName) topName.textContent = prof.name + ' ▾';
         if (topCaisse) topCaisse.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
-        if (compCaisse) compCaisse.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
+
+        // 5. Update Cockpit Hero Cards
+        const kpiTreasury = document.getElementById('kpi-treasury-val');
+        const kpiTreasurySub = document.getElementById('kpi-treasury-sub');
+        const kpiProj = document.getElementById('kpi-active-projects-val');
+        const kpiProjSub = document.getElementById('kpi-active-projects-sub');
+        const kpiEff = document.getElementById('kpi-effectif-val');
+        const kpiEffSub = document.getElementById('kpi-effectif-sub');
+        const kpiSafe = document.getElementById('kpi-safety-val');
+        const kpiSafeSub = document.getElementById('kpi-safety-sub');
+
         if (kpiTreasury) kpiTreasury.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
+        if (kpiTreasurySub) kpiTreasurySub.textContent = prof.treasury_sub || '';
+        if (kpiProj) kpiProj.textContent = (prof.projects || []).length + ' Actif' + ((prof.projects || []).length > 1 ? 's' : '');
+        if (kpiProjSub) kpiProjSub.textContent = prof.projects_sub || '';
+        if (kpiEff) kpiEff.textContent = prof.effectif_count + ' Salarié' + (prof.effectif_count > 1 ? 's' : '');
+        if (kpiEffSub) kpiEffSub.textContent = prof.effectif_sub || '';
+        if (kpiSafe) kpiSafe.textContent = prof.safety_status || '100% Validé';
+        if (kpiSafeSub) kpiSafeSub.textContent = prof.safety_sub || '';
+
+        // 6. Update Company Tab Info
+        const compBadge = document.getElementById('company-profile-badge');
+        const compTitle = document.getElementById('company-profile-title');
+        const compSub = document.getElementById('company-profile-sub');
+        const compCaisse = document.getElementById('company-caisse-val');
+        const compCA = document.getElementById('company-ca-val');
+
+        if (compBadge) compBadge.textContent = prof.type;
+        if (compTitle) compTitle.textContent = prof.name;
+        if (compSub) compSub.textContent = `SIRET : ${prof.siret} • Capital : ${prof.capital} • Siège : ${prof.siege}`;
+        if (compCaisse) compCaisse.textContent = prof.caisse.toLocaleString('fr-FR') + ' €';
+        if (compCA) compCA.textContent = prof.ca_annuel.toLocaleString('fr-FR') + ' €';
 
         logCockpit('🏢 Profil entreprise activé : ' + prof.name, 'ok');
         closeModal('company-switch-modal');
 
-        // Re-render active views
+        // 7. Trigger complete re-rendering across all modules
         try {
-            if (currentNav === 'cockpit') renderCockpitOsmMap();
-            if (currentNav === 'company') renderCompanyCashflowTable();
-            if (currentNav === 'projects_hub') renderProjectsHub();
-            if (currentNav === 'fleet') renderFleetGrid();
-            if (currentNav === 'hr') { initHrTree(); renderHrPartners(); }
-            if (currentNav === 'benchmark') { renderBenchmarkTable(); renderInventoryTable(); renderTeamsBenchmarkTable(); }
+            renderCockpitAiAgents();
+            renderCockpitProjectsSummary();
+            renderCockpitOsmMap();
+            renderCompanyCashflowTable();
+            renderProjectsHub();
+            renderFleetGrid();
+            renderFleetTable();
+            renderFleetTelemetryView();
+            if (typeof renderDocsTable === 'function') renderDocsTable();
+            if (typeof renderDepotInventory === 'function') renderDepotInventory();
+            if (typeof initDepotCanvas === 'function') initDepotCanvas();
+            if (typeof initHrTree === 'function') initHrTree();
+            if (typeof renderHrPartners === 'function') renderHrPartners();
+            if (typeof renderPlanningAgenda === 'function' && typeof renderPlanningGantt === 'function') {
+                if (planningViewMode.startsWith('agenda')) renderPlanningAgenda();
+                else renderPlanningGantt();
+            }
+            if (typeof renderProcurementOrders === 'function') renderProcurementOrders();
+            if (typeof renderSuppliersTable === 'function') renderSuppliersTable();
         } catch (e) {
             console.error('Error re-rendering after company profile switch:', e);
         }
@@ -1099,6 +1999,21 @@ def get_js_part1():
             if (currentProjectFilter === 'dce_ref') return p.ownership.includes('DCE');
             return true;
         });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; background: rgba(15,23,42,0.85); border: 2px dashed rgba(51,65,85,0.8); border-radius: 8px; padding: 2.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📁</div>
+                    <h3 style="color: #f8fafc; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem;">Aucun Marché ni Chantier Engagé</h3>
+                    <p style="color: #94a3b8; font-size: 0.85rem; max-width: 500px; margin: 0 auto 1.2rem;">Votre entreprise est configurée en démarrage zéro. Répondez à votre premier appel d'offres ou importez un DCE d'apprentissage pour démarrer votre activité.</p>
+                    <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="alert('Formulaire de création de devis déboursé sec ouvert.');">➕ Créer un Nouveau Devis</button>
+                        <button class="btn btn-secondary" onclick="switchCompanyProfile('stagiaire_tp')">🎓 Charger les DCE d'apprentissage (Barbazan / Aurouer)</button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
 
         grid.innerHTML = filtered.map(p => `
             <div class="card" style="border: 1px solid rgba(51,65,85,0.8); background: rgba(15,23,42,0.95); display: flex; flex-direction: column; justify-content: space-between;">
