@@ -886,6 +886,32 @@ def get_js_part1():
         renderCockpitOsmMap();
     }
 
+    function openSelectedCockpitMapPointModal() {
+        if (!selectedMapPoint) {
+            alert("Veuillez d'abord cliquer sur un point du réseau territorial sur la carte.");
+            return;
+        }
+        const pt = selectedMapPoint;
+        if (pt.category === 'chantier' || pt.category === 'marche_public_ref') {
+            if (typeof openProjectDetailsModal === 'function') {
+                openProjectDetailsModal(pt.id || (pt.category === 'chantier' ? 'p-01' : 'dce-01'));
+            } else {
+                switchNav('projects_hub');
+            }
+        } else if (pt.category === 'depot') {
+            switchNav('depot');
+            if (typeof openDepotZoneModal === 'function') {
+                openDepotZoneModal('all');
+            }
+        } else if (pt.category === 'fournisseur') {
+            switchNav('procurement');
+        } else if (pt.category === 'siege') {
+            switchNav('company');
+        } else {
+            alert(`Fiche : ${pt.name}\n${pt.desc || ''}\nLocalisation : Occitanie`);
+        }
+    }
+
     // ==========================================
     // 5b. MULTI-ENTERPRISE PROFILES SWITCHER
     // ==========================================

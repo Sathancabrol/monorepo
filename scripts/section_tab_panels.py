@@ -46,16 +46,32 @@ def get_tab_panels():
                         <span class="card-title">🗺️ Cartographie SIG des Chantiers & Flotte (Occitanie)</span>
                         <div style="font-size: 0.75rem; color: #94a3b8;">Déclic anti-collision radial, filtres d'affichage et géolocalisation live</div>
                     </div>
-                    <div style="display: flex; gap: 0.3rem; align-items: center;">
-                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('all', this)">Tous</button>
-                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('chantier', this)">Chantiers</button>
-                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('engin', this)">Engins</button>
-                        <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('depot', this)">Dépôt</button>
+                    <div style="display: flex; gap: 0.3rem; align-items: center; flex-wrap: wrap;">
+                        <button class="btn-secondary map-filter-btn active" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('all', this)">Tous</button>
+                        <button class="btn-secondary map-filter-btn" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('chantier', this)">Chantiers</button>
+                        <button class="btn-secondary map-filter-btn" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('engin', this)">Engins</button>
+                        <button class="btn-secondary map-filter-btn" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('depot', this)">Dépôt</button>
+                        <button class="btn-secondary map-filter-btn" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="filterCockpitMap('fournisseur', this)">Fournisseurs</button>
                         <button class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="resetCockpitMapZoom()">🔍 Reset</button>
                     </div>
                 </div>
                 <div class="map-container" style="height: 380px; position: relative; overflow: hidden;" id="cockpit-map-container">
                     <canvas id="cockpit-osm-map-canvas" style="width: 100%; height: 100%; cursor: grab;"></canvas>
+                </div>
+
+                <!-- SELECTED PIN DETAIL CARD -->
+                <div id="cockpit-selected-pin-card" style="margin-top: 0.5rem; background: rgba(15,23,42,0.95); border: 1px solid var(--cyan); border-radius: 6px; padding: 0.6rem 0.8rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <span id="pin-badge-cat" class="badge badge-info">POINT SIG</span>
+                        <div>
+                            <strong id="pin-name-val" style="color: #f8fafc; font-size: 0.85rem;">Sélectionnez un point sur la carte SIG</strong>
+                            <div id="pin-desc-val" style="font-size: 0.72rem; color: #94a3b8;">Cliquez sur un marqueur pour inspecter ses données en direct</div>
+                        </div>
+                    </div>
+                    <div id="pin-metrics-box" style="display: flex; gap: 0.75rem; font-size: 0.72rem; color: #cbd5e1;"></div>
+                    <div>
+                        <button class="btn btn-primary" id="btn-pin-open-details" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="openSelectedCockpitMapPointModal()">🔍 Inspecter Fiche Complète</button>
+                    </div>
                 </div>
             </div>
 
@@ -87,6 +103,66 @@ def get_tab_panels():
                             <!-- Activity lines populated dynamically -->
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEATHER & INTEMPÉRIES BANNER CCAG TRAVAUX -->
+        <div style="margin-top: 1rem; background: rgba(15,23,42,0.85); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.5rem;">☀️</span>
+                <div>
+                    <div style="font-size: 0.82rem; font-weight: 800; color: #f8fafc;">Station Météo Chantiers Occitanie (Sète / Alès / Montpellier) : <strong>22°C • Vent Tramontane 25 km/h</strong></div>
+                    <div style="font-size: 0.72rem; color: #94a3b8;">Conditions optimales de coulage béton C25/30 et pose d'enrobés BBSG (> 5°C) • Seuil arrêt intempéries CCAG : Non atteint</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.4rem;">
+                <span class="badge badge-success">✅ Conditions Chantier : Favorables</span>
+                <button class="btn-secondary" style="font-size: 0.72rem; padding: 0.2rem 0.5rem;" onclick="alert('Registre intempéries officiel CCAG Travaux 2021 à jour : 0 jour d\'arrêt intempérie ce mois-ci.');">📋 Registre Intempéries</button>
+            </div>
+        </div>
+
+        <!-- 4 COMPANY PROFILES DIRECT SWITCHER -->
+        <div style="margin-top: 1rem; background: rgba(15,23,42,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.4rem;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: var(--cyan);">🏢 Bascule Instantanée d'Entreprise & États Financiers :</div>
+                <span style="font-size: 0.72rem; color: #94a3b8;">Synchronisation temps réel : Caisse, Chantiers, Flotte, Inventaire Dépôt & RH</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem;">
+                <button class="btn btn-secondary company-quick-btn active" id="btn-quick-occitanie_tp" onclick="switchCompanyProfile('occitanie_tp')">
+                    🏢 <strong>Occitanie TP</strong><br><span style="font-size:0.68rem; color:var(--emerald);">PME 450k€ • 4 Chantiers</span>
+                </button>
+                <button class="btn btn-secondary company-quick-btn" id="btn-quick-compte_neuf" onclick="switchCompanyProfile('compte_neuf')">
+                    ✨ <strong>Compte Vierge</strong><br><span style="font-size:0.68rem; color:#94a3b8;">0€ • Démarrage création</span>
+                </button>
+                <button class="btn btn-secondary company-quick-btn" id="btn-quick-stagiaire_tp" onclick="switchCompanyProfile('stagiaire_tp')">
+                    🎓 <strong>Stagiaire TP</strong><br><span style="font-size:0.68rem; color:#38bdf8;">Cours & DCE Réel Barbazan</span>
+                </button>
+                <button class="btn btn-secondary company-quick-btn" id="btn-quick-artisan_2k" onclick="switchCompanyProfile('artisan_2k')">
+                    🔨 <strong>Artisan BTP</strong><br><span style="font-size:0.68rem; color:var(--amber);">2 000€ • Bureau + EPI</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MULTI-AGENT AI FEEDS & REAL-TIME CHANTIER ALERTS -->
+        <div class="grid-2" style="margin-top: 1rem;">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🤖 Agents IA Spécialisés & Analyses Métier</span>
+                    <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="runAutopilot()">🔄 Relancer Audit</button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.76rem;" id="cockpit-ai-agents-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📊 Synthèse Avancement Chantiers & Consommation Budgets</span>
+                    <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="switchNav('projects_hub')">Voir Tous</button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="cockpit-projects-summary-list">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
@@ -230,6 +306,7 @@ def get_tab_panels():
                                 <th onclick="sortDepotInventory('status')" style="padding: 0.55rem; text-align: center; cursor: pointer;">DISPONIBILITÉ / STATUT ⬍</th>
                                 <th onclick="sortDepotInventory('val')" style="padding: 0.55rem; text-align: right; cursor: pointer;">VALEUR (€) ⬍</th>
                                 <th onclick="sortDepotInventory('vgp')" style="padding: 0.55rem; text-align: center; cursor: pointer;">CONTRÔLE VGP ⬍</th>
+                                <th style="padding: 0.55rem; text-align: center;">ACTION</th>
                             </tr>
                         </thead>
                         <tbody id="depot-inventory-tbody">

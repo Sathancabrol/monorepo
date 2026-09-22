@@ -42,6 +42,17 @@ def get_modals():
         </div>
     </div>
 
+    <!-- 4b. DEPOT ACTIVE ZONE COMPLETE SHEET MODAL -->
+    <div class="modal-backdrop" id="depot-zone-modal">
+        <div class="modal-box" style="max-width:850px;">
+            <div id="depot-zone-modal-body"></div>
+            <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(51,65,85,0.5); padding-top:1rem;">
+                <button class="btn btn-primary" onclick="alert('Bon de sortie / inventaire de zone exporté en PDF.');">📄 Exporter Fiche Inventaire</button>
+                <button class="btn btn-secondary" onclick="closeModal('depot-zone-modal')">Fermer la fiche zone</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 5. SDP DETAIL MODAL -->
     <div class="modal-backdrop" id="sdp-detail-modal">
         <div class="modal-box" style="max-width:720px;">

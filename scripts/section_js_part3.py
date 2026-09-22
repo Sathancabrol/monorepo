@@ -185,6 +185,179 @@ def get_js_part3():
     let depotViewMode = '2d';
     let selectedDepotZone = 'all';
 
+    const depotZoneSheets = {
+        bureaux: {
+            id: 'bureaux',
+            icon: '🏢',
+            title: 'BÂTIMENT ADMINISTRATIF, DIRECTION & VESTIAIRES',
+            subtitle: 'Bâtiment modulaire RT2020 R+1 (120 m²) • Siège Opérationnel & Conduite de Travaux',
+            badge: 'ZONE ADMINISTRATIVE & TECHNIQUE',
+            surface: '120 m² (RDC 70 m² + Étage 50 m²)',
+            status: 'Opérationnel & Sécurisé 24/7',
+            safety: 'Badge RFID crypté • Alarme NF-A2P 3 boucliers • DAE Schiller • Registre RUS',
+            assetsVal: '40 500 €',
+            desc: 'Centre névralgique de la gestion des chantiers TP. Héberge le bureau de conduite de travaux, le pôle études de prix, le studio DAO / Topographie et les vestiaires chauffés du personnel de chantier avec douches et réfectoire.',
+            rooms: [
+                { name: "Bureau Conduite de Travaux (R+1)", use: "Supervision chantiers, réunions MOE/CSPS, plannings et validations de situations mensuelles" },
+                { name: "Studio Topographie & DAO (R+1)", use: "Postes Mensura Genius & Civil 3D, traitement nuages de points LiDAR et plans d'EXE" },
+                { name: "Accueil & Secrétariat Administratif (RDC)", use: "Facturation, déclarations DICT / AIPR, pointages journaliers, registre SST" },
+                { name: "Vestiaires & Réfectoire Équipe (RDC)", use: "12 casiers ventilés, 2 douches chaudes, réfectoire 8 places micro-ondes" }
+            ],
+            equipment: [
+                { code: "ADM-001", name: "Station Totale Robotisée Leica TS16", cat: "Topographie", val: "22 000 €", state: "Étalonnée 2026" },
+                { code: "ADM-002", name: "Drone DJI Matrice 300 RTK + LiDAR Zenmuse L1", cat: "Aérien", val: "18 500 €", state: "DGAC S1/S2/S3" },
+                { code: "ADM-003", name: "Traceur de plans grand format HP DesignJet A0", cat: "DAO", val: "4 200 €", state: "En service" },
+                { code: "ADM-004", name: "Défibrillateur Automatisé Externe (DAE) Schiller", cat: "Secours", val: "1 800 €", state: "Contrôlé OK" }
+            ],
+            protocols: [
+                "Contrôle d'accès strict par badge RFID et journalisation des entrées/sorties",
+                "Mise à jour hebdomadaire du Registre Unique de Sécurité (RUS) et affichage obligatoire",
+                "Stockage des dossiers d'ouvrages exécutés (DOE) et plans de récolement sous coffre ignifugé"
+            ]
+        },
+        atelier: {
+            id: 'atelier',
+            icon: '🔧',
+            title: 'ATELIER MÉCANIQUE, ENTRETIEN & MAGASIN OUTILLAGE',
+            subtitle: 'Atelier couvert 80 m² • Maintenance préventive niveaux 1 & 2, étalonnage lasers et magasin outillage',
+            badge: 'ZONE MAINTENANCE & OUTILLAGE',
+            surface: '80 m² • Dallage béton armé haute résistance anti-poussière',
+            status: 'Opérationnel & Contrôlé',
+            safety: 'Fosse vidange avec caillebotis coulissant • Extincteurs CO2/Poudre • Kit antipollution 50L',
+            assetsVal: '12 850 €',
+            desc: 'Atelier technique dédié aux révisions courantes des matériels TP, aux réparations hydrauliques rapides (remplacement flexibles 400b), au stockage sous armoire forte des lasers et outillages électroportatifs.',
+            rooms: [
+                { name: "Fosse de vidange & maintenance PL", use: "Vidanges moteur/ponts, graissage centralisé, révision circuits hydrauliques" },
+                { name: "Magasin & Armoire Sécurisée Outillage", use: "Armoire forte pour lasers de canalisateur, niveaux automatiques et perforateurs" },
+                { name: "Poste soudure & rechargement godets", use: "Poste à souder TIG/MIG, découpeur plasma, rechargement aciers anti-abrasion Hardox" },
+                { name: "Armoire ignifugée certifiée EN 14470-1", use: "Stockage solvants, peintures de traçage TP, huiles hydrauliques ISO VG 46" }
+            ],
+            equipment: [
+                { code: "OUT-001", name: "Laser Canalisateur Piper 200 rouge", cat: "Topographie", val: "3 800 €", state: "Étalonné 2026" },
+                { code: "OUT-002", name: "Découpeuse thermique à disque Stihl TS800", cat: "Petit Outillage", val: "1 650 €", state: "Révisée" },
+                { code: "OUT-003", name: "Plaque vibrante 100kg Bomag BVP 18/45", cat: "Compactage", val: "2 400 €", state: "VGP valide" },
+                { code: "OUT-004", name: "Pilonneuse 4 temps Wacker Neuson BS60", cat: "Compactage", val: "2 200 €", state: "Opérationnelle" },
+                { code: "OUT-005", name: "Compresseur triphasé 500L - 11 bars", cat: "Atelier", val: "2 800 €", state: "Cuve éprouvée" }
+            ],
+            protocols: [
+                "Vérification Générale Périodique (VGP) obligatoire tous les 6 mois pour les équipements de levage",
+                "Évacuation des huiles usagées via bordereau Trackdéchets vers filière agréée",
+                "Port obligatoire des EPI d'atelier : lunettes anti-projection, gants anti-coupure et chaussures S3"
+            ]
+        },
+        casiers: {
+            id: 'casiers',
+            icon: '🧱',
+            title: 'CASIERS EXTÉRIEURS DE STOCKAGE GRANULATS (140 Tonnes)',
+            subtitle: '3 alvéoles séparées par blocs béton empilables type Lego pour approvisionnement express et chantiers urgents',
+            badge: 'ZONE STOCKAGE MATÉRIAUX',
+            surface: '220 m² • Radier béton étanche',
+            status: 'Approvisionné (140 Tonnes en stock)',
+            safety: 'Blocs béton autobloquants 2.4t • Séparation étanche des fractions granulométriques',
+            assetsVal: '3 040 €',
+            desc: 'Zone de transit et réserve tampon des matériaux en vrac. Permet le chargement direct au godet de 1.4m³ sur camion benne 8x4 pour approvisionner les tranchées et couches de forme en urgence.',
+            rooms: [
+                { name: "Alvéole 1 : Grave GNT 0/31.5A Calcaire", use: "Stock : 65 Tonnes • Remblai de tranchées VRD & couche de fondation voirie" },
+                { name: "Alvéole 2 : Sable Alluvionnaire 0/4", use: "Stock : 45 Tonnes • Lit de pose canalisations et enrobage protecteur tuyaux" },
+                { name: "Alvéole 3 : Enrobé à Froid & Gravillons 4/10", use: "Stock : 40 seaux (1t) enrobé noir + 30 Tonnes gravillons 4/10 pour réfection" }
+            ],
+            equipment: [
+                { code: "MAT-001", name: "GNT 0/31.5A Calcaire concassé", cat: "Granulat", val: "1 170 €", state: "Conforme NF P98-125" },
+                { code: "MAT-002", name: "Sable de pose 0/4 alluvionnaire", cat: "Granulat", val: "990 €", state: "NF EN 13242" },
+                { code: "MAT-003", name: "Enrobé à froid haute performance en seaux", cat: "Enrobé", val: "880 €", state: "Prêt à l'emploi" }
+            ],
+            protocols: [
+                "Contrôle systématique du bon de livraison et de la fiche technique carrière à chaque rotation",
+                "Vérification de la propreté du radier béton pour éviter toute contamination des graves",
+                "Bâchage géotextile imperméable en cas d'épisode pluvieux pour préserver la teneur en eau"
+            ]
+        },
+        racks: {
+            id: 'racks',
+            icon: '🪵',
+            title: 'RACKS DE STOCKAGE TUBES, CANALISATIONS & FONTES',
+            subtitle: 'Structures cantilevers galvanisées 3 niveaux pour canalisations AEP, EU, EP et réseaux secs',
+            badge: 'ZONE TUBES & CANALISATIONS',
+            surface: '220 m² de linéaire de stockage sécurisé',
+            status: 'Stock Contrôlé & Agréé',
+            safety: 'Butées d\'arrêt anti-chute sur chaque montant cantilever • Cales en bois biseautées',
+            assetsVal: '24 240 €',
+            desc: 'Stockage ordonné et protégé des canalisations et pièces de voirie. Évite l\'ovalisation des tubes PVC/PEHD et protège les revêtements intérieurs époxy et joints à emboîtement automatique.',
+            rooms: [
+                { name: "Cantilever 1 : Fontes Ductiles AEP", use: "Tuyaux Fonte Intégrale DN400 & DN200 (180 ml) + raccords fonte à brides" },
+                { name: "Cantilever 2 : Tubes PVC Assainissement", use: "Tubes PVC Compact CR8 Ø200 (120 ml) et Ø315 à joint à lèvre étanche" },
+                { name: "Cantilever 3 : Gaines TPC & Couronnes PEHD", use: "Fourreaux annelés TPC Ø40-160 (Rouge/Vert/Jaune) + PEHD PN16 Eau Potable (600 ml)" },
+                { name: "Zone Sol : Regards & Cadres Fonte C250/D400", use: "Tampons de voirie PAM PAMREX, grilles concaves, boîtes de branchement" }
+            ],
+            equipment: [
+                { code: "CAN-001", name: "Tuyaux Fonte Intégral DN400 (L=6m)", cat: "Canalisation", val: "19 800 €", state: "Certifié NF AEP" },
+                { code: "CAN-002", name: "Tubes PVC Assainissement CR8 Ø200", cat: "Canalisation", val: "3 240 €", state: "NF EN 1401" },
+                { code: "CAN-003", name: "Couronnes PEHD Eau Potable PN16 Ø32", cat: "Canalisation", val: "1 200 €", state: "Attestation ACS" }
+            ],
+            protocols: [
+                "Manutention obligatoire avec élingues larges en textile protégées pour ne pas blesser le revêtement",
+                "Maintien des obturateurs de protection d'usine jusqu'à la pose en tranchée",
+                "Empilement limité à 3 niveaux de cantilevers selon notes de calcul constructeur"
+            ]
+        },
+        parking: {
+            id: 'parking',
+            icon: '🚜',
+            title: 'PARC DE STATIONNEMENT POIDS LOURDS & ENGINS TP (340 m²)',
+            subtitle: 'Aire de remisage sécurisée et clôturée avec bornes de maintien de charge 24V et télésurveillance',
+            badge: 'PARC MATÉRIEL ROULANT',
+            surface: '340 m² • Enrobé lourd BBSG 0/14 (Giration semi-remorque rayon 12.5m)',
+            status: 'Surveillance Active 24/7',
+            safety: 'Sens unique de giration • Cales de roues obligatoires • Vidéoprotection IA franchissement',
+            assetsVal: '500 000 €',
+            desc: 'Zone de stationnement nocturne et de manœuvre pour l\'ensemble du parc roulant lourd. Conçue pour résister au ripage intensif des chenilles acier et au poinçonnement des béquilles de porte-char.',
+            rooms: [
+                { name: "Emplacement P1 : Pelle Chenilles Liebherr R924", use: "24 Tonnes • Godet terrassement 1.4m³ & BRH (Actuellement sur Chantier Alès)" },
+                { name: "Emplacement P2 : Pelleteuse Mecalac 12MTX", use: "10 Tonnes • Sur pneus urbaine avec tiltrotator et attache rapide (Au Dépôt)" },
+                { name: "Emplacement P3 : Camion Benne 8x4 Scania G450", use: "PTAC 32t • Bi-benne calorifugée pour enrobés et transport granulats (Au Dépôt)" },
+                { name: "Emplacement P4 : Compacteur Tandem Bomag BW120", use: "2.7 Tonnes • Double cylindre vibrant pour enrobés et tranchées (Sur Chantier Sète)" }
+            ],
+            equipment: [
+                { code: "ENG-001", name: "Pelle Chenilles 24t Liebherr R924", cat: "Engin Lourd", val: "185 000 €", state: "Sur Chantier Alès" },
+                { code: "ENG-002", name: "Pelleteuse Urbaine Mecalac 12MTX", cat: "Engin Lourd", val: "125 000 €", state: "Au Dépôt" },
+                { code: "ENG-003", name: "Camion Benne 8x4 Scania G450", cat: "Poids Lourd", val: "145 000 €", state: "Au Dépôt" },
+                { code: "ENG-004", name: "Compacteur Tandem Bomag BW120", cat: "Engin Lourd", val: "45 000 €", state: "Sur Chantier Sète" }
+            ],
+            protocols: [
+                "Vitesse maximale limitée à 10 km/h sur tout le dépôt avec arrêt obligatoire au portail",
+                "Contrôle journalier des niveaux, feux de gabarit, pneumatiques et gyrophare avant sortie",
+                "Carnet de bord et rapport VGP semestrielle obligatoires dans chaque cabine d'engin"
+            ]
+        },
+        lavage: {
+            id: 'lavage',
+            icon: '🚿',
+            title: 'AIRE DE LAVAGE ÉTANCHE & SÉPARATEUR HYDROCARBURES',
+            subtitle: 'Plateforme de décontamination et nettoyage des engins conforme Loi sur l\'Eau et DREAL',
+            badge: 'ZONE ENVIRONNEMENTALE ÉTANCHE',
+            surface: '100 m² • Dalle béton quartzée armée avec caniveau grille fonte F900',
+            status: 'Conforme Réglementation Environnementale',
+            safety: 'Débourbeur 5000L • Séparateur classe 1 (< 5 mg/L) • Alarme trop-plein / hydrocarbures',
+            assetsVal: '12 600 €',
+            desc: 'Installation environnementale obligatoire pour le débourbage des trains de chenilles, le nettoyage haute pression des bennes et le traitement des eaux polluées avant rejet.',
+            rooms: [
+                { name: "Dalle de lavage à pentes convergentes 2%", use: "Guidage gravitaire des eaux souillées vers le caniveau central de rétention" },
+                { name: "Local technique Nettoyeur Haute Pression", use: "Kärcher HDS 10/20-4M eau chaude 80°C / 200 bars avec détergent biodégradable" },
+                { name: "Fosse Débourbeur 5000 Litres", use: "Piégeage des sables, terres et graviers lourds par sédimentation gravitaire" },
+                { name: "Séparateur Coalescent Hydrocarbures Classe 1", use: "Cellule coalescente capturant les micro-gouttes d'huile pour rejet < 5 mg/L" }
+            ],
+            equipment: [
+                { code: "ENV-001", name: "Séparateur Hydrocarbures 10 L/s", cat: "Environnement", val: "8 500 €", state: "Vidangé 2026" },
+                { code: "ENV-002", name: "Nettoyeur HP Eau Chaude Kärcher 200b", cat: "Nettoyage", val: "4 100 €", state: "Opérationnel" }
+            ],
+            protocols: [
+                "Interdiction formelle de vidanger des solvants ou produits corrosifs non autorisés",
+                "Contrat de maintenance et pompage semestriel des boues par société agréée (Saria)",
+                "Tenue à jour du registre des déchets dangereux Trackdéchets et analyses DREAL semestrielles"
+            ]
+        }
+    };
+
     const depotInventoryData = [
         { id: "ENG-001", name: "Pelle Chenilles 24t Liebherr R924", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - Emplacement P1", status: "Sur Chantier Alès", val: 185000, vgp: "14/10/2026", icon: "🚜" },
         { id: "ENG-002", name: "Pelleteuse Urbaine Mecalac 12MTX", cat: "Engin Lourd", zone: "parking", loc: "Parc Engins - Emplacement P2", status: "Au Dépôt", val: 125000, vgp: "05/11/2026", icon: "🚜" },
@@ -209,7 +382,7 @@ def get_js_part3():
         document.getElementById('btn-depot-' + mode)?.classList.add('active');
 
         const hud = document.getElementById('depot-view-hud');
-        if (hud) hud.textContent = mode === '2d' ? 'VUE PLAN 2D ACTIVE' : (mode === '3d' ? 'PERSPECTIVE 3D ISOMÉTRIQUE' : 'LISTE INVENTAIRE TABULAIRE');
+        if (hud) hud.textContent = mode === '2d' ? 'VUE PLAN 2D ACTIVE (CLIQUEZ SUR UNE ZONE POUR DÉTAIL)' : (mode === '3d' ? 'PERSPECTIVE 3D ISOMÉTRIQUE' : 'LISTE INVENTAIRE TABULAIRE');
 
         const vCont = document.getElementById('depot-viewport-container');
         if (vCont) vCont.style.display = mode === 'list' ? 'none' : 'block';
@@ -226,6 +399,121 @@ def get_js_part3():
         initDepotCanvas();
     }
 
+    function getDepotZoneAtPos(mx, my) {
+        const marginX = 40, marginY = 30;
+        if (depotViewMode === '2d') {
+            if (mx >= marginX + 15 && mx <= marginX + 15 + 160 && my >= marginY + 15 && my <= marginY + 15 + 90) return 'bureaux';
+            if (mx >= marginX + 15 && mx <= marginX + 15 + 160 && my >= marginY + 120 && my <= marginY + 120 + 100) return 'atelier';
+            if (mx >= marginX + 220 && mx <= marginX + 220 + 220 && my >= marginY + 15 && my <= marginY + 15 + 75) return 'casiers';
+            if (mx >= marginX + 220 && mx <= marginX + 220 + 220 && my >= marginY + 105 && my <= marginY + 105 + 65) return 'racks';
+            if (mx >= marginX + 220 && mx <= marginX + 220 + 340 && my >= marginY + 185 && my <= marginY + 185 + 80) return 'parking';
+            if (mx >= marginX + 460 && mx <= marginX + 460 + 100 && my >= marginY + 15 && my <= marginY + 15 + 155) return 'lavage';
+        } else if (depotViewMode === '3d') {
+            const canvas = document.getElementById('depot-viewport-canvas');
+            const w = canvas ? canvas.width : 800;
+            const h = canvas ? canvas.height : 340;
+            const cx = w / 2, cy = h / 2 + 20;
+            if (mx >= cx - 180 && mx <= cx - 100 && my >= cy - 85 && my <= cy - 15) return 'bureaux';
+            if (mx >= cx - 140 && mx <= cx - 60 && my >= cy + 10 && my <= cy + 50) return 'atelier';
+            if (mx >= cx + 40 && mx <= cx + 130 && my >= cy - 70 && my <= cy - 35) return 'casiers';
+            if (mx >= cx + 40 && mx <= cx + 130 && my >= cy + 20 && my <= cy + 60) return 'parking';
+        }
+        return null;
+    }
+
+    function openDepotZoneModal(zoneId) {
+        const key = (zoneId && depotZoneSheets[zoneId]) ? zoneId : 'bureaux';
+        const zone = depotZoneSheets[key];
+        const body = document.getElementById('depot-zone-modal-body');
+        if (!body) return;
+
+        body.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; border-bottom:1px solid rgba(56,189,248,0.3); padding-bottom:0.75rem;">
+                <div>
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                        <span style="font-size:1.6rem;">${zone.icon}</span>
+                        <h3 style="margin:0; font-size:1.15rem; color:#f8fafc; font-weight:800;">${zone.title}</h3>
+                    </div>
+                    <div style="font-size:0.8rem; color:#94a3b8;">${zone.subtitle}</div>
+                </div>
+                <div style="text-align:right;">
+                    <span class="badge badge-success">${zone.badge}</span>
+                    <div style="font-size:0.75rem; color:#38bdf8; margin-top:0.3rem; font-weight:700;">Surface : ${zone.surface}</div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.6rem; margin-bottom:1rem;">
+                <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(51,65,85,0.6); padding:0.6rem; border-radius:6px;">
+                    <div style="font-size:0.7rem; color:#94a3b8;">STATUT OPÉRATIONNEL</div>
+                    <div style="font-size:0.85rem; font-weight:800; color:var(--emerald); margin-top:0.2rem;">${zone.status}</div>
+                </div>
+                <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(51,65,85,0.6); padding:0.6rem; border-radius:6px;">
+                    <div style="font-size:0.7rem; color:#94a3b8;">VALEUR DES ACTIFS SUR SITE</div>
+                    <div style="font-size:0.85rem; font-weight:800; color:var(--cyan); margin-top:0.2rem;">${zone.assetsVal}</div>
+                </div>
+                <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(51,65,85,0.6); padding:0.6rem; border-radius:6px;">
+                    <div style="font-size:0.7rem; color:#94a3b8;">SÉCURITÉ & PROTOCOLE</div>
+                    <div style="font-size:0.72rem; font-weight:700; color:var(--amber); margin-top:0.2rem; line-height:1.2;">${zone.safety}</div>
+                </div>
+            </div>
+
+            <div style="background:rgba(30,41,59,0.5); border:1px solid var(--border); border-radius:6px; padding:0.75rem; margin-bottom:1rem; font-size:0.8rem; color:#e2e8f0; line-height:1.5;">
+                <strong>📝 Description & Fonction Opérationnelle :</strong> ${zone.desc}
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="font-size:0.85rem; font-weight:800; color:#38bdf8; margin-bottom:0.5rem;">📐 Organisation Spatiale & Sous-Espaces :</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
+                    ${zone.rooms.map(r => `
+                        <div style="background:rgba(15,23,42,0.7); border:1px solid rgba(56,189,248,0.2); padding:0.55rem; border-radius:5px;">
+                            <div style="font-weight:700; font-size:0.78rem; color:#f8fafc;">${r.name}</div>
+                            <div style="font-size:0.72rem; color:#94a3b8; margin-top:0.2rem;">${r.use}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="font-size:0.85rem; font-weight:800; color:#38bdf8; margin-bottom:0.5rem;">📋 Matériels & Actifs Assignés à cette Zone :</div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.75rem;">
+                        <thead>
+                            <tr style="background:rgba(30,41,59,0.9); color:#94a3b8; text-align:left;">
+                                <th style="padding:0.4rem;">CODE</th>
+                                <th style="padding:0.4rem;">DÉSIGNATION ÉQUIPEMENT</th>
+                                <th style="padding:0.4rem;">CATÉGORIE</th>
+                                <th style="padding:0.4rem; text-align:right;">VALEUR ESTIMÉE</th>
+                                <th style="padding:0.4rem; text-align:center;">STATUT / VGP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${zone.equipment.map(e => `
+                                <tr style="border-top:1px solid rgba(51,65,85,0.4);">
+                                    <td style="padding:0.4rem; font-family:'JetBrains Mono'; color:#38bdf8; font-weight:700;">${e.code}</td>
+                                    <td style="padding:0.4rem; font-weight:700; color:#f8fafc;">${e.name}</td>
+                                    <td style="padding:0.4rem; color:#94a3b8;">${e.cat || 'Équipement'}</td>
+                                    <td style="padding:0.4rem; text-align:right; font-weight:700; color:var(--emerald);">${e.val}</td>
+                                    <td style="padding:0.4rem; text-align:center;"><span class="badge badge-success" style="font-size:0.65rem;">${e.state}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <div style="font-size:0.85rem; font-weight:800; color:var(--amber); margin-bottom:0.4rem;">⚖️ Protocoles de Sécurité & Obligations Réglementaires :</div>
+                <ul style="margin:0; padding-left:1.2rem; font-size:0.75rem; color:#cbd5e1; line-height:1.5;">
+                    ${zone.protocols.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+
+        if (typeof showModal === 'function') {
+            showModal('depot-zone-modal');
+        }
+    }
+
     function initDepotCanvas() {
         const canvas = document.getElementById('depot-viewport-canvas');
         if (!canvas) return;
@@ -234,6 +522,35 @@ def get_js_part3():
         const h = canvas.parentElement.clientHeight || 340;
         canvas.width = w;
         canvas.height = h;
+
+        if (!canvas.dataset.hasDepotClick) {
+            canvas.dataset.hasDepotClick = 'true';
+            
+            canvas.addEventListener('mousemove', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+                
+                const hoveredZone = getDepotZoneAtPos(mx, my);
+                canvas.style.cursor = hoveredZone ? 'pointer' : 'default';
+            });
+
+            canvas.addEventListener('click', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+
+                const clickedZone = getDepotZoneAtPos(mx, my);
+                if (clickedZone) {
+                    selectDepotZone(clickedZone, document.querySelector(`.depot-zone-filter[onclick*="${clickedZone}"]`));
+                    openDepotZoneModal(clickedZone);
+                }
+            });
+        }
 
         ctx.fillStyle = '#060a14';
         ctx.fillRect(0, 0, w, h);
@@ -427,6 +744,7 @@ def get_js_part3():
                 <td style="padding: 0.55rem; text-align: center;"><span class="badge ${i.status.includes('Chantier') ? 'badge-warning' : 'badge-success'}">${i.status}</span></td>
                 <td style="padding: 0.55rem; text-align: right; font-weight: 800; color: var(--emerald);">${i.val.toLocaleString('fr-FR')} €</td>
                 <td style="padding: 0.55rem; text-align: center; font-size: 0.72rem; color: #38bdf8;">${i.vgp}</td>
+                <td style="padding: 0.55rem; text-align: center;"><button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="openDepotZoneModal('${i.zone}')">🔍 Fiche Zone</button></td>
             </tr>
         `).join('');
     }
@@ -460,6 +778,7 @@ def get_js_part3():
                 <td style="padding: 0.55rem; text-align: center;"><span class="badge ${i.status.includes('Chantier') ? 'badge-warning' : 'badge-success'}">${i.status}</span></td>
                 <td style="padding: 0.55rem; text-align: right; font-weight: 800; color: var(--emerald);">${i.val.toLocaleString('fr-FR')} €</td>
                 <td style="padding: 0.55rem; text-align: center; font-size: 0.72rem; color: #38bdf8;">${i.vgp}</td>
+                <td style="padding: 0.55rem; text-align: center;"><button class="btn btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="openDepotZoneModal('${i.zone}')">🔍 Fiche Zone</button></td>
             </tr>
         `).join('');
     }
