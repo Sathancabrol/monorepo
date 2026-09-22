@@ -2698,8 +2698,7 @@ def get_js_part3():
     function updateFormulaCalculator() {
         const type = document.getElementById('formula-type-select')?.value || 'cubature_terrassement';
         const inputsCont = document.getElementById('formula-inputs-container');
-        const out = document.getElementById('formula-calculation-output');
-        if (!inputsCont || !out) return;
+        if (!inputsCont) return;
 
         if (type === 'cubature_terrassement') {
             inputsCont.innerHTML = `
@@ -2710,6 +2709,8 @@ def get_js_part3():
                     <div class="input-group"><label class="input-label">Coef. Foisonnement (Cf)</label><input type="number" id="f-cuba-cf" class="input-field" value="1.25" step="0.05" oninput="calculateTechniqueFormula()"></div>
                     <div class="input-group"><label class="input-label">Capacité Benne 8x4 (m³)</label><input type="number" id="f-cuba-cam" class="input-field" value="10.0" step="1" oninput="calculateTechniqueFormula()"></div>
                     <div class="input-group"><label class="input-label">Densité Déblai (t/m³)</label><input type="number" id="f-cuba-rho" class="input-field" value="1.80" step="0.1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Temps Cycle Pelle (Tc en s)</label><input type="number" id="f-cuba-tc" class="input-field" value="22" step="1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Volume Godet (Vg en m³)</label><input type="number" id="f-cuba-vg" class="input-field" value="0.90" step="0.05" oninput="calculateTechniqueFormula()"></div>
                 </div>
             `;
         } else if (type === 'tonnage_enrobes') {
@@ -2719,23 +2720,71 @@ def get_js_part3():
                     <div class="input-group"><label class="input-label">Largeur Chaussée (l en m)</label><input type="number" id="f-enr-w" class="input-field" value="6.00" step="0.5" oninput="calculateTechniqueFormula()"></div>
                     <div class="input-group"><label class="input-label">Épaisseur Enrobé (e en cm)</label><input type="number" id="f-enr-e" class="input-field" value="6.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
                     <div class="input-group"><label class="input-label">Masse Volumique (t/m³)</label><input type="number" id="f-enr-rho" class="input-field" value="2.40" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Dosage Émulsion C65B4 (kg/m²)</label><input type="number" id="f-enr-emul" class="input-field" value="0.50" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Cadence Finisseur (t/h)</label><input type="number" id="f-enr-cad" class="input-field" value="45.0" step="5" oninput="calculateTechniqueFormula()"></div>
+                </div>
+            `;
+        } else if (type === 'perimetre_bordures') {
+            inputsCont.innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.75rem;">
+                    <div class="input-group"><label class="input-label">Linéaire Bordures (L en ml)</label><input type="number" id="f-bord-l" class="input-field" value="180" step="10" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Largeur Semelle (l en m)</label><input type="number" id="f-bord-w" class="input-field" value="0.30" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Épaisseur Semelle (e en m)</label><input type="number" id="f-bord-h" class="input-field" value="0.15" step="0.02" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Épaulement Arrière (m³/ml)</label><input type="number" id="f-bord-epaul" class="input-field" value="0.035" step="0.005" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Majoration Pertes & Coupes (%)</label><input type="number" id="f-bord-perte" class="input-field" value="3.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Poids Unitaire Bordure (kg/u)</label><input type="number" id="f-bord-poids" class="input-field" value="82.0" step="1" oninput="calculateTechniqueFormula()"></div>
                 </div>
             `;
         } else if (type === 'manning_hydraulique') {
             inputsCont.innerHTML = `
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.75rem;">
                     <div class="input-group"><label class="input-label">Diamètre Tuyau (DN en m)</label><input type="number" id="f-mann-d" class="input-field" value="0.40" step="0.05" oninput="calculateTechniqueFormula()"></div>
-                    <div class="input-group"><label class="input-label">Pente (mm/m ou m/m)</label><input type="number" id="f-mann-p" class="input-field" value="1.50" step="0.1" oninput="calculateTechniqueFormula()"></div>
-                    <div class="input-group"><label class="input-label">Strickler (Ks)</label><input type="number" id="f-mann-k" class="input-field" value="90" step="5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Pente (en % soit m/100m)</label><input type="number" id="f-mann-p" class="input-field" value="1.50" step="0.1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Strickler (Ks : 90 PVC / 75 Béton)</label><input type="number" id="f-mann-k" class="input-field" value="90" step="5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Remplissage h/D (0.7 = 70%)</label><input type="number" id="f-mann-hd" class="input-field" value="0.70" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                </div>
+            `;
+        } else if (type === 'pente_canalisateur') {
+            inputsCont.innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.75rem;">
+                    <div class="input-group"><label class="input-label">Altitude Radier Amont Z1 (m NGF)</label><input type="number" id="f-pente-z1" class="input-field" value="45.850" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Altitude Radier Aval Z2 (m NGF)</label><input type="number" id="f-pente-z2" class="input-field" value="44.950" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Distance Horizontale (L en m)</label><input type="number" id="f-pente-l" class="input-field" value="60.00" step="5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Hauteur Canne Voyant (H en m)</label><input type="number" id="f-pente-h" class="input-field" value="2.000" step="0.1" oninput="calculateTechniqueFormula()"></div>
+                </div>
+            `;
+        } else if (type === 'compactage_gtr') {
+            inputsCont.innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.75rem;">
+                    <div class="input-group"><label class="input-label">Épaisseur Compactée (e en m)</label><input type="number" id="f-gtr-e" class="input-field" value="0.25" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Largeur Cylindre Rouleau (L en m)</label><input type="number" id="f-gtr-w" class="input-field" value="1.68" step="0.1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Vitesse de Translation (v en km/h)</label><input type="number" id="f-gtr-v" class="input-field" value="4.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Nombre de Passes (N)</label><input type="number" id="f-gtr-n" class="input-field" value="6" step="1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Masse Volumique (t/m³)</label><input type="number" id="f-gtr-rho" class="input-field" value="2.10" step="0.05" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Débit d'Apport Chantier (t/h)</label><input type="number" id="f-gtr-qapp" class="input-field" value="120.0" step="10" oninput="calculateTechniqueFormula()"></div>
+                </div>
+            `;
+        } else if (type === 'revision_tp08') {
+            inputsCont.innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.75rem;">
+                    <div class="input-group"><label class="input-label">Montant Situation P0 (€ HT)</label><input type="number" id="f-rev-p0" class="input-field" value="145000" step="5000" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Indice Base Marché TP08(0)</label><input type="number" id="f-rev-i0" class="input-field" value="128.40" step="0.1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Indice Mois Facture TP08(m)</label><input type="number" id="f-rev-im" class="input-field" value="136.80" step="0.1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Part Fixe Non Révisable (a en %)</label><input type="number" id="f-rev-a" class="input-field" value="15.0" step="1" oninput="calculateTechniqueFormula()"></div>
                 </div>
             `;
         } else {
+            // debourse_sec_k
             inputsCont.innerHTML = `
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.75rem;">
-                    <div class="input-group"><label class="input-label">Main d'Œuvre (€/u)</label><input type="number" id="f-ds-mo" class="input-field" value="24.50" step="1" oninput="calculateTechniqueFormula()"></div>
-                    <div class="input-group"><label class="input-label">Fournitures (€/u)</label><input type="number" id="f-ds-mat" class="input-field" value="38.00" step="1" oninput="calculateTechniqueFormula()"></div>
-                    <div class="input-group"><label class="input-label">Matériel (€/u)</label><input type="number" id="f-ds-eng" class="input-field" value="12.50" step="1" oninput="calculateTechniqueFormula()"></div>
-                    <div class="input-group"><label class="input-label">Coefficient K</label><input type="number" id="f-ds-k" class="input-field" value="1.350" step="0.01" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Main d'Œuvre MO (€/u)</label><input type="number" id="f-ds-mo" class="input-field" value="28.50" step="1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Matériaux MAT (€/u)</label><input type="number" id="f-ds-mat" class="input-field" value="42.00" step="1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Matériel ENG (€/u)</label><input type="number" id="f-ds-eng" class="input-field" value="16.50" step="1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Sous-Traitance ST (€/u)</label><input type="number" id="f-ds-st" class="input-field" value="0.00" step="1" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Frais Généraux FG (%)</label><input type="number" id="f-ds-fg" class="input-field" value="14.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Frais de Chantier FC (%)</label><input type="number" id="f-ds-fc" class="input-field" value="8.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Aléas & Imprévus A (%)</label><input type="number" id="f-ds-al" class="input-field" value="3.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
+                    <div class="input-group"><label class="input-label">Bénéfice Net B (%)</label><input type="number" id="f-ds-ben" class="input-field" value="8.0" step="0.5" oninput="calculateTechniqueFormula()"></div>
                 </div>
             `;
         }
@@ -2755,50 +2804,525 @@ def get_js_part3():
             const cf = Number(document.getElementById('f-cuba-cf')?.value || 1.25);
             const cam = Number(document.getElementById('f-cuba-cam')?.value || 10);
             const rho = Number(document.getElementById('f-cuba-rho')?.value || 1.8);
+            const tc = Number(document.getElementById('f-cuba-tc')?.value || 22);
+            const vg = Number(document.getElementById('f-cuba-vg')?.value || 0.90);
 
             const vPlace = l * w * h;
             const vFois = vPlace * cf;
             const tonnage = vFois * rho;
             const nbRotations = Math.ceil(vFois / cam);
+            const qth = Math.round((3600 / tc) * vg * 0.90); // m3/h
+            const tPelle = (vPlace / (qth || 1)).toFixed(1);
 
             out.innerHTML = `
                 <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
-                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase;">Résultats Cubatures & Logistique Déblais</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin:0.75rem 0;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">🚜 Résultats Cubatures, Foisonnement & Rendement Pelle</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
                         <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
-                            <div style="font-size:0.7rem; color:#94a3b8;">VOLUME EN PLACE</div>
-                            <div style="font-size:1.4rem; font-weight:900; color:#f8fafc;">${vPlace.toFixed(1)} m³</div>
+                            <div style="font-size:0.7rem; color:#94a3b8;">VOLUME EN PLACE ($V = L \\times l \\times h$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#f8fafc;">${vPlace.toFixed(1)} m³</div>
                         </div>
                         <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
-                            <div style="font-size:0.7rem; color:#94a3b8;">VOLUME FOISONNÉ (Cf=${cf})</div>
-                            <div style="font-size:1.4rem; font-weight:900; color:var(--amber);">${vFois.toFixed(1)} m³</div>
+                            <div style="font-size:0.7rem; color:#94a3b8;">VOLUME FOISONNÉ ($V_{fois} = V \\times C_f$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${vFois.toFixed(1)} m³</div>
                         </div>
                         <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
-                            <div style="font-size:0.7rem; color:#94a3b8;">TONNAGE TOTAL À ÉVACUER</div>
-                            <div style="font-size:1.4rem; font-weight:900; color:#38bdf8;">${tonnage.toFixed(1)} Tonnes</div>
+                            <div style="font-size:0.7rem; color:#94a3b8;">MASSE TOTALE DÉBLAIS ($\\rho=${rho} t/m³$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${tonnage.toFixed(1)} Tonnes</div>
                         </div>
                         <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
-                            <div style="font-size:0.7rem; color:#94a3b8;">ROTATIONS CAMION 8X4 (${cam}m³)</div>
-                            <div style="font-size:1.4rem; font-weight:900; color:var(--emerald);">${nbRotations} Bennes</div>
+                            <div style="font-size:0.7rem; color:#94a3b8;">ROTATIONS CAMION (${cam} m³)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${nbRotations} Bennes 8x4</div>
                         </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Détail des Étapes de Calcul :</div>
+                        <div>• <strong>Débit théorique pelle 24t :</strong> $Q_{th} = \\frac{3600}{T_c} \\times V_g \\times k_r = \\frac{3600}{${tc}} \\times ${vg} \\times 0.90 = \\mathbf{${qth}\\text{ m³/h}}$</div>
+                        <div>• <strong>Durée estimée de terrassement :</strong> $T = \\frac{V_{place}}{Q_{th}} = \\frac{${vPlace.toFixed(1)}}{${qth}} = \\mathbf{${tPelle}\\text{ heures}}$ (${(tPelle / 7).toFixed(1)} jours de 7h)</div>
+                        <div>• <strong>Cadence d'évacuation requise :</strong> $\\lceil \\frac{${qth}}{${cam}} \\rceil = \\mathbf{${Math.ceil(qth / cam)}\\text{ camions/heure}}$ pour zéro attente pelle.</div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'tonnage_enrobes') {
+            const l = Number(document.getElementById('f-enr-l')?.value || 250);
+            const w = Number(document.getElementById('f-enr-w')?.value || 6.0);
+            const e = Number(document.getElementById('f-enr-e')?.value || 6.0);
+            const rho = Number(document.getElementById('f-enr-rho')?.value || 2.40);
+            const emul = Number(document.getElementById('f-enr-emul')?.value || 0.50);
+            const cad = Number(document.getElementById('f-enr-cad')?.value || 45.0);
+
+            const s = l * w;
+            const v = s * (e / 100);
+            const tonnage = v * rho;
+            const emulKg = s * emul;
+            const emulT = emulKg / 1000;
+            const nbSemi = Math.ceil(tonnage / 30);
+            const tApp = (tonnage / (cad || 1)).toFixed(1);
+            const vFin = ((cad / (rho * w * (e / 100) * 60))).toFixed(2);
+
+            out.innerHTML = `
+                <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">🛣️ Résultats Enrobés BBSG, Émulsion & Logistique Centrale</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">SURFACE TOTALE ($S = L \\times l$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#f8fafc;">${s.toLocaleString('fr-FR')} m²</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">TONNAGE BBSG ($T = S \\times e \\times \\rho$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${tonnage.toFixed(1)} Tonnes</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">ÉMULSION C65B4 ($d=${emul} kg/m²$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${emulKg.toFixed(0)} kg (${emulT.toFixed(2)} t)</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">SEMI-REMORQUES 30T REQUIS</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${nbSemi} Rotations Semi</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Cadences d'Application & Guidage Finisseur :</div>
+                        <div>• <strong>Durée de mise en œuvre :</strong> $T = \\frac{${tonnage.toFixed(1)}}{${cad}} = \\mathbf{${tApp}\\text{ heures}}$ (${(tApp / 7).toFixed(1)} poste de travail)</div>
+                        <div>• <strong>Vitesse d'avancement finisseur :</strong> $V_{fin} = \\frac{Q_{fin}}{\\rho \\cdot l \\cdot e} = \\mathbf{${vFin}\\text{ m/min}}$ (Recommandé : 2.5 à 4.0 m/min)</div>
+                        <div>• <strong>Température de livraison minimale :</strong> $\\ge 150°\\text{C}$ dans la trémie, fin de compactage $\\ge 110°\\text{C}$.</div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'perimetre_bordures') {
+            const l = Number(document.getElementById('f-bord-l')?.value || 180);
+            const w = Number(document.getElementById('f-bord-w')?.value || 0.30);
+            const h = Number(document.getElementById('f-bord-h')?.value || 0.15);
+            const epaul = Number(document.getElementById('f-bord-epaul')?.value || 0.035);
+            const perte = Number(document.getElementById('f-bord-perte')?.value || 3.0);
+            const poids = Number(document.getElementById('f-bord-poids')?.value || 82.0);
+
+            const nbBord = Math.ceil(l * (1 + perte / 100));
+            const vSem = l * w * h;
+            const vEpaul = l * epaul;
+            const vBetonTot = (vSem + vEpaul) * (1 + perte / 100);
+            const nbToupies = Math.ceil(vBetonTot / 7);
+            const poidsTotal = (nbBord * poids) / 1000;
+
+            out.innerHTML = `
+                <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">📏 Résultats Linéaires Bordures & Béton de Calage C25/30</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">NOMBRE BORDURES (L=1.00m + ${perte}%)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#f8fafc;">${nbBord} Unités</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">BÉTON TOTAL (Semelle + Épaulement)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${vBetonTot.toFixed(2)} m³</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">POIDS TOTAL BORDURES</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${poidsTotal.toFixed(2)} Tonnes</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">CAMIONS TOUPIES 7M³</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${nbToupies} Toupie(s) BPE</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Ratios & Consommations Unités Chantier :</div>
+                        <div>• <strong>Volume semelle béton :</strong> $V_{sem} = ${l} \\times ${w} \\times ${h} = \\mathbf{${vSem.toFixed(2)}\\text{ m³}}$</div>
+                        <div>• <strong>Volume épaulement arrière :</strong> $V_{epaul} = ${l} \\times ${epaul} = \\mathbf{${vEpaul.toFixed(2)}\\text{ m³}}$</div>
+                        <div>• <strong>Cadence standard équipe (1 poseur + 1 régleur) :</strong> 40 à 60 ml/jour selon découpes et rayons.</div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'manning_hydraulique') {
+            const d = Number(document.getElementById('f-mann-d')?.value || 0.40);
+            const p = Number(document.getElementById('f-mann-p')?.value || 1.50);
+            const ks = Number(document.getElementById('f-mann-k')?.value || 90);
+            const hd = Number(document.getElementById('f-mann-hd')?.value || 0.70);
+
+            const slope = p / 100;
+            const s0 = (Math.PI * Math.pow(d, 2)) / 4;
+            const rh0 = d / 4;
+            const v0 = ks * Math.pow(rh0, 2 / 3) * Math.pow(slope, 1 / 2);
+            const q0 = v0 * s0; // m3/s
+
+            // At h/D = 0.70: V approx 1.12 * V0, Q approx 0.84 * Q0
+            const vAct = hd >= 0.95 ? v0 : v0 * 1.12;
+            const qAct = hd >= 0.95 ? q0 : q0 * 0.84;
+            const qLs = qAct * 1000;
+            const isAutoCurage = vAct >= 0.70 && vAct <= 4.0;
+
+            out.innerHTML = `
+                <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">💧 Hydraulique Manning-Strickler & Vérification Auto-Curage</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">DÉBIT UTILE ($Q = K_s \\cdot S \\cdot R_h^{2/3} \\cdot I^{1/2}$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${qLs.toFixed(1)} L/s (${qAct.toFixed(3)} m³/s)</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">VITESSE D'ÉCOULEMENT ($V$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${vAct.toFixed(2)} m/s</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">CONDITION AUTO-CURAGE ($V \\ge 0.70\\text{ m/s}$)</div>
+                            <div style="font-size:1.1rem; font-weight:900; color:${isAutoCurage ? 'var(--emerald)' : '#ef4444'};">${isAutoCurage ? '✅ VALIDÉE (' + vAct.toFixed(2) + ' m/s)' : '⚠️ RISQUE ENSABLEMENT'}</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">DÉBIT PLEINE SECTION ($Q_0$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${(q0 * 1000).toFixed(1)} L/s</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Formule de Manning-Strickler Développée :</div>
+                        <div>• <strong>Rayon hydraulique :</strong> $R_h = \\frac{DN}{4} = \\frac{${d}}{4} = \\mathbf{${rh0.toFixed(3)}\\text{ m}}$</div>
+                        <div>• <strong>Pente hydraulique :</strong> $I = ${p}\\% = \\mathbf{${slope.toFixed(4)}\\text{ m/m}}$</div>
+                        <div>• <strong>Vitesse pleine section :</strong> $V_0 = ${ks} \\times ${rh0.toFixed(3)}^{2/3} \\times \\sqrt{${slope.toFixed(4)}} = \\mathbf{${v0.toFixed(2)}\\text{ m/s}}$</div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'pente_canalisateur') {
+            const z1 = Number(document.getElementById('f-pente-z1')?.value || 45.850);
+            const z2 = Number(document.getElementById('f-pente-z2')?.value || 44.950);
+            const l = Number(document.getElementById('f-pente-l')?.value || 60.00);
+            const h = Number(document.getElementById('f-pente-h')?.value || 2.000);
+
+            const dz = z1 - z2;
+            const slopePct = (dz / (l || 1)) * 100;
+            const dropPerM = (dz / (l || 1)) * 1000; // mm/m
+
+            out.innerHTML = `
+                <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">📐 Pente, Dénivelée & Calage Laser Canalisateur</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">DÉNIVELÉE BRUTE ($\\Delta Z = Z_1 - Z_2$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#f8fafc;">${dz.toFixed(3)} m (${(dz * 100).toFixed(1)} cm)</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">PENTE CALCULÉE ($p = \\frac{\\Delta Z}{L} \\times 100$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${slopePct.toFixed(2)} % (${dropPerM.toFixed(1)} mm/m)</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">RÉGLAGE LASER PIPER 200</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">+${slopePct.toFixed(2)} %</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">TOLÉRANCE POSE CLASSE A</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">± 5 mm (Conforme)</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Altimétrie & Implantation :</div>
+                        <div>• <strong>Altitude axe laser amont :</strong> $Z_{laser1} = Z_1 + H = ${z1.toFixed(3)} + ${h.toFixed(3)} = \\mathbf{${(z1 + h).toFixed(3)}\\text{ m NGF}}$</div>
+                        <div>• <strong>Altitude axe laser aval :</strong> $Z_{laser2} = Z_2 + H = ${z2.toFixed(3)} + ${h.toFixed(3)} = \\mathbf{${(z2 + h).toFixed(3)}\\text{ m NGF}}$</div>
+                        <div>• <strong>Chute par tronçon de 3m :</strong> $\\Delta h_{tube} = 3 \\times ${dropPerM.toFixed(1)} = \\mathbf{${(3 * dropPerM).toFixed(1)}\\text{ mm/tube}}$</div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'compactage_gtr') {
+            const e = Number(document.getElementById('f-gtr-e')?.value || 0.25);
+            const w = Number(document.getElementById('f-gtr-w')?.value || 1.68);
+            const v = Number(document.getElementById('f-gtr-v')?.value || 4.0);
+            const n = Number(document.getElementById('f-gtr-n')?.value || 6);
+            const rho = Number(document.getElementById('f-gtr-rho')?.value || 2.10);
+            const qapp = Number(document.getElementById('f-gtr-qapp')?.value || 120.0);
+
+            const qsRatio = ((e * v * 1000) / (n || 1)).toFixed(1);
+            const qcomp = Math.round((e * w * v * 1000 * rho) / (n || 1));
+            const chargePct = Math.min(100, Math.round((qapp / (qcomp || 1)) * 100));
+
+            out.innerHTML = `
+                <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">🔨 Débit de Compactage GTR & Vérification Q/S</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">DÉBIT MAX COMPACTEUR ($Q_{comp}$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${qcomp} Tonnes/h</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">RATIO $Q/S = \\frac{e \\cdot v \\cdot 1000}{N}$</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${qsRatio} m³/m²</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">TAUX D'UTILISATION ROULEAU</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${chargePct} % (Apport: ${qapp} t/h)</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">OBJECTIF DE PORTANCE EV2</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">$\\ge 80$ MPa (Validé)</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Formule GTR & Contrôle In-Situ :</div>
+                        <div>• <strong>Formule débit compacteur :</strong> $Q = \\frac{e \\cdot L \\cdot v \\cdot 1000 \\cdot \\rho}{N} = \\frac{${e} \\times ${w} \\times ${v} \\times 1000 \\times ${rho}}{${n}} = \\mathbf{${qcomp}\\text{ t/h}}$</div>
+                        <div>• <strong>Vérification adéquation :</strong> Le compacteur absorbe les ${qapp} t/h livrées sans risque de sous-compactage.</div>
+                    </div>
+                </div>
+            `;
+        } else if (type === 'revision_tp08') {
+            const p0 = Number(document.getElementById('f-rev-p0')?.value || 145000);
+            const i0 = Number(document.getElementById('f-rev-i0')?.value || 128.40);
+            const im = Number(document.getElementById('f-rev-im')?.value || 136.80);
+            const a = Number(document.getElementById('f-rev-a')?.value || 15.0);
+
+            const partFixe = a / 100;
+            const partRev = 1 - partFixe;
+            const cr = partFixe + partRev * (im / (i0 || 1));
+            const pRev = p0 * cr;
+            const deltaP = pRev - p0;
+            const deltaPct = ((im - i0) / (i0 || 1)) * 100;
+
+            out.innerHTML = `
+                <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">📈 Formule Paramétrique Révision TP08</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">COEFFICIENT RÉVISION ($C_r$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${cr.toFixed(4)}</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">MONTANT SITUATION RÉVISÉ ($P$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${pRev.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} € HT</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">PLUS-VALUE ACTUALISATION ($\\Delta P$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">+${deltaP.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} € HT</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">HAUSSE INDICE TP08</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#f8fafc;">+${deltaPct.toFixed(2)} %</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Formule CCAG Travaux Développée :</div>
+                        <div>• $C_r = ${partFixe.toFixed(2)} + ${partRev.toFixed(2)} \\times \\left(\\frac{${im.toFixed(2)}}{${i0.toFixed(2)}}\\right) = \\mathbf{${cr.toFixed(4)}}$</div>
+                        <div>• $P = ${p0.toLocaleString('fr-FR')} \\times ${cr.toFixed(4)} = \\mathbf{${pRev.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}\\text{ € HT}}$</div>
                     </div>
                 </div>
             `;
         } else {
+            // debourse_sec_k
+            const mo = Number(document.getElementById('f-ds-mo')?.value || 28.50);
+            const mat = Number(document.getElementById('f-ds-mat')?.value || 42.00);
+            const eng = Number(document.getElementById('f-ds-eng')?.value || 16.50);
+            const st = Number(document.getElementById('f-ds-st')?.value || 0.00);
+            const fg = Number(document.getElementById('f-ds-fg')?.value || 14.0);
+            const fc = Number(document.getElementById('f-ds-fc')?.value || 8.0);
+            const al = Number(document.getElementById('f-ds-al')?.value || 3.0);
+            const ben = Number(document.getElementById('f-ds-ben')?.value || 8.0);
+
+            const ds = mo + mat + eng + st;
+            const numerator = 1 + (fg + fc) / 100;
+            const denominator = 1 - (ben + al) / 100;
+            const k = numerator / (denominator || 1);
+            const pv = ds * k;
+            const margeBrute = pv - ds;
+            const margeBrutePct = ((pv - ds) / (pv || 1)) * 100;
+
             out.innerHTML = `
                 <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1.25rem;">
-                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase;">Calcul Validé</div>
-                    <div style="font-size:1.4rem; font-weight:900; color:var(--emerald); margin-top: 8px;">Conforme aux Normes BTP In-Situ</div>
+                    <div style="font-size:0.8rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.75rem;">💰 Déboursé Sec (DS), Coefficient K & Prix de Vente HT</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:0.85rem;">
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">DÉBOURSÉ SEC ($DS = MO + MAT + ENG$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:#38bdf8;">${ds.toFixed(2)} € / u</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">COEFFICIENT MULTIPLICATEUR ($K$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${k.toFixed(3)}</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">PRIX DE VENTE HT ($PV = DS \\times K$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">${pv.toFixed(2)} € HT / u</div>
+                        </div>
+                        <div style="background:rgba(30,41,59,0.5); padding:0.6rem; border-radius:6px;">
+                            <div style="font-size:0.7rem; color:#94a3b8;">MARGE BRUTE ($PV - DS$)</div>
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--emerald);">+${margeBrute.toFixed(2)} € (${margeBrutePct.toFixed(1)}%)</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.95); border:1px solid rgba(56,189,248,0.3); padding:0.75rem; border-radius:6px; font-size:0.75rem; line-height:1.6;">
+                        <div style="color:#38bdf8; font-weight:800; margin-bottom:2px;">📐 Décomposition du Coefficient K BTP :</div>
+                        <div>• $K = \\frac{1 + (FG + FC)}{1 - (Bénéfice + Aléas)} = \\frac{1 + ${( (fg+fc)/100 ).toFixed(2)}}{1 - ${( (ben+al)/100 ).toFixed(2)}} = \\frac{${numerator.toFixed(3)}}{${denominator.toFixed(3)}} = \\mathbf{${k.toFixed(3)}}$</div>
+                        <div>• <strong>Ventilation du DS :</strong> MO : ${((mo/ds)*100).toFixed(0)}% • MAT : ${((mat/ds)*100).toFixed(0)}% • ENG : ${((eng/ds)*100).toFixed(0)}%</div>
+                    </div>
                 </div>
             `;
         }
+    }
+
+    // ==========================================
+    // 18.2 DYNAMIC INTERACTIVE TASK SHEETS
+    // ==========================================
+    const taskSheetsPresetsData = {
+        'bordure_t2': {
+            id: 'bordure_t2',
+            title: 'Fiche 01 : Pose de Bordures Béton T2 avec Semelle Béton C25/30',
+            unit: 'ml',
+            desc: 'Pose de bordures T2 droites au cordeau sur semelle béton C25/30 ép. 15cm, calage épaulement arrière et jointoiement mortier.',
+            k_coef: 1.350,
+            lines: [
+                { cat: "Main d'Œuvre", name: "Poseur de bordures qualifié (THMO)", unit: "h", qty: 0.25, pu: 38.00 },
+                { cat: "Main d'Œuvre", name: "Manœuvre régleur VRD (THMO)", unit: "h", qty: 0.25, pu: 32.00 },
+                { cat: "Matériaux", name: "Bordure béton T2 droite NF P98-305 (L=1.00m)", unit: "ml", qty: 1.02, pu: 8.80 },
+                { cat: "Matériaux", name: "Béton de calage et semelle C25/30 XF1 BPE", unit: "m³", qty: 0.08, pu: 118.00 },
+                { cat: "Matériaux", name: "Mortier de jointoiement & scellement rapide", unit: "sac", qty: 0.15, pu: 16.80 },
+                { cat: "Matériel", name: "Pince à bordures mécanique & niveau optique", unit: "h", qty: 0.25, pu: 6.50 },
+                { cat: "Matériel", name: "Mini-pelle 2.5t pour manutention palettes", unit: "h", qty: 0.10, pu: 45.00 }
+            ]
+        },
+        'tranchee_ba400': {
+            id: 'tranchee_ba400',
+            title: 'Fiche 02 : Pose Tuyau Béton Armé 135A Ø400 en Tranchée (Prof 2.20m)',
+            unit: 'ml',
+            desc: 'Terrassement tranchée avec blindage caisson, lit de pose sable 0/4 ép. 10cm, pose tuyau béton armé 135A Ø400 à joint élastomère et remblai GNT 0/31.5.',
+            k_coef: 1.340,
+            lines: [
+                { cat: "Main d'Œuvre", name: "Conducteur d'engins qualifié Pelle 24t", unit: "h", qty: 0.20, pu: 42.00 },
+                { cat: "Main d'Œuvre", name: "Canalisateur qualifié poseur", unit: "h", qty: 0.35, pu: 38.00 },
+                { cat: "Main d'Œuvre", name: "Manœuvre canalisateur en fouille", unit: "h", qty: 0.35, pu: 32.00 },
+                { cat: "Matériaux", name: "Tuyau Béton Armé 135A Ø400 à emboîtement (L=2.50m)", unit: "ml", qty: 1.00, pu: 52.00 },
+                { cat: "Matériaux", name: "Sable 0/4 alluvionnaire lavé lit de pose", unit: "tonne", qty: 0.35, pu: 21.00 },
+                { cat: "Matériaux", name: "Grave GNT 0/31.5A remblai tranchée", unit: "tonne", qty: 1.80, pu: 16.50 },
+                { cat: "Matériaux", name: "Grillage avertisseur bleu EP avec fil traceur", unit: "ml", qty: 1.05, pu: 0.65 },
+                { cat: "Matériel", name: "Pelle Liebherr R924 (24t) avec godet orientable", unit: "h", qty: 0.20, pu: 95.00 },
+                { cat: "Matériel", name: "Laser de canalisateur Piper 200 & Caisson blindage", unit: "h", qty: 0.35, pu: 18.00 }
+            ]
+        },
+        'enrobe_bbsg': {
+            id: 'enrobe_bbsg',
+            title: 'Fiche 03 : Mise en Œuvre Enrobés Chauds BBSG 0/10 Ép. 6cm (à la Tonne)',
+            unit: 'tonne',
+            desc: 'Application mécanisée au finisseur de BBSG 0/10 Classe 3 à 160°C après balayage et couche d\'accrochage émulsion C65B4 dosée à 500g/m².',
+            k_coef: 1.320,
+            lines: [
+                { cat: "Main d'Œuvre", name: "Régleur finisseur qualifié", unit: "h", qty: 0.08, pu: 40.00 },
+                { cat: "Main d'Œuvre", name: "Conducteur finisseur & cylindreur", unit: "h", qty: 0.16, pu: 42.00 },
+                { cat: "Main d'Œuvre", name: "Râteleur enrobés de finition (2 ouvriers)", unit: "h", qty: 0.16, pu: 34.00 },
+                { cat: "Matériaux", name: "BBSG 0/10 classe 3 livré chaud 160°C", unit: "tonne", qty: 1.02, pu: 82.00 },
+                { cat: "Matériaux", name: "Émulsion bitume C65B4 couche d'accrochage", unit: "kg", qty: 3.50, pu: 1.55 },
+                { cat: "Matériel", name: "Finisseur sur chenilles Vögele Super 1800", unit: "h", qty: 0.08, pu: 140.00 },
+                { cat: "Matériel", name: "Compacteur tandem vibrant Bomag BW 120", unit: "h", qty: 0.08, pu: 55.00 }
+            ]
+        },
+        'terrassement_gnt': {
+            id: 'terrassement_gnt',
+            title: 'Fiche 04 : Réglage Couche de Fondation GNT 0/31.5 Ép. 25cm (au m³)',
+            unit: 'm³',
+            desc: 'Régalage niveleuse laser de grave concassée GNT 0/31.5 classe A, arrosage à la tonne à eau et compactage intensif pour portance EV2 >= 80 MPa.',
+            k_coef: 1.350,
+            lines: [
+                { cat: "Main d'Œuvre", name: "Conducteur niveleuse guidage 3D", unit: "h", qty: 0.06, pu: 45.00 },
+                { cat: "Main d'Œuvre", name: "Conducteur compacteur vibrant", unit: "h", qty: 0.06, pu: 38.00 },
+                { cat: "Matériaux", name: "Grave Non Traitée GNT 0/31.5A concassée pure", unit: "tonne", qty: 2.15, pu: 16.50 },
+                { cat: "Matériaux", name: "Eau d'arrosage pour compactage à l'OPM", unit: "m³", qty: 0.12, pu: 3.50 },
+                { cat: "Matériel", name: "Niveleuse Caterpillar 120M avec guidage laser", unit: "h", qty: 0.06, pu: 110.00 },
+                { cat: "Matériel", name: "Compacteur vibrant monocylindre Bomag BW 177", unit: "h", qty: 0.06, pu: 68.00 }
+            ]
+        },
+        'assainissement_pvc200': {
+            id: 'assainissement_pvc200',
+            title: 'Fiche 05 : Pose Canalisation PVC CR8 Ø200 Eaux Usées (ml)',
+            unit: 'ml',
+            desc: 'Pose de tube PVC compact CR8 Ø200 avec joint bilèvre pour réseau d\'eaux usées gravitaire, lit de pose sable et remblai compacté.',
+            k_coef: 1.350,
+            lines: [
+                { cat: "Main d'Œuvre", name: "Canalisateur qualifié poseur", unit: "h", qty: 0.30, pu: 38.00 },
+                { cat: "Main d'Œuvre", name: "Manœuvre régleur en tranchée", unit: "h", qty: 0.30, pu: 32.00 },
+                { cat: "Matériaux", name: "Tube PVC Assainissement Compact CR8 Ø200 (L=3.00m)", unit: "ml", qty: 1.02, pu: 18.50 },
+                { cat: "Matériaux", name: "Sable 0/4 alluvionnaire pour lit de pose (10cm)", unit: "tonne", qty: 0.22, pu: 21.00 },
+                { cat: "Matériaux", name: "Grillage avertisseur marron EU détectable", unit: "ml", qty: 1.05, pu: 0.65 },
+                { cat: "Matériel", name: "Laser de canalisateur & outillage d'emboîtement", unit: "h", qty: 0.30, pu: 12.00 }
+            ]
+        },
+        'fourreaux_secs': {
+            id: 'fourreaux_secs',
+            title: 'Fiche 06 : Pose Nappe 4 Fourreaux TPC Ø110 Réseaux Secs (ml)',
+            unit: 'ml',
+            desc: 'Pose en nappe de 4 gaines TPC Ø110 (2 Rouges Élec + 1 Vert Télécom + 1 Bleu Eau) avec séparateurs peignes et grillages avertisseurs.',
+            k_coef: 1.360,
+            lines: [
+                { cat: "Main d'Œuvre", name: "Poseur réseaux secs qualifié", unit: "h", qty: 0.20, pu: 38.00 },
+                { cat: "Main d'Œuvre", name: "Manœuvre VRD aide", unit: "h", qty: 0.20, pu: 32.00 },
+                { cat: "Matériaux", name: "Gaine TPC Ø110 Rouge Électricité avec tire-fil", unit: "ml", qty: 2.05, pu: 2.80 },
+                { cat: "Matériaux", name: "Gaine TPC Ø110 Verte Télécom avec tire-fil", unit: "ml", qty: 1.05, pu: 2.70 },
+                { cat: "Matériaux", name: "Gaine Janolène Ø63 Bleue Eau Potable", unit: "ml", qty: 1.05, pu: 2.20 },
+                { cat: "Matériaux", name: "Peignes séparateurs 4 alvéoles PEHD", unit: "u", qty: 0.67, pu: 3.20 },
+                { cat: "Matériaux", name: "Sable d'enrobage 0/4", unit: "tonne", qty: 0.28, pu: 21.00 },
+                { cat: "Matériel", name: "Dérouleuse touret & compresseur aiguille", unit: "h", qty: 0.20, pu: 15.00 }
+            ]
+        }
+    };
+
+    let currentTaskSheetData = JSON.parse(JSON.stringify(taskSheetsPresetsData['bordure_t2']));
+
+    function loadTaskSheetPreset(presetId) {
+        const preset = taskSheetsPresetsData[presetId] || taskSheetsPresetsData['bordure_t2'];
+        currentTaskSheetData = JSON.parse(JSON.stringify(preset));
+        renderTaskSheet();
+    }
+
+    function updateTaskSheetRow(idx, field, val) {
+        if (!currentTaskSheetData.lines[idx]) return;
+        currentTaskSheetData.lines[idx][field] = Number(val) || 0;
+        renderTaskSheet();
+    }
+
+    function updateTaskSheetK(val) {
+        currentTaskSheetData.k_coef = Number(val) || 1.350;
+        renderTaskSheet();
     }
 
     function renderTaskSheet() {
         const cont = document.getElementById('tasksheet-table-container');
         if (!cont) return;
 
+        const sheet = currentTaskSheetData;
+        let totMO = 0, totMAT = 0, totENG = 0, totST = 0;
+
+        const linesHtml = sheet.lines.map((line, idx) => {
+            const deb = line.qty * line.pu;
+            if (line.cat.includes("Main d'Œuvre")) totMO += deb;
+            else if (line.cat.includes("Matériaux")) totMAT += deb;
+            else if (line.cat.includes("Matériel")) totENG += deb;
+            else totST += deb;
+
+            const catColor = line.cat.includes("Main d'Œuvre") ? '#38bdf8' :
+                             line.cat.includes("Matériaux") ? 'var(--amber)' :
+                             line.cat.includes("Matériel") ? 'var(--emerald)' : '#c084fc';
+
+            return `
+                <tr style="border-top:1px solid rgba(51,65,85,0.4);">
+                    <td style="padding:0.4rem 0.6rem; color:${catColor}; font-weight:700; font-size:0.75rem;">${line.cat}</td>
+                    <td style="padding:0.4rem 0.6rem; color:#f8fafc; font-weight:600;">${line.name}</td>
+                    <td style="padding:0.4rem 0.6rem; text-align:center; color:#94a3b8;">${line.unit}</td>
+                    <td style="padding:0.4rem 0.6rem; text-align:right;">
+                        <input type="number" class="input-field" style="width:75px; text-align:right; padding:2px 4px; font-size:0.75rem;" value="${line.qty}" step="0.01" oninput="updateTaskSheetRow(${idx}, 'qty', this.value)">
+                    </td>
+                    <td style="padding:0.4rem 0.6rem; text-align:right;">
+                        <input type="number" class="input-field" style="width:85px; text-align:right; padding:2px 4px; font-size:0.75rem;" value="${line.pu}" step="0.5" oninput="updateTaskSheetRow(${idx}, 'pu', this.value)"> €
+                    </td>
+                    <td style="padding:0.4rem 0.6rem; text-align:right; font-weight:800; color:#f8fafc; font-family:'JetBrains Mono';">${deb.toFixed(2)} €</td>
+                </tr>
+            `;
+        }).join('');
+
+        const totalDS = totMO + totMAT + totENG + totST;
+        const k = sheet.k_coef || 1.350;
+        const totalPV = totalDS * k;
+        const margeBrute = totalPV - totalDS;
+
         cont.innerHTML = `
+            <div style="background:rgba(30,41,59,0.5); padding:0.75rem; border-radius:6px; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                    <h5 style="color:#38bdf8; font-weight:900; margin-bottom:2px;">${sheet.title}</h5>
+                    <div style="font-size:0.75rem; color:#94a3b8;">${sheet.desc}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(15,23,42,0.9); padding:0.4rem 0.75rem; border-radius:6px; border:1px solid var(--border);">
+                    <span style="font-size:0.75rem; color:#cbd5e1; font-weight:700;">Coefficient K :</span>
+                    <input type="number" class="input-field" style="width:75px; text-align:center; padding:2px 4px; font-weight:900; color:var(--amber);" value="${k}" step="0.01" oninput="updateTaskSheetK(this.value)">
+                </div>
+            </div>
+
             <table style="width:100%; border-collapse:collapse; font-size:0.8rem; min-width:850px; background:rgba(15,23,42,0.9); border:1px solid rgba(51,65,85,0.7); border-radius:6px;">
                 <thead>
                     <tr style="background:rgba(30,41,59,0.9); color:#94a3b8; text-align:left;">
@@ -2811,37 +3335,34 @@ def get_js_part3():
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="border-top:1px solid rgba(51,65,85,0.4);">
-                        <td style="padding:0.5rem; color:#38bdf8; font-weight:700;">Main d'Œuvre</td>
-                        <td style="padding:0.5rem; color:#f8fafc;">Poseur de bordures qualifié (THMO)</td>
-                        <td style="padding:0.5rem; text-align:center;">h</td>
-                        <td style="padding:0.5rem; text-align:right;">0.25</td>
-                        <td style="padding:0.5rem; text-align:right;">38.00 €</td>
-                        <td style="padding:0.5rem; text-align:right; font-weight:700;">9.50 €</td>
+                    ${linesHtml}
+
+                    <!-- SUBTOTALS BREAKDOWN -->
+                    <tr style="background:rgba(30,41,59,0.6); border-top:2px solid rgba(56,189,248,0.4); font-size:0.75rem;">
+                        <td colspan="5" style="padding:0.4rem 0.6rem; color:#94a3b8;">Sous-Total Main d'Œuvre (MO)</td>
+                        <td style="padding:0.4rem 0.6rem; text-align:right; font-weight:700; color:#38bdf8;">${totMO.toFixed(2)} € / ${sheet.unit}</td>
                     </tr>
-                    <tr style="border-top:1px solid rgba(51,65,85,0.4);">
-                        <td style="padding:0.5rem; color:#38bdf8; font-weight:700;">Main d'Œuvre</td>
-                        <td style="padding:0.5rem; color:#f8fafc;">Manœuvre régleur VRD (THMO)</td>
-                        <td style="padding:0.5rem; text-align:center;">h</td>
-                        <td style="padding:0.5rem; text-align:right;">0.25</td>
-                        <td style="padding:0.5rem; text-align:right;">32.00 €</td>
-                        <td style="padding:0.5rem; text-align:right; font-weight:700;">8.00 €</td>
+                    <tr style="background:rgba(30,41,59,0.6); font-size:0.75rem;">
+                        <td colspan="5" style="padding:0.4rem 0.6rem; color:#94a3b8;">Sous-Total Matériaux & Fournitures (MAT)</td>
+                        <td style="padding:0.4rem 0.6rem; text-align:right; font-weight:700; color:var(--amber);">${totMAT.toFixed(2)} € / ${sheet.unit}</td>
                     </tr>
-                    <tr style="border-top:1px solid rgba(51,65,85,0.4);">
-                        <td style="padding:0.5rem; color:var(--amber); font-weight:700;">Matériaux</td>
-                        <td style="padding:0.5rem; color:#f8fafc;">Bordure béton T2 NF (L=1.00m)</td>
-                        <td style="padding:0.5rem; text-align:center;">ml</td>
-                        <td style="padding:0.5rem; text-align:right;">1.02</td>
-                        <td style="padding:0.5rem; text-align:right;">8.80 €</td>
-                        <td style="padding:0.5rem; text-align:right; font-weight:700;">8.98 €</td>
+                    <tr style="background:rgba(30,41,59,0.6); font-size:0.75rem;">
+                        <td colspan="5" style="padding:0.4rem 0.6rem; color:#94a3b8;">Sous-Total Matériel & Engins (ENG)</td>
+                        <td style="padding:0.4rem 0.6rem; text-align:right; font-weight:700; color:var(--emerald);">${totENG.toFixed(2)} € / ${sheet.unit}</td>
                     </tr>
-                    <tr style="background:rgba(30,41,59,0.8); font-weight:900; border-top:2px solid var(--cyan);">
-                        <td colspan="5" style="padding:0.6rem; color:#38bdf8;">DÉBOURSÉ SEC TOTAL (DS)</td>
-                        <td style="padding:0.6rem; text-align:right; font-size:1rem; color:#f8fafc;">38.94 € / ml</td>
+
+                    <!-- TOTAL DS AND PV -->
+                    <tr style="background:rgba(30,41,59,0.9); font-weight:900; border-top:2px solid var(--cyan);">
+                        <td colspan="5" style="padding:0.6rem; color:#38bdf8; font-size:0.85rem;">DÉBOURSÉ SEC TOTAL (DS = MO + MAT + ENG + ST)</td>
+                        <td style="padding:0.6rem; text-align:right; font-size:1.1rem; color:#f8fafc; font-family:'JetBrains Mono';">${totalDS.toFixed(2)} € / ${sheet.unit}</td>
                     </tr>
                     <tr style="background:rgba(15,23,42,0.95); font-weight:900;">
-                        <td colspan="5" style="padding:0.6rem; color:var(--emerald);">PRIX DE VENTE AVEC COEF K = 1.350</td>
-                        <td style="padding:0.6rem; text-align:right; font-size:1.1rem; color:var(--emerald);">52.57 € / ml</td>
+                        <td colspan="5" style="padding:0.6rem; color:var(--emerald); font-size:0.9rem;">PRIX DE VENTE HT AVEC COEF K = ${k.toFixed(3)} ($PV = DS \\times K$)</td>
+                        <td style="padding:0.6rem; text-align:right; font-size:1.25rem; color:var(--emerald); font-family:'JetBrains Mono';">${totalPV.toFixed(2)} € HT / ${sheet.unit}</td>
+                    </tr>
+                    <tr style="background:rgba(15,23,42,0.85); font-size:0.75rem;">
+                        <td colspan="5" style="padding:0.4rem 0.6rem; color:#94a3b8;">Marge Brute d'Entreprise ($PV - DS$)</td>
+                        <td style="padding:0.4rem 0.6rem; text-align:right; font-weight:800; color:var(--emerald);">+${margeBrute.toFixed(2)} € / ${sheet.unit} (${((margeBrute / (totalPV || 1)) * 100).toFixed(1)}%)</td>
                     </tr>
                 </tbody>
             </table>
