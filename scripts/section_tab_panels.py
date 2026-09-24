@@ -372,52 +372,168 @@ def get_tab_panels():
     </div>
 
     <!-- ========================================== -->
-    <!-- TAB 6: WATCH TOWER 3D / 4D SIMULATION      -->
+    <!-- TAB 6: WATCH TOWER 3D / SATELLITE & MAPS   -->
     <!-- ========================================== -->
     <div id="tab-simulator" class="tab-panel">
         <div class="card">
             <div class="card-header" style="flex-wrap: wrap; gap: 0.5rem;">
                 <div>
-                    <span class="card-title">🛰️ Watch Tower 3D/4D : Jumeau Numérique Synchrone & Radar Chantier</span>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">Pelle Liebherr 24t articulée, Benne 8x4, Blindage Krings, Laser Piper, Drone RTK et Répertoire des Acteurs</div>
+                    <span class="card-title">🛰️ Watch Tower : Jumeau Numérique 3D & Cartographie Satellite / OSM / Maps HD</span>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">Imagerie Satellite HD, Cadastre IGN, Réseaux DICT (Gaz/Elec/Eau/Telecom), Mesures Terrain, Street View 360° et Radar RTK</div>
                 </div>
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <button class="btn btn-secondary" onclick="resetSimulatorView('iso')">📐 Vue Isométrique</button>
-                    <button class="btn btn-secondary" onclick="resetSimulatorView('top')">🧭 Vue Dessus</button>
-                    <button class="btn btn-secondary" onclick="zoomSimulator(1.2)">🔍 +</button>
-                    <button class="btn btn-secondary" onclick="zoomSimulator(0.8)">🔍 -</button>
-                    <button class="btn btn-primary" id="btn-toggle-4d-sim" onclick="toggle4DSimulation()">▶️ Lancer Simulation 4D</button>
-                </div>
-            </div>
-
-            <!-- 4D PHASES PROGRESSION BAR -->
-            <div style="background: rgba(15,23,42,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.1rem;">⏱️</span>
-                    <strong style="font-size: 0.85rem; color: #38bdf8;">Phasage 4D & Progression :</strong>
-                </div>
-                <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
-                    <button class="btn-secondary sim-phase-btn active" onclick="setSimPhase(1)">Phase 1 : Terrassement & Purge</button>
-                    <button class="btn-secondary sim-phase-btn" onclick="setSimPhase(2)">Phase 2 : Canalisations Ø400</button>
-                    <button class="btn-secondary sim-phase-btn" onclick="setSimPhase(3)">Phase 3 : Bordures & Trottoirs</button>
-                    <button class="btn-secondary sim-phase-btn" onclick="setSimPhase(4)">Phase 4 : Enrobés BBSG</button>
-                    <button class="btn-secondary sim-phase-btn" onclick="setSimPhase(5)">Phase 5 : Réception & OPR</button>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+                    <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border);">
+                        <button class="btn-secondary sim-view-btn active" id="btn-sim-maps" onclick="setSimulatorViewMode('maps')">🛰️ Vue Satellite & Maps HD</button>
+                        <button class="btn-secondary sim-view-btn" id="btn-sim-3d" onclick="setSimulatorViewMode('3d')">🏗️ Jumeau 3D Chantier</button>
+                        <button class="btn-secondary sim-view-btn" id="btn-sim-radar" onclick="setSimulatorViewMode('radar')">📡 Radar Télémétrie</button>
+                        <button class="btn-secondary sim-view-btn" id="btn-sim-standard" onclick="setSimulatorViewMode('standard')">📐 Split 3D / Maps</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportWatchtowerMapPNG()">📸 Capture Plan PNG</button>
+                    <button class="btn btn-primary" id="btn-play-4d-sim" onclick="togglePlay4DSimulation()">▶️ Simulation 4D</button>
                 </div>
             </div>
 
-            <!-- 3D VIEWPORT & RADAR SPLIT -->
-            <div class="grid-split-60-40">
-                <div style="height: 420px; background: #070a14; border: 1px solid rgba(56,189,248,0.4); border-radius: 8px; position: relative; overflow: hidden;">
-                    <canvas id="watchtower-3d-canvas" style="width: 100%; height: 100%; cursor: grab;"></canvas>
-                    <div style="position: absolute; top: 10px; left: 10px; background: rgba(15,23,42,0.85); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);">
-                        CHANTIER : GIRATOIRE RD906 ALÈS • PK 0+240
+            <!-- MAPS & GIS INTERACTIVE TOOLBAR (ACTIVE IN MAPS / SATELLITE MODE) -->
+            <div id="watchtower-maps-toolbar" style="background: rgba(15,23,42,0.95); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem;">
+                <!-- Layer selector -->
+                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                    <span style="font-size: 0.75rem; font-weight: 800; color: #38bdf8;">🗺️ COUCHE :</span>
+                    <div style="display: flex; background: #0b1120; border-radius: 6px; border: 1px solid rgba(56,189,248,0.3); overflow: hidden;">
+                        <button class="btn-secondary map-layer-btn active" id="btn-layer-satellite" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerMapLayer('satellite')">🛰️ Satellite HD</button>
+                        <button class="btn-secondary map-layer-btn" id="btn-layer-osm" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerMapLayer('osm')">🗺️ OpenStreetMap</button>
+                        <button class="btn-secondary map-layer-btn" id="btn-layer-cadastre" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerMapLayer('cadastre')">🏛️ Cadastre IGN</button>
+                        <button class="btn-secondary map-layer-btn" id="btn-layer-hybride" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerMapLayer('hybride')">🔀 Hybride Réseaux</button>
+                        <button class="btn-secondary map-layer-btn" id="btn-layer-relief" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerMapLayer('relief')">🏔️ Relief MNT</button>
                     </div>
                 </div>
 
-                <div style="height: 420px; background: #070a14; border: 1px solid rgba(56,189,248,0.4); border-radius: 8px; position: relative; overflow: hidden;">
-                    <canvas id="watchtower-radar-canvas" style="width: 100%; height: 100%;"></canvas>
-                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(15,23,42,0.85); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--emerald); border: 1px solid rgba(16,185,129,0.3);">
-                        RADAR TÉLÉMÉTRIE & PROXIMITÉ
+                <!-- POI Search & Quick-Fly -->
+                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                    <span style="font-size: 0.75rem; font-weight: 800; color: var(--emerald);">📍 LIEU / CHANTIER :</span>
+                    <select id="watchtower-poi-select" class="input-field" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.75rem; font-weight: 700; color: #38bdf8;" onchange="flyToWatchtowerPOI(this.value)">
+                        <option value="sete_quai">📍 Sète - Quai de la République (Assainissement Ø400)</option>
+                        <option value="ales_giratoire">📍 Alès - Giratoire RD906 (Terrassement & Enrobés)</option>
+                        <option value="beziers_zac">📍 Béziers - ZAC Ouest (Plateforme VRD)</option>
+                        <option value="frontignan_rd612">📍 Frontignan - Piste RD612 (Bordures & Piste Cyclable)</option>
+                        <option value="meze_port">📍 Mèze - Port des Nacres (Pluvial & Bordures)</option>
+                        <option value="agde_rn112">📍 Agde - Entrée Ville RN112 (GB3 & BBSG)</option>
+                        <option value="depot_sete">🏭 Dépôt & Base Logistique Sète (300m² Parc / 120m² Hangars)</option>
+                        <option value="centrale_pinet">🏗️ Centrale Enrobés Eiffage/Colas Pinet</option>
+                        <option value="carriere_loupian">⛏️ Carrière Calcaire de Loupian</option>
+                        <option value="isdi_villeveyrac">♻️ Centre Recyclage ISDI Villeveyrac</option>
+                    </select>
+                </div>
+
+                <!-- GIS Measurement & Interaction Tools -->
+                <div style="display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary map-tool-btn" id="btn-tool-pan" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerTool('pan')">✋ Navigation</button>
+                    <button class="btn btn-secondary map-tool-btn" id="btn-tool-measure-dist" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerTool('measure_dist')">📏 Distance (ml)</button>
+                    <button class="btn btn-secondary map-tool-btn" id="btn-tool-measure-area" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerTool('measure_area')">📐 Surface (m²)</button>
+                    <button class="btn btn-secondary map-tool-btn" id="btn-tool-profile" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerTool('profile')">⛰️ Profil Pente</button>
+                    <button class="btn btn-secondary map-tool-btn" id="btn-tool-streetview" style="padding: 4px 8px; font-size: 0.72rem;" onclick="setWatchtowerTool('streetview')">🧍 Street View 360°</button>
+                    <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;" onclick="clearWatchtowerMeasurements()">🗑️ Effacer</button>
+                </div>
+            </div>
+
+            <!-- DICT NETWORK OVERLAYS FILTER BAR -->
+            <div id="watchtower-dict-bar" style="background: rgba(30,41,59,0.5); border: 1px solid rgba(51,65,85,0.6); border-radius: 6px; padding: 0.4rem 0.8rem; margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; font-size: 0.72rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                    <strong style="color: #cbd5e1;">⚡ CALQUES RÉSEAUX DICT :</strong>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 3px; color: #facc15;"><input type="checkbox" id="dict-toggle-gaz" checked onchange="renderWatchtowerMaps()"> 🟡 Gaz GRDF (PEHD)</label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 3px; color: #ef4444;"><input type="checkbox" id="dict-toggle-elec" checked onchange="renderWatchtowerMaps()"> 🔴 Élec Enedis (HTA/BT)</label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 3px; color: #38bdf8;"><input type="checkbox" id="dict-toggle-aep" checked onchange="renderWatchtowerMaps()"> 🔵 Eau AEP (Fonte)</label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 3px; color: #fb923c;"><input type="checkbox" id="dict-toggle-eu" checked onchange="renderWatchtowerMaps()"> 🟤 Assainissement (Ø400)</label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 3px; color: #4ade80;"><input type="checkbox" id="dict-toggle-telecom" checked onchange="renderWatchtowerMaps()"> 🟢 Fibre/Télécom (L1T)</label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 3px; color: #c084fc;"><input type="checkbox" id="dict-toggle-traffic" checked onchange="renderWatchtowerMaps()"> 🚦 Trafic Temps Réel</label>
+                </div>
+                <div id="watchtower-measurement-readout" style="font-weight: 800; color: #38bdf8;">
+                    Mesure : Aucune sélection
+                </div>
+            </div>
+
+            <!-- MAIN WATCHTOWER VIEWPORTS -->
+            <div id="watchtower-main-viewport-container" style="position: relative; width: 100%; height: 520px; background: #070a14; border: 1px solid rgba(56,189,248,0.4); border-radius: 8px; overflow: hidden;">
+                
+                <!-- 1. REAL INTERACTIVE LEAFLET / OSM / SATELLITE MAP CONTAINER -->
+                <div id="watchtower-real-map-div" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: block;"></div>
+
+                <!-- 2. FULLSCREEN FALLBACK / CANVAS LAYER -->
+                <canvas id="watchtower-maps-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: grab; display: none; z-index: 5;"></canvas>
+
+                <!-- 3. SPLIT / 3D CANVAS -->
+                <canvas id="watchtower-3d-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: grab; display: none; z-index: 12;"></canvas>
+
+                <!-- 4. RADAR CANVAS -->
+                <canvas id="watchtower-radar-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 12;"></canvas>
+
+                <!-- 4. STREET VIEW 360° IMMERSIVE VIEWPORT (OVERLAY) -->
+                <div id="watchtower-streetview-modal-overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050811; z-index: 50;">
+                    <canvas id="watchtower-streetview-canvas" style="width: 100%; height: 100%; cursor: move;"></canvas>
+                    <div style="position: absolute; top: 12px; left: 12px; background: rgba(15,23,42,0.9); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🚶‍♂️ <strong>VUE CAMÉRA CHANTIER 360° IMMERSIVE</strong> (Street View BTP)</span>
+                        <span class="badge badge-success">Sol Terrain Réel</span>
+                    </div>
+                    <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 0.4rem;">
+                        <button class="btn btn-secondary" style="font-size: 0.75rem;" onclick="rotateStreetView(-30)">↺ Tourner Gauche</button>
+                        <button class="btn btn-secondary" style="font-size: 0.75rem;" onclick="rotateStreetView(30)">↻ Tourner Droite</button>
+                        <button class="btn btn-danger" style="font-size: 0.75rem;" onclick="closeStreetViewMode()">✕ Quitter Street View</button>
+                    </div>
+                    <div style="position: absolute; bottom: 12px; left: 12px; right: 12px; background: rgba(15,23,42,0.85); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; color: #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Glissez la souris pour pivoter à 360° • Ouvriers en poste, Pelle 24t en action, Tranchée blindée & Balisage urbain AK5</span>
+                        <span style="font-weight: 800; color: var(--emerald);" id="streetview-hud-pos">PK 0+240 • Alt. 14.8m</span>
+                    </div>
+                </div>
+
+                <!-- MAP CONTROLS OVERLAY (HUD) -->
+                <div style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 20;">
+                    <button class="btn btn-secondary" style="padding: 6px 10px; font-weight: 800; font-size: 0.9rem;" onclick="zoomWatchtowerMap(1.25)" title="Zoom avant">+</button>
+                    <button class="btn btn-secondary" style="padding: 6px 10px; font-weight: 800; font-size: 0.9rem;" onclick="zoomWatchtowerMap(0.8)" title="Zoom arrière">-</button>
+                    <button class="btn btn-secondary" style="padding: 6px 8px; font-size: 0.75rem;" onclick="resetWatchtowerNorth()" title="Réorienter vers le Nord">🧭 N</button>
+                </div>
+
+                <!-- GPS & TELEMETRY FOOTER BAR -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(15,23,42,0.92); border-top: 1px solid rgba(56,189,248,0.3); padding: 4px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: #94a3b8; z-index: 20; font-family: 'JetBrains Mono', monospace;">
+                    <div id="watchtower-coords-hud">
+                        📍 WGS84: 43.4072° N, 3.6961° E • L93: X=772 450m, Y=6 268 920m • Alt: 14.8m NGF
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span id="watchtower-scale-hud">Échelle : 1:500 (50m)</span>
+                        <span class="badge badge-success" style="font-size: 0.65rem;">🟢 RTK FIX ±1cm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCENARIO & PROGRESSION STRIP -->
+            <div style="background: rgba(15,23,42,0.9); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin-top: 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.1rem;">⏱️</span>
+                    <strong style="font-size: 0.85rem; color: #38bdf8;" id="sim-4d-phase-label">PHASE 1 : TERRASSEMENT & PURGE</strong>
+                    <span class="badge badge-info" id="scenario-active-step-badge">Étape 1/5</span>
+                </div>
+                <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                    <button class="btn-secondary" onclick="loadScenario('scen_tranchee_vrd')">Tranchée Assainissement</button>
+                    <button class="btn-secondary" onclick="loadScenario('scen_giratoire_ales')">Giratoire Alès</button>
+                    <button class="btn-secondary" onclick="prevScenarioStep()">⏮️ Étape Préc.</button>
+                    <button class="btn-secondary" onclick="nextScenarioStep()">⏭️ Étape Suiv.</button>
+                </div>
+            </div>
+
+            <div id="scenario-info-card" style="margin-bottom: 0.75rem;">
+                <!-- Populated dynamically by loadScenario() -->
+            </div>
+
+            <!-- STEPS LIST & STEP DETAILS -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                <div>
+                    <h5 style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.5rem;">📑 Chronologie des Étapes du Scénario</h5>
+                    <div id="scenario-steps-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                <div>
+                    <h5 style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.5rem;">🔍 Prescriptions & Télémétrie</h5>
+                    <div id="step-details-box">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </div>
@@ -943,8 +1059,9 @@ def get_tab_panels():
                     <div style="font-size: 0.8rem; color: #94a3b8;">Simulateur de calculs (Cubatures, Enrobés, Manning-Strickler), Visualisation dynamique Coupe de Tranchée/Compactage et Fiches de Tâches Excel</div>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border);">
+                    <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap; gap: 2px;">
                         <button class="btn-secondary tech-view-btn active" id="btn-tech-formulas" onclick="setTechniqueViewMode('formulas')">🧮 Simulateur de Formules</button>
+                        <button class="btn-secondary tech-view-btn" id="btn-tech-enrobes2d" onclick="setTechniqueViewMode('enrobes_2d')">🛣️ Simulation 2D Passes d'Enrobés</button>
                         <button class="btn-secondary tech-view-btn" id="btn-tech-compactage" onclick="setTechniqueViewMode('compactage')">🔬 Coupe Tranchée & Compacteur</button>
                         <button class="btn-secondary tech-view-btn" id="btn-tech-tasksheet" onclick="setTechniqueViewMode('tasksheet')">📊 Fiche de Tâche Type Excel</button>
                     </div>
@@ -960,13 +1077,15 @@ def get_tab_panels():
                             <label class="input-label">1. Sélectionnez la Famille de Calcul & Formule TP</label>
                             <select id="formula-type-select" class="input-field" style="font-weight:700; color:#38bdf8;" onchange="updateFormulaCalculator()">
                                 <option value="cubature_terrassement">1. 🚜 Cubature Terrassement : Déblai, Foisonnement, Remblai & Rotations Camions</option>
-                                <option value="tonnage_enrobes">2. 🛣️ Tonnage & Enrobés : Chaussée BBSG, Émulsion C65B4 & Fini m²</option>
-                                <option value="perimetre_bordures">3. 📏 Linéaires & Périmètres : Bordures T2/P1, Caniveaux CC1 & Semelle Béton</option>
-                                <option value="manning_hydraulique">4. 💧 Hydraulique : Débit Collecteur Manning-Strickler & Auto-curage</option>
-                                <option value="pente_canalisateur">5. 📐 Pente & Altimétrie : Calcul de Fil d'Eau Laser & ΔH</option>
-                                <option value="compactage_gtr">6. 🔨 Compactage GTR : Débit Q/S, Nombre de Passes N & Vitesse</option>
-                                <option value="revision_tp08">7. 📈 Révision de Prix : Formule Paramétrique Marchés Publics TP08</option>
-                                <option value="debourse_sec_k">8. 💰 Déboursé Sec (DS) & Prix de Vente HT avec Coefficient K</option>
+                                <option value="pente_talus_terrassement">2. 📐 Pentes de Talus & Emprises : Déblais / Remblais (TN, Roches, Argiles, GNT, Risbermes & Stabilité)</option>
+                                <option value="devers_chaussee_enrobes">3. 🛣️ Dévers & Pente Transversale : Chaussée, Enrobés BBSG/GB3 & Raccordement Fil d'Eau</option>
+                                <option value="tonnage_enrobes">4. 🛣️ Tonnage & Enrobés : Chaussée BBSG, Émulsion C65B4 & Fini m²</option>
+                                <option value="perimetre_bordures">5. 📏 Linéaires & Périmètres : Bordures T2/P1, Caniveaux CC1 & Semelle Béton</option>
+                                <option value="manning_hydraulique">6. 💧 Hydraulique : Débit Collecteur Manning-Strickler & Auto-curage</option>
+                                <option value="pente_canalisateur">7. 📐 Pente & Altimétrie : Calcul de Fil d'Eau Laser & ΔH</option>
+                                <option value="compactage_gtr">8. 🔨 Compactage GTR : Débit Q/S, Nombre de Passes N & Vitesse</option>
+                                <option value="revision_tp08">9. 📈 Révision de Prix : Formule Paramétrique Marchés Publics TP08</option>
+                                <option value="debourse_sec_k">10. 💰 Déboursé Sec (DS) & Prix de Vente HT avec Coefficient K</option>
                             </select>
                         </div>
 
@@ -984,6 +1103,106 @@ def get_tab_panels():
             </div>
 
             <!-- 2. CONCRETE CASE : COUPE TECHNIQUE DES COUCHES & COMPACTEUR VIBRANT -->
+            <!-- 2. SIMULATION 2D : CALCUL DES PASSES DE COMPACTAGE D'ENROBÉ & FINISSEUR -->
+            <div id="tech-enrobes-2d-view" style="display: none;">
+                <div style="background: rgba(15,23,42,0.95); border: 2px solid var(--cyan); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <div>
+                            <h4 style="font-size: 1.05rem; font-weight: 800; color: #38bdf8;">🛣️ Simulation 2D des Passes de Compactage d'Enrobés & Finisseur</h4>
+                            <div style="font-size: 0.78rem; color: #94a3b8;">Plan 2D vue de dessus, trajectoire du rouleau tandem, heatmap de recouvrement des passes et courbe thermique (Norme NF EN 13108-1 / Guide Cerema)</div>
+                        </div>
+                        <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                            <button class="btn btn-primary" id="btn-enrobes2d-play" onclick="toggleEnrobes2DSim()">▶️ Lancer Simulation 2D</button>
+                            <button class="btn btn-secondary" onclick="resetEnrobes2DSim()">↺ Réinitialiser</button>
+                            <button class="btn btn-secondary" onclick="stepEnrobes2DSim()">⏭️ Pas +1</button>
+                            <button class="btn btn-secondary" id="btn-enrobes2d-speed" onclick="toggleEnrobes2DSpeed()">⚡ Vitesse x1</button>
+                        </div>
+                    </div>
+
+                    <!-- 2D SIMULATION CANVAS & REAL-TIME CONTROLS SPLIT -->
+                    <div class="grid-split-60-40">
+                        <div style="height: 380px; background: #070a14; border: 1px solid rgba(56,189,248,0.4); border-radius: 6px; position: relative; overflow: hidden;">
+                            <canvas id="enrobes-2d-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                            
+                            <!-- Heatmap Legend Overlay -->
+                            <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(15,23,42,0.9); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(56,189,248,0.3); display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                <span style="font-size: 0.68rem; font-weight: 800; color: #38bdf8;">HEATMAP PASSES :</span>
+                                <div class="enrobes-pass-legend-item"><div class="enrobes-pass-color-box" style="background:#1e293b;"></div> 0p (160°C)</div>
+                                <div class="enrobes-pass-legend-item"><div class="enrobes-pass-color-box" style="background:#0284c7;"></div> 1-2p</div>
+                                <div class="enrobes-pass-legend-item"><div class="enrobes-pass-color-box" style="background:#f59e0b;"></div> 3-4p</div>
+                                <div class="enrobes-pass-legend-item"><div class="enrobes-pass-color-box" style="background:#10b981;"></div> 5-6p (Validé)</div>
+                                <div class="enrobes-pass-legend-item"><div class="enrobes-pass-color-box" style="background:#ec4899;"></div> >8p (Surcompactage)</div>
+                            </div>
+
+                            <!-- Temperature readout -->
+                            <div style="position: absolute; top: 8px; right: 8px; background: rgba(15,23,42,0.9); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(244,63,94,0.4); font-size: 0.75rem; font-family: monospace;">
+                                <span style="color:#f43f5e;">🌡️ T° Enrobé :</span> <strong id="enrobes2d-temp-val" style="color:#facc15;">148.5 °C</strong>
+                            </div>
+                        </div>
+
+                        <!-- PARAMETERS & TELEMETRY PANEL -->
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem;">
+                            <div style="background: rgba(30,41,59,0.5); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(51,65,85,0.6);">
+                                <div style="font-size: 0.8rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.4rem;">🎛️ Paramètres Atelier Finisseur & Compacteur</div>
+                                <div style="font-size: 0.72rem; color: #cbd5e1; display: grid; gap: 0.4rem;">
+                                    <div>
+                                        <div style="display:flex; justify-content:space-between;"><span>Largeur Table Finisseur (L) :</span> <strong id="e2d-width-val" style="color:var(--emerald);">3.50 m</strong></div>
+                                        <input type="range" id="e2d-width-range" min="2.50" max="7.00" step="0.25" value="3.50" class="input-field" oninput="updateEnrobes2DParams()">
+                                    </div>
+                                    <div>
+                                        <div style="display:flex; justify-content:space-between;"><span>Vitesse Finisseur (m/min) :</span> <strong id="e2d-fin-spd-val" style="color:#38bdf8;">3.5 m/min</strong></div>
+                                        <input type="range" id="e2d-fin-spd-range" min="1.5" max="6.0" step="0.5" value="3.5" class="input-field" oninput="updateEnrobes2DParams()">
+                                    </div>
+                                    <div>
+                                        <div style="display:flex; justify-content:space-between;"><span>Vitesse Rouleau Tandem (km/h) :</span> <strong id="e2d-comp-spd-val" style="color:var(--amber);">4.5 km/h</strong></div>
+                                        <input type="range" id="e2d-comp-spd-range" min="2.5" max="7.0" step="0.5" value="4.5" class="input-field" oninput="updateEnrobes2DParams()">
+                                    </div>
+                                    <div>
+                                        <div style="display:flex; justify-content:space-between;"><span>Passes Recommandées Cibles (N) :</span> <strong id="e2d-passes-val" style="color:var(--emerald);">6 passes</strong></div>
+                                        <input type="range" id="e2d-passes-range" min="4" max="10" step="1" value="6" class="input-field" oninput="updateEnrobes2DParams()">
+                                    </div>
+                                    <div>
+                                        <div style="display:flex; justify-content:space-between;"><span>Épaisseur Couche BBSG (cm) :</span> <strong id="e2d-thick-val" style="color:#f8fafc;">5.0 cm</strong></div>
+                                        <input type="range" id="e2d-thick-range" min="3.0" max="8.0" step="0.5" value="5.0" class="input-field" oninput="updateEnrobes2DParams()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- REALTIME TELEMETRY GRID -->
+                            <div class="grid-2" style="gap: 0.4rem;">
+                                <div class="enrobes-stat-card">
+                                    <span class="enrobes-stat-title">Avancement Linéaire</span>
+                                    <span class="enrobes-stat-val text-cyan" id="e2d-stat-lin">0.0 ml</span>
+                                </div>
+                                <div class="enrobes-stat-card">
+                                    <span class="enrobes-stat-title">Tonnage Enrobé Appliqué</span>
+                                    <span class="enrobes-stat-val text-emerald" id="e2d-stat-ton">0.0 t</span>
+                                </div>
+                                <div class="enrobes-stat-card">
+                                    <span class="enrobes-stat-title">Compacité Moyenne</span>
+                                    <span class="enrobes-stat-val text-amber" id="e2d-stat-compac">94.2 % OPN</span>
+                                </div>
+                                <div class="enrobes-stat-card">
+                                    <span class="enrobes-stat-title">Adéquation Atelier</span>
+                                    <span class="enrobes-stat-val" style="color:#a855f7;" id="e2d-stat-adeq">1 Tandem Suffisant</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- METHODOLOGICAL COMPACTION PLAN GUIDE -->
+                    <div style="margin-top: 1rem; background: rgba(30,41,59,0.5); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(51,65,85,0.6); font-size: 0.75rem; color: #cbd5e1; line-height: 1.5;">
+                        <strong style="color: #38bdf8;">📋 Plan de Compactage Méthodique des Enrobés (Guide Cerema / SETRA) :</strong>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.6rem; margin-top: 0.4rem;">
+                            <div><strong>1. Passe d'Attaque :</strong> Démarrage sur le bord libre bas de la bande pour caler la matière sans déformation latérale.</div>
+                            <div><strong>2. Passes Courantes :</strong> Va-et-vient avec chevauchement de 15 à 20cm entre traces. Décalage des points d'inversion en biseau (éviter les ornières).</div>
+                            <div><strong>3. Passe de Fermeture :</strong> Finition sur le joint longitudinal à chaud pour garantir l'étanchéité et l'uni de surface.</div>
+                            <div><strong>4. Plage Thermique :</strong> Compactage impératif entre 160°C et 110°C. Arrêt des vibrations sous 90°C pour éviter la fracturation des granulats.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="tech-compactage-cut-view" style="display: none;">
                 <div style="background: rgba(15,23,42,0.9); border: 2px solid var(--cyan); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1025,11 +1244,11 @@ def get_tab_panels():
                                 <div style="font-weight: 800; color: #38bdf8; margin-bottom: 4px;">📊 Télémétrie & Conformité In-Situ :</div>
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
                                     <span style="color: #94a3b8;">Module de Portance Plaque (EV2) :</span>
-                                    <strong id="cmp-ev2-val" style="color: var(--emerald);">95.4 MPa (Norme $\ge 80$ MPa)</strong>
+                                    <strong id="cmp-ev2-val" style="color: var(--emerald);">95.4 MPa (Norme ≥ 80 MPa)</strong>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
                                     <span style="color: #94a3b8;">Rapport de Compactage EV2/EV1 :</span>
-                                    <strong id="cmp-k-val" style="color: var(--emerald);">1.68 (Norme $\le 2.0$)</strong>
+                                    <strong id="cmp-k-val" style="color: var(--emerald);">1.68 (Norme ≤ 2.0)</strong>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
                                     <span style="color: #94a3b8;">Cadence d'alimentation requise :</span>

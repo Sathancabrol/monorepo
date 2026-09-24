@@ -650,16 +650,15 @@ leaflet_watchtower_js = r'''
 with open('scripts/section_js_part2.py', 'r', encoding='utf-8') as f:
     text = f.read()
 
-pos_wt_start = text.find('// WATCHTOWER GIS / SATELLITE & MAPS ENGINE')
-if pos_wt_start != -1:
-    pos_wt_end = text.find('// 2D RADAR ANIMATION', pos_wt_start)
-    if pos_wt_end != -1:
-        text = text[:pos_wt_start] + leaflet_watchtower_js.strip() + "\n\n    " + text[pos_wt_end:]
-        print("Leaflet Real Map engine replaced in section_js_part2.py successfully!")
-    else:
-        print("Error locating end of Watchtower engine")
-else:
-    print("Error locating start of Watchtower engine")
+pos_sim_mode = text.find('function setSimulatorViewMode(mode) {')
+if pos_sim_mode != -1:
+    pos_toggle = text.find('function togglePlay4DSimulation()')
+    if pos_toggle != -1:
+        # find end of togglePlay4DSimulation
+        pos_radar = text.find('// 2D RADAR ANIMATION', pos_toggle)
+        if pos_radar != -1:
+            text = text[:pos_sim_mode] + leaflet_watchtower_js.strip() + "\n\n    " + text[pos_radar:]
+            print("Leaflet Real Map engine injected successfully into section_js_part2.py!")
 
 with open('scripts/section_js_part2.py', 'w', encoding='utf-8') as f:
     f.write(text)
