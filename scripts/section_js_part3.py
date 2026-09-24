@@ -5955,4 +5955,97 @@ def get_js_part3():
         printWindow.focus();
         setTimeout(() => { printWindow.print(); }, 500);
     }
+
+
+    /* ========================================================================== */
+    /* V56: GTR COMPACTION ABACUS & GEOTECHNICAL SOIL ENGINE                      */
+    /* ========================================================================== */
+    function updateGTRCalculation() {
+        const solType = document.getElementById('gtr-sol-type')?.value || 'B3';
+        const compClass = document.getElementById('gtr-comp-class')?.value || 'V3';
+        const objectif = document.getElementById('gtr-objectif')?.value || 'q4';
+        const vitesse = parseFloat(document.getElementById('gtr-vitesse')?.value || 3.5);
+
+        // GTR Abacus Matrix
+        let eMax = 0.30; // m
+        let nPasses = 6;
+        let widthM = 1.68; // Bomag BW 151 width
+
+        if (compClass === 'V1') { eMax = 0.20; nPasses = 8; widthM = 1.20; }
+        else if (compClass === 'V2') { eMax = 0.25; nPasses = 7; widthM = 1.45; }
+        else if (compClass === 'V3') { eMax = 0.35; nPasses = 6; widthM = 1.68; }
+        else if (compClass === 'V4') { eMax = 0.45; nPasses = 6; widthM = 2.13; }
+        else if (compClass === 'V5') { eMax = 0.60; nPasses = 5; widthM = 2.22; }
+        else if (compClass === 'P1') { eMax = 0.25; nPasses = 8; widthM = 2.00; }
+        else if (compClass === 'P2') { eMax = 0.40; nPasses = 6; widthM = 2.40; }
+        else if (compClass === 'SP1') { eMax = 0.30; nPasses = 8; widthM = 1.80; }
+        else if (compClass === 'PQ3') { eMax = 0.20; nPasses = 5; widthM = 0.65; }
+
+        if (objectif === 'q3') {
+            eMax = eMax * 1.25; // thicker layer permitted in embankment body
+            nPasses = Math.max(4, nPasses - 1);
+        }
+
+        // Q/L = (1000 * e * V) / N in m3/h/m
+        const qOverL = (1000 * eMax * vitesse) / nPasses;
+        const qTotal = qOverL * widthM;
+
+        const emEl = document.getElementById('gtr-emax-res');
+        const npEl = document.getElementById('gtr-npasses-res');
+        const qlEl = document.getElementById('gtr-ql-res');
+        const qtEl = document.getElementById('gtr-qtot-res');
+        const bdgEl = document.getElementById('gtr-badge-statut');
+
+        if (emEl) emEl.textContent = eMax.toFixed(2) + ' m (' + Math.round(eMax * 100) + ' cm)';
+        if (npEl) npEl.textContent = nPasses + ' passes minimales';
+        if (qlEl) qlEl.textContent = Math.round(qOverL) + ' m³/h / mètre de cylindre';
+        if (qtEl) qtEl.textContent = Math.round(qTotal) + ' m³/h (Largeur ' + widthM.toFixed(2) + ' m)';
+        if (bdgEl) bdgEl.textContent = compClass + ' • Sol ' + solType + ' • ' + (objectif === 'q4' ? 'Couche de Forme q4' : 'Remblai q3');
+
+        renderGtrSVG(compClass, solType, eMax, nPasses);
+    }
+
+    function renderGtrSVG(compClass, solType, eMax, nPasses) {
+        const container = document.getElementById('gtr-svg-container');
+        if (!container) return;
+
+        const svg = `
+            <svg viewBox="0 0 340 270" width="100%" height="260" style="max-height: 260px;">
+                <defs>
+                    <linearGradient id="drumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#f59e0b"/>
+                        <stop offset="100%" stop-color="#b45309"/>
+                    </linearGradient>
+                    <pattern id="soilGtr" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="1.5" fill="#f59e0b" opacity="0.4"/>
+                        <circle cx="6" cy="6" r="1" fill="#38bdf8" opacity="0.3"/>
+                    </pattern>
+                </defs>
+                <!-- Background Stratum -->
+                <rect x="20" y="20" width="300" height="230" rx="6" fill="#090d16" stroke="#1e293b"/>
+                
+                <!-- Soil Layer to compact -->
+                <rect x="40" y="110" width="260" height="70" fill="url(#soilGtr)" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="50" y="130" fill="#f59e0b" font-size="10" font-weight="700">SOL ${solType} • Épaisseur e = ${Math.round(eMax * 100)} cm</text>
+                <text x="50" y="145" fill="#94a3b8" font-size="8">Objectif compactage : ${nPasses} passes @ 3.5 km/h</text>
+
+                <!-- Subgrade support (PF2 / Sol support) -->
+                <rect x="40" y="180" width="260" height="50" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+                <text x="50" y="205" fill="#38bdf8" font-size="9" font-weight="700">SOL SUPPORT / PLATEFORME AR2 (EV2 ≥ 50 MPa)</text>
+
+                <!-- Compactor Roller Drum -->
+                <circle cx="170" cy="70" r="38" fill="url(#drumGrad)" stroke="#fef08a" stroke-width="2.5"/>
+                <circle cx="170" cy="70" r="15" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+                <text x="170" y="74" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">${compClass}</text>
+
+                <!-- Vibration energy waves -->
+                <path d="M 140 112 Q 170 125 200 112" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3,2"/>
+                <path d="M 130 135 Q 170 155 210 135" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3,2"/>
+                <path d="M 120 160 Q 170 185 220 160" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="3,2"/>
+
+                <text x="170" y="240" fill="#22c55e" font-size="9" font-weight="700" text-anchor="middle">✔ Énergie transmise conforme norme NF P 98-736</text>
+            </svg>
+        `;
+        container.innerHTML = svg;
+    }
 """

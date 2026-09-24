@@ -1347,11 +1347,12 @@ def get_tab_panels():
                     <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap; gap: 2px;">
                         <button class="btn-secondary tech-view-btn active" id="btn-tech-formulas" onclick="setTechniqueViewMode('formulas')">🧮 Simulateur de Formules</button>
                         <button class="btn-secondary tech-view-btn" id="btn-tech-hydraulique" onclick="setTechniqueViewMode('hydraulique')">🌊 Hydraulique & Bassin</button>
-                        <button class="btn-secondary tech-view-btn" id="btn-tech-bruckner" onclick="setTechniqueViewMode('bruckner')">⛰️ Bruckner & Mouvements Terres</button>
-                        <button class="btn-secondary tech-view-btn" id="btn-tech-reseauxsecs" onclick="setTechniqueViewMode('reseauxsecs')">⚡ Réseaux Secs & Éclairage</button>
+                        <button class="btn-secondary tech-view-btn" id="btn-tech-gtr" onclick="setTechniqueViewMode('gtr')">🚜 Abaques GTR Compactage</button>
+                        <button class="btn-secondary tech-view-btn" id="btn-tech-bruckner" onclick="setTechniqueViewMode('bruckner')">⛰️ Bruckner & Terres</button>
+                        <button class="btn-secondary tech-view-btn" id="btn-tech-reseauxsecs" onclick="setTechniqueViewMode('reseauxsecs')">⚡ Réseaux Secs</button>
                         <button class="btn-secondary tech-view-btn" id="btn-tech-enrobes2d" onclick="setTechniqueViewMode('enrobes_2d')">🛣️ Simulation 2D Enrobés</button>
-                        <button class="btn-secondary tech-view-btn" id="btn-tech-compactage" onclick="setTechniqueViewMode('compactage')">🔬 Coupe Tranchée & Compacteur</button>
-                        <button class="btn-secondary tech-view-btn" id="btn-tech-tasksheet" onclick="setTechniqueViewMode('tasksheet')">📊 Fiche de Tâche Excel</button>
+                        <button class="btn-secondary tech-view-btn" id="btn-tech-compactage" onclick="setTechniqueViewMode('compactage')">🔬 Coupe Tranchée</button>
+                        <button class="btn-secondary tech-view-btn" id="btn-tech-tasksheet" onclick="setTechniqueViewMode('tasksheet')">📊 Fiche Excel</button>
                     </div>
                     <button class="btn btn-primary" onclick="exportTechniqueReport()">📥 Exporter Note de Calcul</button>
                 </div>
@@ -1709,7 +1710,102 @@ def get_tab_panels():
                         </div>
                     </div>
                 </div>
+            </d
+            <!-- GTR COMPACTION ABACUS VIEW -->
+            <div id="tech-gtr-view" style="display: none;">
+                <div class="grid-split-40-60">
+                    <div>
+                        <div class="card" style="background: rgba(15,23,42,0.6); border: 1px solid var(--border); margin-bottom: 1rem;">
+                            <h4 style="color: #f59e0b; margin-top: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>🚜</span> Guide des Terrassements Routiers (GTR Fascicule 2)
+                            </h4>
+                            <div class="grid-2-col" style="gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <div class="input-group">
+                                    <label class="input-label">Classification du Sol (GTR)</label>
+                                    <select class="select-field" id="gtr-sol-type" onchange="updateGTRCalculation()">
+                                        <option value="B1">B1 : Sables et graves très silteux</option>
+                                        <option value="B2">B2 : Sables et graves peu argileux</option>
+                                        <option value="B3" selected>B3 : Graves très silteuses (GNT 0/31.5)</option>
+                                        <option value="A1">A1 : Limons peu plastiques (Ip < 12)</option>
+                                        <option value="A2">A2 : Argiles et limons moyennement plastiques</option>
+                                        <option value="C1">C1 : Éboulis, sables et graves à gros éléments</option>
+                                        <option value="D1">D1 : Sables alluvionnaires propres</option>
+                                        <option value="D2">D2 : Graves alluvionnaires propres</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">Classe Compacteur GTR</label>
+                                    <select class="select-field" id="gtr-comp-class" onchange="updateGTRCalculation()">
+                                        <option value="V1">V1 : Rouleau vibrant léger (M1/L 15-25 kg/cm)</option>
+                                        <option value="V2">V2 : Rouleau vibrant moyen (M1/L 25-40 kg/cm)</option>
+                                        <option value="V3" selected>V3 : Rouleau vibrant lourd (M1/L 40-55 kg/cm - BW 151)</option>
+                                        <option value="V4">V4 : Rouleau vibrant très lourd (M1/L 55-70 kg/cm)</option>
+                                        <option value="V5">V5 : Rouleau vibrant super lourd (> 70 kg/cm)</option>
+                                        <option value="P1">P1 : Compacteur à pneus 2.5t à 4t / roue</option>
+                                        <option value="P2">P2 : Compacteur à pneus 4t à 6t / roue</option>
+                                        <option value="SP1">SP1 : Pieds dameurs vibrant moyen</option>
+                                        <option value="PQ3">PQ3 : Plaque vibrante lourde (> 200 kg)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid-2-col" style="gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <div class="input-group">
+                                    <label class="input-label">Objectif de Compactage</label>
+                                    <select class="select-field" id="gtr-objectif" onchange="updateGTRCalculation()">
+                                        <option value="q4" selected>q4 : Couche de forme & Tranchées (98-100% OPM)</option>
+                                        <option value="q3">q3 : Corps de remblai (95% OPN)</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">Vitesse de Translation (km/h)</label>
+                                    <input type="number" class="input-field" id="gtr-vitesse" value="3.5" step="0.5" min="1.0" max="8.0" oninput="updateGTRCalculation()">
+                                </div>
+                            </div>
+                            <div style="background: rgba(2,6,23,0.7); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem; font-size: 0.8rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="color: #94a3b8;">Épaisseur Maxi par Passe $e_{\max}$ :</span>
+                                    <span id="gtr-emax-res" style="font-weight: 800; color: #38bdf8;">0.30 m (30 cm)</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="color: #94a3b8;">Nombre Minimal de Passes $N$ :</span>
+                                    <span id="gtr-npasses-res" style="font-weight: 800; color: #f59e0b;">6 passes</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span style="color: #94a3b8;">Débit Théorique $Q/L$ :</span>
+                                    <span id="gtr-ql-res" style="font-weight: 800; color: #22c55e;">175 m³/h / mètre</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #94a3b8;">Débit de l'Engin (Largeur 1.68m) :</span>
+                                    <span id="gtr-qtot-res" style="font-weight: 800; color: #a855f7;">294 m³/h</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="background: rgba(15,23,42,0.6); border: 1px solid var(--border);">
+                            <h4 style="color: #38bdf8; margin-top: 0; font-size: 0.9rem;">🔬 Contrôle In Situ : Plaque Westergaard / Dynaplaque</h4>
+                            <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5;">
+                                <div>• <strong>Exigence Plateforme PF2</strong> : $EV_2 \ge 50	ext{ MPa}$ et rapport $k = EV_2/EV_1 \le 2.0$.</div>
+                                <div>• <strong>Exigence Plateforme PF3</strong> : $EV_2 \ge 120	ext{ MPa}$ et rapport $k \le 1.8$.</div>
+                                <div>• <strong>Compacité en fond de tranchée</strong> : Contrôle au pénétromètre dynamique léger Panda (objectif $q_4 = 98\%	ext{ OPM}$).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GTR SVG Graphic -->
+                    <div>
+                        <div class="card" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border); height: 100%; display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <span style="font-size: 0.9rem; font-weight: 700; color: #38bdf8;">📐 Énergie de Compactage GTR & Propagation des Ondes Vibratoires</span>
+                                <span class="badge badge-warning" id="gtr-badge-statut">V3 • GNT 0/31.5 • Objectif q4</span>
+                            </div>
+                            <div id="gtr-svg-container" style="flex: 1; min-height: 280px; display: flex; align-items: center; justify-content: center; background: #020617; border-radius: 8px; border: 1px solid rgba(245,158,11,0.25); position: relative; overflow: hidden;">
+                                <!-- Injected dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+iv>
 
             <!-- 6. OPTIMISATION MOUVEMENTS DE TERRES & COURBE DE BRUCKNER VIEW -->
             <div id="tech-bruckner-view" style="display: none;">
