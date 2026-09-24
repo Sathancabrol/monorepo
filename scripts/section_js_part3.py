@@ -6048,4 +6048,5 @@ def get_js_part3():
         `;
         container.innerHTML = svg;
     }
+</script>
 """

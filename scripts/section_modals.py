@@ -252,7 +252,11 @@ def get_modals():
             <button class="btn btn-secondary" style="text-align:left; font-size:0.85rem;" onclick="quickAction('sdp')">💰 Tableau Croisé DQE</button>
         </div>
     </div>
-id="modal-add-livraison" class="modal-overlay" style="display: none;" onclick="if(event.target===this) closeAddLivraisonModal()">
+
+    <!-- ========================================== -->
+    <!-- MODAL: AJOUTER BON DE LIVRAISON / PESEE    -->
+    <!-- ========================================== -->
+    <div id="modal-add-livraison" class="modal-overlay" style="display: none;" onclick="if(event.target===this) closeAddLivraisonModal()">
         <div class="modal-box" style="max-width: 600px;">
             <div class="modal-header">
                 <span class="modal-title">🚛 Saisie de Bon de Livraison & Pesée Centrale</span>

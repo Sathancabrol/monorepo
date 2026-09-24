@@ -509,6 +509,7 @@
 
         .tab-panel {
             display: none;
+            padding-bottom: 5rem;
             animation: fadeIn 0.2s ease forwards;
         }
         .tab-panel.active { display: block; }
@@ -3568,7 +3569,11 @@ iv>
             <button class="btn btn-secondary" style="text-align:left; font-size:0.85rem;" onclick="quickAction('sdp')">💰 Tableau Croisé DQE</button>
         </div>
     </div>
-id="modal-add-livraison" class="modal-overlay" style="display: none;" onclick="if(event.target===this) closeAddLivraisonModal()">
+
+    <!-- ========================================== -->
+    <!-- MODAL: AJOUTER BON DE LIVRAISON / PESEE    -->
+    <!-- ========================================== -->
+    <div id="modal-add-livraison" class="modal-overlay" style="display: none;" onclick="if(event.target===this) closeAddLivraisonModal()">
         <div class="modal-box" style="max-width: 600px;">
             <div class="modal-header">
                 <span class="modal-title">🚛 Saisie de Bon de Livraison & Pesée Centrale</span>
@@ -14358,6 +14363,7 @@ id="modal-add-livraison" class="modal-overlay" style="display: none;" onclick="i
         `;
         container.innerHTML = svg;
     }
+</script>
 
 </body>
 </html>

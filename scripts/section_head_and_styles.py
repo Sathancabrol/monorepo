@@ -510,6 +510,7 @@ def get_head_and_styles():
 
         .tab-panel {
             display: none;
+            padding-bottom: 5rem;
             animation: fadeIn 0.2s ease forwards;
         }
         .tab-panel.active { display: block; }
