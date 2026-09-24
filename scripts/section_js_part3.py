@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 def get_js_part3():
     return r"""
     // ==========================================
@@ -4845,7 +4843,7 @@ def get_js_part3():
             desc: "Cahier des Clauses Techniques Générales applicable aux marchés publics de travaux d'assainissement (Titre I : Réseaux gravitaires, Titre II : Ouvrages de rétention et bassins d'orage).",
             status: "CCTG Ministériel",
             badge: "Référentiel Travaux",
-            content: "# FASCICULE 70 DU CCTG - DISPOSITIONS TECHNIQUES\n\n- **Pente minimale d'autocurage :** $I \\ge 0.5\\%$ ($5\\text{ mm/m}$) pour eaux usées et pluviales afin de garantir une vitesse d'écoulement $\\ge 0.70\\text{ m/s}$.\n- **Regards de visite :** Implantation obligatoire à chaque changement de direction, de pente, de diamètre, et au maximum tous les $50\\text{ m}$.\n- **Tolérances de pose :** Tolérance d'alignement $\\pm 10\\text{ mm}$, tolérance de niveau fil d'eau $\\pm 5\\text{ mm}$."
+            content: "# FASCICULE 70 DU CCTG - DISPOSITIONS TECHNIQUES\n\n- **Pente minimale d'autocurage :** $I \\ge 0.5\\%$ ($5\\text{ mm/m}$) pour eaux usées et pluviales afin de garantir une vitesse d ecoulement $\\ge 0.70\\text{ m/s}$.\n- **Regards de visite :** Implantation obligatoire à chaque changement de direction, de pente, de diamètre, et au maximum tous les $50\\text{ m}$.\n- **Tolérances de pose :** Tolérance d'alignement $\\pm 10\\text{ mm}$, tolérance de niveau fil d'eau $\\pm 5\\text{ mm}$."
         },
         {
             id: "cctg_fascicule_71",
