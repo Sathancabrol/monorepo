@@ -19,6 +19,7 @@ from fastapi.templating import Jinja2Templates
 from nexus_os import __version__, config
 from nexus_os.agents import AgentSpec, registry as agent_registry
 from nexus_os.creator import create_and_save, draft
+from nexus_os import harness as harness_mod
 from nexus_os.db import store as db_store
 from nexus_os.llm import router as llm_router, system_mode
 from nexus_os.memory import memory
@@ -163,6 +164,43 @@ def api_agent_export(agent_id: str) -> FileResponse:
 
 
 # --------------------------------------------------------------------------- #
+# Portabilité vers les autres harness (Claude Code, Codex, Cline, Hermes…)
+# --------------------------------------------------------------------------- #
+@app.get("/api/harnesses")
+def api_harnesses() -> list[dict[str, Any]]:
+    return harness_mod.list_targets()
+
+
+@app.get("/api/agents/{agent_id}/harness")
+def api_agent_harness_overview(agent_id: str) -> dict[str, Any]:
+    a = agents.get(agent_id)
+    if not a:
+        raise HTTPException(404, f"agent inconnu : {agent_id}")
+    return harness_mod.summarize(a)
+
+
+@app.get("/api/agents/{agent_id}/harness/{target}")
+def api_agent_harness(agent_id: str, target: str, save: bool = Query(False)) -> dict[str, Any]:
+    a = agents.get(agent_id)
+    if not a:
+        raise HTTPException(404, f"agent inconnu : {agent_id}")
+    try:
+        content = harness_mod.export_spec(a, target)
+        filename = harness_mod.filename_for(target, a)
+    except KeyError as e:
+        raise HTTPException(400, str(e))
+    saved_to = None
+    if save:
+        out = config.WORKSPACE_DIR / "harness" / target / filename
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(content, encoding="utf-8")
+        saved_to = f"workspace/harness/{target}/{filename}"
+    return {"agent_id": agent_id, "target": target, "filename": filename,
+            "content": content, "saved_to": saved_to,
+            "bytes": len(content.encode("utf-8"))}
+
+
+# --------------------------------------------------------------------------- #
 # Compétences & outils
 # --------------------------------------------------------------------------- #
 @app.get("/api/skills")
@@ -176,14 +214,6 @@ def api_skill(name: str) -> dict[str, Any]:
     if not s:
         raise HTTPException(404, f"compétence inconnue : {name}")
     return s.to_dict(with_body=True)
-
-
-@app.get("/api/tools")
-def api_tools() -> list[dict[str, Any]]:
-    out = []
-    for t in tools.tools.values():
-        out.append({**t.spec(), "risky": t.risky, "tags": t.tags})
-    return sorted(out, key=lambda x: x["name"])
 
 
 # --------------------------------------------------------------------------- #
@@ -228,23 +258,83 @@ def _stream(gen) -> StreamingResponse:
 
 @app.get("/api/run")
 def api_run(task: str = Query(..., min_length=1), agent: str = Query("orchestrator"),
-            session_id: str | None = Query(None)) -> StreamingResponse:
+            session_id: str | None = Query(None),
+            approval: str = Query("smart", pattern="^(off|manuel|smart)$"),
+            approve: str = Query("", description="outils pré-autorisés, séparés par virgules"),
+            max_steps: int | None = Query(None, ge=1, le=20)) -> StreamingResponse:
     if not agents.get(agent):
         raise HTTPException(404, f"agent inconnu : {agent}")
-    return _stream(rt.run(task, agent, session_id=session_id))
+    return _stream(rt.run(task, agent, session_id=session_id, approval=approval,
+                          approved_tools=[t for t in approve.split(",") if t.strip()],
+                          max_steps=max_steps))
 
 
 @app.get("/api/pipeline")
 def api_pipeline(task: str = Query(..., min_length=1),
                  agents_chain: str = Query(..., description="ids séparés par des virgules"),
-                 session_id: str | None = Query(None)) -> StreamingResponse:
+                 session_id: str | None = Query(None),
+                 approval: str = Query("smart", pattern="^(off|manuel|smart)$"),
+                 approve: str = Query("")) -> StreamingResponse:
     chain = [a.strip() for a in agents_chain.split(",") if a.strip()]
     unknown = [a for a in chain if not agents.get(a)]
     if unknown:
         raise HTTPException(404, f"agents inconnus : {', '.join(unknown)}")
     if not chain:
         raise HTTPException(400, "chaîne vide")
-    return _stream(rt.stream_pipeline(task, chain, session_id=session_id))
+    return _stream(rt.stream_pipeline(task, chain, session_id=session_id, approval=approval,
+                                      approved_tools=[t for t in approve.split(",") if t.strip()]))
+
+
+@app.get("/api/parallel")
+def api_parallel(task: str = Query(..., min_length=1),
+                 agents_list: str = Query(..., description="ids séparés par des virgules"),
+                 session_id: str | None = Query(None),
+                 approval: str = Query("smart", pattern="^(off|manuel|smart)$"),
+                 approve: str = Query("")) -> StreamingResponse:
+    """Flotte : plusieurs agents travaillent en même temps sur la même tâche."""
+    crew = [a.strip() for a in agents_list.split(",") if a.strip()]
+    unknown = [a for a in crew if not agents.get(a)]
+    if unknown:
+        raise HTTPException(404, f"agents inconnus : {', '.join(unknown)}")
+    if len(crew) < 2:
+        raise HTTPException(400, "au moins 2 agents pour une exécution parallèle")
+    return _stream(rt.stream_parallel(task, crew, session_id=session_id, approval=approval,
+                                      approved_tools=[t for t in approve.split(",") if t.strip()]))
+
+
+@app.get("/api/board")
+def api_board() -> dict[str, Any]:
+    from nexus_os.tools import BOARD_COLUMNS, _board_load
+
+    items = _board_load()
+    return {"columns": list(BOARD_COLUMNS), "count": len(items), "items": items}
+
+
+@app.post("/api/board")
+def api_board_change(payload: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    from nexus_os.tools import BOARD_COLUMNS, ToolContext, ToolRegistry, t_task_board
+
+    action = str(payload.get("action", "add"))
+    if action not in {"list", "add", "move", "done", "remove"}:
+        raise HTTPException(400, f"action inconnue : {action}")
+    column = str(payload.get("column", ""))
+    if action in {"add", "move"} and column not in BOARD_COLUMNS:
+        raise HTTPException(400, f"colonne parmi : {', '.join(BOARD_COLUMNS)}")
+    try:
+        out = t_task_board(ToolContext(), action=action, title=str(payload.get("title", "")),
+                           agent=str(payload.get("agent", "")), column=column,
+                           task_id=str(payload.get("task_id", "")))
+    except Exception as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True, "message": out}
+
+
+@app.get("/api/tools")
+def api_tools() -> list[dict[str, Any]]:
+    out = []
+    for t in tools.tools.values():
+        out.append({**t.spec(), "risky": t.risky, "tags": t.tags})
+    return sorted(out, key=lambda x: x["name"])
 
 
 @app.get("/api/runs")

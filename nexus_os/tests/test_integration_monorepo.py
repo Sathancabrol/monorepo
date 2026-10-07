@@ -22,8 +22,8 @@ def test_os_monte_sous_le_monorepo(mono_client):
 
 def test_api_de_l_os_accessible_depuis_le_monorepo(mono_client):
     body = mono_client.get("/os/api/status").json()
-    assert body["runtime"]["agents"] >= 10
-    assert len(mono_client.get("/os/api/agents").json()) >= 10
+    assert body["runtime"]["agents"] >= 22
+    assert len(mono_client.get("/os/api/agents").json()) >= 22
 
 
 def test_assets_de_l_os_sous_le_prefixe(mono_client):

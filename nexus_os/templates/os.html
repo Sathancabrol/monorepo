@@ -3,213 +3,323 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NEXUS·OS — Agentic Operating System</title>
+<meta name="color-scheme" content="dark">
+<title>NEXUS·OS — mission control</title>
 <link rel="stylesheet" href="static/os.css">
 </head>
 <body>
+
 <header class="topbar">
-  <div class="brand"><span class="logo">⬢</span> NEXUS<span class="dim">·</span>OS
-    <span class="ver">v{{ version }}</span></div>
-  <div class="topmeta">
-    <span id="mode-badge" class="badge badge-off">mode…</span>
-    <span id="stat-models" class="chip">modèles —</span>
-    <span id="stat-agents" class="chip">agents —</span>
-    <span id="stat-skills" class="chip">compétences —</span>
-    <span id="stat-memory" class="chip">mémoire —</span>
-    <span id="flag-shell" class="chip chip-flag">shell off</span>
+  <div class="brand">
+    <span class="mark">⬢</span> NEXUS<span class="sep">·</span>OS
+    <span class="ver">v{{ version }}</span>
+  </div>
+  <button class="kbd-btn" id="open-palette">
+    <span>Rechercher un agent, une commande…</span><kbd>⌘K</kbd>
+  </button>
+  <div class="spacer"></div>
+  <div class="telemetry">
+    <span class="tel" id="tel-mode"><i class="dot"></i><b>—</b></span>
+    <span class="tel" id="tel-models">modèles <b>—</b></span>
+    <span class="tel" id="tel-agents">agents <b>—</b></span>
+    <span class="tel" id="tel-skills">compétences <b>—</b></span>
+    <span class="tel" id="tel-mem">mémoire <b>—</b></span>
+    <span class="tel" id="tel-shell">shell <b>—</b></span>
   </div>
 </header>
 
 <div class="shell">
-  <nav class="dock">
-    <button class="dock-btn active" data-view="console"><span>▶</span>Console</button>
-    <button class="dock-btn" data-view="agents"><span>🤖</span>Agents</button>
-    <button class="dock-btn" data-view="creator"><span>🧬</span>Créateur</button>
-    <button class="dock-btn" data-view="skills"><span>📚</span>Compétences</button>
-    <button class="dock-btn" data-view="router"><span>🛰</span>Routeur</button>
-    <button class="dock-btn" data-view="logs"><span>🧾</span>Journaux</button>
-    <button class="dock-btn" data-view="files"><span>🗂</span>Fichiers</button>
-    <button class="dock-btn" data-view="memory"><span>🧠</span>Mémoire</button>
-    <div class="dock-foot">
-      <div class="hint">Mode hors-ligne&nbsp;: ajoute une clé API
-        (<code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>…) pour passer en live.</div>
-    </div>
+  <nav class="rail">
+    <button class="rail-btn active" data-view="control" data-tip="Mission control">◧</button>
+    <button class="rail-btn" data-view="console" data-tip="Console">▶</button>
+    <button class="rail-btn" data-view="agents" data-tip="Agents">🤖</button>
+    <button class="rail-btn" data-view="creator" data-tip="Créateur d'agent">🧬</button>
+    <button class="rail-btn" data-view="board" data-tip="Tableau des tâches">▦</button>
+    <div class="rail-sep"></div>
+    <button class="rail-btn" data-view="skills" data-tip="Compétences">📚</button>
+    <button class="rail-btn" data-view="harness" data-tip="Harness & portabilité">🔌</button>
+    <button class="rail-btn" data-view="router" data-tip="Routeur de modèles">🛰</button>
+    <div class="rail-sep"></div>
+    <button class="rail-btn" data-view="logs" data-tip="Journaux">🧾</button>
+    <button class="rail-btn" data-view="files" data-tip="Fichiers produits">🗂</button>
+    <button class="rail-btn" data-view="memory" data-tip="Mémoire">🧠</button>
   </nav>
 
   <main class="stage">
-    <!-- CONSOLE -->
-    <section class="view active" id="view-console">
-      <div class="console-grid">
-        <div class="pane">
-          <h2>Démarrer une tâche</h2>
-          <label>Agent
-            <select id="run-agent"></select>
-          </label>
-          <label>Tâche
-            <textarea id="run-task" rows="4"
-              placeholder="Ex. : Audite la structure du dépôt et propose un diagramme d'architecture"></textarea>
-          </label>
-          <div class="row">
-            <button id="btn-run" class="primary">Lancer</button>
-            <button id="btn-route" class="ghost">Qui doit traiter&nbsp;?</button>
-            <button id="btn-stop" class="ghost danger" disabled>Arrêter</button>
+
+    <!-- ══════════ MISSION CONTROL ══════════ -->
+    <section class="view active" id="view-control">
+      <div class="grid g-4" style="margin-bottom:14px">
+        <div class="card tight kpi"><span class="l">Mode</span><span class="v acc" id="k-mode">—</span>
+          <span class="d" id="k-mode-d">—</span></div>
+        <div class="card tight kpi"><span class="l">Agents</span><span class="v" id="k-agents">—</span>
+          <span class="d" id="k-agents-d">—</span></div>
+        <div class="card tight kpi"><span class="l">Exécutions</span><span class="v" id="k-runs">—</span>
+          <span class="d" id="k-runs-d">—</span></div>
+        <div class="card tight kpi"><span class="l">Tokens</span><span class="v" id="k-tokens">—</span>
+          <span class="d" id="k-tokens-d">—</span></div>
+      </div>
+
+      <div class="grid g-2" style="margin-bottom:14px">
+        <div class="card">
+          <div class="card-head"><h2>Lancer une tâche</h2><span class="badge" id="qc-agent">—</span></div>
+          <textarea id="qc-task" rows="3"
+            placeholder="Décris la tâche — l'orchestrateur choisira le bon spécialiste"></textarea>
+          <div class="row mt">
+            <button class="primary" id="qc-run">▶ Lancer</button>
+            <button class="ghost" id="qc-route">Qui doit traiter&nbsp;?</button>
+            <select id="qc-agent-sel" style="width:auto;min-width:170px"></select>
           </div>
-          <div id="route-hint" class="note"></div>
+          <div id="qc-hint" class="note"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Flotte d'agents</h2><span class="badge" id="fleet-count">—</span></div>
+          <div class="fleet" id="fleet"></div>
+        </div>
+      </div>
 
-          <h3>Chaîne multi-agents</h3>
-          <div class="row wrap" id="chain-picker"></div>
-          <button id="btn-pipeline" class="ghost">Exécuter la chaîne</button>
+      <div class="grid g-3">
+        <div class="card"><div class="card-head"><h2>Dernières exécutions</h2>
+          <span class="badge" id="runs-count">—</span></div>
+          <div class="runlist" id="recent-runs"></div></div>
+        <div class="card"><div class="card-head"><h2>Artéfacts récents</h2>
+          <span class="badge" id="art-count">—</span></div>
+          <div class="list" id="recent-arts" style="max-height:290px"></div></div>
+        <div class="card"><div class="card-head"><h2>Tableau</h2>
+          <span class="badge" id="board-count">—</span></div>
+          <div class="list" id="mini-board" style="max-height:290px"></div></div>
+      </div>
+    </section>
 
-          <h3>Propositions</h3>
-          <div class="suggestions" id="suggestions"></div>
+    <!-- ══════════ CONSOLE ══════════ -->
+    <section class="view" id="view-console">
+      <div class="split">
+        <div class="card">
+          <div class="card-head"><h2>Tâche</h2><span class="badge" id="run-status">inactif</span></div>
+          <label>Agent</label>
+          <select id="run-agent"></select>
+          <label>Demande</label>
+          <textarea id="run-task" rows="5"
+            placeholder="Ex. : audite la structure de nexus_os et produis un diagramme"></textarea>
+
+          <label>Mode d'exécution</label>
+          <div class="chips" id="mode-picker">
+            <button class="chip" data-mode="sequentiel">séquentiel</button>
+            <button class="chip on" data-mode="orchestré">orchestré</button>
+            <button class="chip" data-mode="parallele">parallèle</button>
+            <button class="chip" data-mode="chaine">chaîne</button>
+          </div>
+
+          <label>Équipe <span style="text-transform:none;letter-spacing:0;color:var(--tx-4)">(parallèle / chaîne)</span></label>
+          <div class="chips" id="crew-picker"></div>
+
+          <label>Approbation des outils</label>
+          <div class="chips" id="approval-picker">
+            <button class="chip" data-approval="off">off — tout autoriser</button>
+            <button class="chip on" data-approval="smart">smart — valider le sensible</button>
+            <button class="chip" data-approval="manuel">manuel — tout valider</button>
+          </div>
+
+          <div class="row mt">
+            <button class="primary" id="btn-run">▶ Lancer</button>
+            <button class="ghost" id="btn-clear">Vider</button>
+            <button class="ghost danger" id="btn-stop" disabled>■ Arrêter</button>
+          </div>
+
+          <div class="hr"></div>
+          <h2>Suggestions</h2>
+          <div class="list" id="suggestions" style="max-height:none"></div>
         </div>
 
-        <div class="pane stream-pane">
-          <div class="stream-head">
-            <h2>Exécution</h2>
-            <span id="run-status" class="badge">inactif</span>
+        <div>
+          <div class="card tight" style="margin-bottom:14px">
+            <div class="card-head"><h2>Plan</h2>
+              <span class="badge" id="plan-meta">en attente</span></div>
+            <div class="plan" id="plan"></div>
           </div>
-          <div id="phases" class="phases"></div>
-          <div id="stream" class="stream"></div>
+          <div class="card tight">
+            <div class="card-head"><h2>Flux d'exécution</h2>
+              <span class="badge" id="stream-meta">—</span></div>
+            <div class="stream" id="stream"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- AGENTS -->
+    <!-- ══════════ AGENTS ══════════ -->
     <section class="view" id="view-agents">
-      <div class="pane">
-        <div class="pane-head">
-          <h2>Agents spécialisés</h2>
-          <button class="primary" data-goto="creator">＋ Créer un agent</button>
-        </div>
-        <div id="agent-grid" class="agent-grid"></div>
+      <div class="page-head">
+        <div><h1>Agents spécialisés</h1><p id="agents-sub">—</p></div>
+        <div class="spacer" style="flex:1"></div>
+        <button class="primary" data-goto="creator">＋ Créer un agent</button>
       </div>
+      <div class="card tight" style="margin-bottom:14px">
+        <div class="row">
+          <input id="agent-search" placeholder="Filtrer par nom, rôle, compétence…" style="max-width:320px">
+          <div class="chips" id="agent-filters"></div>
+        </div>
+      </div>
+      <div class="agents-grid" id="agent-grid"></div>
     </section>
 
-    <!-- CRÉATEUR -->
+    <!-- ══════════ CRÉATEUR ══════════ -->
     <section class="view" id="view-creator">
-      <div class="console-grid">
-        <div class="pane">
-          <h2>Créateur d'agent</h2>
-          <p class="note">Décris le métier. NEXUS·OS compose le prompt système, choisit les
-            compétences et le minimum d'outils, puis enregistre l'agent.</p>
-          <label>Description du métier
-            <textarea id="c-desc" rows="6"
-              placeholder="Ex. : un agent qui relit les contrats, extrait les clauses risquées, produit un tableau de synthèse et cite la page de chaque clause."></textarea>
+      <div class="page-head"><div><h1>Créateur d'agent</h1>
+        <p>Une description → prompt système, compétences, outils, déclencheurs, cycle de vie.</p></div></div>
+      <div class="split">
+        <div class="card">
+          <label>Description du métier</label>
+          <textarea id="c-desc" rows="7"
+            placeholder="Ex. : un agent qui relit les contrats, repère les clauses risquées et produit un tableau de synthèse avec la page de chaque clause."></textarea>
+          <label>Nom</label><input id="c-name" placeholder="auto si vide">
+          <label>Modèle préféré</label>
+          <select id="c-model"><option value="">routeur automatique</option></select>
+          <label>Autonomie</label>
+          <select id="c-autonomy">
+            <option value="manuel">manuel — chaque outil est validé</option>
+            <option value="assisté" selected>assisté — outils sensibles validés</option>
+            <option value="autonome">autonome — pas de validation</option>
+          </select>
+          <label class="check" style="margin-top:12px">
+            <input type="checkbox" id="c-llm" checked> utiliser un modèle live si disponible
           </label>
-          <label>Nom <input id="c-name" placeholder="(auto si vide)"></label>
-          <label>Modèle préféré
-            <select id="c-model"><option value="">routeur automatique</option></select>
-          </label>
-          <label>Autonomie
-            <select id="c-autonomy">
-              <option value="manuel">manuel</option>
-              <option value="assisté" selected>assisté</option>
-              <option value="autonome">autonome</option>
-            </select>
-          </label>
-          <label class="check"><input type="checkbox" id="c-llm" checked> utiliser un modèle live si disponible</label>
-          <div class="row">
-            <button id="btn-draft" class="primary">Générer le brouillon</button>
-            <button id="btn-save" class="ghost" disabled>Enregistrer l'agent</button>
+          <div class="row mt">
+            <button class="primary" id="btn-draft">Générer le brouillon</button>
+            <button class="ghost" id="btn-save" disabled>Enregistrer l'agent</button>
           </div>
-        </div>
-        <div class="pane">
-          <h2>Aperçu de la spec</h2>
-          <ul id="c-rationale" class="rationale"></ul>
-          <textarea id="c-spec" rows="22" spellcheck="false"></textarea>
           <div id="c-msg" class="note"></div>
         </div>
+        <div class="card">
+          <div class="card-head"><h2>Spec générée</h2><span class="badge" id="c-engine">—</span></div>
+          <ul id="c-rationale" class="note" style="margin:0 0 10px 16px;padding:0"></ul>
+          <textarea id="c-spec" rows="20" spellcheck="false"></textarea>
+        </div>
       </div>
     </section>
 
-    <!-- COMPÉTENCES -->
+    <!-- ══════════ TABLEAU ══════════ -->
+    <section class="view" id="view-board">
+      <div class="page-head"><div><h1>Tableau des tâches</h1>
+        <p>Kanban partagé entre agents — lisible et modifiable par l'outil <code>task_board</code>.</p></div></div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="row">
+          <input id="b-title" placeholder="Nouvelle tâche…" style="max-width:420px">
+          <select id="b-agent" style="width:auto;min-width:160px"></select>
+          <select id="b-col" style="width:auto;min-width:140px"></select>
+          <button class="primary" id="b-add">Ajouter</button>
+        </div>
+      </div>
+      <div class="board" id="board"></div>
+    </section>
+
+    <!-- ══════════ COMPÉTENCES ══════════ -->
     <section class="view" id="view-skills">
-      <div class="console-grid">
-        <div class="pane">
-          <h2>Bibliothèque de compétences</h2>
-          <p class="note">Format <code>SKILL.md</code> — dépose tes propres compétences dans
-            <code>.nexus/skills/&lt;nom&gt;/SKILL.md</code>, elles sont découvertes au démarrage.</p>
-          <div id="skill-list" class="skill-list"></div>
+      <div class="page-head"><div><h1>Compétences</h1>
+        <p>Format <code>SKILL.md</code> — pose les tiennes dans <code>.nexus/skills/&lt;nom&gt;/SKILL.md</code>.</p></div></div>
+      <div class="split">
+        <div class="card"><div class="card-head"><h2>Bibliothèque</h2>
+          <span class="badge" id="skills-count">—</span></div>
+          <div class="list" id="skill-list"></div></div>
+        <div class="card"><div class="card-head"><h2 id="skill-title">Compétence</h2>
+          <span class="badge" id="skill-src">—</span></div>
+          <pre class="md" id="skill-body"></pre></div>
+      </div>
+    </section>
+
+    <!-- ══════════ HARNESS ══════════ -->
+    <section class="view" id="view-harness">
+      <div class="page-head"><div><h1>Harness &amp; portabilité</h1>
+        <p>Un agent NEXUS·OS n'y reste pas enfermé : exporte-le dans le format natif d'un autre harness.</p></div></div>
+      <div class="split-r">
+        <div class="card">
+          <div class="card-head"><h2>Harness cibles</h2><span class="badge" id="h-count">—</span></div>
+          <div class="list" id="harness-list"></div>
         </div>
-        <div class="pane">
-          <h2 id="skill-title">Compétence</h2>
-          <pre id="skill-body" class="md"></pre>
+        <div class="card">
+          <div class="card-head"><h2>Aperçu</h2>
+            <span class="row"><select id="h-agent" style="width:auto;min-width:150px"></select>
+            <button class="sm" id="h-save">Écrire dans workspace</button></span></div>
+          <div class="note" id="h-file" style="margin:0 0 8px"></div>
+          <pre class="md" id="h-body"></pre>
         </div>
       </div>
     </section>
 
-    <!-- ROUTEUR -->
+    <!-- ══════════ ROUTEUR ══════════ -->
     <section class="view" id="view-router">
-      <div class="pane">
-        <h2>Routeur de modèles</h2>
-        <p class="note">Un seul point d'entrée, N fournisseurs. Sélection par quota restant +
-          coût, préférence aux modèles gratuits, bascule automatique en cas d'erreur (5 min de
-          cooldown), repli final sur le moteur local.</p>
-        <h3>Fournisseurs</h3>
-        <div id="provider-table"></div>
-        <h3>Catalogue</h3>
-        <div id="model-table"></div>
+      <div class="page-head"><div><h1>Routeur de modèles</h1>
+        <p>Un point d'entrée, N fournisseurs. Quota du jour + coût, bascule automatique, repli local.</p></div></div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-head"><h2>Fournisseurs</h2><span class="badge" id="prov-count">—</span></div>
+        <div class="tw"><table id="provider-table"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Catalogue</h2><span class="badge" id="model-count">—</span></div>
+        <div class="tw"><table id="model-table"></table></div>
       </div>
     </section>
 
-    <!-- JOURNAUX -->
+    <!-- ══════════ JOURNAUX ══════════ -->
     <section class="view" id="view-logs">
-      <div class="pane">
-        <h2>Historique des exécutions</h2>
-        <div id="runs-table"></div>
-        <h3>Consommation du jour</h3>
-        <div id="usage-table"></div>
+      <div class="page-head"><div><h1>Journaux</h1><p>Exécutions, modèles, tokens, phases.</p></div></div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-head"><h2>Exécutions</h2><span class="badge" id="logs-count">—</span></div>
+        <div class="tw"><table id="runs-table"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Consommation du jour</h2></div>
+        <div class="tw"><table id="usage-table"></table></div>
+        <div class="note" id="usage-total"></div>
       </div>
     </section>
 
-    <!-- FICHIERS -->
+    <!-- ══════════ FICHIERS ══════════ -->
     <section class="view" id="view-files">
-      <div class="console-grid">
-        <div class="pane">
-          <h2>Espace de travail</h2>
-          <p class="note">Tout ce que les agents écrivent atterrit ici (sandbox). Rien n'est
-            écrit ailleurs dans le dépôt.</p>
-          <div id="file-tree" class="file-tree"></div>
-        </div>
-        <div class="pane">
-          <h2 id="file-title">Aperçu</h2>
-          <iframe id="file-frame" title="aperçu" sandbox="allow-scripts allow-same-origin"></iframe>
-          <pre id="file-text" class="md"></pre>
-        </div>
+      <div class="page-head"><div><h1>Fichiers produits</h1>
+        <p>Sandbox <code>.nexus/workspace/</code> — rien n'est écrit ailleurs dans le dépôt.</p></div></div>
+      <div class="split">
+        <div class="card"><div class="card-head"><h2>Arborescence</h2>
+          <button class="sm" id="f-up">↑ racine</button></div>
+          <div class="list" id="file-tree"></div></div>
+        <div class="card"><div class="card-head"><h2 id="file-title">Aperçu</h2></div>
+          <iframe id="file-frame" title="aperçu" style="display:none"></iframe>
+          <pre class="md" id="file-text"></pre></div>
       </div>
     </section>
 
-    <!-- MÉMOIRE -->
+    <!-- ══════════ MÉMOIRE ══════════ -->
     <section class="view" id="view-memory">
-      <div class="console-grid">
-        <div class="pane">
-          <h2>Ajouter un souvenir</h2>
-          <label>Contenu <textarea id="m-content" rows="3"></textarea></label>
-          <label>Type
-            <select id="m-kind">
-              <option value="fact">fait vérifié</option>
-              <option value="decision">décision</option>
-              <option value="lesson">leçon</option>
-            </select>
-          </label>
-          <label>Tags <input id="m-tags" placeholder="séparés par virgules"></label>
-          <button id="btn-memory" class="primary">Mémoriser</button>
+      <div class="page-head"><div><h1>Mémoire</h1>
+        <p>Faits, décisions, leçons — réinjectés dans les tâches suivantes.</p></div></div>
+      <div class="split">
+        <div class="card">
+          <label>Contenu</label><textarea id="m-content" rows="3"></textarea>
+          <label>Type</label>
+          <select id="m-kind"><option value="fact">fait vérifié</option>
+            <option value="decision">décision</option><option value="lesson">leçon</option></select>
+          <label>Tags</label><input id="m-tags" placeholder="séparés par virgules">
+          <div class="row mt"><button class="primary" id="btn-memory">Mémoriser</button></div>
         </div>
-        <div class="pane">
-          <h2>Mémoire persistante</h2>
-          <div id="memory-list" class="memory-list"></div>
-        </div>
+        <div class="card"><div class="card-head"><h2>Souvenirs</h2>
+          <span class="badge" id="mem-count">—</span></div>
+          <div class="list" id="memory-list"></div></div>
       </div>
     </section>
   </main>
 </div>
 
-<div id="modal" class="modal hidden">
-  <div class="modal-box">
-    <div class="modal-head"><h3 id="modal-title">Détail</h3>
-      <button id="modal-close" class="ghost">fermer</button></div>
-    <pre id="modal-body" class="md"></pre>
+<div class="modal hidden" id="palette-modal">
+  <div class="palette">
+    <input id="pal-input" placeholder="Agent, compétence, commande…" autocomplete="off">
+    <div class="pal-list" id="pal-list"></div>
+    <div class="pal-foot"><span>↑↓ naviguer</span><span>↵ ouvrir</span><span>esc fermer</span></div>
+  </div>
+</div>
+
+<div class="modal hidden" id="dialog">
+  <div class="dialog">
+    <div class="dh"><h3 id="dlg-title">Détail</h3><button class="sm" id="dlg-close">fermer</button></div>
+    <pre class="md" id="dlg-body"></pre>
   </div>
 </div>
 

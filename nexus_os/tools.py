@@ -14,6 +14,7 @@ import html
 import json
 import re
 import subprocess
+import time
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
@@ -303,6 +304,208 @@ def t_compose_html(ctx: ToolContext, title: str = "", html_body: str = "",
 
 
 # --------------------------------------------------------------------------- #
+# Outils : comparaison, visualisation, tableau de tâches
+# --------------------------------------------------------------------------- #
+def t_diff_files(ctx: ToolContext, path_a: str = "", path_b: str = "") -> str:
+    """Diff unifié entre deux fichiers lisibles du dépôt."""
+    import difflib
+
+    a, b = _safe_read_path(path_a), _safe_read_path(path_b)
+    la = a.read_text(encoding="utf-8", errors="ignore").splitlines()
+    lb = b.read_text(encoding="utf-8", errors="ignore").splitlines()
+    diff = list(difflib.unified_diff(la, lb, fromfile=path_a, tofile=path_b, lineterm="", n=2))
+    if not diff:
+        return f"aucune différence entre {path_a} et {path_b}"
+    added = sum(1 for l in diff if l.startswith("+") and not l.startswith("+++"))
+    removed = sum(1 for l in diff if l.startswith("-") and not l.startswith("---"))
+    return _clip(f"+{added} / -{removed} lignes\n" + "\n".join(diff[:200]))
+
+
+def t_render_chart(ctx: ToolContext, title: str = "", kind: str = "bar",
+                   labels: str = "", values: str = "") -> str:
+    """Génère un graphique SVG autonome (bar | line) — aucune dépendance externe."""
+    labs = [x.strip() for x in (labels or "").split(",") if x.strip()]
+    try:
+        vals = [float(x) for x in (values or "").replace(";", ",").split(",") if x.strip()]
+    except ValueError as e:
+        raise ToolError(f"`values` doit être une liste de nombres : {e}")
+    if not labs or not vals or len(labs) != len(vals):
+        raise ToolError("fournis `labels` et `values` de même longueur, non vides")
+    labs, vals = labs[:12], vals[:12]
+
+    w, h, pad = 720, 340, 56
+    vmax = max(vals) or 1.0
+    vmin = min(min(vals), 0.0)
+    span = (vmax - vmin) or 1.0
+    iw, ih = w - pad * 2, h - pad * 2
+    acc = "#8b7cff"
+    parts = [
+        f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {w} {h}' "
+        f"font-family='ui-monospace,monospace' font-size='12'>",
+        f"<rect width='{w}' height='{h}' fill='#0e1013'/>",
+        f"<text x='{pad}' y='30' fill='#e8eaed' font-size='15'>{html.escape(title or 'graphique')}</text>",
+    ]
+    for i in range(5):
+        y = pad + ih * i / 4
+        val = vmax - span * i / 4
+        parts.append(f"<line x1='{pad}' y1='{y:.1f}' x2='{w-pad}' y2='{y:.1f}' "
+                     f"stroke='#1e2228' stroke-width='1'/>")
+        parts.append(f"<text x='{pad-8}' y='{y+4:.1f}' fill='#6b7280' text-anchor='end'>"
+                     f"{val:,.3g}</text>")
+    if kind == "line":
+        pts = []
+        for i, v in enumerate(vals):
+            x = pad + (iw * i / max(1, len(vals) - 1))
+            y = pad + ih * (1 - (v - vmin) / span)
+            pts.append(f"{x:.1f},{y:.1f}")
+        parts.append(f"<polyline points='{' '.join(pts)}' fill='none' stroke='{acc}' "
+                     f"stroke-width='2.5'/>")
+        for p in pts:
+            x, y = p.split(",")
+            parts.append(f"<circle cx='{x}' cy='{y}' r='3.5' fill='{acc}'/>")
+    else:
+        bw = iw / len(vals) * 0.62
+        for i, v in enumerate(vals):
+            x = pad + iw * (i + 0.19) / len(vals)
+            bh = ih * (v - vmin) / span
+            y = pad + ih - bh
+            parts.append(f"<rect x='{x:.1f}' y='{y:.1f}' width='{bw:.1f}' height='{bh:.1f}' "
+                         f"fill='{acc}' rx='3'/>")
+            parts.append(f"<text x='{x+bw/2:.1f}' y='{y-6:.1f}' fill='#9ca3af' "
+                         f"text-anchor='middle'>{v:,.3g}</text>")
+    for i, lab in enumerate(labs):
+        x = pad + iw * (i + 0.5) / len(labs)
+        parts.append(f"<text x='{x:.1f}' y='{h-pad+20}' fill='#9ca3af' text-anchor='middle'>"
+                     f"{html.escape(lab[:14])}</text>")
+    parts.append("</svg>")
+
+    slug = re.sub(r"[^a-z0-9]+", "-", (title or "graphique").lower()).strip("-") or "graphique"
+    path = _safe_write_path(f"charts/{slug}.svg")
+    path.write_text("".join(parts), encoding="utf-8")
+    return (f"graphique créé : workspace/charts/{slug}.svg ({len(vals)} points, "
+            f"min {min(vals):,.3g} / max {vmax:,.3g})")
+
+
+_BOARD_FILE = "board.json"
+
+
+def _board_load() -> list[dict[str, Any]]:
+    f = config.WORKSPACE_DIR / _BOARD_FILE
+    if f.exists():
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            return data if isinstance(data, list) else []
+        except Exception:
+            return []
+    return []
+
+
+def _board_save(items: list[dict[str, Any]]) -> None:
+    config.WORKSPACE_DIR.mkdir(parents=True, exist_ok=True)
+    (config.WORKSPACE_DIR / _BOARD_FILE).write_text(
+        json.dumps(items, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+BOARD_COLUMNS = ("à faire", "en cours", "en revue", "terminé")
+
+
+def t_task_board(ctx: ToolContext, action: str = "list", title: str = "",
+                 agent: str = "", column: str = "", task_id: str = "") -> str:
+    """Tableau de tâches partagé entre agents (kanban persistant)."""
+    items = _board_load()
+    action = (action or "list").strip().lower()
+
+    if action == "add":
+        if not title.strip():
+            raise ToolError("`title` requis pour ajouter")
+        col = column if column in BOARD_COLUMNS else "à faire"
+        item = {"id": uuid4_id(), "title": title.strip(), "agent": agent or ctx.agent_id,
+                "column": col, "ts": time.time()}
+        items.append(item)
+        _board_save(items)
+        return f"tâche ajoutée [{col}] {item['id']} — {item['title']}"
+    if action == "move":
+        if column not in BOARD_COLUMNS:
+            raise ToolError(f"`column` parmi : {', '.join(BOARD_COLUMNS)}")
+        for it in items:
+            if it["id"] == task_id:
+                it["column"] = column
+                _board_save(items)
+                return f"{task_id} → {column}"
+        raise ToolError(f"tâche introuvable : {task_id}")
+    if action == "done":
+        return t_task_board(ctx, "move", column="terminé", task_id=task_id)
+    if action == "remove":
+        keep = [i for i in items if i["id"] != task_id]
+        if len(keep) == len(items):
+            raise ToolError(f"tâche introuvable : {task_id}")
+        _board_save(keep)
+        return f"tâche supprimée : {task_id}"
+    if action == "list":
+        if not items:
+            return "tableau vide"
+        out = []
+        for col in BOARD_COLUMNS:
+            rows = [i for i in items if i["column"] == col]
+            out.append(f"## {col} ({len(rows)})")
+            out += [f"- {i['id']} · {i['title']} → {i['agent']}" for i in rows] or ["-"]
+        return "\n".join(out)
+    raise ToolError(f"action inconnue : {action} (list|add|move|done|remove)")
+
+
+def uuid4_id() -> str:
+    import uuid
+
+    return uuid.uuid4().hex[:8]
+
+
+def t_export_harness(ctx: ToolContext, agent_id: str = "", target: str = "claude-code") -> str:
+    """Exporte un agent au format d'un autre harness (Claude Code, Codex, Cline…)."""
+    from nexus_os.agents import registry
+    from nexus_os.harness import TARGETS, export_spec, filename_for
+
+    spec = registry().get(agent_id or ctx.agent_id)
+    if not spec:
+        raise ToolError(f"agent inconnu : {agent_id}")
+    if target not in TARGETS:
+        raise ToolError(f"harness inconnu : {target} (disponibles : {', '.join(TARGETS)})")
+    rel = filename_for(target, spec)
+    path = _safe_write_path(f"harness/{target}/{rel}")
+    path.write_text(export_spec(spec, target), encoding="utf-8")
+    return f"agent {spec.id} exporté pour {target} : workspace/harness/{target}/{rel}"
+
+
+def t_create_skill(ctx: ToolContext, name: str = "", description: str = "",
+                   triggers: str = "", body: str = "", tags: str = "") -> str:
+    """Écrit une compétence réutilisable (boucle d'auto-amélioration).
+
+    Même principe que Hermes Agent : quand une façon de faire a fonctionné,
+    l'agent la fixe dans un SKILL.md que les exécutions suivantes découvriront.
+    """
+    slug = re.sub(r"[^a-z0-9]+", "-", (name or "").lower()).strip("-")
+    if not slug:
+        raise ToolError("`name` requis")
+    if len((body or "").strip()) < 40:
+        raise ToolError("`body` trop court : une compétence utile fait au moins quelques règles")
+    config.USER_SKILLS_DIR.mkdir(parents=True, exist_ok=True)
+    d = config.USER_SKILLS_DIR / slug
+    d.mkdir(parents=True, exist_ok=True)
+    fm = [
+        "---",
+        f"name: {slug}",
+        f"description: {(description or slug)[:200]}",
+        f"triggers: [{triggers or slug}]",
+        f"tags: [{tags or slug}]",
+        "license: MIT",
+        "---",
+    ]
+    (d / "SKILL.md").write_text(
+        "\n".join(fm) + f"\n\n# {slug}\n\n{body.strip()}\n", encoding="utf-8")
+    ctx.log(f"compétence apprise : {slug}")
+    return f"compétence créée : {slug} (découverte au prochain chargement)"
+
+
+# --------------------------------------------------------------------------- #
 # Outils : méta (routage inter-agents, création d'agent)
 # --------------------------------------------------------------------------- #
 def t_handoff(ctx: ToolContext, agent_id: str = "", task: str = "") -> str:
@@ -376,6 +579,36 @@ BUILTIN_TOOLS: list[Tool] = [
     Tool("compose_html", "Compose une page HTML autonome (rapport, landing, slide).",
          _params({"title": _STR, "html_body": _STR, "css": _STR}, ["title", "html_body"]),
          t_compose_html, tags=["produce", "html"]),
+    Tool("diff_files", "Diff unifié entre deux fichiers du dépôt.",
+         _params({"path_a": _STR, "path_b": _STR}, ["path_a", "path_b"]),
+         t_diff_files, tags=["fs", "review"]),
+    Tool("render_chart", "Génère un graphique SVG autonome (bar ou line), sans dépendance.",
+         _params({"title": _STR,
+                  "kind": {"type": "string", "enum": ["bar", "line"]},
+                  "labels": {**_STR, "description": "A, B, C"},
+                  "values": {**_STR, "description": "10, 20, 30"}},
+                 ["title", "labels", "values"]),
+         t_render_chart, tags=["produce", "dataviz"]),
+    Tool("task_board", "Tableau de tâches partagé entre agents (kanban persistant).",
+         _params({"action": {"type": "string",
+                             "enum": ["list", "add", "move", "done", "remove"]},
+                  "title": _STR, "agent": _STR,
+                  "column": {**_STR, "description": "à faire|en cours|en revue|terminé"},
+                  "task_id": _STR}, ["action"]),
+         t_task_board, tags=["coordination"]),
+    Tool("export_harness", "Exporte un agent au format d'un autre harness "
+                           "(claude-code, codex, opencode, cline, cursor, goose, gemini, "
+                           "qwen, hermes, agentskills, nexus).",
+         _params({"agent_id": _STR,
+                  "target": {**_STR, "description": "harness cible"}}, ["target"]),
+         t_export_harness, tags=["meta", "portability"]),
+    Tool("create_skill", "Fixe une méthode qui a fonctionné dans une compétence "
+                         "réutilisable (auto-amélioration).",
+         _params({"name": _STR, "description": _STR,
+                  "triggers": {**_STR, "description": "mots-clés séparés par virgules"},
+                  "body": {**_STR, "description": "règles markdown"},
+                  "tags": _STR}, ["name", "body"]),
+         t_create_skill, tags=["meta", "learning"]),
     Tool("handoff", "Délègue une sous-tâche à un autre agent de l'OS.",
          _params({"agent_id": _STR, "task": _STR}, ["agent_id", "task"]),
          t_handoff, tags=["meta"]),

@@ -34,6 +34,9 @@ from nexus_os.providers import MODEL_INDEX, ModelRequest
 from nexus_os.skills import library as skill_library
 from nexus_os.tools import META_TOOLS, ToolContext, ToolError, ToolRegistry
 
+#: Modes d'approbation des outils (inspiré du modèle à paliers de Hermes Agent).
+APPROVAL_MODES = ("off", "manuel", "smart")
+
 PHASE_TITLES = {
     "plan": "Planification",
     "research": "Recherche",
@@ -63,14 +66,28 @@ class RunResult:
     modes: list[str] = field(default_factory=list)
     artifacts: list[str] = field(default_factory=list)
     depth: int = 0
+    approval: str = "off"
+    pending_approvals: list[str] = field(default_factory=list)
+    tool_failures: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "run_id": self.run_id, "agent_id": self.agent_id, "status": self.status,
             "result": self.result, "steps": self.steps, "tokens": self.tokens,
             "duration_ms": self.duration_ms, "models": self.models, "modes": self.modes,
-            "artifacts": self.artifacts, "depth": self.depth, "events": self.events,
+            "artifacts": self.artifacts, "depth": self.depth,
+            "approval": self.approval, "pending_approvals": self.pending_approvals,
+            "tool_failures": self.tool_failures,
+            "confidence": self.confidence, "events": self.events,
         }
+
+
+    @property
+    def confidence(self) -> str:
+        """Signal binaire (mieux compris qu'un pourcentage) : confiant / à vérifier."""
+        if self.tool_failures or self.pending_approvals:
+            return "à vérifier"
+        return "confiant" if self.artifacts or self.steps else "à vérifier"
 
 
 @dataclass
@@ -201,7 +218,8 @@ class Runtime:
 
     # --- API publique (générateurs) -----------------------------------------
     def run(self, task: str, agent_id: str = "orchestrator", *,
-            session_id: str | None = None, max_steps: int | None = None) -> Generator[Event, None, RunResult]:
+            session_id: str | None = None, max_steps: int | None = None,
+            approval: str = "smart", approved_tools: Sequence[str] = ()) -> Generator[Event, None, RunResult]:
         """Exécute un agent et **cède** chaque événement (streaming)."""
         q: queue.Queue = queue.Queue()
 
@@ -209,6 +227,7 @@ class Runtime:
             try:
                 res = self._run_impl(task, agent_id, session_id=session_id,
                                      max_steps=max_steps, depth=0, context="",
+                                     approval=approval, approved_tools=tuple(approved_tools),
                                      emit=q.put)
                 q.put(_Done(res))
             except Exception as e:  # le flux ne doit jamais mourir en silence
@@ -225,7 +244,8 @@ class Runtime:
             yield item
 
     def run_pipeline(self, task: str, agent_ids: Sequence[str], *,
-                     session_id: str | None = None,
+                     session_id: str | None = None, approval: str = "smart",
+                     approved_tools: Sequence[str] = (),
                      emit: Callable[[Event], None] | None = None) -> list[RunResult]:
         """Chaîne d'agents : la sortie de l'un devient le contexte du suivant."""
         unknown = [a for a in agent_ids if not self.agents.get(a)]
@@ -239,19 +259,76 @@ class Runtime:
         for i, aid in enumerate(agent_ids, 1):
             sink({"type": "pipeline_step", "index": i, "total": len(agent_ids), "agent_id": aid})
             sub = self._run_impl(task, aid, session_id=session_id, max_steps=None, depth=0,
-                                 context=context, emit=sink)
+                                 context=context, approval=approval,
+                                 approved_tools=tuple(approved_tools), emit=sink)
             results.append(sub)
             context = f"## Résultat de l'étape précédente ({aid})\n{sub.result[:3000]}"
         return results
 
+    def run_parallel(self, task: str, agent_ids: Sequence[str], *,
+                     session_id: str | None = None, approval: str = "smart",
+                     approved_tools: Sequence[str] = (),
+                     emit: Callable[[Event], None] | None = None) -> list[RunResult]:
+        """Flotte : tous les agents travaillent en même temps sur la même tâche."""
+        unknown = [a for a in agent_ids if not self.agents.get(a)]
+        if unknown:
+            raise KeyError(f"agents inconnus : {', '.join(unknown)}")
+        if len(agent_ids) < 2:
+            raise ValueError("il faut au moins 2 agents pour une exécution parallèle")
+        sink = emit or (lambda e: None)
+        results: list[RunResult | None] = [None] * len(agent_ids)
+        threads = []
+
+        def worker(index: int, aid: str) -> None:
+            def tagged(e: Event) -> None:
+                sink({**e, "agent_id": aid})
+
+            results[index] = self._run_impl(task, aid, session_id=session_id, max_steps=None,
+                                            depth=0, context="", approval=approval,
+                                            approved_tools=tuple(approved_tools), emit=tagged)
+
+        for index, aid in enumerate(agent_ids):
+            t = threading.Thread(target=worker, args=(index, aid), daemon=True)
+            threads.append(t)
+            t.start()
+        for t in threads:
+            t.join()
+        return [r for r in results if r is not None]   # ordre d'entrée préservé
+
+    def stream_parallel(self, task: str, agent_ids: Sequence[str], *,
+                        session_id: str | None = None, approval: str = "smart",
+                        approved_tools: Sequence[str] = ()) -> Generator[Event, None, list[RunResult]]:
+        """Version streamée de `run_parallel` (les événements portent `agent_id`)."""
+        q: queue.Queue = queue.Queue()
+
+        def worker() -> None:
+            try:
+                out = self.run_parallel(task, agent_ids, session_id=session_id,
+                                        approval=approval, approved_tools=approved_tools,
+                                        emit=q.put)
+                q.put(_Done(out))
+            except Exception as e:
+                q.put({"type": "error", "message": f"{type(e).__name__}: {e}"})
+                q.put(_Done([]))
+
+        threading.Thread(target=worker, daemon=True).start()
+        while True:
+            item = q.get()
+            if isinstance(item, _Done):
+                return item.result
+            yield item
+
     def stream_pipeline(self, task: str, agent_ids: Sequence[str], *,
-                        session_id: str | None = None) -> Generator[Event, None, list[RunResult]]:
+                        session_id: str | None = None, approval: str = "smart",
+                        approved_tools: Sequence[str] = ()) -> Generator[Event, None, list[RunResult]]:
         """Version streamée de `run_pipeline`."""
         q: queue.Queue = queue.Queue()
 
         def worker() -> None:
             try:
-                out = self.run_pipeline(task, agent_ids, session_id=session_id, emit=q.put)
+                out = self.run_pipeline(task, agent_ids, session_id=session_id,
+                                        approval=approval, approved_tools=approved_tools,
+                                        emit=q.put)
                 q.put(_Done(out))
             except Exception as e:
                 q.put({"type": "error", "message": f"{type(e).__name__}: {e}"})
@@ -267,12 +344,16 @@ class Runtime:
     # --- implémentation (fonction ordinaire, récursive) ---------------------
     def _run_impl(self, task: str, agent_id: str, *, session_id: str | None,
                   max_steps: int | None, depth: int, context: str,
-                  emit: Callable[[Event], None]) -> RunResult:
+                  emit: Callable[[Event], None], approval: str = "smart",
+                  approved_tools: Sequence[str] = ()) -> RunResult:
         started = time.time()
         agent = self.agents.get(agent_id) or self.agents.require("orchestrator")
         run_id = self.db.start_run(agent.id, task, session_id)
         result = RunResult(run_id=run_id, agent_id=agent.id)
         result.depth = depth
+        result.approval = approval if approval in APPROVAL_MODES else "smart"
+        approved = set(approved_tools)
+        result._approved = tuple(approved_tools)  # propagé aux délégations
 
         def ev(e: Event) -> None:
             result.events.append(e)
@@ -280,7 +361,7 @@ class Runtime:
 
         ev({"type": "run_start", "run_id": run_id, "agent": _agent_card(agent), "task": task,
             "mode": "live" if llm_router().is_live() else "offline",
-            "phases": agent.lifecycle, "depth": depth})
+            "phases": agent.lifecycle, "depth": depth, "approval": result.approval})
         if session_id:
             self.db.add_message(session_id, "user", task, {"agent_id": agent.id})
 
@@ -294,6 +375,7 @@ class Runtime:
                 ev({"type": "handoff", "to": best["agent_id"], "task": task[:200]})
                 sub = self._run_impl(task, best["agent_id"], session_id=None,
                                      max_steps=max_steps, depth=depth + 1, context="",
+                                     approval=approval, approved_tools=tuple(approved),
                                      emit=emit)
                 _merge(result, sub)
                 ev({"type": "consolidation", "from": best["agent_id"],
@@ -301,7 +383,7 @@ class Runtime:
                 result.result = _consolidate(task, best, sub.result)
                 ev({"type": "message", "text": result.result, "model": "nexus-router",
                     "provider": "router", "mode": "router", "depth": depth,
-                    "final": True})
+                    "final": True, "confidence": result.confidence})
                 self._finish(result, started, ev, session_id)
                 return result
 
@@ -347,7 +429,7 @@ class Runtime:
                 elif name == "create_agent":
                     obs = self._create_agent(args, ev)
                 else:
-                    obs = self._exec_tool(name, args, agent.id, ev, result)
+                    obs = self._exec_tool(name, args, agent.id, ev, result, approval, approved)
                 if obs:
                     observations.append(obs)
                     messages.append({"role": "tool", "name": name, "content": obs[:4000]})
@@ -365,14 +447,26 @@ class Runtime:
                          else _compose_offline(task, agent, skill_objs, observations))
         ev({"type": "message", "text": result.result, "model": final_comp.model,
             "provider": final_comp.provider, "mode": final_comp.mode,
-            "usage": final_comp.usage, "depth": depth, "final": depth == 0})
+            "usage": final_comp.usage, "depth": depth, "final": depth == 0,
+            "confidence": result.confidence})
         self._finish(result, started, ev, session_id)
         return result
 
     # --- outillage -----------------------------------------------------------
     def _exec_tool(self, name: str, args: dict[str, Any], agent_id: str,
-                   emit: Callable[[Event], None], result: RunResult) -> str:
+                   emit: Callable[[Event], None], result: RunResult,
+                   approval: str = "smart", approved: set[str] | None = None) -> str:
         emit({"type": "tool_call", "name": name, "args": args})
+        approved = approved or set()
+        tool = self.tools.get(name)
+        needs = (approval == "manuel") or (approval == "smart" and bool(tool and tool.risky))
+        if needs and name not in approved:
+            result.pending_approvals.append(name)
+            emit({"type": "approval_required", "name": name, "args": args,
+                  "reason": "outil sensible" if (tool and tool.risky) else "mode manuel",
+                  "mode": approval})
+            return (f"en attente d'autorisation : {name} — relance avec cet outil autorisé "
+                    f"(mode {approval})")
         if name in META_TOOLS:
             emit({"type": "tool_result", "name": name, "ok": False,
                   "result": "outil méta : à traiter par le runtime, pas par le registre"})
@@ -384,6 +478,8 @@ class Runtime:
             out, ok = f"refusé : {e}", False
         except Exception as e:  # un outil ne doit jamais tuer un run
             out, ok = f"erreur {type(e).__name__}: {e}", False
+        if not ok:
+            result.tool_failures += 1
         emit({"type": "tool_result", "name": name, "ok": ok,
               "result": out[:config.MAX_TOOL_RESULT_CHARS]})
         for m in re.finditer(r"workspace/([\w./-]+)", out):
@@ -402,7 +498,8 @@ class Runtime:
             return "profondeur de délégation maximale atteinte"
         emit({"type": "handoff", "to": agent_id, "task": task[:200]})
         sub = self._run_impl(task, agent_id, session_id=None, max_steps=None,
-                             depth=depth + 1, context="", emit=emit)
+                             depth=depth + 1, context="", approval=result.approval,
+                             approved_tools=tuple(getattr(result, "_approved", ())), emit=emit)
         _merge(result, sub)
         return sub.result
 

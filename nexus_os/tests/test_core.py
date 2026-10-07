@@ -79,10 +79,10 @@ def test_frontmatter_parse():
     assert body.startswith("# Corps")
 
 
-def test_14_competences_integrees_decouvertes():
+def test_24_competences_integrees_decouvertes():
     lib = SkillLibrary()
     names = {s.name for s in lib.all()}
-    assert len(names) == 14
+    assert len(names) == 24
     assert {"research-first", "diagram-design", "marketing-copy", "adhd-output",
             "agent-design"} <= names
     for s in lib.all():
@@ -150,11 +150,13 @@ def test_diagram_produit_mermaid_et_html(tmp_path, monkeypatch):
 # -------------------------------------------------------------------------- #
 # Agents
 # -------------------------------------------------------------------------- #
-def test_10_agents_integres_charges():
+def test_22_agents_integres_charges():
     reg = registry()
     ids = {a.id for a in reg.all()}
     assert {"orchestrator", "researcher", "coder", "writer", "architect", "analyst",
-            "reviewer", "pilot", "coach", "builder"} <= ids
+            "reviewer", "pilot", "coach", "builder", "osint", "geo", "teacher", "jurist",
+            "translator", "devops", "pm", "designer", "videomaker", "qa", "archivist",
+            "promptsmith"} <= ids
     for a in reg.all():
         assert a.system_prompt and a.role and a.lifecycle
         assert a.autonomy in ("manuel", "assisté", "autonome")

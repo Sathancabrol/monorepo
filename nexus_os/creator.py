@@ -92,9 +92,20 @@ class CreationResult:
         }
 
 
+_ACCENTS = str.maketrans({
+    "à": "a", "â": "a", "ä": "a", "á": "a",
+    "é": "e", "è": "e", "ê": "e", "ë": "e",
+    "î": "i", "ï": "i", "í": "i",
+    "ô": "o", "ö": "o", "ó": "o",
+    "ù": "u", "û": "u", "ü": "u", "ú": "u",
+    "ÿ": "y", "ç": "c", "ñ": "n",
+})
+
+
 def slugify(text: str, fallback: str = "agent") -> str:
-    s = re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")
-    return s[:32] or fallback
+    """Identifiant ASCII stable : les accents sont translittérés, pas supprimés."""
+    s = re.sub(r"[^a-z0-9]+", "-", (text or "").lower().translate(_ACCENTS)).strip("-")
+    return s[:32].rstrip("-") or fallback
 
 
 def _pick(hints: dict[str, tuple[str, ...]], text: str, *, minimum: int = 2,
@@ -241,14 +252,43 @@ def _spec(agent_id: str, name: str, emoji: str, role: str, description: str, pro
     )
 
 
+#: « je veux un agent qui… » → on garde le métier, pas la formule.
+_LEAD_FILLER = re.compile(
+    r"^(?:je\s+(?:veux|voudrais|souhaite)\s+|j'\s?(?:ai|aimerais)\s+(?:besoin\s+d'?\s*)?|"
+    r"il\s+(?:me\s+)?faut\s+|cré[eé]s?\s+|fais\s+|donne\s+-?moi\s+)?"
+    r"(?:un\s+|une\s+|le\s+|la\s+|des\s+|du\s+|nouvel\s+|nouvelle\s+)?"
+    r"(?:agent(?:e)?|assistant|bot|outil)\s*"
+    r"(?:qui|que|pour|afin\s+de|capable\s+de|dont|spécialisé\s+(?:dans|en))\s+",
+    re.IGNORECASE)
+_STOPWORDS = frozenset("""un une le la les des du de d' et ou à a en dans sur avec sans son sa
+ses ce cet cette ces pour qui que dont afin capable je veux besoin il faut plus tous toute toutes
+être est sont puis ensuite donc mais or ni car se sa s' l' qu' quand si au aux y""".split())
+
+
 def _title_from(description: str) -> str:
-    words = re.findall(r"[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9'-]*", description)[:5]
-    return " ".join(words).strip().title() or "Nouvel agent"
+    """Titre court à partir d'une phrase libre : « Relit fiches paie signale anomalies »."""
+    text = _LEAD_FILLER.sub("", (description or "").strip())
+    words = [w for w in re.findall(r"[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9'-]*", text)
+             if w.lower().strip("'-") not in _STOPWORDS][:4]
+    return " ".join(words).title() or "Nouvel agent"
+
+
+def _cut(text: str, limit: int = 60) -> str:
+    """Tronque proprement, sans couper un mot."""
+    text = text.strip().rstrip(".")
+    if len(text) <= limit:
+        return text
+    cut = text[:limit].rsplit(" ", 1)[0]
+    return cut.rstrip(",;:")
 
 
 def _role_from(description: str) -> str:
-    m = re.search(r"(?:qui|pour)\s+([a-zà-ÿ0-9 ,\-]{4,60})", description.lower())
-    return (m.group(1).strip().rstrip(".") if m else description[:70]).capitalize()
+    text = _LEAD_FILLER.sub("", (description or "").strip()).lower()
+    m = re.search(r"(?:qui|pour|afin de|capable de|dont)\s+([a-zà-ÿ0-9 ,\-']{4,60})", text)
+    raw = m.group(1) if m else text[:70]
+    for sep in (" et ", " puis ", " ensuite ", " afin ", " ainsi "):
+        raw = raw.split(sep)[0]
+    return _cut(raw).capitalize() or "Agent spécialisé"
 
 
 def _recipe(name: str, description: str) -> str:

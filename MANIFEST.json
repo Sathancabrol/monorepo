@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-07T23:43:34.431350+00:00",
+  "generated_at": "2026-10-07T05:42:19.472794+00:00",
   "user": "Sathancabrol",
   "repos": [
     {
@@ -35,7 +35,7 @@
     {
       "name": "monorepo",
       "url": "https://github.com/Sathancabrol/monorepo",
-      "sha": "3d8a17e03ceba9bc7b833bdeba4c3fe06b2adf1a",
+      "sha": "cd6e33e64d174894f7d69017b8df14f72a2a3ed4",
       "branch": "main"
     },
     {
@@ -53,7 +53,7 @@
     {
       "name": "watchtower",
       "url": "https://github.com/Sathancabrol/watchtower",
-      "sha": "715bfa793923fb8e0fddc3c0f9561e252178723a",
+      "sha": "2e34c21e1aa82931cd7c234b1f593422d04ef166",
       "branch": "main"
     }
   ]
