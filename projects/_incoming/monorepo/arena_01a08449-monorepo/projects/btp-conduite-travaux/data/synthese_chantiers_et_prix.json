@@ -1,0 +1,287 @@
+{
+  "projets_etudies": [
+    {
+      "id": "barbazan_giratoire",
+      "titre": "Aménagement du Giratoire RD 33 / RD 33D au PR 9+978",
+      "lieu": "Barbazan (Haute-Garonne, 31)",
+      "maitre_ouvrage": "Conseil Général de la Haute-Garonne - Service des Études Sud",
+      "maitre_oeuvre": "Reulet Ingénierie",
+      "titulaire": "Entreprise J. Lefebvre / Entreprise TP",
+      "type_marche": "Marché Public à Prix Unitaires - Bordereau des Prix",
+      "duree_previsionnelle_semaines": 8,
+      "budget_estime_ht": 268500.0,
+      "points_cles_techniques": [
+        "Création anneau giratoire rayon extérieur 10.0m avec surlargeur pavée en galets maçonnés",
+        "Structure chaussée lourde: GB3 ép. 12cm + BBSG 0/14 ép. 6cm sur GNT 0/20",
+        "Îlots séparateurs béton et galets de Garonne, bordures P2, I1, I2, CC1, CS2",
+        "Assainissement EP: cunettes bétonnées, regards 40x40 grilles C250/D400, PVC Ø300 CR4"
+      ],
+      "aleas_in_situ_releves": [
+        "Retard de 3 semaines dû au dévoiement des réseaux aériens et souterrains EDF / Orange",
+        "Surdosage liant centrale enrobés Villeneuve-de-Rivière (5.3% vs 4.5% exigé) -> Non-conformité 202 k€",
+        "Découverte de câblages d éclairage public vétustes en classe C nécessitant arrêt et avenant"
+      ]
+    },
+    {
+      "id": "saint_nicolas_voie_nouvelle",
+      "titre": "Projet Urbain Partenarial (PUP) - Aménagement d une voie nouvelle",
+      "lieu": "Saint-Nicolas-de-la-Grave (Tarn-et-Garonne, 82)",
+      "maitre_ouvrage": "Commune de Saint-Nicolas-de-la-Grave",
+      "dossier_ref": "A14210",
+      "type_marche": "Procédure Adaptée (MAPA) - BPU / DQE",
+      "points_cles_techniques": [
+        "Création complète de voirie de desserte résidentielle et trottoirs PMR",
+        "Collecte des eaux pluviales avec raccordement exutoire naturel",
+        "Réseaux secs sous fourreaux TPC et candélabres d éclairage public"
+      ],
+      "points_cles_dict": [
+        "14 récépissés DT instruits auprès des concessionnaires (Enedis, GRDF, Orange, SIAEP, etc.)",
+        "Zone à forte sensibilité réseaux avec présence de canalisations anciennes en amiante-ciment"
+      ]
+    },
+    {
+      "id": "aurouer_lotissement_pruniaux",
+      "titre": "Viabilisation du Lotissement La Croix Pruniaux (13 lots)",
+      "lieu": "Aurouer (Allier, 03)",
+      "maitre_ouvrage": "Moulins Habitat",
+      "allotissement": [
+        {
+          "lot": "Lot 1",
+          "intitule": "Terrassement - Voirie - Eaux Pluviales",
+          "tranches": [
+            "Tranche Ferme T1 (9 lots)",
+            "Tranche Conditionnelle T2 (4 lots)"
+          ],
+          "ouvrages": "Voirie lourde/légère, bassin d infiltration ouvert, bordures T2/CS2"
+        },
+        {
+          "lot": "Lot 2",
+          "intitule": "Réseaux Divers (Eaux Usées, Eau Potable, Fourreaux Secs)",
+          "tranches": [
+            "Tranche Ferme T1",
+            "Tranche Conditionnelle T2"
+          ],
+          "ouvrages": "Collecteur EU PVC Ø200, Branchements AEP PEHD Ø32, Fourreaux BT/Télécom"
+        }
+      ],
+      "points_cles_techniques": [
+        "Gestion alternative des eaux pluviales par bassin de rétention/décantation à ciel ouvert",
+        "Coordination étroite inter-lots pour phasage remblaiement de tranchées communes"
+      ]
+    },
+    {
+      "id": "noe_restaurant_scolaire",
+      "titre": "Construction d un restaurant scolaire - Lot VRD et aménagements extérieurs",
+      "lieu": "Noé (Haute-Garonne, 31)",
+      "ouvrages": "Terrassements de plateforme, bassin d orage enterré SAUL, raccordements EU/EP/AEP"
+    },
+    {
+      "id": "levignac_rd17",
+      "titre": "Réfection de chaussée sous circulation - Traversée de Lévignac RD 17",
+      "lieu": "Lévignac (Haute-Garonne, 31)",
+      "ouvrages": "Rabotage 5cm, BBSG 0/10 sous exploitation avec alternat par feux et déviation poids lourds"
+    }
+  ],
+  "base_sdp_extraite": [
+    {
+      "code": "515_P2",
+      "designation": "Bordure P2 giratoire",
+      "unite": "ml",
+      "pu_sec": 34.17,
+      "k_vente": 1.25,
+      "pu_vente": 42.71,
+      "rendement_j": 15.0,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "514_I1",
+      "designation": "Bordure d îlot I1",
+      "unite": "ml",
+      "pu_sec": 37.39,
+      "k_vente": 1.25,
+      "pu_vente": 46.74,
+      "rendement_j": 14.48,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "515_I2",
+      "designation": "Bordure d îlot I2",
+      "unite": "ml",
+      "pu_sec": 57.38,
+      "k_vente": 1.25,
+      "pu_vente": 71.73,
+      "rendement_j": 12.73,
+      "mo_equipe": "1 Chef (275€/j) + 2 Ouvriers (310€/j)"
+    },
+    {
+      "code": "522_CC1",
+      "designation": "Caniveau CC1 préfabriqué",
+      "unite": "ml",
+      "pu_sec": 122.74,
+      "k_vente": 1.25,
+      "pu_vente": 153.43,
+      "rendement_j": 9.0,
+      "mo_equipe": "2 Ouvriers (310€/j) + 1 OHQ (180€/j)"
+    },
+    {
+      "code": "409c_GB3",
+      "designation": "Fondation Grave Bitume Cl. 3 ép. 12cm",
+      "unite": "t",
+      "pu_sec": 86.71,
+      "k_vente": 1.25,
+      "pu_vente": 108.39,
+      "rendement_j": 23.86,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "409b_GB2",
+      "designation": "Reprofilage Grave Bitume Cl. 2",
+      "unite": "t",
+      "pu_sec": 67.56,
+      "k_vente": 1.25,
+      "pu_vente": 84.45,
+      "rendement_j": 23.55,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "423B1_BBSG",
+      "designation": "Couche de roulement BBSG 0/14 Cl. 3",
+      "unite": "t",
+      "pu_sec": 89.71,
+      "k_vente": 1.25,
+      "pu_vente": 112.14,
+      "rendement_j": 19.83,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "412S_GNT",
+      "designation": "Couche de réglage GNT 0/20 concassée",
+      "unite": "m3",
+      "pu_sec": 77.11,
+      "k_vente": 1.25,
+      "pu_vente": 96.39,
+      "rendement_j": 10.21,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "301_DECAP",
+      "designation": "Décapage terre végétale ép. 20cm",
+      "unite": "m2",
+      "pu_sec": 2.81,
+      "k_vente": 1.25,
+      "pu_vente": 3.51,
+      "rendement_j": 235.0,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "311_REMBLAI",
+      "designation": "Remblais d apport compactés",
+      "unite": "m3",
+      "pu_sec": 57.28,
+      "k_vente": 1.25,
+      "pu_vente": 71.6,
+      "rendement_j": 17.45,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "207B_DEMOL",
+      "designation": "Démolition découpe chaussée scie hydr.",
+      "unite": "m2",
+      "pu_sec": 16.65,
+      "k_vente": 1.25,
+      "pu_vente": 20.81,
+      "rendement_j": 361.6,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "210_RABOT",
+      "designation": "Rabotage de chaussée 0-5cm",
+      "unite": "m2",
+      "pu_sec": 11.63,
+      "k_vente": 1.25,
+      "pu_vente": 14.54,
+      "rendement_j": 504.3,
+      "mo_equipe": "1 Chef (275€/j) + 1 Ouvrier (155€/j)"
+    },
+    {
+      "code": "537B_GALET",
+      "designation": "Galets maçonnés surlargeur giratoire",
+      "unite": "m2",
+      "pu_sec": 51.47,
+      "k_vente": 1.25,
+      "pu_vente": 64.34,
+      "rendement_j": 4.32,
+      "mo_equipe": "2 Ouvriers (310€/j) + 1 OHQ (180€/j)"
+    },
+    {
+      "code": "537S_ILOT",
+      "designation": "Îlots béton et galets de Garonne",
+      "unite": "m2",
+      "pu_sec": 34.71,
+      "k_vente": 1.25,
+      "pu_vente": 43.39,
+      "rendement_j": 4.34,
+      "mo_equipe": "2 Ouvriers (310€/j) + 1 OHQ (180€/j)"
+    },
+    {
+      "code": "536B_REMPL",
+      "designation": "Remplissage îlots béton C20/25",
+      "unite": "m2",
+      "pu_sec": 29.93,
+      "k_vente": 1.25,
+      "pu_vente": 37.41,
+      "rendement_j": 72.9,
+      "mo_equipe": "2 Ouvriers (310€/j) + 1 OHQ (180€/j)"
+    },
+    {
+      "code": "662SE_CUNET",
+      "designation": "Cunette bétonnée coulée en place",
+      "unite": "ml",
+      "pu_sec": 149.35,
+      "k_vente": 1.25,
+      "pu_vente": 186.69,
+      "rendement_j": 6.67,
+      "mo_equipe": "2 Ouvriers (310€/j) + 1 OHQ (180€/j)"
+    },
+    {
+      "code": "665D_REGARD",
+      "designation": "Regard 40x40 avec grille fonte",
+      "unite": "u",
+      "pu_sec": 1143.92,
+      "k_vente": 1.25,
+      "pu_vente": 1429.9,
+      "rendement_j": 1.0,
+      "mo_equipe": "1 Ouvrier (155€/j) + 2 OHQ (360€/j)"
+    },
+    {
+      "code": "676S_PVC300",
+      "designation": "Canalisation PVC Ø300 CR4",
+      "unite": "ml",
+      "pu_sec": 400.86,
+      "k_vente": 1.25,
+      "pu_vente": 501.08,
+      "rendement_j": 8.0,
+      "mo_equipe": "1 Ouvrier (155€/j) + 2 OHQ (360€/j)"
+    },
+    {
+      "code": "672B_JANO110",
+      "designation": "Fourreau TPC Janolène Ø110",
+      "unite": "ml",
+      "pu_sec": 34.27,
+      "k_vente": 1.25,
+      "pu_vente": 42.84,
+      "rendement_j": 14.29,
+      "mo_equipe": "1 Ouvrier (155€/j) + 1 OHQ (180€/j)"
+    },
+    {
+      "code": "930S_GLISS",
+      "designation": "Dépose glissières sécurité GS2",
+      "unite": "ml",
+      "pu_sec": 15.31,
+      "k_vente": 1.25,
+      "pu_vente": 19.14,
+      "rendement_j": 27.27,
+      "mo_equipe": "2 Ouvriers (310€/j)"
+    }
+  ]
+}

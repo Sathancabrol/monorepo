@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+.env
+data/*.json
+!data/.gitkeep
+!data/github_inventory.json
+monorepo.bundle
+.DS_Store
+# allow built previews to be committed
+!projects/
+!projects/*/dist/
+!projects/*/dist/**
+
+# NEXUS·OS — état local (base, mémoire, agents créés, sandbox des agents)
+.nexus/

@@ -1,0 +1,47 @@
+# Origine — `monorepo` · branche `arena/171a1f38-monorepo`
+
+- Dépôt : https://github.com/Sathancabrol/monorepo
+- Branche : `arena/171a1f38-monorepo`
+- Commit : `8302a0962806`
+- Comparaison : `main...arena/171a1f38-monorepo` — 37 fichiers importés (0.35 Mo)
+- Importé le : 2026-10-07 (monorepo, branche `arena/0034230e-monorepo`)
+
+## Fichiers importés
+
+- `README.md` (6 Ko)
+- `audit/ANALYSE-V1-V5.md` (33 Ko)
+- `audit/AUDIT-2026-10.csv` (1 Ko)
+- `audit/AUDIT-2026-10.md` (33 Ko)
+- `audit/CATEGORIES.md` (6 Ko)
+- `audit/JOURNAL.jsonl` (1 Ko)
+- `audit/MEMORY.md` (2 Ko)
+- `audit/PLAN.md` (7 Ko)
+- `audit/data/S0-mapping.json` (34 Ko)
+- `audit/data/branches-all.json` (8 Ko)
+- `audit/data/branches.json` (7 Ko)
+- `audit/data/drift.json` (5 Ko)
+- `audit/data/importance.json` (20 Ko)
+- `audit/data/inventory.json` (48 Ko)
+- `audit/data/monorepo-branches.json` (7 Ko)
+- `audit/graph.json` (5 Ko)
+- `audit/notes/P-COGNITORIUM.md` (5 Ko)
+- `audit/notes/P-ETAT-DE-LART-PSYCHOLOGIE.md` (5 Ko)
+- `audit/notes/P-HCSM.md` (5 Ko)
+- `audit/notes/P-Language-decoder.md` (5 Ko)
+- `audit/notes/P-animation-chronos.md` (4 Ko)
+- `audit/notes/P-frontignan.md` (5 Ko)
+- `audit/notes/P-proto-cognitorium.md` (6 Ko)
+- `audit/notes/P-reaserch-engine.md` (5 Ko)
+- `audit/notes/P-watchtower.md` (7 Ko)
+- `audit/notes/S0-racine.md` (5 Ko)
+- `audit/notes/S1-infra.md` (4 Ko)
+- `audit/notes/S2-inventaire.md` (5 Ko)
+- `audit/notes/S3-github.md` (8 Ko)
+- `audit/notes/S4-externe.md` (5 Ko)
+- `audit/notes/S4-transverse.md` (8 Ko)
+- `audit/state.json` (8 Ko)
+- `scripts/audit_gh_drift.py` (4 Ko)
+- `scripts/audit_importance.py` (12 Ko)
+- `scripts/audit_inventory.py` (10 Ko)
+- `scripts/audit_memory.py` (11 Ko)
+- `scripts/audit_s0_map.py` (5 Ko)

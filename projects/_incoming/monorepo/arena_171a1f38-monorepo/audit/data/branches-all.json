@@ -1,0 +1,342 @@
+[
+ {
+  "repo": "COGNITORIUM",
+  "branch": "arena/01a05ef8-cognitorium",
+  "ahead": 0,
+  "behind": 3,
+  "files": 83,
+  "size_mo": 22.75,
+  "date": "2026-09-03",
+  "msg": "v14: poste de commandement (5 missions de démarrage), MOI (GPS+manuel+"
+ },
+ {
+  "repo": "COGNITORIUM",
+  "branch": "arena/01a06876-cognitorium",
+  "ahead": 0,
+  "behind": 1,
+  "files": 131,
+  "size_mo": 22.89,
+  "date": "2026-09-05",
+  "msg": "docs: gouvernance, état des lieux, audits et architecture Cognitorium"
+ },
+ {
+  "repo": "COGNITORIUM",
+  "branch": "watchtower/osint-workbench-v0.1",
+  "ahead": 13,
+  "behind": 0,
+  "files": 143,
+  "size_mo": 22.94,
+  "date": "2026-09-07",
+  "msg": "docs(watchtower): align OSINT roadmap with master spec"
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a033e8-proto-cognitorium",
+  "ahead": 0,
+  "behind": 54,
+  "files": 30,
+  "size_mo": 0.51,
+  "date": "2026-08-24",
+  "msg": "feat: add five-level graph hierarchy"
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a034f2-proto-cognitorium",
+  "ahead": 0,
+  "behind": 38,
+  "files": 432,
+  "size_mo": 86.42,
+  "date": "2026-08-24",
+  "msg": "Add files via upload"
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a035a5-proto-cognitorium",
+  "ahead": 0,
+  "behind": 31,
+  "files": 99,
+  "size_mo": 45.68,
+  "date": "2026-08-24",
+  "msg": "chore: réintroduire package-lock.json (build reproductible de la V0.1 "
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a0369e-proto-cognitorium",
+  "ahead": 0,
+  "behind": 29,
+  "files": 100,
+  "size_mo": 45.71,
+  "date": "2026-08-25",
+  "msg": "Add temporal network view with progressive node and edge activation"
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a03436-proto-cognitorium",
+  "ahead": 0,
+  "behind": 52,
+  "files": 31,
+  "size_mo": 0.51,
+  "date": "2026-08-24",
+  "msg": "Add raw/ folder for unprocessed project data"
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a03899-proto-cognitorium",
+  "ahead": 0,
+  "behind": 5,
+  "files": 507,
+  "size_mo": 92.78,
+  "date": "2026-08-26",
+  "msg": "Merge main into Savoirs branch and resolve PR conflicts"
+ },
+ {
+  "repo": "proto-cognitorium",
+  "branch": "arena/01a08342-proto-cognitorium",
+  "ahead": 5,
+  "behind": 2,
+  "files": 173,
+  "size_mo": 73.77,
+  "date": "2026-09-10",
+  "msg": "audit: registre a jour pour main 74e301e (SEC-04, UX-04, 3 aggravation"
+ },
+ {
+  "repo": "HCSM",
+  "branch": "arena/01a03a6b-hcsm",
+  "ahead": 0,
+  "behind": 3,
+  "files": 55,
+  "size_mo": 0.18,
+  "date": "2026-08-25",
+  "msg": "Structure HCSM as a scientific research framework (v0.1)"
+ },
+ {
+  "repo": "HCSM",
+  "branch": "arena/01a03a93-hcsm",
+  "ahead": 0,
+  "behind": 1,
+  "files": 87,
+  "size_mo": 0.27,
+  "date": "2026-08-25",
+  "msg": "feat(validator): Phase 1 V1 form + V5 admissibility contract"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a03aac-etat-de-lart-psychologie",
+  "ahead": 2,
+  "behind": 1,
+  "files": 39,
+  "size_mo": 3.4,
+  "date": "2026-08-25",
+  "msg": "feat: Cognitorium v8 complète — graphe 3D, 40 fiches concepts/biais/ou"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a03adf-etat-de-lart-psychologie",
+  "ahead": 0,
+  "behind": 1,
+  "files": 33,
+  "size_mo": 3.06,
+  "date": "2026-08-25",
+  "msg": "Merge pull request #2 from Sathancabrol/arena/01a0389d-etat-de-lart-ps"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a04f7b-etat-de-lart-psychologie",
+  "ahead": 38,
+  "behind": 1,
+  "files": 1818,
+  "size_mo": 19.63,
+  "date": "2026-09-02",
+  "msg": "fix: homepage noire + vues cassées — TDZ planets0/ovals (ReferenceErro"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a07d32-etat-de-lart-psychologie",
+  "ahead": 5,
+  "behind": 0,
+  "files": 46,
+  "size_mo": 3.84,
+  "date": "2026-09-07",
+  "msg": "Route /download/monorepo.bundle : secours push 403 (bundle git complet"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a035f7-etat-de-lart-psychologie",
+  "ahead": 0,
+  "behind": 15,
+  "files": 24,
+  "size_mo": 2.9,
+  "date": "2026-08-25",
+  "msg": "feat: consolidation complète projet dans repo - tout le projet"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a045a1-etat-de-lart-psychologie",
+  "ahead": 1,
+  "behind": 1,
+  "files": 54,
+  "size_mo": 3.17,
+  "date": "2026-09-07",
+  "msg": "feat(agent): agent de recherche littéraire scientifique v1"
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a0369b-etat-de-lart-psychologie",
+  "ahead": 0,
+  "behind": 3,
+  "files": 33,
+  "size_mo": 2.97,
+  "date": "2026-08-25",
+  "msg": "fix: réécriture ultra-épurée et robuste du graphe D3 (sans dépendance "
+ },
+ {
+  "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+  "branch": "arena/01a0389d-etat-de-lart-psychologie",
+  "ahead": 0,
+  "behind": 2,
+  "files": 33,
+  "size_mo": 3.06,
+  "date": "2026-08-25",
+  "msg": "feat: Cognitorium v7 — Graphe Obsidian 99 nœuds, 137 liens, 38 sources"
+ },
+ {
+  "repo": "watchtower",
+  "branch": "arena/dec9cd88-watchtower",
+  "ahead": 7,
+  "behind": 0,
+  "files": 623,
+  "size_mo": 23.83,
+  "date": "2026-10-07",
+  "msg": "INTEL — vue TERRAIN (6 sources officielles), gabarit CHANTIER et regis"
+ },
+ {
+  "repo": "watchtower",
+  "branch": "arena/01a06ebe-watchtower",
+  "ahead": 0,
+  "behind": 11,
+  "files": 564,
+  "size_mo": 22.17,
+  "date": "2026-09-06",
+  "msg": "docs: état de reprise (sauvegarde de session it. 21 — HEAD 55e553b)"
+ },
+ {
+  "repo": "watchtower",
+  "branch": "arena/01a072e1-watchtower",
+  "ahead": 43,
+  "behind": 10,
+  "files": 650,
+  "size_mo": 22.9,
+  "date": "2026-10-07",
+  "msg": "fix(intel): la vue INTEL etait mal calee — trois chevauchements"
+ },
+ {
+  "repo": "watchtower",
+  "branch": "arena/01a0730a-watchtower",
+  "ahead": 0,
+  "behind": 1,
+  "files": 583,
+  "size_mo": 22.81,
+  "date": "2026-09-07",
+  "msg": "Merge origin/main dans la branche d'audit (PR sans destruction)"
+ },
+ {
+  "repo": "Language-decoder",
+  "branch": "arena/01a05429-language-decoder",
+  "ahead": 7,
+  "behind": 0,
+  "files": 27,
+  "size_mo": 0.58,
+  "date": "2026-10-07",
+  "msg": "Add a Home page with simple schemas of purpose and tools"
+ },
+ {
+  "repo": "Language-decoder",
+  "branch": "arena/01a05471-language-decoder",
+  "ahead": 3,
+  "behind": 0,
+  "files": 24,
+  "size_mo": 2.02,
+  "date": "2026-10-07",
+  "msg": "feat(ui): add visual home onboarding schemas and action potential guid"
+ },
+ {
+  "repo": "monorepo",
+  "branch": "arena/01a07e3c-monorepo",
+  "ahead": 0,
+  "behind": 28,
+  "files": 1551,
+  "size_mo": 167.36,
+  "date": "2026-09-07",
+  "msg": "feat: monorepo unifié — 8 projets + previews navigables + panorama GitHub"
+ },
+ {
+  "repo": "monorepo",
+  "branch": "arena/01a08168-monorepo",
+  "ahead": 0,
+  "behind": 26,
+  "files": 1579,
+  "size_mo": 180.97,
+  "date": "2026-09-08",
+  "msg": "fix(app): migration TemplateResponse vers l'API Starlette >= 0.29 (request "
+ },
+ {
+  "repo": "monorepo",
+  "branch": "arena/01a08203-monorepo",
+  "ahead": 1,
+  "behind": 25,
+  "files": 1598,
+  "size_mo": 184.12,
+  "date": "2026-09-08",
+  "msg": "frontignan : atlas interactif (graphe Obsidian, carte heuristique, slides, "
+ },
+ {
+  "repo": "monorepo",
+  "branch": "arena/01a08277-monorepo",
+  "ahead": 0,
+  "behind": 1,
+  "files": 1805,
+  "size_mo": 410.07,
+  "date": "2026-10-07",
+  "msg": "docs: index classé du dossier de chantier (220 fichiers, 12 catégories)"
+ },
+ {
+  "repo": "monorepo",
+  "branch": "arena/01a08385-monorepo",
+  "ahead": 6,
+  "behind": 25,
+  "files": 1666,
+  "size_mo": 181.48,
+  "date": "2026-10-07",
+  "msg": "app : /api/tools annonçait moins d'outils que le runtime n'en a"
+ },
+ {
+  "repo": "monorepo",
+  "branch": "arena/01a08449-monorepo",
+  "ahead": 2,
+  "behind": 13,
+  "files": 1987,
+  "size_mo": 449.28,
+  "date": "2026-10-07",
+  "msg": "fix(ui/ux): ultra high-contrast typography, compact 4X HUD single line layo"
+ },
+ {
+  "repo": "monorepo",
+  "branch": "feat/final-interface-skeleton-2026-10-07",
+  "ahead": 7,
+  "behind": 0,
+  "files": 1810,
+  "size_mo": 410.09,
+  "date": "2026-10-07",
+  "msg": "docs: add final interface integration audit"
+ },
+ {
+  "repo": "monorepo",
+  "branch": "feat/tool-data-catalog-2026-10",
+  "ahead": 13,
+  "behind": 0,
+  "files": 1813,
+  "size_mo": 410.08,
+  "date": "2026-10-07",
+  "msg": "docs: document modular monorepo architecture"
+ }
+]

@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "generated_at": "2026-10-07",
+  "schema": "core/contracts/module.schema.json",
+  "modules": [
+    {"id":"gis","name":"GIS / Cartographie","domain":"gis","kind":"adapter","status":"prototype","source":"Sathancabrol/watchtower","capabilities":["maps","layers","3d","terrain","cadastre","weather","geojson"],"depends_on":[]},
+    {"id":"territory","name":"Territoire","domain":"territory","kind":"adapter","status":"prototype","source":"projects/frontignan","capabilities":["population","mobility","actors","projects","scenarios"],"depends_on":["gis"]},
+    {"id":"chantier","name":"Chantier BTP / TP","domain":"btp","kind":"adapter","status":"prototype","source":"chantier-corpus","capabilities":["dce","cctp","ccap","bpu","dqe","tasks","quantities","planning","risks","safety","quality","equipment"],"depends_on":["gis","research","temporal"]},
+    {"id":"research","name":"Research / Evidence","domain":"research","kind":"adapter","status":"prototype","source":"Sathancabrol/reaserch-engine","capabilities":["retrieval","sources","evidence","claims","contradictions","dossiers"],"depends_on":[]},
+    {"id":"cognition","name":"Cognition / Knowledge","domain":"cognition","kind":"adapter","status":"prototype","source":"Sathancabrol/HCSM","capabilities":["ontology","provenance","uncertainty","knowledge-graph","skills"],"depends_on":["research"]},
+    {"id":"learning","name":"Learning Engine","domain":"learning","kind":"adapter","status":"prototype","source":"Sathancabrol/COGNITORIUM","capabilities":["scenario","interaction","feedback","concept-emergence","transfer"],"depends_on":["cognition"]},
+    {"id":"temporal","name":"Temporal / Chronos","domain":"temporal","kind":"adapter","status":"prototype","source":"Sathancabrol/animation-chronos","capabilities":["timeline","animation","sequence","progression","phasing"],"depends_on":[]},
+    {"id":"agents","name":"Agents / Orchestration","domain":"agents","kind":"adapter","status":"planned","source":"Sathancabrol/proto-cognitorium","capabilities":["orchestration","tool-selection","workflow","verification"],"depends_on":["gis","research","cognition","learning","chantier"]},
+    {"id":"language","name":"Language Decoder","domain":"language","kind":"adapter","status":"planned","source":"Sathancabrol/Language-decoder","capabilities":["language-decoding","text-analysis"],"depends_on":["research","cognition"]}
+  ]
+}

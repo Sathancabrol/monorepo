@@ -1,0 +1,798 @@
+{
+ "audit": "audit-2026-10",
+ "genere": "2026-10-07",
+ "grille": "v1 socle | v2 coeur d'usage | v3 puissance | v4 conception | v5 horizon | v0 archive",
+ "total": 79,
+ "elements": [
+  {
+   "id": "D11-06",
+   "element": "5 mecanismes de persistance heterogenes (localStorage x2, JSON, SQLite, 39 cles)",
+   "source": "les 9 projets",
+   "domaine": "D11",
+   "etat": "dette",
+   "v": "v0",
+   "action": "resorber par le Core",
+   "v_ordre": 0
+  },
+  {
+   "id": "D2-07",
+   "element": "Fork watchtower-mods (doublon 62/62)",
+   "source": "projects/COGNITORIUM/watchtower-mods",
+   "domaine": "D2",
+   "etat": "doublon",
+   "v": "v0",
+   "action": "archiver",
+   "v_ordre": 0
+  },
+  {
+   "id": "D4-05",
+   "element": "Dossier de chantier duplique (branche BTP vs racine)",
+   "source": "projects/btp-conduite-travaux/documents_sources",
+   "domaine": "D4",
+   "etat": "doublon",
+   "v": "v0",
+   "action": "dedupliquer",
+   "v_ordre": 0
+  },
+  {
+   "id": "T-07",
+   "element": "19 branches mortes",
+   "source": "9 depots",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v0",
+   "action": "supprimer",
+   "v_ordre": 0
+  },
+  {
+   "id": "T-08",
+   "element": "watchtower-mods (doublon 62/62)",
+   "source": "projects/COGNITORIUM/watchtower-mods",
+   "domaine": "T",
+   "etat": "doublon",
+   "v": "v0",
+   "action": "archiver",
+   "v_ordre": 0
+  },
+  {
+   "id": "T-09",
+   "element": "Dossier de chantier en double (racine vs branche BTP)",
+   "source": "monorepo",
+   "domaine": "T",
+   "etat": "doublon",
+   "v": "v0",
+   "action": "dedupliquer",
+   "v_ordre": 0
+  },
+  {
+   "id": "T-10",
+   "element": "289 Mo de binaires en Git (225 + 64 Mo)",
+   "source": "racine + proto/raw",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v0",
+   "action": "externaliser + SHA-256",
+   "v_ordre": 0
+  },
+  {
+   "id": "T-11",
+   "element": "Donnees RH sensibles publiques (grilles salariales, corriges AIPR)",
+   "source": "racine",
+   "domaine": "T",
+   "etat": "risque",
+   "v": "v0",
+   "action": "retirer / restreindre",
+   "v_ordre": 0
+  },
+  {
+   "id": "D1-01",
+   "element": "Interface finale 12 domaines (html/css/js + registre)",
+   "source": "branche feat/final-interface-skeleton-2026-10-07",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "fusionner en premier",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-02",
+   "element": "Coquille FastAPI (explorateur, previews, garde-fous)",
+   "source": "app/main.py (monorepo main)",
+   "domaine": "D1",
+   "etat": "existe",
+   "v": "v1",
+   "action": "conserver, renforcer",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-03",
+   "element": "Registre des outils/donnees (9 domaines, regle referencer→adapter→normaliser→extraire)",
+   "source": "docs/TOOL-DATA-CATALOG.md (feat/tool-data-catalog-2026-10)",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "fusionner",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-05",
+   "element": "Snapshot GitHub rafraichi + date en UI",
+   "source": "data/github_inventory.json",
+   "domaine": "D1",
+   "etat": "existe (perime)",
+   "v": "v1",
+   "action": "regenerer",
+   "v_ordre": 1
+  },
+  {
+   "id": "D11-01",
+   "element": "Base unique PostgreSQL + pgvector + Apache AGE + PostGIS (ADR-007)",
+   "source": "architecture/target.md + data-model.md",
+   "domaine": "D11",
+   "etat": "specifie",
+   "v": "v1",
+   "action": "construire - fondation de tout",
+   "v_ordre": 1
+  },
+  {
+   "id": "D11-02",
+   "element": "Schema bi-temporel (T valide + T' ingestion, invalidation, episodes)",
+   "source": "absent du data-model (lecon Graphiti/Zep)",
+   "domaine": "D11",
+   "etat": "absent",
+   "v": "v1",
+   "action": "acter avant premiere migration",
+   "v_ordre": 1
+  },
+  {
+   "id": "D11-03",
+   "element": "HCSM : provenance, incertitude, observation/evidence/inference",
+   "source": "projects/HCSM",
+   "domaine": "D11",
+   "etat": "existe",
+   "v": "v1",
+   "action": "contrat semantique",
+   "v_ordre": 1
+  },
+  {
+   "id": "D11-07",
+   "element": "Memoire d'audit (state.json, MEMORY.md, JOURNAL.jsonl, graphe)",
+   "source": "audit/",
+   "domaine": "D11",
+   "etat": "existe",
+   "v": "v1",
+   "action": "outil de pilotage",
+   "v_ordre": 1
+  },
+  {
+   "id": "D12-01",
+   "element": "Politique secrets : zero cle par defaut, .env 600, jamais commite, pas de 0.0.0.0",
+   "source": "watchtower AGENTS.md + .env.example x4",
+   "domaine": "D12",
+   "etat": "existe (partiel)",
+   "v": "v1",
+   "action": "generaliser",
+   "v_ordre": 1
+  },
+  {
+   "id": "D12-02",
+   "element": "Licences : decider pour 6 projets ; attribuer le fork watchtower (MIT, Bilawal Sidhu)",
+   "source": "audit C1",
+   "domaine": "D12",
+   "etat": "manquant",
+   "v": "v1",
+   "action": "decider",
+   "v_ordre": 1
+  },
+  {
+   "id": "D12-05",
+   "element": "CI minimale (lint/build/tests) sur les 9 depots",
+   "source": "audit C8 (1 CI sur 9)",
+   "domaine": "D12",
+   "etat": "manquant",
+   "v": "v1",
+   "action": "garde-fou de restructuration",
+   "v_ordre": 1
+  },
+  {
+   "id": "D3-06",
+   "element": "Garde-fou : aucune fonctionnalite visant une personne physique",
+   "source": "projects/watchtower/AGENTS.md",
+   "domaine": "D3",
+   "etat": "existe",
+   "v": "v1",
+   "action": "eriger en regle plateau",
+   "v_ordre": 1
+  },
+  {
+   "id": "D5-01",
+   "element": "HCSM : ontologie, constructs, provenance/incertitude/contexte/temporal state, validateur V1/V5 (23 cas, 29 tests)",
+   "source": "projects/HCSM",
+   "domaine": "D5",
+   "etat": "existe",
+   "v": "v1",
+   "action": "promouvoir en contrat du Core",
+   "v_ordre": 1
+  },
+  {
+   "id": "D5-05",
+   "element": "3 bases de connaissances psy concurrentes",
+   "source": "proto + ETAT + HCSM",
+   "domaine": "D5",
+   "etat": "doublon",
+   "v": "v1",
+   "action": "fermer ADR-009",
+   "v_ordre": 1
+  },
+  {
+   "id": "D6-05",
+   "element": "Methode Talbot v4.2 : registre de claims, 12 corrections",
+   "source": "docs/synthese-talbot-2026",
+   "domaine": "D6",
+   "etat": "existe",
+   "v": "v1",
+   "action": "generaliser en registre de claims",
+   "v_ordre": 1
+  },
+  {
+   "id": "T-05",
+   "element": "proto resync (25 fichiers manquants dont auth/onboarding)",
+   "source": "projects/proto-cognitorium",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v1",
+   "action": "git pull + resync",
+   "v_ordre": 1
+  },
+  {
+   "id": "T-06",
+   "element": "2 tests rouges reaserch-engine",
+   "source": "tests/test_agents.py, tests/test_research_strategy.py",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v1",
+   "action": "corriger",
+   "v_ordre": 1
+  },
+  {
+   "id": "T-12",
+   "element": "Snapshot GitHub perime",
+   "source": "data/github_inventory.json",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v1",
+   "action": "regenerer + dater",
+   "v_ordre": 1
+  },
+  {
+   "id": "T-13",
+   "element": "reaserch-engine mal orthographie",
+   "source": "depot GitHub",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v1",
+   "action": "renommer",
+   "v_ordre": 1
+  },
+  {
+   "id": "T-14",
+   "element": "ADR-009 (3 bases de connaissances) non tranchee",
+   "source": "COGNITORIUM",
+   "domaine": "T",
+   "etat": "decision",
+   "v": "v1",
+   "action": "fermer l'ADR",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-04",
+   "element": "Dashboard global, recherche globale, timeline",
+   "source": "domaine 1 du registre",
+   "domaine": "D1",
+   "etat": "specifie",
+   "v": "v2",
+   "action": "construire apres 3 domaines",
+   "v_ordre": 2
+  },
+  {
+   "id": "D10-03",
+   "element": "Agent de recherche reaserch-engine (1 agent reel)",
+   "source": "projects/reaserch-engine",
+   "domaine": "D10",
+   "etat": "existe",
+   "v": "v2",
+   "action": "premier agent utile",
+   "v_ordre": 2
+  },
+  {
+   "id": "D11-04",
+   "element": "JsonRunStore : 1 episode JSON atomique par run",
+   "source": "reaserch-engine (engine/persistence.py)",
+   "domaine": "D11",
+   "etat": "existe",
+   "v": "v2",
+   "action": "premier producteur d'episodes",
+   "v_ordre": 2
+  },
+  {
+   "id": "D11-05",
+   "element": "Inventaires SHA-256, audit trail, import/export, frontiere vie privee, coffre a cles",
+   "source": "registre domaine 11",
+   "domaine": "D11",
+   "etat": "specifie",
+   "v": "v2",
+   "action": "hygiene de confiance",
+   "v_ordre": 2
+  },
+  {
+   "id": "D12-03",
+   "element": "Modes gratuit/payant + pre-validation des cles (keySetupCore.mjs)",
+   "source": "projects/watchtower",
+   "domaine": "D12",
+   "etat": "existe",
+   "v": "v2",
+   "action": "reutiliser tel quel",
+   "v_ordre": 2
+  },
+  {
+   "id": "D12-04",
+   "element": "Provider manager multi-LLM, plugins, feature flags, diagnostics, backup",
+   "source": "nexus_os + registre domaine 12",
+   "domaine": "D12",
+   "etat": "branche/skeleton",
+   "v": "v2",
+   "action": "reutiliser",
+   "v_ordre": 2
+  },
+  {
+   "id": "D2-01",
+   "element": "Globe Cesium, ~29 calques, docks, vues territoire, epingles, bati 3D",
+   "source": "projects/watchtower",
+   "domaine": "D2",
+   "etat": "existe",
+   "v": "v2",
+   "action": "autorite monde",
+   "v_ordre": 2
+  },
+  {
+   "id": "D2-02",
+   "element": "Barre unique de fonctions, carte 2D IGN, minicarte, volant, panneau FIL, archives/crues, charge mentale",
+   "source": "branche arena/01a072e1-watchtower (+43)",
+   "domaine": "D2",
+   "etat": "branche",
+   "v": "v2",
+   "action": "PR puis fusion",
+   "v_ordre": 2
+  },
+  {
+   "id": "D2-03",
+   "element": "INTEL territorial Frontignan/Thau, import CSV, projets, lacunes, veille officielle, imprevus TP",
+   "source": "branche arena/dec9cd88-watchtower (PR #3)",
+   "domaine": "D2",
+   "etat": "branche",
+   "v": "v2",
+   "action": "fusionner",
+   "v_ordre": 2
+  },
+  {
+   "id": "D2-04",
+   "element": "Dossier territoire Frontignan : rapport 826 l., 249 sources datees, vision 2040, deck 18 slides",
+   "source": "projects/frontignan",
+   "domaine": "D2",
+   "etat": "existe",
+   "v": "v2",
+   "action": "conserver comme modele",
+   "v_ordre": 2
+  },
+  {
+   "id": "D3-02",
+   "element": "Dossier de recherche : claims, contradictions, suffisance",
+   "source": "projects/reaserch-engine",
+   "domaine": "D3",
+   "etat": "existe",
+   "v": "v2",
+   "action": "corriger tests puis integrer",
+   "v_ordre": 2
+  },
+  {
+   "id": "D5-02",
+   "element": "Profils (6), graphe competences 5 niveaux, ROME 1911 fiches, decay, epistemique, CV alignment",
+   "source": "projects/proto-cognitorium",
+   "domaine": "D5",
+   "etat": "existe",
+   "v": "v2",
+   "action": "resync puis demembrer par domaine",
+   "v_ordre": 2
+  },
+  {
+   "id": "D5-03",
+   "element": "Atlas psychologie + PsyRef + labo (experiences, evaluations, metacognition)",
+   "source": "projects/proto-cognitorium (composants)",
+   "domaine": "D5",
+   "etat": "existe",
+   "v": "v2",
+   "action": "atlas v2, labo v4",
+   "v_ordre": 2
+  },
+  {
+   "id": "D5-04",
+   "element": "Language-decoder : moteur Python 12 modules + schema decoded-human + UI",
+   "source": "branches arena/01a05471 et 01a05429 (Language-decoder)",
+   "domaine": "D5",
+   "etat": "branche",
+   "v": "v2",
+   "action": "PR vers main",
+   "v_ordre": 2
+  },
+  {
+   "id": "D6-01",
+   "element": "reaserch-engine : pipeline complet 21 modules, 9 schemas, JsonRunStore",
+   "source": "projects/reaserch-engine",
+   "domaine": "D6",
+   "etat": "existe",
+   "v": "v2",
+   "action": "corriger 2 tests rouges avant integration",
+   "v_ordre": 2
+  },
+  {
+   "id": "D6-02",
+   "element": "ETAT-DE-LART : base 42 champs, app FastAPI+SQLite, PRISMA, scripts DOI, 4 viz D3",
+   "source": "projects/ETAT-DE-LART-PSYCHOLOGIE",
+   "domaine": "D6",
+   "etat": "existe",
+   "v": "v2",
+   "action": "conserver comme contenu",
+   "v_ordre": 2
+  },
+  {
+   "id": "D6-03",
+   "element": "Agent de recherche litteraire, cosmos, 221 sorties",
+   "source": "branche arena/01a04f7b-ETAT-DE-LART (+38)",
+   "domaine": "D6",
+   "etat": "branche",
+   "v": "v2",
+   "action": "revue puis fusion",
+   "v_ordre": 2
+  },
+  {
+   "id": "D6-06",
+   "element": "Frontignan : 249 sources datees + balises de statut",
+   "source": "projects/frontignan",
+   "domaine": "D6",
+   "etat": "existe",
+   "v": "v2",
+   "action": "deja conforme",
+   "v_ordre": 2
+  },
+  {
+   "id": "T-01",
+   "element": "PR #3 watchtower (CI verte)",
+   "source": "branche arena/dec9cd88-watchtower",
+   "domaine": "T",
+   "etat": "branche",
+   "v": "v2",
+   "action": "fusionner",
+   "v_ordre": 2
+  },
+  {
+   "id": "T-02",
+   "element": "Branche watchtower +43 (UI reutilisable)",
+   "source": "branche arena/01a072e1-watchtower",
+   "domaine": "T",
+   "etat": "branche",
+   "v": "v2",
+   "action": "PR puis fusion",
+   "v_ordre": 2
+  },
+  {
+   "id": "T-03",
+   "element": "ETAT +38 (agent, cosmos, 221 sorties)",
+   "source": "branche arena/01a04f7b-ETAT-DE-LART",
+   "domaine": "T",
+   "etat": "branche",
+   "v": "v2",
+   "action": "revue puis fusion",
+   "v_ordre": 2
+  },
+  {
+   "id": "T-04",
+   "element": "Language-decoder (moteur + UI + tests)",
+   "source": "branches arena/01a05471 et 01a05429",
+   "domaine": "T",
+   "etat": "branche",
+   "v": "v2",
+   "action": "PR vers main",
+   "v_ordre": 2
+  },
+  {
+   "id": "T-15",
+   "element": "Doc animation-chronos inexistante",
+   "source": "projects/animation-chronos",
+   "domaine": "T",
+   "etat": "dette",
+   "v": "v2",
+   "action": "README d'intention ou archive",
+   "v_ordre": 2
+  },
+  {
+   "id": "D10-01",
+   "element": "nexus_os : 22 agents JSON, routeur multi-provider, skills, MCP, memoire, SSE, sandbox, evals (59 tests)",
+   "source": "branche arena/01a08385-monorepo",
+   "domaine": "D10",
+   "etat": "branche",
+   "v": "v3",
+   "action": "integrer apres le Core",
+   "v_ordre": 3
+  },
+  {
+   "id": "D10-02",
+   "element": "13 fiches d'agents (orchestrateur, research, data, CAD, GIS, learning, verification...)",
+   "source": "projects/COGNITORIUM/docs/agents",
+   "domaine": "D10",
+   "etat": "specifie",
+   "v": "v3",
+   "action": "cahier des charges",
+   "v_ordre": 3
+  },
+  {
+   "id": "D10-04",
+   "element": "Orchestrateur maison + MCP (ADR-008)",
+   "source": "constitution/03-architecture.md",
+   "domaine": "D10",
+   "etat": "specifie",
+   "v": "v3",
+   "action": "reconcilier avec nexus_os",
+   "v_ordre": 3
+  },
+  {
+   "id": "D2-05",
+   "element": "Atlas interactif Frontignan / Cognitarium City",
+   "source": "branche arena/01a08203-monorepo",
+   "domaine": "D2",
+   "etat": "branche",
+   "v": "v3",
+   "action": "evaluer",
+   "v_ordre": 3
+  },
+  {
+   "id": "D3-01",
+   "element": "intelTwin, OSINT case, evidence/source registry, veille, empreinte economique",
+   "source": "projects/watchtower",
+   "domaine": "D3",
+   "etat": "fragment",
+   "v": "v3",
+   "action": "apres le Core",
+   "v_ordre": 3
+  },
+  {
+   "id": "D3-03",
+   "element": "Correlation multi-signaux + baseline temporelle + gaps visibles",
+   "source": "absent (modele World Monitor)",
+   "domaine": "D3",
+   "etat": "absent",
+   "v": "v3",
+   "action": "construire",
+   "v_ordre": 3
+  },
+  {
+   "id": "D3-04",
+   "element": "OSINT workbench (modules + specs)",
+   "source": "branche watchtower/osint-workbench-v0.1 (COGNITORIUM)",
+   "domaine": "D3",
+   "etat": "branche",
+   "v": "v3",
+   "action": "evaluer vs watchtower",
+   "v_ordre": 3
+  },
+  {
+   "id": "D3-05",
+   "element": "Flux GDELT, scanner, news",
+   "source": "absent (ref. OSIRIS)",
+   "domaine": "D3",
+   "etat": "absent",
+   "v": "v3",
+   "action": "ajouter",
+   "v_ordre": 3
+  },
+  {
+   "id": "D4-01",
+   "element": "Module BTP complet : corpus 154 sources, DCE→DOE, prix, DT/DICT/AIPR, dashboard",
+   "source": "branche arena/01a08449-monorepo (projects/btp-conduite-travaux)",
+   "domaine": "D4",
+   "etat": "branche",
+   "v": "v3",
+   "action": "apres territoire",
+   "v_ordre": 3
+  },
+  {
+   "id": "D4-02",
+   "element": "Corpus racine 220 documents / 225 Mo (12 familles)",
+   "source": "racine monorepo",
+   "domaine": "D4",
+   "etat": "existe",
+   "v": "v3",
+   "action": "externaliser stockage (v0)",
+   "v_ordre": 3
+  },
+  {
+   "id": "D4-03",
+   "element": "Couche chantier watchtower : 81 fiches imprevus, suivi, engins",
+   "source": "projects/watchtower",
+   "domaine": "D4",
+   "etat": "fragment",
+   "v": "v3",
+   "action": "aligner sur module BTP",
+   "v_ordre": 3
+  },
+  {
+   "id": "D5-06",
+   "element": "Biais cognitifs, metacognition, histoire de vie",
+   "source": "proto (cognitiveBiasesData.ts, distant)",
+   "domaine": "D5",
+   "etat": "fragment",
+   "v": "v3",
+   "action": "enrichir le profil",
+   "v_ordre": 3
+  },
+  {
+   "id": "D6-04",
+   "element": "Cognitorium v8 (graphe 3D, 40 fiches)",
+   "source": "branche arena/01a03aac-ETAT-DE-LART",
+   "domaine": "D6",
+   "etat": "branche",
+   "v": "v3",
+   "action": "evaluer",
+   "v_ordre": 3
+  },
+  {
+   "id": "D7-01",
+   "element": "CLE : learning-engine.js, PoC turboreacteur, PoC money, architecture",
+   "source": "projects/COGNITORIUM/learning",
+   "domaine": "D7",
+   "etat": "fragment",
+   "v": "v3",
+   "action": "apres Skill Graph persistant",
+   "v_ordre": 3
+  },
+  {
+   "id": "D7-02",
+   "element": "Scenario / challenge / operations cognitives / boucle adaptative / transfert",
+   "source": "registre domaine 7",
+   "domaine": "D7",
+   "etat": "fragment",
+   "v": "v3",
+   "action": "apres socle profil",
+   "v_ordre": 3
+  },
+  {
+   "id": "D8-02",
+   "element": "Graphes temporels et reseau interactifs",
+   "source": "proto (TemporalNetworkGraph, NetworkGraph)",
+   "domaine": "D8",
+   "etat": "existe",
+   "v": "v3",
+   "action": "viz reutilisable plus tot",
+   "v_ordre": 3
+  },
+  {
+   "id": "D10-05",
+   "element": "Creator d'agents, evals, sandbox",
+   "source": "nexus_os",
+   "domaine": "D10",
+   "etat": "branche",
+   "v": "v4",
+   "action": "meta-outillage",
+   "v_ordre": 4
+  },
+  {
+   "id": "D4-04",
+   "element": "Phasage 4D / BIM / jumeau numerique chantier",
+   "source": "registre domaine 4 (placeholder)",
+   "domaine": "D4",
+   "etat": "absent",
+   "v": "v4",
+   "action": "plus tard",
+   "v_ordre": 4
+  },
+  {
+   "id": "D6-07",
+   "element": "Redaction d'articles / paper writing",
+   "source": "registre domaine 6",
+   "domaine": "D6",
+   "etat": "absent",
+   "v": "v4",
+   "action": "apres synthese stabilisee",
+   "v_ordre": 4
+  },
+  {
+   "id": "D7-03",
+   "element": "Pattern de revelation progressive",
+   "source": "projects/animation-chronos (ProgressiveDiscoveryBar)",
+   "domaine": "D7",
+   "etat": "existe",
+   "v": "v4",
+   "action": "composant d'onboarding",
+   "v_ordre": 4
+  },
+  {
+   "id": "D8-01",
+   "element": "Experiment Studio + catalogue evaluations + boucle metacognitive",
+   "source": "proto (ExperimentStudio, evaluationsCatalog, MetacogLoopView)",
+   "domaine": "D8",
+   "etat": "existe",
+   "v": "v4",
+   "action": "quand donnees reelles",
+   "v_ordre": 4
+  },
+  {
+   "id": "D8-03",
+   "element": "Experience temporelle Chronos (9 composants)",
+   "source": "projects/animation-chronos",
+   "domaine": "D8",
+   "etat": "existe",
+   "v": "v4",
+   "action": "integrer comme composant, pas app",
+   "v_ordre": 4
+  },
+  {
+   "id": "D9-01",
+   "element": "Decisions CAD : Replicad + OpenCascade.js ; JSCAD CSG ; OrcaSlicer local",
+   "source": "constitution/03-architecture.md + audits external 004",
+   "domaine": "D9",
+   "etat": "specifie",
+   "v": "v4",
+   "action": "rien a integrer (slicer v5)",
+   "v_ordre": 4
+  },
+  {
+   "id": "D9-02",
+   "element": "three.js present dans proto (rendu, pas de CAD)",
+   "source": "proto package.json",
+   "domaine": "D9",
+   "etat": "fragment",
+   "v": "v4",
+   "action": "base du 3D objet",
+   "v_ordre": 4
+  },
+  {
+   "id": "D9-03",
+   "element": "Espace objet 3D, CAO parametrique, CSG, import/export, impression",
+   "source": "registre domaine 9 (missing)",
+   "domaine": "D9",
+   "etat": "absent",
+   "v": "v4",
+   "action": "chantier neuf - apres v1-v3",
+   "v_ordre": 4
+  },
+  {
+   "id": "D9-04",
+   "element": "Book of Shapes + audit CAD",
+   "source": "docs/audits/external/002 et 004",
+   "domaine": "D9",
+   "etat": "existe",
+   "v": "v4",
+   "action": "recherche deja faite",
+   "v_ordre": 4
+  },
+  {
+   "id": "D2-06",
+   "element": "Couche solar system",
+   "source": "projects/watchtower",
+   "domaine": "D2",
+   "etat": "existe",
+   "v": "v5",
+   "action": "hors chaine de valeur",
+   "v_ordre": 5
+  },
+  {
+   "id": "D8-04",
+   "element": "Sandbox de simulation",
+   "source": "registre domaine 8 (placeholder)",
+   "domaine": "D8",
+   "etat": "absent",
+   "v": "v5",
+   "action": "plus tard",
+   "v_ordre": 5
+  }
+ ]
+}

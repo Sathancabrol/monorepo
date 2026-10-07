@@ -1,0 +1,961 @@
+# 🗺 WATCHTOWER — FEUILLE DE ROUTE
+
+Document vivant : **mis à jour à chaque itération**. Chaque entrée indique
+l'état (`✅ fait` · `🟡 en cours` · `⬜ prévu`), le module concerné et la
+source de données utilisée (toutes ouvertes et sans clé, sauf mention).
+
+Dernière mise à jour : **itération 23** — 🔒 **intégrité UI** : les 7 fonctions
+rendues orphelines par l'itération 22 sont rapatriées, et un garde-fou
+automatique (`src/integriteUI.test.mjs`) refuse désormais qu'une fonction perde
+son point d'entrée. Voir **`docs/AUDIT-UI.md`** (2ᵉ passe), qui contient aussi
+les **retours arrière copier-coller** pour chaque correctif.
+Itération **22** = 🎛 audit UI sur plainte « je peux pas installer ça dans
+l'état » : barre unique des fonctions, planchers de lisibilité, pastilles
+éteintes par défaut, HQ en hub centré.
+Itération **21** = 🔍 **audit général** : chronologie
+1 → 20, état réel, sources, ce qui manque et dettes techniques. Voir
+**`docs/AUDIT.md`**.
+Itération **20** = (🗂 dossier d'investigation du
+tableau + 📺 télé cathodique + 🪟 fenêtre → vue stellaire + 🚁 décollage
+confirmé + 🗺 minicarte sans cadre + 🧭 médaillons emboîtés).
+Itération **19** = (🧭 boussole relisible · 😴 veille
+patientée · 🧹 panneaux d'origine rangés · 📍 pastilles dispersées · 📐
+échelle VRAIE du système solaire).
+Itération **18** = (🎯 lanceur compact : une catégorie
+= un bouton · 🗺 minicarte et boussole qui épousent le globe · 📍 pastilles
+d'entités posées sur un lieu réel · 🔥 2 modules coupés par mon propre script
+réparés).
+Itération **17** = (🔥 le bug qui coupait 19 modules
+d'un coup est trouvé et réparé · 🛡 garde-fous structurels automatisés).
+Itération **16** = (🐞 diagnostic de démarrage F3 +
+« tout réafficher » · 📶 bandeau live rendu · 🧭 médaillons repli sans
+réseau · 📐 lanceur plafonné). Voir **`docs/DIAGNOSTIC.md`** : comment
+l'app est montée, les cinq mécanismes qui vident l'écran, les pannes déjà
+rencontrées, la marche à suivre.
+Itérations précédentes : **15** = 🗂 CALQUES : les 27 couches, rien de
+bloqué · 🧭 médaillons de lieu 360° · 🎛 pastilles de catégories · **14** = 🎛 lanceur par catégories + préréglages,
+🧭 boussole dans la minicarte, 🗺 minicarte en globe · **13** = 🧭 boussole « casque » sur la hauteur, ▚
+MATRIX sur la minicarte, 🎨 peau néon, 👁 œil dans le logo · **12** = 🖥 HUD central (un œil toujours visible +
+la liste de tout ce qui s'affiche) · **11** = 🕰 mode historique (la ville se construit à
+partir des dates OpenStreetMap) · **10** = parcours de vol traçés & rejoués, 3ᵉ personne
+réparée, routes + cadastre visibles en satellite, bouton « ME LOCALISER »
+explicité · **9** = 🧠 palais mental, 😴 veille du HUD, 🔑 comptes & IA locale,
+🎥 dispositifs en direct, 🔲 cadrans au tracé communal, 🌀 rotation 360° des
+icônes AR · **8** = chat à réponses rapides, `/aide`, mode urgence guidé ·
+**7** = … · **6** = entités de la carte, sources cliquables & traçabilité,
+mobiGlas + VTOL + 3ᵉ personne, INTEL élargi à 6 vues, cadrans, fenêtres
+réductibles, SUIVI direct, analyse de 25 sites gratuits.
+
+---
+
+## 🔭 CAP (06/10/2026) — WATCHTOWER pour elle-même
+
+**Décision de l'utilisateur : on se concentre sur watchtower.** Le
+rattachement à `proto-cognitorium` est **différé** — l'analyse reste
+consignée dans `docs/ARCHITECTURE-MODULE.md`, marquée comme telle, mais elle
+ne commande plus l'ordre des travaux.
+
+Point d'entrée d'un agent qui reprend le dépôt : **`AGENTS.md`** à la racine.
+
+### Itération 26 — le volet européen et les niveaux INTEL (06/10/2026) ✅
+
+Première itération tirée du catalogue d'outils. Deux couches de données
+pures, testées, sans DOM et sans clé.
+
+* **`src/data/osint/sourcesDocuments.js`** passe de 15 à **20 sources**, avec
+  une portée `europe` : **Europe PMC** (40 M de notices, aucune clé, 10 req/s),
+  **Crossref**, **Open Research Europe**, **CORDIS**, **data.europa.eu**.
+  L'ordre de recherche devient **France → Europe → monde**.
+* **Défaut trouvé et corrigé au passage** : `encodeURIComponent` transformait
+  la barre oblique d'un DOI en `%2F`, et **Unpaywall, OpenAlex et Crossref**
+  répondent 404 dans ce cas. Un DOI placé dans un *chemin* d'URL garde sa
+  barre ; dans un *paramètre*, il est encodé entièrement. Les deux cas sont
+  désormais gelés par un test.
+* **Le besoin de clé est déclaré, plus deviné.** Un test reniflait la chaîne
+  d'URL et se trompait ; chaque source porte maintenant un champ `cle`.
+* **`src/data/intel/niveaux.js`** (nouveau) — chantier **F**. Les sept
+  échelons d'`echelleVue.js` ont chacun un titre, une question et au moins
+  trois indicateurs, chacun avec sa source, son URL, sa confiance et le fait
+  de savoir s'il répond **hors ligne**. Les niveaux **mondial, national et
+  régional** qui manquaient sont là : GDELT, GDELT GEO, Banque mondiale,
+  REST Countries, Eurostat. **Aucun indicateur ne réclame de clé**, et un
+  test refuse qu'on en introduise un.
+* **`src/intelTwin.js`** — le bandeau annonce l'échelon courant, sa question,
+  combien d'indicateurs répondent **hors ligne**, et si le **réseau est
+  requis**. Ajout pur : rien n'a été retiré ni déplacé.
+
+Tests : **3 504** dont 3 499 passent (les 4 échecs sont les préexistants).
+Build ✓.
+
+### Itération 27 — les 4 tests rouges, et le fil qui se règle (06/10/2026) ✅
+
+**La suite passe entièrement pour la première fois : 3 525 / 3 525.**
+
+**Deux tests étaient périmés.** L'interface a été traduite en français et
+deux garde-fous épinglaient encore l'anglais : la tuile du premier lancement
+(« earthquakes ») et l'avertissement de vie privée de la radio. L'épinglage
+est reporté sur le texte français, l'intention conservée.
+
+**Deux étaient de vrais défauts livrés.** Trois fonds de carte français —
+**IGN ortho, plan IGN, relief OpenTopoMap** — avaient été ajoutés à
+`MAP_STACKS` sans être déclarés ailleurs, et personne ne l'avait vu parce que
+l'application les affiche correctement :
+
+* **aucun alias vocal** → `normalizeStackId` renvoyait `null` et le contrôleur
+  levait « Unknown map stack ». Trois fonds livrés, inatteignables à la voix.
+  Alias ajoutés, **en français aussi** : « photo aérienne », « plan IGN »,
+  « relief » ;
+* **absents de la classification des câbles sous-marins** → repli sur `BOTH`,
+  donc le double jeu de commandes que cette liste existe pour éviter.
+
+Le schéma d'outils vocaux est verrouillé par un hachage : **le verrou a
+attrapé ma propre correction**, et il a été réépinglé en documentant le
+motif, comme en août.
+
+**Chantier G — `src/data/fil/preferencesFil.js`** (nouveau, 22 tests). Le fil
+de contexte devient **réglable et mémorisé** : **10 flux** déclarés avec leur
+source et le fait d'aller ou non sur le réseau, allumage par flux, **ordre
+manuel**, 4 tris (importance · récent · source · manuel), limite, seuil de
+gravité, **mode hors ligne**. Il démarre **replié** et **sobre** (5 flux sur
+10) — il ne prend l'écran que si on le lui demande.
+
+Points durs traités : des préférences enregistrées par une version
+antérieure ne font jamais disparaître un flux ajouté depuis ; **tout
+éteindre est une intention respectée**, pas une erreur à corriger dans le dos
+de l'utilisateur ; un stockage qui refuse (navigation privée) ne fait pas
+tomber l'application ; une dépêche dont le flux est inconnu est **gardée**.
+
+**Reste à faire sur G** : le panneau de réglage et le bouton de dépliage dans
+l'interface. La couche de décision est prête et gelée par les tests.
+
+### Itération 28 — le fil réglable, visible à l'écran (06/10/2026) ✅
+
+Le chantier **G est terminé**. La couche de décision de l'itération 27 est
+maintenant branchée et manipulable.
+
+* **`src/data/fil/panneauFil.js`** (nouveau, 18 tests) — le panneau en
+  **logique pure** : le balisage produit et l'effet de chaque clic. Les
+  actions sont des chaînes (`basculer:presse`, `tri:recent`), ce qui permet
+  de tester le comportement **sans navigateur** — il n'y en a pas dans le bac
+  à sable.
+* **`etiqueterFlux` / `fluxDeDepeche`** — les dépêches portaient une
+  `sourceCle` héritée d'avant ; on traduit plutôt que de renommer des dizaines
+  d'appels et d'en oublier un. Une dépêche non rattachée est **gardée**.
+* **`src/vuesIntel.js`** — deux boutons dans le fil : **⚙ régler** et
+  **⤢ déplier**. Le panneau se reconstruit à chaque changement, donc les clics
+  passent par **délégation** ; le réglage est enregistré à chaque action.
+* **`style.css`** — feuille **statique** (un masquage posé en JS ne tient pas
+  si le module ne démarre pas), `var(--wt-z-fenetre)`, et recadrage sous
+  760 px.
+* **Volant** — `Régler le fil` et `Déplier le fil` rangés dans **Analyser**,
+  via `clic:` sur les boutons d'origine : une seule logique d'ouverture, donc
+  un seul endroit où se tromper. Exigence transverse respectée.
+
+**L'état par défaut est replié et sobre** : le fil ne prend l'écran que par
+le bouton prévu pour ça.
+
+Tests : **3 547 / 3 547**. Build ✓.
+
+### Suite proposée
+
+| Rang | Chantier | Ce qu'on prend dans le catalogue |
+|---|---|---|
+| 2 | **A4 / A1 / A3** — minicarte | `cobe` (5 ko) au lieu d'un 2ᵉ contexte Cesium |
+| 3 | **E** — vue communale animée | BD TOPO, `maplibre-gl-draw`, Motion One |
+| 4 | **F** (suite) — brancher les niveaux sur les API | GDELT GEO, Eurostat, Banque mondiale |
+| 5 | **D** — multicam | `hls.js`, catalogue osiris |
+| 6 | Hors ligne | PMTiles, Protomaps, Service Worker |
+
+---
+
+## 🧰 CATALOGUE D'OUTILS (06/10/2026) — la base de ce qu'on peut intégrer
+
+**Règle posée par l'utilisateur : rien ne s'intègre avant d'être passé par ce
+catalogue.** Il recense, par catégorie, tout ce qui pourrait entrer dans
+WATCHTOWER — outils, sources, bibliothèques, formats, dépôts — avec pour
+chacun la licence, le coût (**payant / gratuit / gratuit avec compte**), la
+compatibilité avec notre contrainte *front-only*, le chantier de cette feuille
+de route auquel il se rattache, et un niveau de confiance.
+
+**Fichiers** — `docs/audit/AUDIT-watchtower-2026-10-06.xlsx` (6 onglets) et les
+CSV correspondants dans `docs/audit/`. Synthèse lisible :
+`docs/AUDIT-SOURCES-2026-10-06.md`.
+
+### Les 9 catégories
+
+| Catégorie | Entrées | Ce qu'elle couvre |
+|---|---|---|
+| Moteurs 3D et carto | 12 | Cesium, MapLibre, openglobus, cobe, PMTiles, iTowns |
+| Données géo | 10 | IGN, Copernicus, EMODnet, SHOM, BD TOPO, Corine |
+| OSINT sources | 21 | Vol, mer, caméras, énergie, réseau, actualité géolocalisée |
+| OSINT outils | 10 | Dépôts audités, et ceux explicitement écartés |
+| Imagerie et 3D | 10 | Gaussian splatting, 3D Tiles, CityJSON, C2PA |
+| Design et interface | 11 | Jetons, animation, graphiques, mosaïque, icônes, typo |
+| Science et documents | 11 | Open Research Europe, Europe PMC, CORDIS, HAL |
+| Information | 9 | Presse, Wikidata, Eurostat, associations, vie locale |
+| Technique | 8 | Hors ligne, Tauri, SQLite WASM, qualité |
+
+### Les trois critères qui décident
+
+1. **Front-only.** Un navigateur ne fait ni DNS, ni WHOIS, ni scan de port.
+   Tout ce qui exige un serveur est écarté par construction — c'est ce qui
+   permet à chacun de lancer l'app depuis son propre agent sans rien payer.
+2. **Gratuit, et de préférence sans clé.** Une clé par ami, c'est un ami qui
+   abandonne. Les sources sans inscription passent devant.
+3. **Rattaché à un chantier.** Un outil qui ne sert aucun des chantiers A à G
+   reste en veille, il n'entre pas.
+
+### Ce que le catalogue désigne comme prioritaire
+
+| Chantier | Ce qu'on prend | Pourquoi |
+|---|---|---|
+| **A4** minicarte | `cobe` (5 ko) | Un globe de minicarte sans recharger Cesium |
+| **D** multicam | `hls.js` + catalogue osiris + YouTube IFrame API | La seule voie licite et réaliste en navigateur |
+| **E** vue communale | BD TOPO, maplibre-gl-draw, Motion One | Le tracé cadastral animé, avec les hauteurs de bâti |
+| **F** INTEL | GDELT GEO, Eurostat, Banque mondiale | Les trois niveaux manquants : mondial, national, régional |
+| **G** fil contexte | Flux RSS locaux, RNA associations | Vie locale — consigne explicite |
+| **Docs** | Europe PMC, CORDIS, Crossref, data.europa.eu | Volet européen, tous sans clé |
+| **Hors ligne** | PMTiles, Protomaps, Service Worker, IndexedDB | La consigne de fond : répondre sans réseau |
+
+### Écarté, et pourquoi
+
+SpiderFoot, theHarvester, Amass, Sherlock, Maigret, IntelOwl : **serveur
+obligatoire**. Shodan, Censys, Maltego, Scopus, Google Maps, Mapbox, Windy :
+**payants**. Sherlock et Maigret sont en outre écartés pour une raison qui
+n'est pas technique — chercher une personne sur 400 ou 6 000 sites n'est pas
+ce que fait cette application.
+
+### Point de vigilance financier
+
+**Cesium ion** est le seul poste susceptible de devenir payant : nous
+utilisons le jeton par défaut, dont le quota est partagé. Prévoir que chaque
+ami renseigne son propre jeton gratuit.
+
+---
+
+## ⭐ CAP FIXÉ (25/09/2026) — décisions d'architecture
+
+Arbitrages rendus après l'audit technique du 25/09/2026. Rapport intégral et
+reproductible : `docs/AUDIT-2026-09-25.md`. Ces cinq décisions commandent
+toutes les itérations qui suivent.
+
+### D1 — WATCHTOWER est une application de bureau installable
+
+Cible : une personne **sans aucune connaissance technique** télécharge un
+fichier, clique sur une icône, et l'application s'installe avec tout ce dont
+elle a besoin. Elle fonctionne **gratuitement** dès le premier lancement ; les
+clés API et les comptes tiers (Google et autres) ne sont que des **suppléments**
+optionnels, ajoutables depuis l'interface.
+
+**Conséquence majeure — l'architecture actuelle est la bonne.** L'audit avait
+classé comme risque n°1 le fait que `vite.config.js` (7 946 lignes, 28 routes
+`/api/*`) serve de backend et disparaisse au `build`. Dans un modèle
+installable, ce serveur devient le **serveur local embarqué** de l'application.
+**Il n'y a rien à réécrire** : ce qui était un défaut de déploiement devient le
+cœur du produit.
+
+Ce choix apporte en prime ce qu'un site hébergé ne pourrait pas offrir : les
+clés restent sur la machine de l'utilisateur ; le cache disque (`.gev-cache/`)
+devient une **réserve hors ligne** qui grossit à l'usage ; et l'accès au réseau
+local ouvre des fonctions impossibles dans un navigateur distant.
+
+**Reste à faire** : choisir l'empaquetage (Electron, Tauri ou Pinokio — noter
+que `scripts/pinokio-environment.mjs` existe déjà), produire les installeurs
+Windows/macOS/Linux, et garantir un premier lancement sans terminal.
+
+### D2 — RECON : jusqu'à la limite du légal, le reste en local éducatif
+
+Vérification faite dans le droit français (sources dans
+`docs/AUDIT-2026-09-25.md`) :
+
+* **Article 323-1 du code pénal** — l'accès ou le maintien *frauduleux* dans un
+  système de traitement automatisé de données : **3 ans et 100 000 €** (version
+  en vigueur depuis le 26/01/2023), aggravé si l'État est visé.
+  **L'article 323-7 punit la tentative des mêmes peines.**
+* **Article 323-3-1** — fournir un outil « conçu ou spécialement adapté » pour
+  commettre ces infractions est puni **des mêmes peines**, sauf « motif
+  légitime, notamment de recherche ou de sécurité informatique ». C'est
+  l'article décisif quand on **distribue** un logiciel au grand public.
+* **Arrêt Kitetoa c/ Tati** (CA Paris, 12e ch. A, 30/10/2002) — consulter des
+  données atteignables « par la simple utilisation d'un logiciel grand public
+  de navigation » **n'est pas frauduleux** : ces parties non protégées sont
+  « réputées non confidentielles ». La consultation de données publiques est
+  donc **licite**.
+
+**Règle retenue pour WATCHTOWER — deux régimes séparés :**
+
+| Régime | Contenu | Cible autorisée |
+|---|---|---|
+| 🟢 **PASSIF — activé par défaut** | DNS, WHOIS, certificat TLS publié, en-têtes HTTP, ASN/BGP, Wikidata, registres ouverts, sanctions OFAC | **n'importe quel domaine public** — simple consultation de données publiées (jurisprudence Kitetoa) |
+| 🟠 **ACTIF — bridé, éducatif** | scan de ports, découverte de services, bannières | **uniquement `localhost`, `127.0.0.0/8` et les plages privées RFC 1918** (`10/8`, `172.16/12`, `192.168/16`) — donc le poste et le réseau de l'utilisateur |
+
+Le régime actif est **techniquement contraint dans le code**, pas seulement
+déconseillé dans la documentation : toute cible hors plages privées est
+**refusée par le serveur local**, avec le motif juridique affiché. Scanner son
+propre réseau ne constitue aucune infraction ; c'est l'usage éducatif voulu.
+
+**Explicitement écarté** : tout contournement d'authentification, toute
+exploitation de faille, tout scan de cible tierce. Un logiciel distribué à des
+non-spécialistes ne peut pas se prévaloir sereinement de l'exception de
+« motif légitime » de l'article 323-3-1.
+
+### D3 — Priorité : le territoire français
+
+L'effort porte d'abord sur les données FR (cadastre, INSEE, Géorisques, IGN
+Géoplateforme, entreprises, transports), avant l'OSINT mondial et avant
+l'export 3D. Le jeu d'essai reste **Thau Agglo**, l'objectif restant que
+**chaque commune** fonctionne.
+
+Chantier prioritaire déjà identifié : **WFS IGN Géoplateforme**
+(`https://data.geopf.fr/wfs/ows`), sans clé, **repéré mais jamais branché**.
+
+### D4 — L'audit de référence est celui du 25/09/2026
+
+Le cahier des charges transmis décrivait l'état du dépôt en **début de mois**.
+Plusieurs de ses constats sont **périmés** et ne doivent plus servir de base de
+décision. Rectifications établies par lecture du code :
+
+| Affirmation du brief | Réalité vérifiée le 25/09/2026 |
+|---|---|
+| « Aucun import GeoJSON/KML/GPX » | **Faux** — implémenté et branché (`src/watchtowerExtras.js:459-474`, `src/main.js:512`), formats KML/KMZ/GeoJSON/GPX par glisser-déposer |
+| « Dépendance aux serveurs publics sans proxy/cache » | **Faux** — 28 routes `/api/*` avec cache disque et 5 miroirs Overpass |
+| « 27 couches, 24 gratuites » | **29 couches, 26 gratuites**, 1 compte, 2 payantes |
+| « Worker 3D absent » | **Exact** — le bâti utilise `requestAnimationFrame` sur le thread principal |
+| « Identité de fork incomplète » | **Exact** — `package.json` toujours amont |
+| « Pas de RECON » | **Exact** — zéro fichier |
+
+### D5 — Traçabilité et reproductibilité maximales
+
+Règles désormais contraignantes, en plus de celles de la section 5 :
+
+* **Tout audit est daté, versionné et conservé** dans `docs/AUDIT-<date>.md`.
+  Aucun audit n'est écrasé : on en ajoute un nouveau.
+* **Tout constat cite son chemin et sa ligne** (`src/fichier.js:123`), afin
+  d'être revérifiable par un tiers.
+* **Toute mesure est accompagnée de sa commande**, pour être rejouable à
+  l'identique.
+* **Toute affirmation juridique cite son article ou sa décision** ; aucune
+  reformulation de mémoire.
+* **Ce qui n'a pas pu être vérifié est déclaré comme tel**, avec le motif.
+
+### Plan retenu (ordre d'exécution)
+
+| # | Étape | Priorité | Dépend de |
+|---|---|---|---|
+| 1 | `docs/ARCHITECTURE.md` : les 28 routes `/api/*`, leur portée, le serveur local | **P0** | — |
+| 2 | Achever le fork : `package.json`, `TESTING.md`, README, worker 3D, comptage des couches | **P0** | — |
+| 3 | Empaquetage installable + assistant de premier lancement (clés facultatives) | **P0** | D1 |
+| 4 | Territoire FR : brancher le WFS IGN Géoplateforme, enrichir la base hors ligne | **P1** | — |
+| 5 | Robustesse : miroirs OSRM, repli de géocodage | **P1** | — |
+| 6 | RECON passif (DNS/WHOIS/TLS) puis actif bridé aux plages privées | **P2** | D1, D2 |
+| 7 | Export 3D (GLB puis STL) | **P2** | — |
+
+## 0. Itération 23 — intégrité, performance, UX
+
+> 🔒 **Itération de consolidation.** L'itération 22 avait masqué le rail du
+> dock pour supprimer une redondance visuelle — et rendu **7 fonctions
+> inatteignables** au passage. Aucun test ne l'avait vu. Cette itération
+> répare, puis **outille** pour que ça ne se reproduise pas.
+
+| # | Sujet | État | Détail |
+|---|---|---|---|
+| 23.1 | 7 fonctions orphelines | ✅ fait | calques/partage/globe, vue de rue, photo, panneau localiser → catégorie **Outils** ; PALAIS, AFFICHAGE, DIAG → `barre.accueillir()` |
+| 23.2 | `dock.ranger()` détourné | ✅ fait | renvoi vers la barre, repli sur l'ancien comportement |
+| 23.3 | `--wt-hauteur-dock` réparée | ✅ fait | `max-height:0` corrompait la hauteur publiée dont dépendent les panneaux ancrés |
+| 23.4 | Garde-fou automatique | ✅ fait | `src/integriteUI.test.mjs`, 6 tests : plus aucune fonction ne peut disparaître en silence |
+| 23.5 | Layout thrash supprimé | ✅ fait | `placerPoignee` regroupé sur `requestAnimationFrame` |
+| 23.6 | Fuite d'écouteur `resize` | ✅ fait | `detruire()` le retire enfin |
+| 23.7 | Débordement de la barre | ✅ fait | une seule ligne conservée ; dégradé sur les bords + molette → défilement horizontal |
+| 23.8 | Retours arrière documentés | ✅ fait | `docs/AUDIT-UI.md`, section « Si quelque chose casse » |
+| 23.9 | Époques (Overpass) | ⬜ **non vérifié** | aucun réseau sortant dans le bac à sable — irreproductible ici |
+| 23.10 | Charger bâti (Overpass) | ⬜ **non vérifié** | même cause |
+
+**Décision assumée** : le bundle principal (2,24 Mo, 86 imports statiques dans
+`main.js`) n'est **pas** découpé. Le gain serait réel mais imposerait de
+réordonner le démarrage — risque disproportionné sur une application que
+l'utilisateur veut pouvoir installer maintenant. Les gros jeux de données sont
+déjà en import dynamique (vérifié).
+
+**Itération 24 — ☀ SOLEIL (fait)** : les fonctions de suncalc.org, calculées
+**en local** (algorithme SunCalc/Meeus, aucune API, aucune clé, hors ligne).
+Position du soleil et de la lune, 13 phases du jour (aube astronomique →
+crépuscule astronomique), heure dorée, **ombres portées** dans la scène 3D,
+curseur d'heure, trajectoire du soleil. Validé contre les **valeurs de
+référence publiées par SunCalc** : écart < 1 min sur les heures, < 0,01° sur
+les positions. Modules `src/data/soleil/calculSolaire.js` + `src/soleil.js`.
+
+**Note transverse — charge mentale** : `docs/CHARGE-MENTALE.md` fait le tri
+entre l'état de l'art réel et un document source aux références en partie
+fabriquées. **Décision : aucune caméra, aucun capteur, aucune biométrie.** La
+reconnaissance émotionnelle sur un lieu de travail est interdite en Europe
+(règlement IA, art. 5(1)(f), depuis le 02/02/2025). On agit uniquement sur la
+**charge extrinsèque** — ce que l'audit UI fait déjà.
+
+**Reste ouvert, par priorité** :
+
+1. **Époques et bâti** — attendent un test côté utilisateur, console ouverte.
+   C'est le seul point qui bloque encore l'installation.
+2. **`POTES.md`** — mode d'emploi pour les amis (jamais écrit).
+3. **Volant** — 8 rayons sur 23 ancres du dock : reste à étendre.
+4. **Chantier E** — vue communale, tracé cadastral animé (`ign-wfs` non branché).
+5. **Chantier F** — niveaux mondial · national · régional de l'INTEL.
+
+---
+
+## 1. Itération 21 — audit général
+
+> 🔍 **Itération d'audit.** Bilan complet des itérations 1 → 20 dans
+> **`docs/AUDIT.md`** : nos discussions, ce qui est implanté, ce qui manque,
+> les sources avec liens, les dettes techniques et l'ordre proposé pour la
+> suite. La numérotation de cette feuille de route a été remise à plat.
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Audit** | 🔍 Bilan général : chronologie, état réel (100 modules, 3 136 tests), sources, dettes | ✅ | `docs/AUDIT.md` | — |
+| **Roadmap** | 🧭 Numérotation latine continue + **toutes** les itérations 9 → 21 en table (les tables s'étaient arrêtées à 15 alors que l'en-tête annonçait 20) | ✅ | `ROADMAP.md` | — |
+| **Régressions** | 🔥 Fenêtre WATCHTOWER · vue HQ : **non reproduites au build ni aux tests** — en attente de ton **F3** pour travailler sur pièce | 🟡 | `fenetres.js`, `mobiDock.js` | — |
+| **INTEL** | ⬜ Hub d'investigation : drill-down de l'arborescence, « Bloomberg de la ville », analyse territoriale | ⬜ | `intel.js` | SIRENE, OSM |
+| **3D** | ⬜ Bascule **2D ↔ 3D** (MapLibre GL) : Cesium sature la carte graphique H24 | ⬜ | à créer | https://maplibre.org/ |
+| **HQ** | 🏰 **La tour de guet dans le ciel** — ce qu'est vraiment « HQ » : une tour procédurale (aucun fichier 3D) qui **apparaît par paliers** comme les repères Maps : 🔦 balise ≤ 120 km → 🗼 silhouette ≤ 40 km → 🏰 détail ≤ 12 km | ✅ | `hq.js` | — |
+| **HQ** | 🎯 Suit « ME LOCALISER » : elle se pose sur ta position GPS (domicile / Sète à défaut), bouton 🏰 **HQ** dans le lanceur (VUES) et clé `hq` au diagnostic F3 | ✅ | `main.js`, `diagnostic.js` | — |
+
+## 0 bis. Itération 20 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Palais** | 🗂 **Dossier d'investigation** : 6 étapes déduites (zone → sources → vérifier → cartographier → observer → conclure), chacune associée aux fonctions WATCHTOWER qui la servent | ✅ | `dossier.js` | — |
+| **Palais** | 📝 Notes : créer · modifier · épingler · ranger dans un dossier · supprimer (mémorisé) | ✅ | `dossier.js` | localStorage |
+| **Palais** | 📺 **Télé cathodique** : affiche le dossier en cours (progression, fait, suivant, dossiers) | ✅ | `dossier.js`, `palais.js` | — |
+| **Palais** | 🪟 **Fenêtre** : rideaux animés (état mémorisé) **+** bascule en vue stellaire | ✅ | `palais.js`, `main.js` | — |
+| **Palais** | 🚁 Le drone **confirme** avant de décoller au-dessus de ta position | ✅ | `main.js` | — |
+| **Minicarte** | 🗂 Plus de cadre ni de fond : globe, boussole et pastilles flottent | ✅ | `minimap.js` | — |
+| **Médaillons** | 🧭 Emboîtement organique : niveau courant + monter/descendre, au lieu d'empiler 4-5 pastilles | ✅ | `medaillons.js` | — |
+
+## 0 ter. Itération 19 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Boussole** | 🧹 Fond opaque + **cap en clair** (`042°`) : enfin lisible par-dessus la carte | ✅ | `compassTape.js` | — |
+| **Veille** | 😴 **60 s / 90 s** au lieu de 10 s / 15 s | ✅ | `main.js`, `veille.js` | — |
+| **Écran** | 🧹 `DATA LAYERS · CCTV · SCENES · CONTEXT` **retirés**, jamais perdus : bouton 📦 « Panneaux d'origine » dans CALQUES | ✅ | `main.js`, `calques.js` | — |
+| **Entités** | 📍 Pastilles **dispersées** : moins de 22 m → petit cercle de 26 px (fin de la superposition) | ✅ | `entites.js` | — |
+| **Système** | 📐 **Échelle VRAIE** (1 UA = 30 000 km) : orbites elliptiques, T² ∝ a³ | ✅ | `systemeSolaire.js` | éléments JPL |
+
+## 0 quater. Itération 18 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Lanceur** | 🎯 **2 lignes** : une catégorie = un bouton (🧭 NAVIGATION · 👁 VUES · 📊 DONNÉES · 🛠 OUTILS · 🎮 MODES) | ✅ | `mobiDock.js` | — |
+| **Minicarte** | 🗺 Fenêtre en bulle ronde + boussole **arc** épousant le globe | ✅ | `minimap.js`, `compassTape.js` | — |
+| **Entités** | 📍 Pastilles **ancrées sur un lieu réel** (fin du barycentre dans le vide) | ✅ | `entites.js` | — |
+| **Réparation** | 🔥 2 blocs que **mon propre script** avait tronqués (`surMess`, chat) → CHAT et HISTORIQUE revivent | ✅ | `main.js` | — |
+
+## 0 quinquies. Itération 17 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Bug** | 🔥 **19 modules coupés** : doublon de `function rendreListe()` dans `flightMode.js` → TDZ `ReferenceError` | ✅ | `flightMode.js` | — |
+| **Garde-fous** | 🛡 `proteger()` / `elDe()` + tests structurels : plus jamais un module ne vide l'écran en silence | ✅ | `gardeFous.test.mjs` | — |
+| **Doc** | 📖 `docs/DIAGNOSTIC.md` : comment l'app est montée, les 5 mécanismes qui vident l'écran | ✅ | `docs/DIAGNOSTIC.md` | — |
+
+## 0 sexies. Itération 16 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Diagnostic** | 🐞 **F3** : rapport de démarrage (33 clés attendues + erreurs runtime) et « tout réafficher » | ✅ | `diagnostic.js` | — |
+| **Bandeau** | 📶 Bandeau live rendu (il n'atteignait jamais l'écran) | ✅ | `main.js` | — |
+| **Médaillons** | 🧭 Repli sans réseau | ✅ | `medaillons.js` | — |
+
+## 0 septies. Itération 15 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Calques** | 🗂 **Les 27 couches de l'app** dans le panneau CALQUES du panneau droit, rangées en 5 familles | ✅ | `calques.js` | modules + sources ouvertes |
+| **Calques** | Niveau par couche : 🟢 gratuit (24) · 🔵 compte (1) · 🔑 payant (2) — **aucun n'est bloqué**, 🔑 marche en repli gratuit | ✅ | `calques.js` | — |
+| **Calques** | L'état de chaque case est **lu dans l'application** (pas mémorisé à côté) et rafraîchi en continu | ✅ | `calques.js` | — |
+| **Lieux** | 🧭 **Médaillons 360°** : quand « noms de lieux » est actif, chaque niveau devient une grande icône qui **flotte** et **tourne lentement** | ✅ | `medaillons.js` | Nominatim (sans clé) |
+| **Lieux** | Au clic : **⬆ MONTER · ⬇ DESCENDRE** dans la hiérarchie pays → région → département → commune → quartier, + 📄 FICHE · 🎯 RECENTRER | ✅ | `medaillons.js` | Nominatim |
+| **Lanceur** | 🎛 **Une pastille par catégorie** dans la barre du haut : chaque famille se remet d'un clic (fin du « les outils / INTEL ont disparu ») | ✅ | `mobiDock.js` | — |
+
+## 0 octies. Itération 14 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Dock** | 🎛 **Lanceur par catégories** : NAVIGATION · VUES · DONNÉES · OUTILS · MODES — une ligne nommée par famille | ✅ | `mobiDock.js` | — |
+| **Dock** | 🧩 **Préréglages visuels** : TOUT · EXPLORER · VOL · CHANTIER · EXPERT · ÉPURÉ (mémorisés) + repli ▾ | ✅ | `mobiDock.js` | localStorage |
+| **Dock** | **Règle : MODES dans TOUS les préréglages** → ✈ VOL et 🖥 AFFICHAGE ne peuvent plus disparaître | ✅ | `mobiDock.js` | — |
+| **Dock** | **+10 fonctions enfin atteignables** : CADRANS · CADASTRE · RADIO · ENTITÉS · DISPOSITIFS · ÉPINGLES · RUE · PHOTO · GLOBE · ACTIONS | ✅ | `main.js` | modules existants |
+| **Dock** | Hauteur publiée dans `--wt-hauteur-dock` : la barre micro se cale AU-DESSUS — plus aucun bouton recouvert (cause du ✈ VOL invisible) | ✅ | `mobiDock.js` | — |
+| **Minicarte** | 🗺 **Forme globe** : dessin circulaire (178 px), graticule, ombre de limbe, reflet, anneau | ✅ | `minimap.js` | tuiles raster |
+| **Boussole** | 🧭 **Posée dans la fenêtre de la minicarte**, au-dessus du globe ; ⚙ la remet en ruban sur la hauteur (détachable) | ✅ | `compassTape.js`, `minimap.js` | — |
+
+## 0 nonies. Itération 13 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Boussole** | 🧭 **Ruban sur la hauteur** (défaut) : pleine hauteur, collé au bord gauche/droite — ne recouvre plus les boutons du haut | ✅ | `compassTape.js` | — |
+| **Boussole** | ⚙ **Réglable** : hauteur/largeur, côté, épaisseur, opacité, degrés visibles, masquage — mémorisés | ✅ | `compassTape.js`, `reglagesValides()` | localStorage |
+| **Boussole** | Présentation « casque » : index central, degrés, N/E/S/O, coins de visière | ✅ | `compassTape.js` | — |
+| **Minicarte** | ▚ **MATRIX** : la couche OpenStreetMap posée SUR le satellite, teintée vert néon + grille et balayage | ✅ | `minimap.js` | tuiles OSM + Esri |
+| **Apparence** | 🎨 **Peau néon** : bordures, séparateurs et ascenseurs blancs → cyan (désactivable, AFFICHAGE → F2) | ✅ | `theme.js` | — |
+| **HUD** | 👁 **Œil dans le logo** du titre : intégré à la marque, à côté de WATCHTOWER, il ne bouge plus jamais | ✅ | `hudCentral.js` | — |
+| **HUD** | Filets : impossible de tout masquer (la barre du bas revient) + bouton « REMETTRE LA BARRE DU BAS » | ✅ | `hudCentral.js` | — |
+
+## 0 decies. Itération 12 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **HUD** | 👁 **Œil toujours visible** (haut gauche + logo du titre) : un clic et TOUT le HUD revient — vue propre, veille, réduction auto ou mode vol compris | ✅ | `hudCentral.js` | — |
+| **HUD** | 🖥 **Fenêtre « AFFICHAGE »** (dock + **F2**) : la liste EXHAUSTIVE des ~30 blocs d'interface, une case chacun, recherche insensible aux accents | ✅ | `hudCentral.js`, `data/hudCatalogue.js` | — |
+| **HUD** | Préréglages **TOUT AFFICHER · ÉPURÉ · VOL · LECTURE** + dépliage des panneaux repliés de l'app d'origine | ✅ | `data/hudCatalogue.js` | — |
+| **HUD** | Les **5 modes qui vident l'écran** (vue propre V · HUD tactique H · veille · réduction auto du dock · mode vol M) sont listés et pilotables | ✅ | `hudCentral.js` | — |
+| **HUD** | 🕰 **HUD progressif** (option) : écran nu au démarrage, un clic sur l'œil fait apparaître l'interface bloc par bloc (cascade 45 ms) | ✅ | `hudCentral.js` | — |
+| **HUD** | Réglages mémorisés (`watchtower.hudCentral.v1`) + message d'accueil qui dit où est l'œil à la première visite | ✅ | `hudCentral.js` | localStorage |
+
+## 0 undecies. Itération 11 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Temps** | 🕰 **MODE HISTORIQUE** : curseur d'année, seuls les bâtiments déjà debout restent à l'écran | ✅ | `historique.js`, `data/historique.js` | Overpass · OSM `start_date` |
+| **Temps** | Lecture des dates OSM : `1850`, `1850s`, `C19`, `XIXe siècle`, `~1850`, `avant/après 1900`, `1850..1870`, dates ISO, époques en mots | ✅ | `data/historique.js` | — |
+| **Temps** | ▶ LIRE : la ville pousse décennie par décennie (une primitive par décennie, aucun recalcul) | ✅ | `historique.js` | — |
+| **Temps** | Courbe de croissance + liste des bâtiments « apparus dans les années N » (clic = la caméra y vole) | ✅ | `historique.js` | — |
+| **Temps** | Rendu « vieille photo » (sépia) + bâti actuel masqué pendant le mode ; sortie = bâti rendu (cache) | ✅ | `historique.js` | — |
+| **Traçabilité** | 3 provenances jamais mélangées : **daté OSM** · **estimé (hypothèse, option)** · **non daté (masqué)** | ✅ | `data/historique.js` | — |
+
+## 0 duodecies. Itération 10 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Vol** | 🛩 **PARCOURS** : 5 préréglages (orbite, balayage, spirale, approche, navette) + réglages | ✅ | `flightMode.js`, `data/volParcours.js` | géométrie pure |
+| **Vol** | 📐 TRACER · ▶ JOUER · ⏹ STOP · 💾 SAUVER (liste locale) · 🔴 ENREGISTRER LE VOL réel | ✅ | `flightMode.js` | mesure locale |
+| **Vol** | 🐛 **3ᵉ personne réparée** : toute vue passe par `appliquerVue()` (boutons compris, plus seulement la touche V) | ✅ | `flightMode.js` | — |
+| **Cadastre** | 👁 « visible en vue satellite » : plafond porté à 22 000 m | ✅ | `cadastre.js` | apicarto (IGN · Etalab) |
+| **Cadastre** | 🛣 **ROUTES** : tracé Overpass coloré par classe, noms optionnels, résumé en km | ✅ | `cadastre.js` | Overpass (ODbL) |
+| **Interface** | 👁 bouton HQ renommé **« ME LOCALISER »** + message à chaque clic | ✅ | `main.js` | — |
+
+### Mémoire des outils (ne rien refaire deux fois)
+→ voir **`docs/SOURCES_ET_OUTILS.md`** : ce qui a été vu, utilisé, écarté, et
+pourquoi. Document à compléter dès qu'un outil est croisé.
+
+---
+
+## 0 terdecies. Itération 9 — terminée
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| **Interface** | 🧠 **PALAIS MENTAL** : chambre de motel 70 (CSS/SVG, aucun asset) — mur, tableau, bureau, lit, néon, porte | ✅ | `palais.js`, `data/vignettes.js`, `data/dossiers.js` | — |
+| **Interface** | Dossiers épinglés au mur : ouverture en cascade jusqu'au plus petit élément + recherche qui affine en direct | ✅ | `data/dossiers.js` | données vivantes de l'app |
+| **Interface** | Objets du bureau = outils de l'app (carte, drone, téléphone/chat, calendrier, radio, moniteur, chemise) | ✅ | `palais.js#ouvrirObjet` | modules existants |
+| **Interface** | 😴 **Veille** : plus aucun HUD après 15 s (fondu de 10 s à 15 s), retour au premier geste | ✅ | `veille.js` | — |
+| **IA** | 🦙 Chat branché sur **Ollama local** (détection, modèles, `/api/chat`) + tout service compatible OpenAI | ✅ | `llm.js` | Ollama (machine de l'utilisateur) |
+| **IA** | Repli **hors-ligne** honnête : commandes locales + sources, jamais d'invention | ✅ | `llm.js`, `commandes.js` | — |
+| **Comptes** | 🔑 Fenêtre de connexion « comme un site » + niveaux 🟢 gratuit / 🔵 compte / 🟣 payant | ✅ | `compte.js` | localStorage (clés locales) |
+| **Dispositifs** | 🎥 Caméras / micros / capteurs sur la carte, icône cliquable → fiche + **mini-fenêtre de direct** | ✅ | `dispositifs.js` | Overpass, `getUserMedia`, flux ajoutés |
+| **Dispositifs** | Fiche détaillée : site, type d'objet, outils, **activité estimée**, description de scène (mesuré localement) | ✅ | `dispositifs.js` | mesure locale (aucun envoi) |
+| **Cadrans** | Découpage **au tracé communal** : intersection exacte case × contour (ear clipping + Sutherland–Hodgman) | ✅ | `data/geoCadrans.js` | géométrie pure |
+| **Vue communale** | 🌀 Icônes AR : rotation 360° (24 images), 104 px, écartées pour ne plus se chevaucher | ✅ | `arIcons.js`, `vueCommunale.js` | — |
+
+---
+
+## 1. Ce qui est en place
+
+| Domaine | Fonction | État | Module | Source |
+|---|---|---|---|---|
+| Vues | Vue communale 2D → contour animé → couche AR (icônes 3D) | ✅ | `vueCommunale.js` | geo.api.gouv.fr, Overpass |
+| Vues | Bâti 3D rapide (2 draw-calls, worker, hauteurs estimées) | ✅ | `batiRapide.js` | Overpass |
+| Vues | Noms de lieux (pays → villes → hameaux) + fenêtre du lieu central | ✅ | `nomsLieux.js` | Overpass, geo.api.gouv.fr, Nominatim |
+| Vues | Cadastre léger (contours de parcelles, < 2 500 m) | ✅ | `cadastre.js` | apicarto (IGN · Etalab) |
+| Vues | Street view libre (Panoramax) + repli vue POV 3D | ✅ | `streetView.js` | Panoramax (IGN / OSM-FR) |
+| Vues | Système solaire (positions réelles, repère inertiel) | ✅ | `systemeSolaire.js` | éléments JPL, ELP2000 |
+| Vues | Épingles, trajets (vol d'oiseau / route / pied / vélo) | ✅ | `pins.js`, `trajets.js` | OSRM |
+| Navigation | « ME LOCALISER » : orbite → station → scan → zoom → bâtiment → périmètre → présence | ✅ | `localisation.js` | Nominatim, apicarto |
+| Navigation | Approche cinématique HQ (travelling, letterbox, grain) | ✅ | `cinematique.js` | — |
+| Navigation | Photo → GPS (lecture EXIF locale) + glisser-déposer | ✅ | `photoSearch.js` | EXIF (local, sans réseau) |
+| Vol | Cockpit (horizon, bandes, gaz, télémétrie) + HUD épuré (touche H) | ✅ | `cockpit.js` | — |
+| Vol | Hangar : 12 engins (performances réelles) + filtres de caméra | ✅ | `engins.js`, `flightMode.js` | — |
+| Écoute | Radio en direct (stations géolocalisées, favoris) | ✅ | `radio.js` | Radio-Browser |
+| Fiche | Illustration garantie : photo libre ou capture drone | ✅ | `illustration.js` | Wikimedia Commons, moteur 3D |
+| Fiche | Empreinte économique : exploitant, SIREN, effectif, risques, tags, liens | ✅ | `empreinte.js` | recherche-entreprises, Wikidata, Géorisques, OSM |
+| Interface | Fenêtres déplaçables / redimensionnables / transformables | ✅ | `fenetres.js` | — |
+| Interface | Minicarte 2D à l'échelle (fond, filtre, emprise) | ✅ | `minimap.js` | tuiles ouvertes, Esri |
+| **Carte** | **Entités : pastille de la FONCTION RÉELLE de chaque lieu (🥐📚🏠🛢…)** | ✅ | `entites.js` | Overpass / OSM (ODbL) |
+| **Carte** | **Regroupement « cadastre » : entités voisines de même fonction = 1 pastille ×N, sélecteur au clic** | ✅ | `entites.js` | Overpass |
+| **Carte** | **Cadrans de commune : tracé animé + noms de quartiers OSM, sinon alphabet OTAN** | ✅ | `cadrans.js` | Overpass, bbox Cesium |
+| **Fiche** | **Bloc 🧾 SOURCES CONSULTÉES : chaque donnée cliquable jusqu'au site/document d'origine** | ✅ | `tracabilite.js`, `empreinte.js`, `ficheLieu.js` | registre local |
+| **Fiche** | **Journal de traçabilité local + export CSV** | ✅ | `tracabilite.js` | localStorage |
+| **Vol** | **Mode mobiGlas : HUD compact au-dessus du micro, fenêtres de bureau estompées (🕶 / M)** | ✅ | `mobiglas.js` | — |
+| **Vol** | **VTOL (sur-place + nacelle 360°) et vue 3ᵉ personne (appareil visible)** | ✅ | `flightMode.js`, `data/volVues.js` | — |
+| **INTEL** | **6 vues expertes : jumeau AR · communal · individuel · politique · économique · production** | ✅ | `vuesIntel.js` | Overpass, Géorisques, entreprises, Wikidata |
+| **INTEL** | **Bandeau « fil » façon Bloomberg + mini-bandeau par catégorie** | ✅ | `vuesIntel.js`, `filInfo.js` | GDELT, USGS, Open-Meteo, entreprises |
+| **Chantier** | **📶 SUIVI en direct : multi-vues POV + icônes carte + liens « travaillent ensemble »** | ✅ | `chantier.js` | interne |
+| **Chantier** | **📡 TRACKING (ancien « SUIVI ») : GPS outils + journal des positions** | ✅ | `chantier.js` | géolocalisation navigateur |
+| **Interface** | **Fenêtres réductibles en icône (–) en plus du déplacement / redimensionnement / formes** | ✅ | `fenetres.js` | — |
+
+## 2. Ce que cette itération a corrigé / ajouté
+
+Itération **20** :
+
+* **« le tableau doit guider l'utilisateur à créer un dossier d'investigation
+  complet, infère les étapes »** — 6 étapes déduites, chacune branchée sur les
+  fonctions réelles de l'app (MOI · LIEUX · CADASTRE · ENTITÉS · INTEL ·
+  FICHE · BÂTI 3D · VOL…). Le tableau propose la **prochaine étape**.
+* **« créer des notes, les modifier, les épingler ou les mettre dans un
+  dossier »** — fait (créer / modifier / épingler / ranger / supprimer,
+  dossiers illimités, mémorisé localement).
+* **« rajouter une télé cathodique qui affiche le dossier en cours »** —
+  nouvel objet du palais, branché sur `dossier.elementTele()`.
+* **« si on clique sur la fenêtre, envoi sur la vue stellaire, les rideaux
+  s'ouvrent »** — les rideaux s'écartent (animation, état mémorisé) et la vue
+  bascule sur le système solaire + la cinématique espace.
+* **« si j'active la vue vol dans le palais, le drone démarre son vol au-dessus
+  de l'utilisateur, doit le renseigner pour lancer »** — une confirmation
+  affiche la position avant le décollage.
+* **« enlève le cadre fenêtre de la minimap »** — plus de bordure ni de fond :
+  le globe flotte, avec la boussole et les pastilles.
+* **« j'ai 4 pastilles en cercle, ça ne sert à rien, il faut que les vues
+  s'emboîtent de façon organique »** — au-delà de trois niveaux on n'affiche
+  plus que le niveau courant + monter/descendre (+ le pays comme repère) :
+  la hiérarchie se **parcourt**, elle ne s'empile plus.
+
+Itération **19** :
+
+* **« change la boussole, on voit rien comme ça »** — fond opaque sous le
+  ruban et **cap affiché en clair** (`042°`) : lisible par-dessus n'importe
+  quel fond de carte. La variante « arc » reste accessible depuis ⚙.
+* **« la veille s'active trop vite »** — 60 s avant de s'estomper, 90 s avant
+  de disparaître (au lieu de 10/15 s).
+* **« les boutons COUCHES DE DONNÉES / SCENES / CCTV / CONTEXT sont encore
+  présents »** — ces quatre panneaux d'origine sont **masqués** (pas
+  détruits) ; le bouton 📦 « Panneaux d'origine » des CALQUES les remet à
+  tout moment : **aucune fonction perdue**, et le choix est mémorisé.
+* **« pastille mal placée et se superpose »** — en plus de l'ancrage sur un
+  lieu réel (it. 18), les pastilles à moins de 22 m l'une de l'autre sont
+  **dispersées sur un petit cercle** à l'écran (boulangerie + restaurant dans
+  le même bâtiment ne se marchent plus dessus).
+* **« la vue système solaire doit suivre les lois de notre orbite »** — les
+  positions étaient déjà calculées avec les éléments képleriens JPL, mais
+  l'AFFICHAGE compressait les rayons (`r^0.28`) : les distances n'étaient plus
+  proportionnelles. Nouveau bouton 📐 **ÉCHELLE : VRAIE (KEPLER)** : rayon
+  proportionnel à la distance réelle, orbites elliptiques, vitesses conformes.
+
+Itération **18** :
+
+* **« les icônes du bas prennent trop de place, attribue les catégories à un
+  bouton »** — le lanceur passe de 6 lignes à **2** : une ligne de
+  préréglages, une ligne de familles. Chaque famille est un bouton qui
+  déploie ses fonctions.
+* **« la minicarte, la fenêtre et la boussole doivent épouser le globe »** —
+  la fenêtre devient une bulle ronde et la boussole adopte une variante
+  **arc** : ses graduations sont posées sur un cercle de grand rayon et
+  inclinées radialement, comme une couronne autour de la sphère.
+* **« les icônes des entités s'affichent mais ne sont pas au bon endroit »** —
+  les pastilles étaient placées au **barycentre** de groupes qui
+  s'étiraient de proche en proche (45 m à chaque saut, sans limite) :
+  l'icône atterrissait au milieu de nulle part. Elles sont maintenant
+  **ancrées sur un lieu réel** (le membre nommé, sinon le premier), et un
+  groupe ne peut plus dépasser 2× le rayon.
+* **Deux modules morts à cause de mon propre script** (itération 17) :
+  `surMess` et `affichage: window.__godsEy` tronqués — CHAT et HISTORIQUE ne
+  démarraient plus. Réparé, et `chantier`/`vol` sont enfin enregistrés dans
+  `window.__godsEyeView` (le rapport F3 ne les annoncera plus absents).
+
+Itération **17** :
+
+* **Le rapport F3 a tout dit.** Une seule erreur : `Cannot access
+  'elListeParcours' before initialization`. Deux `function rendreListe()`
+  coexistaient dans `flightMode.js` **depuis l'itération 10** : les
+  déclarations de fonction sont remontées, la seconde écrasait la première
+  pour tous les appels et touchait une `const` encore en zone morte
+  temporelle. L'exception était absorbée par l'immense `try` du bloc « lanceur
+  + poste + mission » → **19 modules n'étaient jamais créés**. C'était donc
+  la vraie cause de « je n'ai pas accès à VOL », d'INTEL et de CHANTIER
+  « qui ne s'activent pas » — pas un problème de bouton.
+* Fonctions renommées `rendreListeEngins` / `rendreListeParcours`.
+* Leçons transformées en code : `proteger()` isole chaque initialisation,
+  `elDe()` récupère les éléments sans risque, le lanceur ignore un panneau
+  sans élément, et `src/gardeFous.test.mjs` empêche cette classe de panne de
+  revenir (doublons de fonctions, `!important` en ligne, ordre de la capture
+  d'erreurs).
+
+Itération **16** :
+
+* **« j'ai plus le bandeau d'info live »** — trouvé : `intelTwin.js` posait
+  `display: none !important` sur `#intel-hud` au démarrage, et un style
+  inline `!important` écrase tout (la fenêtre AFFICHAGE ne pouvait donc pas
+  le rendre). Le masquage devient conditionnel et mémorisé
+  (`watchtower.bandeauLive.v1`) ; le bandeau est de retour et pilotable
+  depuis **CALQUES → Bandeau live**.
+* **« les médaillons n'apparaissent pas »** — deux causes : Nominatim muet
+  (plus de hiérarchie du tout) et des altitudes absolues qui sortaient du
+  champ de la caméra. Le module a maintenant un **repli sans réseau** (il lit
+  pays / région / département / ville déjà affichés dans le panneau
+  WATCHTOWER · FR) et un **empilement en pixels** autour du point survolé :
+  visible à 300 m comme à 300 km.
+* **« les vues INTEL / CHANTIER ne s'activent pas »** — pas encore prouvé :
+  plutôt que deviner, l'app s'auto-diagnostique. **F3** (ou 🐞 DIAG) liste
+  les modules présents, les erreurs capturées et quel mécanisme masque
+  l'écran ; **TOUT RÉAFFICHER** remet tout en place d'un clic.
+
+Itération **15** :
+
+* **« les outils ne sont pas visibles, la vue INTEL a disparu »** — en
+  choisissant un préréglage, certaines catégories se masquent. Le lanceur a
+  maintenant **une pastille par catégorie** (NAVIGATION · VUES · DONNÉES ·
+  OUTILS · MODES) dans la barre du haut : chaque famille se remontre d'un
+  clic, quel que soit le préréglage actif.
+* **« dans CALQUES, mettre tous les calques disponibles selon le style de
+  compte, sans rien bloquer »** — 27 couches en 5 familles (TERRITOIRE ·
+  DONNÉES · TRAFIC · AMBIANCE · OUTILS) : bâti 3D, cadastre, routes, entités,
+  cadrans, noms de lieux, épingles, itinéraires, INTEL, zones de chaleur,
+  caméras & capteurs, détections, radios, avions 3D, CCTV, système solaire,
+  anneau céleste, éclairage soleil, brouillard, atmosphère, masque
+  circulaire, halo, peau néon, boussole, relief 3D 🔵, Google 3D 🔑,
+  commandes vocales 🔑. **Rien n'est bloqué** : un calque 🔑 s'active et
+  fonctionne avec le repli gratuit (un message l'explique).
+* **« quand noms de lieux est actif, le nom est une grande icône qui flotte
+  en 360° lent, cliquable »** — médaillons : un disque par niveau, rotation
+  lente (26 s/tour) et flottement vertical, posés sur la carte. Au clic :
+  fiche du lieu + **⬆ MONTER / ⬇ DESCENDRE** dans la hiérarchie
+  pays → région → département → commune → quartier (Nominatim, sans clé).
+
+Itération **14** :
+
+* **« j'ai toujours pas accès à VOL »** — deux causes, deux corrections :
+  * la barre du bas débordait sur plusieurs rangs et le rang du haut passait
+    **sous la barre micro** (`#command-dock`, calée en dur à 72 px). Le dock
+    publie maintenant sa hauteur (`--wt-hauteur-dock`) et la barre micro se
+    cale au-dessus ;
+  * des modules entiers n'avaient **aucun bouton** nulle part. Le dock passe
+    de 19 boutons en vrac à **26 boutons rangés en 5 catégories**
+    (NAVIGATION · VUES · DONNÉES · OUTILS · MODES) : CADRANS, CADASTRE,
+    RADIO, ENTITÉS, DISPOSITIFS, ÉPINGLES, RUE, PHOTO, GLOBE et ACTIONS
+    deviennent atteignables.
+  * **Préréglages visuels** (TOUT · EXPLORER · VOL · CHANTIER · EXPERT ·
+    ÉPURÉ) + repli ▾ pour ceux qui veulent un écran nu. **MODES fait partie
+    de tous les préréglages** : ✈ VOL et 🖥 AFFICHAGE restent toujours là.
+* **« la boussole est sur la gauche de l'écran, mets-la sur la minicarte »** —
+  elle se pose DANS la fenêtre de la minicarte, juste au-dessus du globe.
+  L'engrenage ⚙ la remet en ruban pleine hauteur (elle se détache au bord de
+  l'écran).
+* **« change la forme de la minicarte en globe »** — dessin circulaire :
+  graticule (méridiens/parallèles), ombre de limbe, reflet et anneau. Nord
+  et échelle recentrés, ▚ MATRIX et les filtres conservés.
+
+Itération **13** :
+
+* **« la boussole bloque la vue des fenêtres et des boutons »** — le ruban
+  horizontal de 380 px trônait au centre du haut de l'écran, par-dessus les
+  boutons d'actions. Il devient un **ruban pleine hauteur** collé au bord
+  (gauche ou droite), façon affichage de casque, et il est **réglable**
+  (⚙ : hauteur ↔ largeur, côté, épaisseur, opacité, degrés visibles).
+* **« la minicarte doit proposer un filtre MATRIX »** — bouton ▚ : l'OSM est
+  dessiné **par-dessus** le satellite, teinté vert néon, avec grille et
+  balayage ; un clic revient à l'affichage normal.
+* **« les side bars des fenêtres font blanc »** — peau néon : bordures,
+  séparateurs et ascenseurs blancs passent au cyan, en-têtes en dégradé
+  sombre (désactivable dans AFFICHAGE).
+* **« l'œil doit être dans le logo »** — l'œil est inséré juste après le logo
+  animé, avant le texte WATCHTOWER : il fait partie du titre, il ne bouge
+  plus. Le titre est exempté de veille et survit à la vue propre pour que
+  l'œil reste **toujours** cliquable.
+* **« je n'ai plus accès à HQ / INTEL / VOL »** — impossible de tout masquer
+  (la barre du bas est rendue d'office) et un bouton « REMETTRE LA BARRE DU
+  BAS » apparaît dès qu'elle est masquée.
+
+Itération **12** :
+
+* **« il manque plein de boutons, je n'ai pas de quoi les afficher »** —
+  l'interface est faite de ~30 blocs indépendants que CINQ mécanismes savent
+  masquer (vue propre **V**, HUD tactique **H**, veille auto, réduction auto
+  du dock, mode vol **M**). D'où trois réponses :
+  * un **👁 œil toujours visible** en haut à gauche (et sur le logo du titre) :
+    un clic et **tout** le HUD revient, quoi qu'il l'ait caché ;
+  * la fenêtre **AFFICHAGE** (dock 🖥 ou **F2**) : tous les blocs listés, une
+    case chacun, une recherche, les préréglages **TOUT AFFICHER · ÉPURÉ ·
+    VOL · LECTURE**, et l'état des cinq modes qui vident l'écran ;
+  * l'option **HUD progressif** : écran nu au démarrage, l'œil révèle
+    l'interface en cascade.
+
+Itérations **10** et **11** :
+
+* **« le mode vol n'a pas de parcours »** — panneau 🛩 **PARCOURS** : 5
+  préréglages (orbite, balayage, spirale, approche, navette), 📐 TRACER dessine
+  la trajectoire sur la carte, ▶ JOUER fait voler la caméra le long du tracé
+  (drone qui scanne la ville), 💾 SAUVER garde le parcours, 🔴 ENREGISTRER
+  capture le vol **réellement piloté** (simplifié au posage) pour le rejouer.
+* **« la 3ᵉ personne ne marche pas »** — les boutons de vue changeaient
+  `modeVue` sans toucher à l'avatar : seule la touche **V** fonctionnait. Toute
+  vue passe maintenant par `appliquerVue()`.
+* **« le cadastre et les routes disparaissent en vue satellite »** — case
+  👁 « visible en vue satellite » (plafond porté à 22 000 m) et couche 🛣
+  **ROUTES** (OpenStreetMap, colorée par classe, noms optionnels, résumé en km).
+* **« on ne comprend pas le bouton HQ »** — renommé **ME LOCALISER**, avec un
+  message à chaque clic qui explique la cinématique (espace → ta position).
+* **🕰 MODE HISTORIQUE** — curseur d'année : seuls les bâtiments déjà debout
+  restent à l'écran, ▶ LIRE fait pousser la ville décennie par décennie,
+  courbe de croissance, liste des bâtiments apparus (clic = la caméra y vole),
+  rendu sépia. Dates lues dans **OSM `start_date`** : gratuit, ouvert, sans clé.
+  Ce qui n'est pas daté n'est **pas inventé** : option « estimer » séparée,
+  toujours annoncée comme hypothèse.
+
+Plus ancien (itérations 6 → 9) :
+
+* **« fenetres non modifiables »** — toutes les fenêtres flottantes passent par
+  `amenagerToutes()` (`fenetres.js`) : déplaçables, redimensionnables,
+  transformables (⚙) **et réductibles en icône** (–, double-clic sur la barre de
+  titre). État mémorisé par fenêtre.
+* **« le HUD de vol est trop gros »** — mode **mobiGlas** : une seule ligne
+  d'instruments collée **au-dessus de la capture vocale**, fenêtres de bureau à
+  14 % d'opacité (ou masquées), minicarte / altimètre / boussole / cockpit
+  intouchés. Touche **M**, bouton 🕶 dans le bandeau.
+* **« mode VTOL + vue 3ᵉ personne »** — **VTOL** = l'engin fait du sur-place et
+  la caméra devient une **nacelle d'observation 360°** (lacet continu, site
+  borné, souris ou flèches) ; **3ᵉ personne** = caméra en retrait, appareil
+  visible (dessin vectoriel), distance réglable `[` `]`. Touche **V** pour
+  permuter. Les maths sont isolées et testées dans `data/volVues.js`.
+* **« la carte ne dit pas ce qu'il y a »** — couche **ENTITÉS** : chaque bâtiment
+  ou équipement reçoit la pastille de sa **fonction réelle OpenStreetMap**
+  (🥐 boulangerie, 📚 bibliothèque, 🏠 maison, 🛢 cuves…). Entités voisines de
+  même fonction **partagent une pastille ×N** (logique cadastrale) et un clic
+  ouvre un sélecteur qui les liste séparément — aucune entité perdue.
+* **« les données doivent être vraies, avec les sources cliquables »** —
+  registre unique des sources (`tracabilite.js`) : **une donnée sans source
+  connue n'est pas affichée**. La fiche montre 🧾 SOURCES CONSULTÉES (pastilles
+  cliquables), des liens « documents à télécharger » (rapport Géorisques,
+  cadastre IGN, annuaire, INSEE, data.gouv) et un **journal de traçabilité
+  local** exportable en CSV.
+* **« vue quartier incompréhensible »** — **cadrans** : tracé animé qui divise la
+  commune (2×2 ou 3×3, + sous-cadrans ×4), nommés par les quartiers officiels
+  OSM quand ils existent, sinon ALPHA / BRAVO / CHARLIE / DELTA.
+* **« l'INTEL doit devenir le cœur expert »** — six nouvelles vues
+  (🛰 JUMEAU AR, 🏛 COMMUNAL, 🏠 INDIVIDUEL, 🗳 POLITIQUE, 💼 ÉCONOMIQUE,
+  🏭 PRODUCTION), chacune avec ses données, ses outils et son **mini-bandeau
+  défilant** (GDELT, USGS, Open-Meteo, Géorisques, entreprises).
+* **« bouton suivi → tracking »** — l'ancien SUIVI GPS devient 📡 **TRACKING** ;
+  un nouvel onglet 📶 **SUIVI** affiche le **direct** : multi-vues POV (nombre de
+  cellules réglable), icônes de chaque élément sur la carte, traits « travaillent
+  ensemble » entre éléments proches et actifs, horodatage au journal.
+* **Analyse comparée de 25 sites gratuits** (vidéo « 25 Websites You Won't
+  Believe Exist ») → `docs/COMPARAISON_SITES.md` : 6 idées retenues sur 26
+  (GeoFS → notre mode vol, Stellarium → déjà couvert, Spidey Tracker → notre
+  traçabilité locale, Pl@ntNet → GBIF à brancher, What's This Cloud → Open-Meteo,
+  iFixit → fiches d'entretien en réflexion).
+
+## 3. Prochaines étapes (ordre proposé)
+
+| # | Fonction | Pourquoi | Source / outil | Effort |
+|---|---|---|---|---|
+| 1 | **🏗 Dossier source chantier** : CERFA, DT-DICT, budgets, normes, plans, bordereaux — modèle de référence réutilisable, complété automatiquement | le chantier doit capitaliser | interne + data.gouv (modèles CERFA) | 🟠 |
+| 2 | **🗓 Phasage → animation du périmètre sur la carte** + options de préparation (balisage, circulations, interdictions) | sécuriser avant d'ouvrir | interne + OSM | 🟡 |
+| 3 | ~~**Plans de vol / waypoints**~~ → **FAIT** (itération 10 : `data/volParcours.js` + 🛩 PARCOURS) | transforme la visite en mission | moteur interne | ✅ |
+| 4 | **Curseur temporel** (heure → ombres + lumière réelles) | juger une vue drone | Cesium (clock) | 🟢 |
+| 5 | **Mode photo** (HUD masqué, capture haute rés, filigrane coordonnées) | livrable terrain | `preserveDrawingBuffer` | 🟢 |
+| 6 | **Biodiversité d'un site** (GBIF / iNaturalist) | compléter l'empreinte environnementale | API ouvertes sans clé | 🟡 |
+| 7 | ~~**Noms de rues** au fort zoom~~ → **FAIT** (itération 10 : couche 🛣 ROUTES + 🔤 noms) | orientation fine | Overpass `highway[name]` | ✅ |
+| 8 | **Journal de vol + export GPX/KML** | traçabilité | moteur interne | 🟡 |
+| 9 | **Préréglages de calques** (urbanisme / risques / nature / nocturne) | un bouton au lieu de dix | interne | 🟢 |
+| 10 | **Alertes / veille** (nouveaux ICPE, arrêtés, séismes) | « prévoir et actionner » | Géorisques, USGS | 🟡 |
+| 11 | **Manette de jeu** (Gamepad API) | confort de pilotage | navigateur | 🟡 |
+| 12 | **Comparateur temporel** (imagerie avant/après) | juger l'évolution | IGN remonter le temps (clé) | 🟠 |
+| 13 | **Modèles 3D d'aéronefs** (glTF) | remplacer les silhouettes | licences à vérifier | 🟠 |
+| 14 | **Comptes annuels certifiés** (Pappers / API Entreprise) | CA et résultat officiels dans la fiche | jeton gratuit | 🟡 |
+| 15 | **Étendre le mode historique** aux voies, POI et équipements datés (`start_date` sur tout OSM) | une ville complète, pas que le bâti | Overpass | 🟢 |
+| 16 | **Recouper les dates manquantes** (BDNB, cadastre napoléonien, archives départementales) | moins de « non daté » | BDNB (ouverte), archives open data | 🟠 |
+| 17 | **Imagerie ancienne** superposée au curseur d'année | juger l'évolution d'un coup d'œil | IGN remonter le temps (clé gratuite) | 🟠 |
+| 18 | **Réglage du CONTENU de chaque panneau** (« ce que j'affiche dans INTEL, dans CHAT… ») | un seul bouton = une seule vue utile | interne (prolongement de `hudCentral`) | 🟡 |
+| 19 | **Profils d'interface** exportables (bureau / terrain / vol / nuit) | changer de poste en un clic | localStorage | 🟢 |
+
+## 4. Sources ouvertes : ce que j'utilise, et ce qui reste à brancher
+
+### Déjà branchées (sans clé)
+
+| Source | Données | Endpoint |
+|---|---|---|
+| OpenStreetMap / Overpass | bâti, POI, tags, noms de lieux | `overpass-api.de/api/interpreter` |
+| geo.api.gouv.fr | communes FR, population, codes postaux | `/communes?lat=&lon=` |
+| api-adresse.data.gouv.fr (BAN) | géocodage / adresses | `/search/?q=`, `/reverse/?lon=&lat=` |
+| Nominatim | géocodage et recherche mondiale | `/search`, `/reverse` |
+| apicarto (IGN · Etalab) | parcelles cadastrales | `/api/cadastre/parcelle?geom=` |
+| Panoramax (IGN / OSM-FR) | photos de rue libres | `api.panoramax.xyz/api/search` |
+| OSRM | itinéraires route / pied / vélo | `router.project-osrm.org/route/v1` |
+| Wikimedia Commons | photos libres géolocalisées | `commons.wikimedia.org/w/api.php` |
+| Wikidata | propriétaire, effectif, CA, maison mère | `Special:EntityData`, `wbsearchentities` |
+| recherche-entreprises.api.gouv.fr (DINUM/INSEE) | SIREN, SIRET, NAF, effectif, dirigeants | `/search?q=` |
+| Géorisques (MTE) | ICPE/SEVESO, sols pollués, CATNAT, radon, argiles, sismicité | `georisques.gouv.fr/api/v1/{thème}?latlon=` |
+| Radio-Browser | radios du monde entier | `de1.api.radio-browser.info/json/stations/search` |
+| Open-Meteo | météo, vent, hygrométrie | `/v1/forecast` |
+| recherche-entreprises **`/near_point`** | **entreprises autour d'un point** (SIREN, NAF, effectif) | `/near_point?lat=&long=&radius=` |
+| GDELT | dépêches de presse indexées | `api.gdeltproject.org/api/v2/doc/doc` |
+| USGS | séismes des dernières 24 h | `earthquake.usgs.gov/…/all_day.geojson` |
+| **Overpass `start_date` / `end_date`** | **dates de construction & de démolition des bâtiments (mode historique)** | `overpass-api.de/api/interpreter` |
+| Radio-Browser, Panoramax, Commons | voir ci-dessus | — |
+
+### À brancher (selon les besoins)
+
+| Source | Apporte | Condition |
+|---|---|---|
+| API Entreprise (api.gouv.fr) | liasses fiscales, CA/résultat **certifiés** DGFIP | jeton gratuit (identifiant SIRET appelant) |
+| Pappers / societe.com | comptes annuels, dirigeants détaillés | jeton Pappers (offre gratuite) ou lien manuel |
+| INSEE (BPE, dossiers communaux) | équipements, emploi, démographie locale | téléchargement + hébergement |
+| data.gouv.fr | taxes locales, subventions, marchés publics | datasets à charger |
+| IGN Géoportail (remonter le temps, ortho) | imagerie historique, comparaison | clé gratuite |
+| USGS | séismes temps réel | sans clé |
+| OpenSky / AIS | avions et navires en direct | sans clé (limites) |
+| GLEIF | identifiants d'entreprise (LEI) monde entier | sans clé |
+| **GBIF / iNaturalist** | biodiversité observée autour d'un site | sans clé |
+| **iFixit (API publique)** | guides d'entretien du matériel (chantier) | sans clé |
+| **INSEE BPE** | équipements et services par commune | téléchargement |
+
+## 5. Règles du jeu
+
+* **Open source d'abord** : aucune fonction ne doit dépendre d'un service
+  payant ; une clé ne fait qu'*améliorer* (mode payant).
+* **Toujours un repli** : si une source ne répond pas, la fonction continue
+  (photo → capture drone, itinéraire → ligne droite, géocodage → coordonnées
+  brutes) et le dit.
+* **Jamais de donnée inventée** : ce qui n'est pas renseigné s'affiche
+  « non renseigné », avec le lien pour vérifier.
+* **Tout appel réseau a un délai d'abandon** (`fetchAvecDelai`) : une source
+  muette ne doit jamais bloquer l'interface.
+* **Une fonction = un test** : les fonctions pures (URL, parsing, conversions)
+  sont testées ; la suite complète est la porte d'entrée (`npm test`).
+* **Une donnée sans source n'existe pas** : toute information affichée est
+  rattachée au registre `tracabilite.js` et renvoie vers un site ou un document
+  vérifiable.
+* **Traçabilité locale** : ce qui est personnel (journal, projets, épingles,
+  placements chantier) reste dans le navigateur et se exporte en CSV.
+
+## 6. Itération 25 — OPTION, minicarte, réunion (2026-09-27)
+
+Suite des 7 chantiers. Ce qui a bougé :
+
+| Chantier | Demande | État | Fichier | Reste |
+| --- | --- | --- | --- | --- |
+| **A3** | 🗺 Tous les boutons → **un seul bouton** ouvrant les autres en pop-up | ✅ | `ergonomieDock.js` | — |
+| **A4** | 🗺 Interrupteur dédié de la minicarte, sous « Vue 3D » | ✅ | `basculeMinicarte.js` | — |
+| **A1** | ▚ MATRIX limité au cadastre et au bâti (pas de night-vision globale) | 🟡 | `minimap.js` | à cadrer |
+| **F** | 🧠 INTEL — mode réunion, graphe de connaissances, VI/VD | ✅ | `reunion*.js`, `grapheVue.js` | niveaux mondial/national/régional |
+| **B** | 🎛 Volant — 8 rayons sur ~23 ancres | 🟡 | `volant.js` | étendre |
+| **C** | 🔐 Connexions externes (YouTube, Twitch, Radio Garden) | 🟠 | — | non commencé |
+| **D** | 🎥 Multicam en mosaïque (esprit Bloomberg / QG) | 🟠 | — | non commencé |
+| **E** | 🏘 Vue communale sur **chaque** commune + animation cadastrale | 🟡 | `localisation.js` | généraliser |
+| **G** | 📶 Fil contexte modifiable et non envahissant | 🟡 | `filInfo.js` | ordre et filtres mémorisés |
+
+### Décisions de cette itération
+
+* **« OPTION » est un SOMMAIRE, pas un déménagement.** Le tiroir
+  `#control-panel` (ex-préréglages, puis OUTILS) est renommé **OPTION** et
+  reçoit un sommaire de **20 entrées** en 5 groupes : Réglages, Calques, Vues,
+  Données, Navigation. Ces entrées **ouvrent** les panneaux existants au lieu
+  de les déplacer. Raison : déplacer physiquement `#param-slider-panel` ou
+  `#pp-toggles` dans un tiroir fermé rendrait invisibles les boutons du dock
+  qui pointent vers eux — c'est exactement la perte de fonction que la
+  consigne « ne perd pas de feature » interdit.
+* **Une entrée dont la cible n'est pas montée est affichée grisée**, avec la
+  raison en infobulle, plutôt que de rester cliquable et de ne rien faire.
+* **La minicarte est masquée, jamais détruite** (`display:none` +
+  neutralisation des clics). L'entrée GLOBE du dock, le volant et le sommaire
+  OPTION continuent donc de fonctionner. L'état est mémorisé.
+* **Le chat est intégré DANS `#voice-console`** (dernier enfant) au lieu
+  d'être posé en dessous du dock.

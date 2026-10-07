@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Monorepo Module Manifest",
+  "type": "object",
+  "required": ["id", "name", "version", "domain", "kind", "status", "source", "capabilities"],
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "version": {"type": "string"},
+    "domain": {"type": "string"},
+    "kind": {"enum": ["embedded", "service", "library", "adapter", "external"]},
+    "status": {"enum": ["active", "prototype", "planned", "deprecated"]},
+    "source": {"type": "object"},
+    "capabilities": {"type": "array", "items": {"type": "string"}},
+    "inputs": {"type": "array", "items": {"type": "string"}},
+    "outputs": {"type": "array", "items": {"type": "string"}},
+    "consumes_events": {"type": "array", "items": {"type": "string"}},
+    "produces_events": {"type": "array", "items": {"type": "string"}},
+    "depends_on": {"type": "array", "items": {"type": "string"}},
+    "integration_points": {"type": "array", "items": {"type": "string"}}
+  }
+}

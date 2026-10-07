@@ -1,0 +1,41 @@
+# Fichiers déjà présents dans le dépôt (identiques au bit près)
+
+Ces fichiers existaient déjà ailleurs dans le monorepo : la copie importée a été retirée.
+
+- `BORDURE P2.pdf` → déjà présent en `./BORDURE P2.pdf`
+- `BORUDRE P1.pdf` → déjà présent en `./BORUDRE P1.pdf`
+- `Bibliothèque  Prix Fournitures.xlsx` → déjà présent en `./Bibliothèque  Prix Fournitures.xlsx`
+- `COURS etude de prix 2018.pdf` → déjà présent en `./COURS etude de prix 2018.pdf`
+- `DETAIL-ESTIMATIF.xls` → déjà présent en `./DETAIL-ESTIMATIF.xls`
+- `DQE VERIF.xls` → déjà présent en `./DQE VERIF.xls`
+- `Equipement 30-05.xlsx` → déjà présent en `./Equipement 30-05.xlsx`
+- `SDP terrassement & voirie.pdf` → déjà présent en `./SDP terrassement & voirie.pdf`
+- `UN MÉMOIRE TECHNIQUE.pdf` → déjà présent en `./UN MÉMOIRE TECHNIQUE.pdf`
+- `arrachage arbre.pdf` → déjà présent en `./arrachage arbre.pdf`
+- `bordure CC1.pdf` → déjà présent en `./bordure CC1.pdf`
+- `bordure I1.pdf` → déjà présent en `./bordure I1.pdf`
+- `bordure I2.pdf` → déjà présent en `./bordure I2.pdf`
+- `confection surface en galet maconne giratoire.pdf` → déjà présent en `./confection surface en galet maconne giratoire.pdf`
+- `couche de fondation.pdf` → déjà présent en `./couche de fondation.pdf`
+- `couche de reprofilage.pdf` → déjà présent en `./couche de reprofilage.pdf`
+- `couche de roulement.pdf` → déjà présent en `./couche de roulement.pdf`
+- `couche de réglage.pdf` → déjà présent en `./couche de réglage.pdf`
+- `cunette.pdf` → déjà présent en `./cunette.pdf`
+- `demo decoupe chaussé.pdf` → déjà présent en `./demo decoupe chaussé.pdf`
+- `décapage terre végé.pdf` → déjà présent en `./décapage terre végé.pdf`
+- `démolition trottoir ilot.pdf` → déjà présent en `./démolition trottoir ilot.pdf`
+- `fiche de tache Exemple bassin.xlsx` → déjà présent en `./fiche de tache Exemple bassin.xlsx`
+- `fiche de tache NOE.xlsx` → déjà présent en `./fiche de tache NOE.xlsx`
+- `fiche de tache barbazan.xlsx` → déjà présent en `./fiche de tache barbazan.xlsx`
+- `glisière.pdf` → déjà présent en `./glisière.pdf`
+- `ilot en béton et galet de garonne.pdf` → déjà présent en `./ilot en béton et galet de garonne.pdf`
+- `janolene Ø110.pdf` → déjà présent en `./janolene Ø110.pdf`
+- `pvc Ø300.pdf` → déjà présent en `./pvc Ø300.pdf`
+- `rabotage.pdf` → déjà présent en `./rabotage.pdf`
+- `regard 40x40.pdf` → déjà présent en `./regard 40x40.pdf`
+- `remblai d'apport.pdf` → déjà présent en `./remblai d'apport.pdf`
+- `remplissage ilot en béton.pdf` → déjà présent en `./remplissage ilot en béton.pdf`
+- `reprise terre végétale.pdf` → déjà présent en `./reprise terre végétale.pdf`
+- `sciage chaussée.pdf` → déjà présent en `./sciage chaussée.pdf`
+- `tableau recap 30-05.xlsx` → déjà présent en `./tableau recap 30-05.xlsx`
+- `trottoir béton.pdf` → déjà présent en `./trottoir béton.pdf`

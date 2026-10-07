@@ -15,7 +15,11 @@
 | **`05-REPONSES-AUX-QUESTIONS.md`** | Réponses aux 7 points du 2026-10-07 : **licence sous l'angle monétisation** (association + open core + CLA), **séquence P0→P6 expliquée en clair**, **ordre chronologique réel des travaux** (retrouvé sur GitHub + Drive), **corpus conservé dans Git** (proposition retirée et remplacée par une politique) |
 | **`06-ECOSYSTEME-LOCAL-GRATUIT.md`** | L'écosystème libre et hors ligne : **modèles IA locaux** tenant dans 6 Go de VRAM, écosystème « prepper » (Kiwix, Project NOMAD, pimaps, Organic Maps, ODK/Kobo), **cartes et fiches ID**, précautions de licence, **liste des 6 briques à créer** |
 
-**Rappel des livrables antérieurs** : `00` à `03` sont commités (`df13086`) ; `04` à `06` et les maquettes sont postérieurs.
+| **`07-INVENTAIRE-FONCTIONNALITES.md`** | **Rien ne manque** : contrôle fichier par fichier des 9 dépôts (1 114 fichiers) et de leurs **17 branches non fusionnées**, récupération de tout ce qui manquait, et **matrice « quel dépôt apporte quelle fonctionnalité → quel module de Carré d'As »** |
+| **`../../scripts/verif-completude-repos.py`** | Le contrôle rejouable : vérifie par **empreinte Git** que tout le contenu des dépôts et de leurs branches est présent dans le monorepo |
+| **`../../projects/_incoming/`** | Le travail des branches, rangé par dépôt et par branche, **avec un `_PROVENANCE.md`** (dépôt, branche, commit, fichiers) dans chaque dossier |
+
+**Rappel des livrables antérieurs** : `00` à `03` sont commités (`df13086`) ; `04` à `07` et les maquettes sont postérieurs.
 
 ## À lire avec
 

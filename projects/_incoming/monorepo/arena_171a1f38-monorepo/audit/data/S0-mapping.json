@@ -1,0 +1,1141 @@
+{
+ "generated_at": "2026-10-07T12:23:28Z",
+ "documents": 220,
+ "repo_files": [
+  ".gitignore",
+  "MANIFEST.json",
+  "README.md",
+  "requirements.txt"
+ ],
+ "total_bytes": 236004470,
+ "families": {
+  "Pièces de marché (DCE)": 30,
+  "Références techniques & fournisseurs": 35,
+  "Ressources humaines & administration": 6,
+  "Devis, prix & budget": 9,
+  "Études, essais & qualité": 23,
+  "Signalisation, sécurité & AIPR": 17,
+  "Réseaux, DT/DICT & autorisations": 13,
+  "Suivi de chantier": 29,
+  "Prescriptions d'exécution (série F)": 30,
+  "Plans & profils": 23,
+  "Juridique (recours & litiges)": 2,
+  "Images & vues": 3
+ },
+ "family_bytes": {
+  "Pièces de marché (DCE)": 28688590,
+  "Références techniques & fournisseurs": 30540613,
+  "Ressources humaines & administration": 7680085,
+  "Devis, prix & budget": 10396871,
+  "Études, essais & qualité": 14771310,
+  "Signalisation, sécurité & AIPR": 43742574,
+  "Réseaux, DT/DICT & autorisations": 4366557,
+  "Suivi de chantier": 5949775,
+  "Prescriptions d'exécution (série F)": 59689581,
+  "Plans & profils": 19825114,
+  "Juridique (recours & litiges)": 203158,
+  "Images & vues": 10150242
+ },
+ "mapping": {
+  "00 - Cartouche et Nomenclature.pdf": {
+   "file": "00 - Cartouche et Nomenclature.pdf",
+   "size": 123402,
+   "family": "Pièces de marché (DCE)"
+  },
+  "02 - Plan de situation.pdf": {
+   "file": "02 - Plan de situation.pdf",
+   "size": 967168,
+   "family": "Pièces de marché (DCE)"
+  },
+  "03 - Acte d'engagement.pdf": {
+   "file": "03 - Acte d'engagement.pdf",
+   "size": 31987,
+   "family": "Pièces de marché (DCE)"
+  },
+  "04 - CCAP.pdf": {
+   "file": "04 - CCAP.pdf",
+   "size": 177355,
+   "family": "Pièces de marché (DCE)"
+  },
+  "05 - CCTP.pdf": {
+   "file": "05 - CCTP.pdf",
+   "size": 335828,
+   "family": "Pièces de marché (DCE)"
+  },
+  "06 - BPU.pdf": {
+   "file": "06 - BPU.pdf",
+   "size": 172027,
+   "family": "Pièces de marché (DCE)"
+  },
+  "07 - DQE.pdf": {
+   "file": "07 - DQE.pdf",
+   "size": 130067,
+   "family": "Pièces de marché (DCE)"
+  },
+  "08 - Plan Etat des lieux.pdf": {
+   "file": "08 - Plan Etat des lieux.pdf",
+   "size": 297776,
+   "family": "Pièces de marché (DCE)"
+  },
+  "09 - Plan voirie - Eaux pluviales.pdf": {
+   "file": "09 - Plan voirie - Eaux pluviales.pdf",
+   "size": 477278,
+   "family": "Pièces de marché (DCE)"
+  },
+  "10 - Récepissés DT .pdf": {
+   "file": "10 - Récepissés DT .pdf",
+   "size": 1201914,
+   "family": "Pièces de marché (DCE)"
+  },
+  "20190318_F1106.pdf": {
+   "file": "20190318_F1106.pdf",
+   "size": 180371,
+   "family": "Références techniques & fournisseurs"
+  },
+  "2024 - PLANNING ANNUEL S10.xlsx": {
+   "file": "2024 - PLANNING ANNUEL S10.xlsx",
+   "size": 1881037,
+   "family": "Ressources humaines & administration"
+  },
+  "23-LGPM-044_LABASTIDE D'ANJOU_DEVIS EXE ENTREPRISE-02-02-24.xls": {
+   "file": "23-LGPM-044_LABASTIDE D'ANJOU_DEVIS EXE ENTREPRISE-02-02-24.xls",
+   "size": 599552,
+   "family": "Devis, prix & budget"
+  },
+  "307732019R10FR_manuel-terrassement.pdf": {
+   "file": "307732019R10FR_manuel-terrassement.pdf",
+   "size": 3126005,
+   "family": "Références techniques & fournisseurs"
+  },
+  "5683-19.02.2018_controle-exterieur-de-ch.pdf": {
+   "file": "5683-19.02.2018_controle-exterieur-de-ch.pdf",
+   "size": 944055,
+   "family": "Études, essais & qualité"
+  },
+  "AE.doc": {
+   "file": "AE.doc",
+   "size": 231936,
+   "family": "Pièces de marché (DCE)"
+  },
+  "AIPR CORRECTION.xlsx": {
+   "file": "AIPR CORRECTION.xlsx",
+   "size": 5318519,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "AUTORISATION DE VOIRIE.pdf": {
+   "file": "AUTORISATION DE VOIRIE.pdf",
+   "size": 788214,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "Acte d-engagement.pdf": {
+   "file": "Acte d-engagement.pdf",
+   "size": 217808,
+   "family": "Pièces de marché (DCE)"
+  },
+  "Arrêté de circulation.pdf": {
+   "file": "Arrêté de circulation.pdf",
+   "size": 1288362,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "BORDURE P2.pdf": {
+   "file": "BORDURE P2.pdf",
+   "size": 267766,
+   "family": "Références techniques & fournisseurs"
+  },
+  "BORUDRE P1.pdf": {
+   "file": "BORUDRE P1.pdf",
+   "size": 267051,
+   "family": "Références techniques & fournisseurs"
+  },
+  "BP.doc": {
+   "file": "BP.doc",
+   "size": 221696,
+   "family": "Pièces de marché (DCE)"
+  },
+  "BPU LOT1 unique.xls": {
+   "file": "BPU LOT1 unique.xls",
+   "size": 133632,
+   "family": "Pièces de marché (DCE)"
+  },
+  "BPU LOT2 unique.xls": {
+   "file": "BPU LOT2 unique.xls",
+   "size": 56832,
+   "family": "Pièces de marché (DCE)"
+  },
+  "Bibliothèque  Prix Fournitures.xlsx": {
+   "file": "Bibliothèque  Prix Fournitures.xlsx",
+   "size": 16501,
+   "family": "Devis, prix & budget"
+  },
+  "Bordures et Caniveaux.pdf": {
+   "file": "Bordures et Caniveaux.pdf",
+   "size": 5094932,
+   "family": "Références techniques & fournisseurs"
+  },
+  "CCAP.pdf": {
+   "file": "CCAP.pdf",
+   "size": 93970,
+   "family": "Pièces de marché (DCE)"
+  },
+  "CCTP LOT1.pdf": {
+   "file": "CCTP LOT1.pdf",
+   "size": 160964,
+   "family": "Pièces de marché (DCE)"
+  },
+  "CCTP.pdf": {
+   "file": "CCTP.pdf",
+   "size": 308518,
+   "family": "Pièces de marché (DCE)"
+  },
+  "CDPGF Noé Rempli Marché.xlsx": {
+   "file": "CDPGF Noé Rempli Marché.xlsx",
+   "size": 34766,
+   "family": "Pièces de marché (DCE)"
+  },
+  "CHANTIER EN COURS-Nathan (2).xlsx": {
+   "file": "CHANTIER EN COURS-Nathan (2).xlsx",
+   "size": 168707,
+   "family": "Suivi de chantier"
+  },
+  "COURS etude de prix 2018.pdf": {
+   "file": "COURS etude de prix 2018.pdf",
+   "size": 101197,
+   "family": "Études, essais & qualité"
+  },
+  "Cahier des Clauses Administratives Particulières.pdf": {
+   "file": "Cahier des Clauses Administratives Particulières.pdf",
+   "size": 210444,
+   "family": "Pièces de marché (DCE)"
+  },
+  "DDE-ODP-SURPLOMB-SAILLIE-ENSEIGNE.pdf": {
+   "file": "DDE-ODP-SURPLOMB-SAILLIE-ENSEIGNE.pdf",
+   "size": 7874116,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "DE LOT 1 T1.xls": {
+   "file": "DE LOT 1 T1.xls",
+   "size": 66048,
+   "family": "Devis, prix & budget"
+  },
+  "DE LOT 1 T2.xls": {
+   "file": "DE LOT 1 T2.xls",
+   "size": 66048,
+   "family": "Devis, prix & budget"
+  },
+  "DE LOT 2 T1.xls": {
+   "file": "DE LOT 2 T1.xls",
+   "size": 48128,
+   "family": "Devis, prix & budget"
+  },
+  "DE LOT 2 T2.xls": {
+   "file": "DE LOT 2 T2.xls",
+   "size": 47616,
+   "family": "Devis, prix & budget"
+  },
+  "DESC-v1.pdf": {
+   "file": "DESC-v1.pdf",
+   "size": 454038,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "DESC.pdf": {
+   "file": "DESC.pdf",
+   "size": 459215,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "DESCexpl ss chant I OT 2.6.pdf": {
+   "file": "DESCexpl ss chant I OT 2.6.pdf",
+   "size": 165157,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "DETAIL-ESTIMATIF.xls": {
+   "file": "DETAIL-ESTIMATIF.xls",
+   "size": 341504,
+   "family": "Devis, prix & budget"
+  },
+  "DICT.pdf": {
+   "file": "DICT.pdf",
+   "size": 228098,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "DQE VERIF.xls": {
+   "file": "DQE VERIF.xls",
+   "size": 385536,
+   "family": "Devis, prix & budget"
+  },
+  "Dossier des Ouvrages Exécutés.docx": {
+   "file": "Dossier des Ouvrages Exécutés.docx",
+   "size": 14791,
+   "family": "Suivi de chantier"
+  },
+  "Equipement 30-05.xlsx": {
+   "file": "Equipement 30-05.xlsx",
+   "size": 32091,
+   "family": "Suivi de chantier"
+  },
+  "Essai de qualité.pdf": {
+   "file": "Essai de qualité.pdf",
+   "size": 190697,
+   "family": "Études, essais & qualité"
+  },
+  "Etude de dossier Giratoire de BARBAZAN   Conduite M4 - L.pdf": {
+   "file": "Etude de dossier Giratoire de BARBAZAN   Conduite M4 - L.pdf",
+   "size": 115067,
+   "family": "Études, essais & qualité"
+  },
+  "Etude de dossier Lotissement Pruniaux   Préparation M4  2022.pdf": {
+   "file": "Etude de dossier Lotissement Pruniaux   Préparation M4  2022.pdf",
+   "size": 105250,
+   "family": "Études, essais & qualité"
+  },
+  "Exemple de PAQ COLAS.pdf": {
+   "file": "Exemple de PAQ COLAS.pdf",
+   "size": 4041106,
+   "family": "Études, essais & qualité"
+  },
+  "F2 - Terrassements généraux.pdf": {
+   "file": "F2 - Terrassements généraux.pdf",
+   "size": 1247928,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F23 - Fournitures de granulats employés à la construction et à l’entretien des chaussées.pdf": {
+   "file": "F23 - Fournitures de granulats employés à la construction et à l’entretien des chaussées.pdf",
+   "size": 1699027,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F24 - Fourniture de liants bitumineux pour la construction et l’entretien des chaussées.pdf": {
+   "file": "F24 - Fourniture de liants bitumineux pour la construction et l’entretien des chaussées.pdf",
+   "size": 2534797,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F25 - Exécution des corps de chaussées.pdf": {
+   "file": "F25 - Exécution des corps de chaussées.pdf",
+   "size": 1961991,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F26 - Exécution des enduits superficiels d’usure.pdf": {
+   "file": "F26 - Exécution des enduits superficiels d’usure.pdf",
+   "size": 2054958,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F27 - Fabrication et mise en oeuvre des enrobés hydrocarbonés.pdf": {
+   "file": "F27 - Fabrication et mise en oeuvre des enrobés hydrocarbonés.pdf",
+   "size": 1396517,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F28 - Exécution des chaussées en béton.pdf": {
+   "file": "F28 - Exécution des chaussées en béton.pdf",
+   "size": 1683805,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F29 - Exécution des revêtements de voiries et espaces publics en produits modulaires.pdf": {
+   "file": "F29 - Exécution des revêtements de voiries et espaces publics en produits modulaires.pdf",
+   "size": 736798,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F31 - Bordures et caniveaux en pierre naturelle ou en béton et dispositif de retenue en béton.pdf": {
+   "file": "F31 - Bordures et caniveaux en pierre naturelle ou en béton et dispositif de retenue en béton.pdf",
+   "size": 2119329,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F32 - Construction de trottoirs.pdf": {
+   "file": "F32 - Construction de trottoirs.pdf",
+   "size": 472038,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F34 - Travaux forestiers de boisement.pdf": {
+   "file": "F34 - Travaux forestiers de boisement.pdf",
+   "size": 1080916,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F35 - Aménagements paysagers- Aires de sports et de loisirs en plein air.pdf": {
+   "file": "F35 - Aménagements paysagers- Aires de sports et de loisirs en plein air.pdf",
+   "size": 2684712,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F36 -Réseau d’éclairage public- Conception et réalisation.pdf": {
+   "file": "F36 -Réseau d’éclairage public- Conception et réalisation.pdf",
+   "size": 1805918,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F39 - Travaux d’assainissement et de drainage de terres agricoles.pdf": {
+   "file": "F39 - Travaux d’assainissement et de drainage de terres agricoles.pdf",
+   "size": 1232706,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F62-V - Règles techniques de conception et de calcul des fondations d’ouvrages de génie civil.pdf": {
+   "file": "F62-V - Règles techniques de conception et de calcul des fondations d’ouvrages de génie civil.pdf",
+   "size": 1975568,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F64 - Travaux de maçonnerie d’ouvrages de génie civil.pdf": {
+   "file": "F64 - Travaux de maçonnerie d’ouvrages de génie civil.pdf",
+   "size": 513863,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F65 - Exécution des ouvrages de génie civil en béton armé ou précontraint.pdf": {
+   "file": "F65 - Exécution des ouvrages de génie civil en béton armé ou précontraint.pdf",
+   "size": 2045466,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F66 - Exécution des ouvrages de génie civil à ossature en acier.pdf": {
+   "file": "F66 - Exécution des ouvrages de génie civil à ossature en acier.pdf",
+   "size": 874298,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F67-I - Etanchéité des ponts routes- Support en béton de ciment.pdf": {
+   "file": "F67-I - Etanchéité des ponts routes- Support en béton de ciment.pdf",
+   "size": 782598,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F67-III - Etanchéité des ouvrages souterrains.pdf": {
+   "file": "F67-III - Etanchéité des ouvrages souterrains.pdf",
+   "size": 900163,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F70 - Ouvrages d’assainissement, Ouvrages de recueil, de restitution et de stockage des eaux pluviales.pdf": {
+   "file": "F70 - Ouvrages d’assainissement, Ouvrages de recueil, de restitution et de stockage des eaux pluviales.pdf",
+   "size": 5116228,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F71 - Fourniture et pose de conduites d’adduction et de distribution d’eau.pdf": {
+   "file": "F71 - Fourniture et pose de conduites d’adduction et de distribution d’eau.pdf",
+   "size": 4906080,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F73 - Equipement hydraulique, mécanique et électrique des stations de pompage d’eaux.pdf": {
+   "file": "F73 - Equipement hydraulique, mécanique et électrique des stations de pompage d’eaux.pdf",
+   "size": 1358192,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F74 - Construction des réservoirs en béton.pdf": {
+   "file": "F74 - Construction des réservoirs en béton.pdf",
+   "size": 1819453,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F75 - Conception et exécution des installations de traitement des eaux destinées à la consommation humaine.pdf": {
+   "file": "F75 - Conception et exécution des installations de traitement des eaux destinées à la consommation humaine.pdf",
+   "size": 3412874,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F76 - Travaux de forage pour la recherche et l’exploitation d’eau potable.pdf": {
+   "file": "F76 - Travaux de forage pour la recherche et l’exploitation d’eau potable.pdf",
+   "size": 2181890,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F78 - Canalisations et ouvrages de transport et de distribution de chaleur ou de froid.pdf": {
+   "file": "F78 - Canalisations et ouvrages de transport et de distribution de chaleur ou de froid.pdf",
+   "size": 2659272,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F81-II - Conception et exécution d’installations d’épuration d’eaux usées.pdf": {
+   "file": "F81-II - Conception et exécution d’installations d’épuration d’eaux usées.pdf",
+   "size": 3279054,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F82 - Construction d’installations d’incinération avec fours à grille, oscillants ou tournants de déchets ménagers, autres déchets non dangereux et DASRI.pdf": {
+   "file": "F82 - Construction d’installations d’incinération avec fours à grille, oscillants ou tournants de déchets ménagers, autres déchets non dangereux et DASRI.pdf",
+   "size": 1176550,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "F85 - Construction d’installation de broyage des déchets ménagers.pdf": {
+   "file": "F85 - Construction d’installation de broyage des déchets ménagers.pdf",
+   "size": 3976592,
+   "family": "Prescriptions d'exécution (série F)"
+  },
+  "FACTURE DE SITUATION PHASE 1.xlsx": {
+   "file": "FACTURE DE SITUATION PHASE 1.xlsx",
+   "size": 82136,
+   "family": "Suivi de chantier"
+  },
+  "GEOPORTAIL.pdf": {
+   "file": "GEOPORTAIL.pdf",
+   "size": 1345905,
+   "family": "Plans & profils"
+  },
+  "LOT 2 CCTP.pdf": {
+   "file": "LOT 2 CCTP.pdf",
+   "size": 96561,
+   "family": "Pièces de marché (DCE)"
+  },
+  "Liant et gravillong.pdf": {
+   "file": "Liant et gravillong.pdf",
+   "size": 119412,
+   "family": "Références techniques & fournisseurs"
+  },
+  "Manuel_exploitation.pdf": {
+   "file": "Manuel_exploitation.pdf",
+   "size": 9473647,
+   "family": "Références techniques & fournisseurs"
+  },
+  "Module-15-Connaissance des essais des sols et des produits composés .pdf": {
+   "file": "Module-15-Connaissance des essais des sols et des produits composés .pdf",
+   "size": 2018724,
+   "family": "Études, essais & qualité"
+  },
+  "Notice DICT.pdf": {
+   "file": "Notice DICT.pdf",
+   "size": 193501,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "O015_-_Fiche_n5_-_Essai_Double-anneau_FR.pdf": {
+   "file": "O015_-_Fiche_n5_-_Essai_Double-anneau_FR.pdf",
+   "size": 1040754,
+   "family": "Études, essais & qualité"
+  },
+  "OJ-FT-Grilles_de_protection_pr_chambres_telecom_(E01062018).pdf": {
+   "file": "OJ-FT-Grilles_de_protection_pr_chambres_telecom_(E01062018).pdf",
+   "size": 457267,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "PAQ_qualiroute.pdf": {
+   "file": "PAQ_qualiroute.pdf",
+   "size": 2025726,
+   "family": "Études, essais & qualité"
+  },
+  "PLAN-GENERAL-COORDINATION.pdf": {
+   "file": "PLAN-GENERAL-COORDINATION.pdf",
+   "size": 231462,
+   "family": "Plans & profils"
+  },
+  "PLAN-MASSE.pdf": {
+   "file": "PLAN-MASSE.pdf",
+   "size": 926058,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE- enrobé.pdf": {
+   "file": "PLAN-PHASE- enrobé.pdf",
+   "size": 957013,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE- gnt-2.pdf": {
+   "file": "PLAN-PHASE- gnt-2.pdf",
+   "size": 898931,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE- gnt-3.pdf": {
+   "file": "PLAN-PHASE- gnt-3.pdf",
+   "size": 898899,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE- gnt-4.pdf": {
+   "file": "PLAN-PHASE- gnt-4.pdf",
+   "size": 899015,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE- gnt.pdf": {
+   "file": "PLAN-PHASE- gnt.pdf",
+   "size": 899975,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE-1 et 2 elargissement voie.pdf": {
+   "file": "PLAN-PHASE-1 et 2 elargissement voie.pdf",
+   "size": 899575,
+   "family": "Plans & profils"
+  },
+  "PLAN-PHASE-3  création giratoire.pdf": {
+   "file": "PLAN-PHASE-3  création giratoire.pdf",
+   "size": 976223,
+   "family": "Plans & profils"
+  },
+  "PLAN-PROFIL-EN-LONG-AXE1.pdf": {
+   "file": "PLAN-PROFIL-EN-LONG-AXE1.pdf",
+   "size": 147789,
+   "family": "Plans & profils"
+  },
+  "PLAN-PROFIL-EN-LONG-AXE2.pdf": {
+   "file": "PLAN-PROFIL-EN-LONG-AXE2.pdf",
+   "size": 148325,
+   "family": "Plans & profils"
+  },
+  "PLAN-PROFIL-EN-LONG-AXE3.pdf": {
+   "file": "PLAN-PROFIL-EN-LONG-AXE3.pdf",
+   "size": 147394,
+   "family": "Plans & profils"
+  },
+  "PLAN-PROFIL-EN-LONG-AXE4.pdf": {
+   "file": "PLAN-PROFIL-EN-LONG-AXE4.pdf",
+   "size": 146601,
+   "family": "Plans & profils"
+  },
+  "PLAN-PROFIL-EN-LONG-GIRATOIRE.pdf": {
+   "file": "PLAN-PROFIL-EN-LONG-GIRATOIRE.pdf",
+   "size": 155856,
+   "family": "Plans & profils"
+  },
+  "PLAN-PROFILS TYPE.pdf": {
+   "file": "PLAN-PROFILS TYPE.pdf",
+   "size": 702341,
+   "family": "Plans & profils"
+  },
+  "PLAN-SITUATION.pdf": {
+   "file": "PLAN-SITUATION.pdf",
+   "size": 427560,
+   "family": "Plans & profils"
+  },
+  "Page de garde - suivi chantier BARBAZAN.xls": {
+   "file": "Page de garde - suivi chantier BARBAZAN.xls",
+   "size": 150016,
+   "family": "Suivi de chantier"
+  },
+  "Page de garde - suivi chantier noe.xls": {
+   "file": "Page de garde - suivi chantier noe.xls",
+   "size": 150528,
+   "family": "Suivi de chantier"
+  },
+  "Permission  et autorisation de voirie pour travaux.pdf": {
+   "file": "Permission  et autorisation de voirie pour travaux.pdf",
+   "size": 178936,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "Plan AEP 500e.pdf": {
+   "file": "Plan AEP 500e.pdf",
+   "size": 710987,
+   "family": "Plans & profils"
+  },
+  "Plan Assainissement  500e.pdf": {
+   "file": "Plan Assainissement  500e.pdf",
+   "size": 1510239,
+   "family": "Plans & profils"
+  },
+  "Plan Assainissement bassin ouvert 500e.pdf": {
+   "file": "Plan Assainissement bassin ouvert 500e.pdf",
+   "size": 1519842,
+   "family": "Plans & profils"
+  },
+  "Plan Voirie 500e.pdf": {
+   "file": "Plan Voirie 500e.pdf",
+   "size": 1350460,
+   "family": "Plans & profils"
+  },
+  "Plan de situation.pdf": {
+   "file": "Plan de situation.pdf",
+   "size": 3137155,
+   "family": "Plans & profils"
+  },
+  "QCM AIPR Encadrant.xls": {
+   "file": "QCM AIPR Encadrant.xls",
+   "size": 5308753,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "QUALITE.pdf": {
+   "file": "QUALITE.pdf",
+   "size": 49230,
+   "family": "Études, essais & qualité"
+  },
+  "REGLEMENT-CONSULTATION.pdf": {
+   "file": "REGLEMENT-CONSULTATION.pdf",
+   "size": 68237,
+   "family": "Pièces de marché (DCE)"
+  },
+  "Rapport Chantier NOE.pdf": {
+   "file": "Rapport Chantier NOE.pdf",
+   "size": 612155,
+   "family": "Suivi de chantier"
+  },
+  "Recours Barbazan.docx": {
+   "file": "Recours Barbazan.docx",
+   "size": 15928,
+   "family": "Juridique (recours & litiges)"
+  },
+  "Recours Barbazan.pdf": {
+   "file": "Recours Barbazan.pdf",
+   "size": 187230,
+   "family": "Juridique (recours & litiges)"
+  },
+  "Réglement de consultation.pdf": {
+   "file": "Réglement de consultation.pdf",
+   "size": 198512,
+   "family": "Pièces de marché (DCE)"
+  },
+  "SDN_P2_Pré_OPR_11-044_240104.xlsx": {
+   "file": "SDN_P2_Pré_OPR_11-044_240104.xlsx",
+   "size": 1008499,
+   "family": "Suivi de chantier"
+  },
+  "SDP TX.xls": {
+   "file": "SDP TX.xls",
+   "size": 603648,
+   "family": "Études, essais & qualité"
+  },
+  "SDP terrassement & voirie.pdf": {
+   "file": "SDP terrassement & voirie.pdf",
+   "size": 444538,
+   "family": "Études, essais & qualité"
+  },
+  "SIGNALISATION TEMPORAIRE DES CHANTIERS 1.ppt": {
+   "file": "SIGNALISATION TEMPORAIRE DES CHANTIERS 1.ppt",
+   "size": 5974528,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "SIGNALISATION TEMPORAIRE DES CHANTIERS 2.ppt": {
+   "file": "SIGNALISATION TEMPORAIRE DES CHANTIERS 2.ppt",
+   "size": 1341440,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "SIGNALISATION TEMPORAIRE DEVIATIONS.ppt": {
+   "file": "SIGNALISATION TEMPORAIRE DEVIATIONS.ppt",
+   "size": 945152,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "SOMMAIRE-DCE.pdf": {
+   "file": "SOMMAIRE-DCE.pdf",
+   "size": 25833,
+   "family": "Pièces de marché (DCE)"
+  },
+  "SeQuelec_Guide_3.pdf": {
+   "file": "SeQuelec_Guide_3.pdf",
+   "size": 2398797,
+   "family": "Références techniques & fournisseurs"
+  },
+  "Signalisation OPPBTP.pdf": {
+   "file": "Signalisation OPPBTP.pdf",
+   "size": 5448398,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "Support animation - Fiches sensibilisation petits matériels.pdf": {
+   "file": "Support animation - Fiches sensibilisation petits matériels.pdf",
+   "size": 801315,
+   "family": "Ressources humaines & administration"
+  },
+  "TB-5.5-EN13036-4-Method-for-measurement-of-slip-resistance-of-a-surface-The-pendulum-test-FR.pdf": {
+   "file": "TB-5.5-EN13036-4-Method-for-measurement-of-slip-resistance-of-a-surface-The-pendulum-test-FR.pdf",
+   "size": 176092,
+   "family": "Études, essais & qualité"
+  },
+  "UN MÉMOIRE TECHNIQUE.pdf": {
+   "file": "UN MÉMOIRE TECHNIQUE.pdf",
+   "size": 144305,
+   "family": "Pièces de marché (DCE)"
+  },
+  "abréviation et signification.xlsx": {
+   "file": "abréviation et signification.xlsx",
+   "size": 128060,
+   "family": "Références techniques & fournisseurs"
+  },
+  "aipr test complet.xlsx": {
+   "file": "aipr test complet.xlsx",
+   "size": 6432853,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "aipr test result.png": {
+   "file": "aipr test result.png",
+   "size": 94384,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "aret 1.jpeg": {
+   "file": "aret 1.jpeg",
+   "size": 1109602,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "aret.jpeg": {
+   "file": "aret.jpeg",
+   "size": 863825,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "arrachage arbre.pdf": {
+   "file": "arrachage arbre.pdf",
+   "size": 266181,
+   "family": "Études, essais & qualité"
+  },
+  "blpc_231_33-38.pdf": {
+   "file": "blpc_231_33-38.pdf",
+   "size": 482321,
+   "family": "Références techniques & fournisseurs"
+  },
+  "bordure CC1.pdf": {
+   "file": "bordure CC1.pdf",
+   "size": 267026,
+   "family": "Références techniques & fournisseurs"
+  },
+  "bordure I1.pdf": {
+   "file": "bordure I1.pdf",
+   "size": 268021,
+   "family": "Références techniques & fournisseurs"
+  },
+  "bordure I2.pdf": {
+   "file": "bordure I2.pdf",
+   "size": 266904,
+   "family": "Références techniques & fournisseurs"
+  },
+  "brochure_entreprises dict.pdf": {
+   "file": "brochure_entreprises dict.pdf",
+   "size": 488989,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "ccag-travaux-2021.pdf": {
+   "file": "ccag-travaux-2021.pdf",
+   "size": 738952,
+   "family": "Références techniques & fournisseurs"
+  },
+  "cerfa_14023-01.pdf": {
+   "file": "cerfa_14023-01.pdf",
+   "size": 178633,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "cerfa_14024-01.pdf": {
+   "file": "cerfa_14024-01.pdf",
+   "size": 701026,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "cerfa_14434 Dict.pdf": {
+   "file": "cerfa_14434 Dict.pdf",
+   "size": 237808,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "compte-rendu_n°1.pdf": {
+   "file": "compte-rendu_n°1.pdf",
+   "size": 137525,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°2.pdf": {
+   "file": "compte-rendu_n°2.pdf",
+   "size": 226573,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°3.pdf": {
+   "file": "compte-rendu_n°3.pdf",
+   "size": 140018,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°4.pdf": {
+   "file": "compte-rendu_n°4.pdf",
+   "size": 191977,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°5.pdf": {
+   "file": "compte-rendu_n°5.pdf",
+   "size": 194828,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°6.pdf": {
+   "file": "compte-rendu_n°6.pdf",
+   "size": 157286,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°7.pdf": {
+   "file": "compte-rendu_n°7.pdf",
+   "size": 145864,
+   "family": "Suivi de chantier"
+  },
+  "compte-rendu_n°9.pdf": {
+   "file": "compte-rendu_n°9.pdf",
+   "size": 150655,
+   "family": "Suivi de chantier"
+  },
+  "confection surface en galet maconne giratoire.pdf": {
+   "file": "confection surface en galet maconne giratoire.pdf",
+   "size": 266438,
+   "family": "Références techniques & fournisseurs"
+  },
+  "couche de fondation.pdf": {
+   "file": "couche de fondation.pdf",
+   "size": 266316,
+   "family": "Références techniques & fournisseurs"
+  },
+  "couche de reprofilage.pdf": {
+   "file": "couche de reprofilage.pdf",
+   "size": 266619,
+   "family": "Références techniques & fournisseurs"
+  },
+  "couche de roulement.pdf": {
+   "file": "couche de roulement.pdf",
+   "size": 265282,
+   "family": "Références techniques & fournisseurs"
+  },
+  "couche de réglage.pdf": {
+   "file": "couche de réglage.pdf",
+   "size": 266319,
+   "family": "Références techniques & fournisseurs"
+  },
+  "couches-chaussee-différente couche 2.jpg": {
+   "file": "couches-chaussee-différente couche 2.jpg",
+   "size": 153478,
+   "family": "Références techniques & fournisseurs"
+  },
+  "couches-chaussee-différente couche.jpg": {
+   "file": "couches-chaussee-différente couche.jpg",
+   "size": 51389,
+   "family": "Références techniques & fournisseurs"
+  },
+  "courrier-signalisation.pdf": {
+   "file": "courrier-signalisation.pdf",
+   "size": 33281,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "cunette.pdf": {
+   "file": "cunette.pdf",
+   "size": 266537,
+   "family": "Références techniques & fournisseurs"
+  },
+  "dc4mod2007.rtf": {
+   "file": "dc4mod2007.rtf",
+   "size": 111851,
+   "family": "Pièces de marché (DCE)"
+  },
+  "dc5mod2007.rtf": {
+   "file": "dc5mod2007.rtf",
+   "size": 155419,
+   "family": "Pièces de marché (DCE)"
+  },
+  "demande d'arrete de circulation.pdf": {
+   "file": "demande d'arrete de circulation.pdf",
+   "size": 630951,
+   "family": "Signalisation, sécurité & AIPR"
+  },
+  "demo decoupe chaussé.pdf": {
+   "file": "demo decoupe chaussé.pdf",
+   "size": 265243,
+   "family": "Études, essais & qualité"
+  },
+  "doe.pdf": {
+   "file": "doe.pdf",
+   "size": 190466,
+   "family": "Suivi de chantier"
+  },
+  "décapage terre végé.pdf": {
+   "file": "décapage terre végé.pdf",
+   "size": 265101,
+   "family": "Études, essais & qualité"
+  },
+  "démolition trottoir ilot.pdf": {
+   "file": "démolition trottoir ilot.pdf",
+   "size": 264930,
+   "family": "Études, essais & qualité"
+  },
+  "enedis demande Dict.pdf": {
+   "file": "enedis demande Dict.pdf",
+   "size": 229477,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "enedis.pdf": {
+   "file": "enedis.pdf",
+   "size": 228182,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "essai de plaque.docx": {
+   "file": "essai de plaque.docx",
+   "size": 18406,
+   "family": "Études, essais & qualité"
+  },
+  "essai hydraulique.JPG": {
+   "file": "essai hydraulique.JPG",
+   "size": 55977,
+   "family": "Études, essais & qualité"
+  },
+  "essai.xlsx": {
+   "file": "essai.xlsx",
+   "size": 229293,
+   "family": "Suivi de chantier"
+  },
+  "fiche de nonconformité.xlsx": {
+   "file": "fiche de nonconformité.xlsx",
+   "size": 15993,
+   "family": "Suivi de chantier"
+  },
+  "fiche de tache Exemple bassin.xlsx": {
+   "file": "fiche de tache Exemple bassin.xlsx",
+   "size": 37122,
+   "family": "Suivi de chantier"
+  },
+  "fiche de tache NOE.xlsx": {
+   "file": "fiche de tache NOE.xlsx",
+   "size": 394276,
+   "family": "Suivi de chantier"
+  },
+  "fiche de tache barbazan.xlsx": {
+   "file": "fiche de tache barbazan.xlsx",
+   "size": 168625,
+   "family": "Suivi de chantier"
+  },
+  "fichetechnique9.pdf": {
+   "file": "fichetechnique9.pdf",
+   "size": 1133038,
+   "family": "Études, essais & qualité"
+  },
+  "fntp_journalkitpedago2015_v8.pdf": {
+   "file": "fntp_journalkitpedago2015_v8.pdf",
+   "size": 4465638,
+   "family": "Ressources humaines & administration"
+  },
+  "glisière.pdf": {
+   "file": "glisière.pdf",
+   "size": 264258,
+   "family": "Références techniques & fournisseurs"
+  },
+  "guide-conception-ice.pdf": {
+   "file": "guide-conception-ice.pdf",
+   "size": 1328601,
+   "family": "Références techniques & fournisseurs"
+  },
+  "ilot en béton et galet de garonne.pdf": {
+   "file": "ilot en béton et galet de garonne.pdf",
+   "size": 266517,
+   "family": "Références techniques & fournisseurs"
+  },
+  "invitation-première_reunion.pdf": {
+   "file": "invitation-première_reunion.pdf",
+   "size": 280102,
+   "family": "Suivi de chantier"
+  },
+  "janolene Ø110.pdf": {
+   "file": "janolene Ø110.pdf",
+   "size": 267520,
+   "family": "Références techniques & fournisseurs"
+  },
+  "logo stagiaire tp.JPG": {
+   "file": "logo stagiaire tp.JPG",
+   "size": 94029,
+   "family": "Ressources humaines & administration"
+  },
+  "lordre-de-service.pdf": {
+   "file": "lordre-de-service.pdf",
+   "size": 131461,
+   "family": "Suivi de chantier"
+  },
+  "lotissement la croix pruniau  03460 aurouer 2021 fps.pdf": {
+   "file": "lotissement la croix pruniau  03460 aurouer 2021 fps.pdf",
+   "size": 10112028,
+   "family": "Pièces de marché (DCE)"
+  },
+  "memoire justificatif Giratoire.doc": {
+   "file": "memoire justificatif Giratoire.doc",
+   "size": 11325952,
+   "family": "Pièces de marché (DCE)"
+  },
+  "mémoire technique v1.pdf": {
+   "file": "mémoire technique v1.pdf",
+   "size": 864524,
+   "family": "Pièces de marché (DCE)"
+  },
+  "métré.xlsx": {
+   "file": "métré.xlsx",
+   "size": 8825938,
+   "family": "Devis, prix & budget"
+  },
+  "notice_51404#01.pdf": {
+   "file": "notice_51404#01.pdf",
+   "size": 101956,
+   "family": "Références techniques & fournisseurs"
+  },
+  "notice_51406#01.pdf": {
+   "file": "notice_51406#01.pdf",
+   "size": 102957,
+   "family": "Références techniques & fournisseurs"
+  },
+  "objectif PAE2.pdf": {
+   "file": "objectif PAE2.pdf",
+   "size": 116749,
+   "family": "Études, essais & qualité"
+  },
+  "ordre de service.pdf": {
+   "file": "ordre de service.pdf",
+   "size": 77396,
+   "family": "Suivi de chantier"
+  },
+  "plan de situation 10000.pdf": {
+   "file": "plan de situation 10000.pdf",
+   "size": 787509,
+   "family": "Plans & profils"
+  },
+  "planning BARBAZAN (Enregistré automatiquement).pdf": {
+   "file": "planning BARBAZAN (Enregistré automatiquement).pdf",
+   "size": 600714,
+   "family": "Suivi de chantier"
+  },
+  "planning BARBAZAN (Enregistré automatiquement).xls": {
+   "file": "planning BARBAZAN (Enregistré automatiquement).xls",
+   "size": 134656,
+   "family": "Suivi de chantier"
+  },
+  "planning BARBAZAN.xls": {
+   "file": "planning BARBAZAN.xls",
+   "size": 111616,
+   "family": "Suivi de chantier"
+  },
+  "pvc Ø300.pdf": {
+   "file": "pvc Ø300.pdf",
+   "size": 266060,
+   "family": "Références techniques & fournisseurs"
+  },
+  "rabotage.pdf": {
+   "file": "rabotage.pdf",
+   "size": 264535,
+   "family": "Études, essais & qualité"
+  },
+  "regard 40x40.pdf": {
+   "file": "regard 40x40.pdf",
+   "size": 266860,
+   "family": "Références techniques & fournisseurs"
+  },
+  "remblai d'apport.pdf": {
+   "file": "remblai d'apport.pdf",
+   "size": 266455,
+   "family": "Références techniques & fournisseurs"
+  },
+  "remplissage ilot en béton.pdf": {
+   "file": "remplissage ilot en béton.pdf",
+   "size": 266046,
+   "family": "Références techniques & fournisseurs"
+  },
+  "reprise terre végétale.pdf": {
+   "file": "reprise terre végétale.pdf",
+   "size": 265639,
+   "family": "Références techniques & fournisseurs"
+  },
+  "salaire_minima_hierarchiques_occitanie_2022_0.pdf": {
+   "file": "salaire_minima_hierarchiques_occitanie_2022_0.pdf",
+   "size": 385801,
+   "family": "Ressources humaines & administration"
+  },
+  "satellite 85.PNG": {
+   "file": "satellite 85.PNG",
+   "size": 2955617,
+   "family": "Images & vues"
+  },
+  "satellite.PNG": {
+   "file": "satellite.PNG",
+   "size": 4195148,
+   "family": "Images & vues"
+  },
+  "sciage chaussée.pdf": {
+   "file": "sciage chaussée.pdf",
+   "size": 265066,
+   "family": "Études, essais & qualité"
+  },
+  "sivom.pdf": {
+   "file": "sivom.pdf",
+   "size": 228185,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "standard-interne-doe.pdf": {
+   "file": "standard-interne-doe.pdf",
+   "size": 1729380,
+   "family": "Références techniques & fournisseurs"
+  },
+  "streetview.PNG": {
+   "file": "streetview.PNG",
+   "size": 2999477,
+   "family": "Images & vues"
+  },
+  "tableau recap 30-05.xlsx": {
+   "file": "tableau recap 30-05.xlsx",
+   "size": 14406,
+   "family": "Suivi de chantier"
+  },
+  "tableau_reclassement_ETAM.pdf": {
+   "file": "tableau_reclassement_ETAM.pdf",
+   "size": 52265,
+   "family": "Ressources humaines & administration"
+  },
+  "telecom.pdf": {
+   "file": "telecom.pdf",
+   "size": 228241,
+   "family": "Réseaux, DT/DICT & autorisations"
+  },
+  "trottoir béton.pdf": {
+   "file": "trottoir béton.pdf",
+   "size": 266721,
+   "family": "Références techniques & fournisseurs"
+  }
+ }
+}

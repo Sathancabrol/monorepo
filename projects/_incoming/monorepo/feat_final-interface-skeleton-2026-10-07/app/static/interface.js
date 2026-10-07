@@ -1,0 +1,10 @@
+const REGISTRY_URL='/static/../data/interface_registry.json';
+let REG=null,current=null;
+const $=id=>document.getElementById(id);
+async function boot(){const r=await fetch('/api/interface-registry');REG=await r.json();renderNav();renderCards();select(REG.categories[0]);}
+function renderNav(){document.querySelector('#fi-nav').innerHTML=REG.categories.map(c=>'<button class="fi-nav-item" data-id="'+c.id+'"><b>'+c.icon+'</b><span>'+c.label+'</span></button>').join('');document.querySelectorAll('.fi-nav-item').forEach(b=>b.onclick=()=>select(REG.categories.find(c=>c.id===b.dataset.id)));}
+function renderCards(){$('fi-dashboard').innerHTML=REG.categories.map(c=>'<article class="fi-card" data-id="'+c.id+'"><span class="icon">'+c.icon+'</span><span class="count">'+c.features.length+' capacités</span><h3>'+c.label+'</h3><p>'+c.description+'</p><span class="tag">'+c.status.toUpperCase()+'</span></article>').join('');document.querySelectorAll('.fi-card').forEach(x=>x.onclick=()=>select(REG.categories.find(c=>c.id===x.dataset.id)));}
+function select(c){current=c;$('fi-title').textContent=c.label;$('fi-panel-title').textContent=c.label;$('fi-panel-status').textContent=c.status.toUpperCase();$('fi-panel-body').innerHTML=c.features.map(f=>'<div class="feature"><span>'+f+'</span><span class="'+stateClass(c.status)+'">'+stateLabel(c.status)+'</span></div>').join('');$('fi-matrix').innerHTML='<div class="migration"><strong>Sources</strong>'+c.source.join(' · ')+'</div><div class="migration"><strong>Cible</strong>Monorepo → '+c.id+'</div><div class="migration"><strong>Principe</strong>Réutiliser l’existant avant toute réécriture.</div>';document.querySelectorAll('.fi-nav-item').forEach(b=>b.classList.toggle('active',b.dataset.id===c.id));}
+function stateClass(s){return s==='partial'||s==='prototype'||s==='branch'?'state-partial':s==='missing'?'state-missing':'state-have'}
+function stateLabel(s){return s==='partial'?'PARTIEL':s==='prototype'?'POC':s==='branch'?'BRANCHE':s==='missing'?'À CRÉER':'PRÉSENT'}
+boot().catch(e=>{$('fi-dashboard').innerHTML='<div class="fi-card"><h3>Registry indisponible</h3><p>'+e+'</p></div>'});

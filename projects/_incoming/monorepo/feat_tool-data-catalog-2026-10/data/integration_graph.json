@@ -1,0 +1,19 @@
+{
+  "version":"0.1.0",
+  "edges":[
+    ["territory","gis","uses"],
+    ["chantier","gis","uses"],
+    ["chantier","research","uses"],
+    ["chantier","temporal","uses"],
+    ["research","cognition","feeds"],
+    ["cognition","learning","feeds"],
+    ["learning","temporal","uses"],
+    ["language","research","feeds"],
+    ["language","cognition","feeds"],
+    ["agents","gis","orchestrates"],
+    ["agents","research","orchestrates"],
+    ["agents","cognition","orchestrates"],
+    ["agents","learning","orchestrates"],
+    ["agents","chantier","orchestrates"]
+  ]
+}

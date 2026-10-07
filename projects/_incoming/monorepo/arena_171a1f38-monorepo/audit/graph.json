@@ -1,0 +1,299 @@
+{
+ "generated_at": "2026-10-07T14:31:14Z",
+ "nodes": [
+  {
+   "id": "project:COGNITORIUM",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 131,
+    "size_mo": 22.9,
+    "loc": 27691,
+    "tests": 0,
+    "docs": 53,
+    "maturite": "M2",
+    "risk": "moyen",
+    "branches_actives": 1,
+    "repo": "Sathancabrol/COGNITORIUM"
+   }
+  },
+  {
+   "id": "project:proto-cognitorium",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 161,
+    "size_mo": 73.8,
+    "loc": 53334,
+    "tests": 0,
+    "docs": 57,
+    "maturite": "M3",
+    "risk": "élevé",
+    "branches_actives": 1,
+    "repo": "Sathancabrol/proto-cognitorium",
+    "drift_local_vs_main": 25
+   }
+  },
+  {
+   "id": "project:HCSM",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 87,
+    "size_mo": 0.27,
+    "loc": 1917,
+    "tests": 30,
+    "docs": 52,
+    "maturite": "M2",
+    "risk": "faible",
+    "branches_actives": 0,
+    "repo": "Sathancabrol/HCSM"
+   }
+  },
+  {
+   "id": "project:reaserch-engine",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 61,
+    "size_mo": 0.13,
+    "loc": 1167,
+    "tests": 12,
+    "docs": 16,
+    "maturite": "M2",
+    "risk": "moyen",
+    "branches_actives": 0,
+    "repo": "Sathancabrol/reaserch-engine",
+    "tests_rouges": 2
+   }
+  },
+  {
+   "id": "project:ETAT-DE-LART-PSYCHOLOGIE",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 37,
+    "size_mo": 3.6,
+    "loc": 2569,
+    "tests": 0,
+    "docs": 20,
+    "maturite": "M2",
+    "risk": "élevé",
+    "branches_actives": 4,
+    "repo": "Sathancabrol/ETAT-DE-LART-PSYCHOLOGIE"
+   }
+  },
+  {
+   "id": "project:watchtower",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 583,
+    "size_mo": 22.8,
+    "loc": 190453,
+    "tests": 208,
+    "docs": 35,
+    "maturite": "M3",
+    "risk": "moyen",
+    "branches_actives": 2,
+    "repo": "Sathancabrol/watchtower",
+    "ci": true
+   }
+  },
+  {
+   "id": "project:animation-chronos",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 30,
+    "size_mo": 3.8,
+    "loc": 2583,
+    "tests": 0,
+    "docs": 0,
+    "maturite": "M2",
+    "risk": "faible",
+    "branches_actives": 0,
+    "repo": "Sathancabrol/animation-chronos"
+   }
+  },
+  {
+   "id": "project:Language-decoder",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 1,
+    "size_mo": 2e-05,
+    "loc": 0,
+    "tests": 1,
+    "docs": 1,
+    "maturite": "M0",
+    "risk": "élevé",
+    "branches_actives": 2,
+    "repo": "Sathancabrol/Language-decoder",
+    "main_bytes": 19
+   }
+  },
+  {
+   "id": "project:frontignan",
+   "type": "project",
+   "status": "fait",
+   "repo": null,
+   "facts": {
+    "files": 28,
+    "size_mo": 13.6,
+    "loc": 3764,
+    "tests": 0,
+    "docs": 3,
+    "maturite": "M2",
+    "risk": "moyen",
+    "branches_actives": 1,
+    "repo": null
+   }
+  },
+  {
+   "id": "audit/AUDIT-2026-10.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/AUDIT-2026-10.csv",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/PLAN.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/CATEGORIES.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/state.json",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/MEMORY.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/JOURNAL.jsonl",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/graph.json",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S0-racine.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S1-infra.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S2-inventaire.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S3-github.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S4-transverse.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S4-externe.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-COGNITORIUM.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-proto-cognitorium.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-HCSM.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-reaserch-engine.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-ETAT-DE-LART-PSYCHOLOGIE.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-watchtower.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-animation-chronos.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-Language-decoder.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/P-frontignan.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/data/inventory.json",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/data/S0-mapping.json",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/data/drift.json",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/data/branches-all.json",
+   "type": "artifact"
+  },
+  {
+   "id": "scripts/audit_memory.py",
+   "type": "artifact"
+  },
+  {
+   "id": "scripts/audit_inventory.py",
+   "type": "artifact"
+  },
+  {
+   "id": "scripts/audit_s0_map.py",
+   "type": "artifact"
+  },
+  {
+   "id": "scripts/audit_gh_drift.py",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/ANALYSE-V1-V5.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/data/importance.json",
+   "type": "artifact"
+  },
+  {
+   "id": "scripts/audit_importance.py",
+   "type": "artifact"
+  }
+ ],
+ "edges": []
+}

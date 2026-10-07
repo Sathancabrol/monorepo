@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>☉ SOL — Système Cognitorium</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    :root { --bg0:#030508; --bg1:#070b14; --bg2:#0d1320; --border:#1e293b; --border2:#334155; }
+    body { font-family:'Inter',system-ui,sans-serif; background:var(--bg0); color:#f1f5f9; overflow:hidden; }
+    ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg1)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+    .glass{background:rgba(13,19,32,0.85);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.05)}
+    .glass-card{background:rgba(21,29,46,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.04)}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{animation:fadeInUp .3s ease-out}
+    .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+    #sky3d { cursor: grab; } #sky3d:active { cursor: grabbing; }
+    .modal-backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(6px)}
+    .view-btn{font-size:11px;padding:5px 10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);color:#94a3b8;transition:all .15s}
+    .view-btn:hover,.view-btn.on{border-color:rgba(251,191,36,.45);color:#fcd34d;background:rgba(251,191,36,.07)}
+    .chip{font-size:11px;font-family:'JetBrains Mono',monospace;padding:4px 9px;border-radius:7px;background:var(--bg2);border:1px solid var(--border);color:#94a3b8;cursor:pointer;transition:all .15s;white-space:nowrap}
+    .chip:hover{border-color:#818cf8;color:#a5b4fc}
+    .md h1{font-size:17px;font-weight:700;color:#f1f5f9;margin:14px 0 8px} .md h2{font-size:14px;font-weight:600;color:#e2e8f0;margin:14px 0 6px} .md h3{font-size:12.5px;font-weight:600;color:#c7d2fe;margin:10px 0 4px}
+    .md p{margin:6px 0;font-size:12.5px;color:#cbd5e1} .md li{margin:3px 0 3px 16px;list-style:disc;font-size:12.5px;color:#cbd5e1}
+    .md table{border-collapse:collapse;margin:8px 0;font-size:11px} .md td,.md th{border:1px solid #334155;padding:4px 8px;color:#cbd5e1}
+    .md blockquote{border-left:2px solid #f59e0b;padding-left:10px;color:#94a3b8;margin:8px 0;font-size:12px}
+    .md hr{border-color:#1e293b;margin:12px 0} .md code{font-family:monospace;color:#7dd3fc;font-size:11.5px}
+    .md strong{color:#f1f5f9}
+    .sat-chip{font-size:10.5px;padding:3px 8px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);color:#94a3b8;cursor:pointer}
+    .sat-chip.on{border-color:#818cf8;color:#a5b4fc;background:rgba(129,140,248,.1)}
+  </style>
+</head>
+<body class="h-full">
+<div x-data="solApp()" x-init="init()" class="h-full flex flex-col">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="glass sticky top-0 z-30 border-b border-white/5">
+    <div class="max-w-[1800px] mx-auto px-4 py-2.5 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-300/40 to-amber-600/20 border border-amber-400/40 flex items-center justify-center text-base text-amber-200 select-none">☉</div>
+      <div class="flex-1 min-w-0">
+        <h1 class="text-sm font-semibold tracking-wide">SOL <span class="text-slate-500 font-normal">· orchestrateur du système <span class="text-slate-600">· Cognitorium</span></span></h1>
+        <p class="text-[10.5px] text-slate-500 truncate">Clic sur un corps = sa fenêtre · double-clic = le suivre · molette = zoom · clic droit = se déplacer</p>
+      </div>
+      <div class="hidden md:flex items-center gap-2">
+        <span class="text-[11px] px-2.5 py-1 rounded-full border" :class="integClass()" x-text="integ.label"></span>
+        <span class="text-[11px] px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 mono" x-text="budget.spend_today_usd != null ? budget.spend_today_usd.toFixed(4) + ' $ / ' + (budget.budget?.daily_cap_usd ?? '—') + ' $' : '…'"></span>
+        <button @click="openModal('sol')" class="text-[11px] px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-300 transition font-semibold" title="Parler à Laplace ✳ — l'interlocuteur principal (SOL approuve chaque réponse)">💬 Laplace</button>
+        <button @click="dispatchEvent(new Event('open-laplace-chat'))" class="text-[11px] px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300/80 transition" title="Chat flottant (nébuleuse, en bas à droite)">✳</button>
+        <button @click="loadHades(); openModal('hades')" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 border border-slate-500/30 text-slate-300 transition" title="Cycle de vie : ce qui peut être fauché, pourquoi, et ce qui est toujours conservé">♇ Hadès</button>
+        <button @click="loadArmory(); openModal('mars')" class="text-[11px] px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 transition" title="Outils du système : open source d'abord, forge sinon">♂ Armurerie</button>
+        <button @click="refreshNebula(); openModal('sebas')" class="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 transition" title="Exécutant des commandes divines — aucune fausse donnée capteur">◉ Sebas</button>
+        <a href="/agent" class="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 transition" title="Console missions de l'agent chercheur">♅ Uranus</a>
+        <a href="/" class="text-[11px] text-slate-500 hover:text-indigo-300 border border-slate-700/60 hover:border-indigo-500/40 rounded-lg px-2.5 py-1 transition" title="Dashboard principal : profil, fil d'Ariane, base de données">📊 Dashboard</a>
+        <a href="/?tab=univers" class="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/40 text-indigo-200 transition font-semibold" title="vue fusionnée : le système solaire complet est désormais l'accueil">🪐 vue fusionnée</a>
+        <a href="/?tab=mobiglas" class="text-[11px] px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-200 transition font-semibold" title="Instrument cognitif : monde réel → capteurs → features → modèles → inférences → action">🥽 Pipeline</a>
+        <button @click="loadShadow(); openModal('ombre')" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 border border-slate-500/40 text-slate-200 transition font-semibold" title="Bureau de l'Ombre — Sera Victoria, agent de terrain de Sebas : outils de surveillance, équipe, raccourcis d'espionnage">🕵 OMBRE</button>
+        <button @click="loadUnderworld(); openModal('inferno')" class="text-[11px] px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 transition font-semibold" title="INFERNO — la corbeille du système : le royaume d'Hadès, où rien ne disparaît vraiment">🔥 INFERNO</button>
+        <button @click="openModal('aide')" class="text-[11px] w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-slate-300 transition font-bold" title="Comment utiliser ce système ?">?</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ VUE 3D PRINCIPALE ═══ -->
+  <main class="flex-1 relative overflow-hidden">
+    <div id="sky3d" class="absolute inset-0"></div>
+    <div class="absolute top-3 left-4 z-10 pointer-events-none">
+      <h2 class="text-[11px] uppercase tracking-[.14em] text-slate-500">Système — vue 3D</h2>
+      <div class="mt-2 pointer-events-auto">
+        <button @click="toggleSystemLight()" class="text-[11px] px-3 py-1.5 rounded-lg border transition font-semibold"
+          :class="systemOn ? 'bg-amber-500/15 border-amber-500/40 text-amber-200 hover:bg-amber-500/25' : 'bg-slate-600/20 border-slate-500/40 text-slate-300 hover:bg-slate-500/30'"
+          :title="systemOn ? 'éteindre : gèle planètes et lunes — seuls Laplace ✳ et ses divinités continuent' : 'rallumer le système'"
+          x-text="systemOn ? '💡 light ON — système vivant' : '💤 light OFF — seul Laplace ✳ et ses divinités bougent'"></button>
+        <button @click="openOlympus()" class="mt-1.5 block text-[11px] px-3 py-1.5 rounded-lg bg-violet-500/15 border border-violet-500/40 text-violet-200 hover:bg-violet-500/25 transition font-semibold" title="Le Mont Olympe : les divinités incarnées à leur poste — déplacements en temps réel selon leur activité (procès de Thémis, forge de Mars, Porte des Enfers…)">🏛 OLYMPUS</button>
+        <p x-show="skyMsg" x-transition x-cloak class="text-[10px] text-amber-200/90 mt-1 max-w-[260px]" x-text="skyMsg"></p>
+      </div>
+      <p class="text-[10px] text-slate-600 mt-0.5">✳ Laplace (créateur) · ☉ SOL (direction générale) · ☿ Mercure (commercial) · ♀ Vénus (finance) · 🜨 Terre+☾ (production) · ♂ Mars ◂◦ (R&D outils) · ⚳ Cérès (RH) · ♃ Jupiter (juridique) · ♅ Uranus (recherche) · ♆ Neptune (IT)</p>
+    </div>
+    <div class="absolute bottom-3 right-4 z-10 text-[10px] text-slate-600 text-right leading-relaxed pointer-events-none">
+      <div>glisser = tourner · molette = zoom</div>
+      <div><span class="text-indigo-300">clic ♅ Uranus</span> → fenêtre recherche · <span class="text-amber-300">clic ♀ Vénus</span> → fenêtre finances</div>
+    </div>
+    <div x-show="hover.info" x-cloak class="absolute z-20 glass rounded-lg px-2.5 py-1.5 pointer-events-none" :style="'left:'+(hover.x+14)+'px;top:'+(hover.y+10)+'px'">
+      <div class="text-[11px] text-slate-200" x-text="hover.name"></div>
+      <div class="text-[9.5px] text-slate-500 max-w-[240px]" x-text="hover.role"></div>
+    </div>
+  </main>
+
+  <!-- ══════════════ MODALE CORPS GÉNÉRIQUE (fiche agent entreprise) ══════════════ -->
+  <div x-show="modals.body" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('body')">
+    <div class="glass rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-5 fade-in">
+      <template x-if="bodyData">
+        <div>
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="text-3xl leading-none mt-0.5" x-text="bodyData.body.symbol"></div>
+              <div>
+                <h2 class="text-sm font-semibold"><span x-text="bodyData.body.name"></span>
+                  <span class="text-[10px] text-slate-500 font-normal" x-show="bodyData.body.parent" x-text="bodyData.body.parent ? '· satellite de ' + bodyData.body.parent.name : ''"></span></h2>
+                <p class="text-[10.5px] text-cyan-300/90 mt-0.5" x-text="bodyData.body.departement || bodyData.body.kind"></p>
+                <p class="text-[11px] text-slate-400 mt-1 max-w-xl leading-relaxed" x-text="bodyData.body.role"></p>
+              </div>
+            </div>
+            <button @click="closeModal('body')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+          </div>
+
+          <!-- ⚡ Fonction · Pouvoir · Devoir — descriptif textuel + schématique -->
+          <div class="mt-4 rounded-xl border border-white/10 bg-white/[.02] p-3.5">
+            <div class="flex items-center gap-2 mb-2">
+              <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-500">Fonction · Pouvoir · Devoir</h3>
+              <span class="flex-1"></span>
+              <!-- aller vers : sa vue 3D / sa vue dans le graphe Obsidian -->
+              <button @click="goTo3D(bodyData.body.id)" class="text-[10px] px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20" title="voler vers cet astre dans la vue système">🪐 aller vers · 3D</button>
+              <button @click="goToObsidian(bodyData.body.id)" class="text-[10px] px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/30 text-violet-300 hover:bg-violet-500/20" title="sa constellation dans le graphe de connaissances">✦ aller vers · Obsidian</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="space-y-1.5">
+                <p class="text-[10.5px] text-slate-400"><span class="text-cyan-300/90 font-semibold">📛 Fonction —</span> <span x-text="bodyData.body.departement || bodyData.body.kind"></span></p>
+                <p class="text-[10.5px] text-slate-400"><span class="text-amber-300/90 font-semibold">⚡ Pouvoir —</span> <span x-text="bodyData.body.pouvoir || '—'"></span></p>
+                <p class="text-[10.5px] text-slate-400"><span class="text-emerald-300/90 font-semibold">🛡 Devoir —</span> <span x-text="bodyData.body.devoir || '—'"></span></p>
+                <p class="text-[9px] text-slate-600 pt-0.5" x-text="bodyData.body.role"></p>
+              </div>
+              <svg id="bodySchema" style="width:100%;height:150px"></svg>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+            <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Interactions</div><div class="mono text-sm text-emerald-300" x-text="bodyData.stats.interactions"></div></div>
+            <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Mémoire</div><div class="mono text-sm text-amber-300" x-text="bodyData.stats.memoire"></div></div>
+            <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Concepts</div><div class="mono text-sm text-indigo-300" x-text="bodyData.stats.concepts"></div></div>
+            <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Références</div><div class="mono text-sm text-cyan-300" x-text="bodyData.stats.references"></div></div>
+          </div>
+
+          <!-- 🌌 Astres connectés — la famille, cliquable en direct -->
+          <div class="mt-3 rounded-xl border border-violet-500/15 bg-violet-500/[.03] p-3" x-show="connectedBodies(bodyData.body).length">
+            <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-500 mb-2">🌌 Astres connectés <span class="normal-case tracking-normal text-slate-600">— un système, une famille : cliquez pour sauter d'un astre à l'autre</span></h3>
+            <div class="flex flex-wrap gap-1.5">
+              <template x-for="c in connectedBodies(bodyData.body)" :key="c.id">
+                <button @click="openBody(c.id)" class="chip !border-violet-500/25 hover:!border-violet-400/60 hover:!text-violet-200 !text-slate-300"
+                        :title="c.pouvoir ? ((c.pouvoir) + '  ·  ' + (c.devoir)) : ('ouvrir la fiche de ' + c.name)">
+                  <span x-text="c.name"></span> <span class="text-slate-600 text-[9px]" x-text="c.rel"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- ☉ Panneau SOL : chat à boutons + chariot d'Apollon -->
+          <div x-show="bodyData.body.id==='sol'" class="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/[.04] p-3.5">
+            <div class="flex items-center gap-2 mb-2.5">
+              <h3 class="text-[11px] font-semibold text-amber-200">☉ SOL vous parle — boutons proposés</h3>
+              <span class="flex-1"></span>
+              <button @click="startSplit('sol')" class="text-[10px] px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-200 hover:bg-amber-500/25">💬 discuter — chat à côté ◀</button>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button @click="solQuick('état du système')" class="chip">🟢 État système</button>
+              <button @click="solQuick('scan de Hadès : données, traitement, éligibles au fauchage')" class="chip">♇ Scan Hadès</button>
+              <button @click="solQuick('mon profil cognitif')" class="chip">✦ Mon profil</button>
+              <button @click="solQuick('budget du système')" class="chip">♀ Budget</button>
+              <button @click="apollonDivine()" class="chip !border-amber-400/50 !text-amber-200">🏆 Chariot d'Apollon — divination</button>
+            </div>
+            <div id="apollonPanel" class="mt-2.5"></div>
+          </div>
+
+          <div class="flex items-center justify-between mt-4 mb-2">
+            <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600">Constellation de connaissances <span class="text-slate-700 normal-case tracking-normal">(cliquez un nœud pour l'inspecter)</span></h3>
+            <a :href="'/agent?agent=' + bodyData.body.id" class="text-[10px] px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20">Console missions ↗</a>
+          </div>
+          <svg id="bodygraph" style="width:100%;height:280px"></svg>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            <div>
+              <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mb-2">Dernières interactions (approuvées SOL)</h3>
+              <div class="space-y-1 max-h-40 overflow-y-auto pr-1">
+                <template x-for="(m, i) in bodyData.interactions.slice(0, 12)" :key="i">
+                  <div class="text-[10.5px] glass-card rounded px-2.5 py-1.5 flex items-center gap-2">
+                    <span x-text="{'delivered':'✅','approved':'✔︎','denied':'⛔','failed':'❌'}[m.status] || '•'"></span>
+                    <span class="text-slate-300 truncate flex-1" x-text="m.source + ' → ' + m.target + ' · ' + (m.reason || m.type || '').slice(0, 44)"></span>
+                    <span class="text-slate-600 mono text-[9px]" x-text="(m.ts || '').slice(11, 16)"></span>
+                  </div>
+                </template>
+                <p x-show="!bodyData.interactions.length" class="text-[10.5px] text-slate-600 italic">Aucune interaction encore.</p>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mb-2">Mémoire du corps</h3>
+              <div class="space-y-1 max-h-40 overflow-y-auto pr-1">
+                <template x-for="(it, i) in bodyData.memoire.slice(0, 12)" :key="i">
+                  <div class="text-[10.5px] glass-card rounded px-2.5 py-1.5 flex items-center gap-2">
+                    <span class="px-1.5 rounded bg-amber-500/10 text-amber-300 text-[8.5px] mono" x-text="it.type"></span>
+                    <span class="text-slate-300 truncate flex-1" x-text="it.titre"></span>
+                    <span class="text-slate-600 mono text-[9px]" x-text="it.ts.slice(5, 10)"></span>
+                  </div>
+                </template>
+                <p x-show="!bodyData.memoire.length" class="text-[10.5px] text-slate-600 italic">Mémoire vide pour ce corps.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ══════════════ TOAST SÉLECTION CORPS (clic simple) ══════════════ -->
+  <div x-show="bodyToast" x-cloak x-transition.duration.200 class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] glass rounded-xl px-4 py-3 flex items-center gap-3 shadow-2xl" style="border-color:rgba(52,211,153,.3)">
+    <span class="text-[12px] text-slate-100 font-semibold" x-text="bodyToast?.name"></span>
+    <span class="text-[9px] text-slate-600">clic simple = sélection · double-clic = suivre + fiche</span>
+    <button @click="openBodySmart(bodyToast.id); bodyToast=null" class="text-[10px] px-2.5 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/40 text-indigo-200 hover:bg-indigo-500/25">fiche ↗</button>
+    <button @click="followFromToast()" class="text-[10px] px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/25">suivre 🎥</button>
+    <button @click="bodyToast=null" class="text-slate-500 hover:text-white text-base leading-none">✕</button>
+  </div>
+
+  <!-- ══════════════ INSPECTEUR DE NŒUD (global) ══════════════ -->
+  <div x-show="inspectN" x-cloak class="fixed bottom-24 left-4 z-[60] w-72 glass rounded-xl p-3.5 fade-in" style="border-color:rgba(56,189,248,.25)">
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0">
+        <p class="text-[12px] text-slate-100 font-semibold truncate" x-text="inspectN?.label"></p>
+        <p class="text-[9px] mono uppercase tracking-wider" style="color:#7dd3fc" x-text="inspectN?.type"></p>
+      </div>
+      <button @click="inspectN=null" class="text-slate-500 hover:text-white text-base leading-none">✕</button>
+    </div>
+    <div class="mt-2 space-y-1 text-[10.5px] text-slate-400">
+      <p x-show="inspectN?.doi"><span class="text-slate-600">DOI :</span> <a class="text-cyan-300 underline" :href="'https://doi.org/' + inspectN?.doi" target="_blank" x-text="inspectN?.doi"></a></p>
+      <p x-show="inspectN?.trust !== undefined && inspectN?.trust !== null"><span class="text-slate-600">Trust :</span> <span class="mono text-emerald-300" x-text="inspectN?.trust"></span></p>
+      <p x-show="inspectN?.id"><span class="text-slate-600">id :</span> <span class="mono" x-text="inspectN?.id"></span></p>
+      <p class="text-slate-500 leading-relaxed" x-show="inspectN?.type === 'concept'">Concept de la constellation — relié à son corps et aux références matchées de la base.</p>
+      <p class="text-slate-500 leading-relaxed" x-show="inspectN?.type === 'reference'">Référence scientifique de la base, matchée sur les mots-clés du domaine du corps.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE PLUTON ♇ / HADÈS (cycle de vie) ══════════════ -->
+  <div x-show="modals.hades" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('hades')">
+    <div class="glass rounded-2xl w-full max-w-2xl max-h-[88vh] overflow-y-auto p-5 fade-in">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">♇ Pluton / Hadès — cycle de vie & optimisation</h2>
+          <p class="text-[10.5px] text-slate-500">Le dieu des morts du système · ⚰ Charon (passeur) · ☠ Styx (rétention) · ⧉ secondé par les 3 Moires d'Ananké — fauche redondances, outdated et junk</p>
+        </div>
+        <button @click="closeModal('hades')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="grid grid-cols-5 gap-2 mt-4" x-show="hadesScan.stats">
+        <div class="glass-card rounded-lg p-2.5" title="éléments que le scan a condamnés — détail et raisons plus bas"><div class="text-[9px] uppercase text-slate-600">Condamnés</div><div class="mono text-lg text-rose-300" x-text="hadesScan.stats?.condamnes ?? '—'"></div></div>
+        <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Espace libérable</div><div class="mono text-lg text-rose-300" x-text="(hadesScan.stats?.ko ?? 0) + ' Ko'"></div></div>
+        <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Politique Styx</div><div class="text-[10px] text-slate-400 mt-1" x-text="'garder les ' + (hadesScan.politique_styx?.runs_gardes ?? 25) + ' derniers runs'"></div></div>
+        <div class="glass-card rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Données vues</div><div class="mono text-lg text-slate-300" x-text="(hadesScan.stats?.mo_octets ?? '—') + ' Mo'"></div></div>
+        <button @click="openTokensDetail()" title="cliquez : comment ce chiffre est calculé" class="glass-card rounded-lg p-2.5 border-emerald-500/25 hover:border-emerald-400/60 hover:bg-emerald-500/[.06] transition text-left group relative">
+          <div class="text-[9px] uppercase text-emerald-400/90">🪙 Tokens épargnés</div>
+          <div class="mono text-lg text-emerald-300" x-text="(hadesScan.prevision_tokens?.estime ?? 0).toLocaleString('fr-FR')"></div>
+          <div class="text-[8.5px] text-slate-600">prévision si fauche <span class="text-emerald-400 opacity-0 group-hover:opacity-100 transition">— comment ? ↗</span></div>
+        </button>
+      </div>
+      <p class="text-[9px] text-slate-600 mt-1.5" x-show="hadesScan.prevision_tokens" x-text="'🪙 ' + (hadesScan.prevision_tokens?.methode || '') + ' — détail : ' + Object.entries(hadesScan.prevision_tokens?.par_type || {}).map(([k,v]) => v.toLocaleString('fr-FR') + ' (' + k + ')').join(' · ')"></p>
+
+      <!-- Traitement des données (5 étapes) -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Traitement des données <span class="text-slate-700 normal-case tracking-normal">— ce que le scan a réellement examiné</span></h3>
+      <div class="space-y-1.5">
+        <template x-for="(t, i) in hadesScan.traitement || []" :key="i">
+          <div class="flex items-start gap-2.5 glass-card rounded-lg px-3 py-2">
+            <span class="mono text-[9px] text-rose-400/80 mt-0.5 w-4 shrink-0" x-text="(i+1)+'.'"></span>
+            <div class="min-w-0">
+              <p class="text-[10.5px] text-slate-200 font-medium" x-text="t.etape"></p>
+              <p class="text-[9.5px] text-slate-500" x-text="t.detail"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Les 3 Moires -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">⧉ Les 3 Moires <span class="text-slate-700 normal-case tracking-normal">— elles filelent, mesurent et coupent la vie des données</span></h3>
+      <div class="grid grid-cols-3 gap-2">
+        <div class="glass-card rounded-lg p-2.5 border-pink-500/15">
+          <p class="text-[10.5px] text-pink-300 font-semibold" title="Clotho file le fil : compte les données nées dans les dernières 24 h">🧵 Clotho</p>
+          <p class="text-[9px] text-slate-500 mb-1.5" x-text="hadesScan.moires?.clotho?.role"></p>
+          <p class="mono text-lg text-pink-300" x-text="hadesScan.moires?.clotho?.naissance_24h ?? '—'"></p>
+          <p class="text-[9px] text-slate-600">naissances de données / 24 h</p>
+        </div>
+        <div class="glass-card rounded-lg p-2.5 border-pink-500/15">
+          <p class="text-[10.5px] text-violet-300 font-semibold" title="Lachésis mesure le fil : âge moyen des runs, durée de conservation visée">📏 Lachésis</p>
+          <p class="text-[9px] text-slate-500 mb-1.5" x-text="hadesScan.moires?.lachesis?.role"></p>
+          <p class="mono text-lg text-violet-300" x-text="(hadesScan.moires?.lachesis?.age_moyen_runs_jours ?? '—') + ' j'"></p>
+          <p class="text-[9px] text-slate-600">âge moyen · <span x-text="hadesScan.moires?.lachesis?.duree_visee"></span></p>
+        </div>
+        <div class="glass-card rounded-lg p-2.5 border-pink-500/15">
+          <p class="text-[10.5px] text-rose-300 font-semibold" title="Atropos coupe le fil : prononce la mort des condamnés, sans appel">✂️ Atropos</p>
+          <p class="text-[9px] text-slate-500 mb-1.5" x-text="hadesScan.moires?.atropos?.role"></p>
+          <p class="mono text-lg text-rose-300" x-text="hadesScan.moires?.atropos?.condamnes ?? '—'"></p>
+          <p class="text-[9px] text-slate-600" x-text="hadesScan.moires?.atropos?.verdict"></p>
+        </div>
+      </div>
+
+      <!-- Éligibilité : QUOI sera détruit, POURQUOI, et pourquoi c'est sûr -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-1">Qui est éligible au fauchage — et pourquoi</h3>
+      <p class="text-[9.5px] text-slate-600 mb-2">Avant toute fauche, lisez ce qui suit : <b class="text-slate-400">rien n'est détruit sans explication</b>. Chaque catégorie indique ce qui sera supprimé, la raison, et ce qui reste conservé.</p>
+      <div class="space-y-1.5">
+        <template x-for="(pk, tid) in (hadesScan.pourquoi || {})" :key="tid">
+          <div class="glass-card rounded-lg px-3 py-2 border-l-2" :class="{'border-rose-500/40': (hadesScan.stats?.par_type?.[tid]||0)>0, 'border-white/5': !(hadesScan.stats?.par_type?.[tid]||0)}">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px]" x-text="{'run_outdated':'📦','junk_vide':'🕳️','doublon_memoire':'👯','journal':'📜'}[tid] || '⚰'"></span>
+              <p class="text-[10.5px] text-slate-200 font-medium" x-text="tid"></p>
+              <span class="mono text-[10px] px-1.5 py-0.5 rounded" :class="(hadesScan.stats?.par_type?.[tid]||0)>0 ? 'bg-rose-500/15 text-rose-300' : 'bg-white/5 text-slate-600'" x-text="(hadesScan.stats?.par_type?.[tid]||0) + ' condamné(s)'"></span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 mt-1"><span class="text-slate-500">Quoi :</span> <span x-text="pk.quoi"></span></p>
+            <p class="text-[9.5px] text-slate-400"><span class="text-slate-500">Pourquoi :</span> <span x-text="pk.raison"></span></p>
+            <p class="text-[9.5px] text-emerald-300/70"><span class="text-slate-500">Ce qui reste conservé :</span> <span x-text="pk.sur"></span></p>
+          </div>
+        </template>
+      </div>
+      <div class="mt-2 rounded-lg border border-emerald-500/20 bg-emerald-500/[.05] px-3 py-2">
+        <p class="text-[9.5px] text-emerald-300/90">🛡 <b>Toujours conservé, quoi qu'il arrive :</b> <span x-text="hadesScan.ce_qui_est_conserve || 'les 25 derniers runs · la mémoire vivante · le grand livre'"></span></p>
+      </div>
+
+      <div class="flex items-center gap-2 mt-4">
+        <button @click="loadHades()" class="text-[11px] px-3 py-1.5 rounded-lg bg-[var(--bg2)] border border-[var(--border)] hover:border-slate-400/40 text-slate-300">⟳ Scanner le système</button>
+        <button @click="reapHades()" class="text-[11px] px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/40 text-rose-200 hover:bg-rose-500/25 font-semibold">⚰ Lancer la fauche</button>
+        <span class="text-[9.5px] text-slate-600">suppression réelle, journalisée, approuvée par ☉ SOL</span>
+      </div>
+      <p x-show="hadesMsg" class="text-[11px] mt-2" :class="hadesDone ? 'text-emerald-300' : 'text-slate-400'" x-text="hadesMsg"></p>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Condamnés par Atropos <span x-text="'(' + (hadesScan.targets?.length || 0) + ')'"></span></h3>
+      <p class="text-[9.5px] text-slate-600 mb-1.5">👇 cliquez un condamné pour <b>suivre jusqu'à l'entité réelle</b> qui sera supprimée (dossier instruit par Dikè 🧑‍⚖️)</p>
+      <div class="space-y-1 max-h-72 overflow-y-auto pr-1">
+        <template x-for="(t, i) in hadesScan.targets || []" :key="i">
+          <div>
+            <button @click="toggleTarget(t)" class="w-full glass-card rounded-lg px-3 py-2 flex items-center gap-2 text-left hover:border-rose-400/30 transition" :class="targetOpen===t.cible && 'border-rose-400/40 bg-rose-500/[.04]'">
+              <span class="text-[11px]" x-text="{'run_outdated':'📦','junk_vide':'🕳️','doublon_memoire':'👯','journal':'📜'}[t.type] || '⚰'"></span>
+              <div class="flex-1 min-w-0">
+                <p class="text-[10.5px] text-slate-300 truncate mono" x-text="t.cible"></p>
+                <p class="text-[9px] text-slate-600 truncate" x-text="t.raison"></p>
+              </div>
+              <span class="text-[9px] mono text-slate-500 shrink-0" x-text="t.octets ? (t.octets/1024).toFixed(1) + ' Ko' : '—'"></span>
+              <span class="text-[9px] text-slate-600 shrink-0" x-text="targetOpen===t.cible ? '▾' : '▸'"></span>
+            </button>
+            <!-- dossier instruit : l'entité réelle, son contenu, ce qui sera supprimé -->
+            <div x-show="targetOpen===t.cible" x-cloak x-transition.duration.200 class="ml-4 mt-1 mb-2 rounded-lg border border-rose-500/20 bg-rose-500/[.03] p-2.5">
+              <template x-if="targetDetail">
+                <div class="space-y-1.5">
+                  <p class="text-[9px] uppercase tracking-[.12em] text-rose-400/80">Dossier instruit par Dikè — l'entité qui sera supprimée</p>
+                  <template x-if="targetDetail.entite">
+                    <div class="glass-card rounded px-2.5 py-1.5">
+                      <p class="text-[10px] text-slate-300"><b x-text="targetDetail.entite.tache || targetDetail.entite.id || '—'"></b></p>
+                      <p class="text-[9px] text-slate-600" x-text="(targetDetail.entite.run_id ? 'run ' + targetDetail.entite.run_id + ' · ' : '') + (targetDetail.entite.statut || '') + (targetDetail.entite.date ? ' · ' + targetDetail.entite.date.slice(0,16) : '')"></p>
+                      <p class="text-[9px] text-slate-500" x-show="targetDetail.entite.etapes" x-text="'compétences exécutées : ' + (targetDetail.entite.etapes||[]).join(', ')"></p>
+                      <p class="text-[9px] text-slate-400 mt-0.5" x-show="targetDetail.entite.contenu" x-text="'contenu : ' + (targetDetail.entite.contenu||'').slice(0,120)"></p>
+                    </div>
+                  </template>
+                  <template x-if="targetDetail.apercu && !targetDetail.entite">
+                    <p class="text-[9.5px] text-slate-500 italic" x-text="'aperçu : ' + (targetDetail.apercu[0]?.titre || targetDetail.apercu[0] || '')"></p>
+                  </template>
+                  <div class="max-h-32 overflow-y-auto space-y-0.5" x-show="targetDetail.contenu?.length">
+                    <template x-for="(f, j) in targetDetail.contenu || []" :key="j">
+                      <p class="text-[9.5px] text-slate-400 mono truncate"><span class="text-slate-600" x-text="f.octets >= 1024 ? (f.octets/1024).toFixed(1)+' Ko' : f.octets+' o'"></span> — <span x-text="f.nom || f.chemin"></span></p>
+                    </template>
+                  </div>
+                  <p class="text-[10px] text-rose-300/90">🗑 sera supprimé : <span x-text="targetDetail.supprime"></span></p>
+                </div>
+              </template>
+              <p x-show="!targetDetail" class="text-[10px] text-slate-500">⚖ instruction du dossier…</p>
+            </div>
+          </div>
+        </template>
+        <p x-show="!(hadesScan.targets?.length)" class="text-[11px] text-emerald-300/80 italic">Le système est propre — rien à faucher. ☠ Styx approuve.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE ? GUIDE — comment utiliser ce système ══════════════ -->
+  <div x-show="modals.aide" x-cloak class="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('aide')">
+    <div class="glass rounded-2xl w-full max-w-xl max-h-[88vh] overflow-y-auto p-5 fade-in">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">? Guide — utiliser Cognitorium en 6 gestes</h2>
+          <p class="text-[10.5px] text-slate-500">chaque écran explique ce qu'il montre — voici la logique d'ensemble</p>
+        </div>
+        <button @click="closeModal('aide')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <div class="space-y-2 mt-4">
+        <div class="glass-card rounded-lg p-3"><p class="text-[11px] text-slate-200 font-semibold">🪐 1 · Explorer le système</p><p class="text-[10px] text-slate-500 mt-0.5">Dans la vue 3D : <b>clic simple</b> = sélectionner un astre, <b>double-clic</b> = le suivre et ouvrir sa fiche. Chaque corps a un rôle réel (Laplace le savoir, Hadès le cycle de vie, Mars les outils…).</p></div>
+        <div class="glass-card rounded-lg p-3"><p class="text-[11px] text-slate-200 font-semibold">💬 2 · Discuter</p><p class="text-[10px] text-slate-500 mt-0.5">Le bouton 💬 ouvre Laplace ✳ (interlocuteur principal ; ☉ SOL approuve chaque réponse). Les <b>boutons proposés</b> sous la saisie évitent de deviner quoi demander — et la fiche à gauche s'actualise selon votre question.</p></div>
+        <div class="glass-card rounded-lg p-3"><p class="text-[11px] text-slate-200 font-semibold">🔢 3 · Comprendre les chiffres</p><p class="text-[10px] text-slate-500 mt-0.5">Tout chiffre clé est cliquable et montre <b>d'où il vient</b> : ex. la carte 🪙 tokens épargnés de Hadès ouvre son calcul complet (mesuré → estimé → limites). Le badge « incertitude » du profil dit à quel point y croire.</p></div>
+        <div class="glass-card rounded-lg p-3"><p class="text-[11px] text-slate-200 font-semibold">⚖ 4 · Faucher en connaissance de cause</p><p class="text-[10px] text-slate-500 mt-0.5">Hadès ne détruit rien sans montrer <b>quoi</b>, <b>pourquoi</b>, et <b>ce qui reste toujours conservé</b> — puis une confirmation détaillée, puis un bilan. La suppression est réelle et journalisée.</p></div>
+        <div class="glass-card rounded-lg p-3"><p class="text-[11px] text-slate-200 font-semibold">🧵 5 · Voir la chaîne d'exécution</p><p class="text-[10px] text-slate-500 mt-0.5">Sur le 📊 Dashboard : le fil d'Ariane rejoue le parcours réel d'une demande (Vous → Laplace → Métatron → SOL → exécution → remise), liaison par liaison.</p></div>
+        <div class="glass-card rounded-lg p-3"><p class="text-[11px] text-slate-200 font-semibold">🛡 6 · Règle d'or du système</p><p class="text-[10px] text-slate-500 mt-0.5">Aucune fausse donnée : ce qui est mesuré est dit mesuré, ce qui est estimé est dit estimé (avec ses limites), les capteurs absents sont dits absents. Soldez votre confiance en conséquence.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE 🏛 OLYMPUS — les divinités incarnées à leur poste ══════════════ -->
+  <div x-show="modals.olympus" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeOlympus()">
+    <div class="glass rounded-2xl w-full max-w-[1200px] h-[92vh] flex flex-col fade-in border-violet-500/20">
+      <div class="px-4 py-3 border-b border-white/5 flex items-center gap-3">
+        <span class="text-lg">🏛</span>
+        <div class="flex-1 min-w-0">
+          <h2 class="text-sm font-semibold" x-text="olympus?.titre || 'Le Mont Olympe'"></h2>
+          <p class="text-[9.5px] text-slate-500 truncate" x-text="olympus?.sous_titre || ''"></p>
+        </div>
+        <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 shrink-0">● direct</span>
+        <button @click="closeOlympus()" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <div class="flex-1 relative overflow-hidden">
+        <canvas id="olympusCanvas" class="w-full h-full cursor-pointer"></canvas>
+        <div class="absolute top-3 right-3 flex flex-col gap-2 w-[270px] max-h-[78%]">
+          <div class="glass rounded-xl border border-rose-500/25 p-2.5">
+            <p class="text-[9px] uppercase tracking-[.16em] text-rose-300/80 mb-1.5">☠ killchain — suite d'actions en cours</p>
+            <div class="space-y-1">
+              <template x-for="(f, i) in olyFeed" :key="i">
+                <div class="flex items-center gap-1.5 rounded-lg px-1.5 py-1" :class="f.kill ? 'bg-rose-500/15 border border-rose-500/40' : 'bg-white/[.03] border border-white/5'" :style="'opacity:' + (1 - i * 0.13)">
+                  <span class="text-[11px]" x-text="f.ic"></span>
+                  <p class="text-[9.5px] leading-tight flex-1 min-w-0 truncate"><span class="text-slate-200 font-semibold" x-text="f.qui"></span> <span class="text-slate-500" x-text="f.kill ? '— ÉLIMINATION' : '→'"></span> <span class="text-slate-400" x-text="f.texte"></span></p>
+                </div>
+              </template>
+              <p x-show="!olyFeed.length" class="text-[9.5px] text-slate-600 italic">en attente du premier mouvement…</p>
+            </div>
+          </div>
+          <div class="glass rounded-xl border border-white/10 p-2.5 overflow-y-auto">
+            <p class="text-[9px] uppercase tracking-[.16em] text-slate-500 mb-1.5">📡 chronique réelle</p>
+            <template x-for="(c, i) in (olympus?.chronique || [])" :key="i">
+              <p class="text-[9.5px] text-slate-400 leading-snug mb-1 flex gap-1.5"><span x-text="c.icon"></span><span class="flex-1" x-text="c.texte"></span></p>
+            </template>
+          </div>
+        </div>
+        <p class="absolute top-3 left-3 text-[9px] text-slate-500 max-w-[250px] leading-snug glass rounded-lg px-2 py-1.5 border border-white/10">🖱 cliquez sur un personnage → sa fiche (fonction · pouvoir · devoir)</p>
+        <div class="absolute bottom-3 left-3 w-80 max-w-[42%] glass rounded-xl border border-violet-500/25 p-2.5">
+          <p class="text-[9px] uppercase tracking-[.16em] text-violet-300/70 mb-1.5">💬 dialogue des divinités — en direct</p>
+          <div class="space-y-1 max-h-36 overflow-y-auto">
+            <template x-for="(m, i) in olyChat" :key="i">
+              <p class="text-[10px] leading-snug fade-in"><span class="font-semibold" :style="'color:' + m.couleur" x-text="m.nom + ' :'"></span> <span class="text-slate-300" x-text="m.texte"></span></p>
+            </template>
+            <p x-show="!olyChat.length" class="text-[9.5px] text-slate-600 italic">le silence précède l'action…</p>
+          </div>
+        </div>
+        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 glass rounded-xl border border-violet-500/25 px-4 py-2 max-w-[82%] text-center">
+          <p class="text-[11.5px] text-violet-100 leading-snug" x-text="olympusBeat?.texte || '…'"></p>
+          <p class="text-[8.5px] text-slate-500 mt-0.5" x-text="olympus?.drama?.source || ''"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE 🕵 OMBRE — le Bureau de l'Ombre de Sera Victoria ══════════════ -->
+  <div x-show="modals.ombre" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('ombre')">
+    <div class="glass rounded-2xl w-full max-w-3xl max-h-[88vh] overflow-y-auto p-5 fade-in border-slate-500/25">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">🕵 Bureau de l'Ombre <span class="text-slate-500 font-normal">— l'agence de terrain de Sebas</span></h2>
+          <p class="text-[10px] text-slate-500">Sera Victoria, agent de terrain — obligée de chercher des informations utiles du monde réel pour aider la chaîne hiérarchique</p>
+        </div>
+        <button @click="closeModal('ombre')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <!-- carte Sera -->
+      <div class="mt-3 rounded-xl border border-rose-500/20 bg-rose-500/[.03] p-3">
+        <div class="flex items-start gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-900/60 to-slate-900 border border-rose-500/30 flex items-center justify-center text-2xl shrink-0">🕵</div>
+          <div class="flex-1">
+            <p class="text-xs font-semibold text-rose-200">Sera Victoria <span class="text-[9.5px] font-normal text-slate-500">· reporte à Sebas 🛠 · <span x-text="shadow?.sera?.style"></span></span></p>
+            <p class="text-[10.5px] text-slate-300 leading-snug mt-1"><span class="text-rose-300 font-semibold">Contrainte :</span> <span x-text="shadow?.sera?.contrainte"></span></p>
+            <p class="text-[10px] text-slate-400 leading-snug mt-0.5"><span class="text-amber-300/90 font-semibold">⚡ Pouvoir —</span> <span x-text="shadow?.sera?.pouvoir"></span></p>
+            <p class="text-[10px] text-slate-400 leading-snug"><span class="text-emerald-300/90 font-semibold">🛡 Devoir —</span> <span x-text="shadow?.sera?.devoir"></span></p>
+          </div>
+          <button @click="openBody('sera')" class="text-[9.5px] px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 shrink-0">fiche ↗</button>
+        </div>
+        <p class="text-[9px] text-slate-600 mt-2 leading-snug">⚠ <span x-text="shadow?.ethique"></span></p>
+      </div>
+
+      <!-- outils + raccourcis -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-500 mt-4 mb-2">🧰 Outils de surveillance — raccourcis d'utilisation</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <template x-for="o in (shadow?.outils || [])" :key="o.id">
+          <div class="rounded-xl border border-white/5 bg-white/[.02] p-2.5">
+            <div class="flex items-center gap-1.5">
+              <p class="text-[11px] font-semibold text-slate-200 flex-1" x-text="o.nom"></p>
+              <span class="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/25" x-text="o.type"></span>
+            </div>
+            <p class="text-[9.5px] text-slate-500 leading-snug mt-0.5" x-text="o.raccourci"></p>
+            <p class="text-[9px] text-cyan-300/80 leading-snug mt-0.5" x-text="▸ + ' ' + o.usage"></p>
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              <button @click="openTool(o)" class="text-[9.5px] px-2 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-200 hover:bg-cyan-500/20"
+                      x-text="armoryMatch(o.nom) ? '▶ ouvrir (base d’outils)' : '↗ utiliser'"></button>
+              <button @click="advanceForge(o.nom.replace(/[^\w' -]/g,'').trim())" :disabled="forgeBusy" class="text-[9.5px] px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 disabled:opacity-40" title="Mars : examiner → analyser → reconstruire à l'identique → améliorer → utiliser → boucle R&D → présenter">⚒ forge R&D</button>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- forge R&D de Mars sur les OSS -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-500 mt-4 mb-2">⚒ Forge R&D de Mars — boucle d'ingénieur sur l'open source</h3>
+      <div class="space-y-1.5">
+        <template x-for="f in (shadow?.forge || [])" :key="f.id">
+          <div class="rounded-xl border border-red-500/15 bg-red-500/[.02] p-2.5">
+            <div class="flex items-center gap-2">
+              <p class="text-[11px] font-semibold text-red-200 flex-1" x-text="f.outil"></p>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-300" x-text="'stade : ' + forgeStage(f)"></span>
+              <button @click="advanceForge(f.outil)" :disabled="forgeBusy" class="text-[9.5px] px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 disabled:opacity-40">avancer ▸</button>
+            </div>
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              <template x-for="(s, i) in f.stages" :key="s">
+                <span class="text-[8.5px] px-1.5 py-0.5 rounded border" :class="i < f.stage ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300' : i === f.stage ? 'bg-amber-500/15 border-amber-500/40 text-amber-200' : 'bg-white/[.02] border-white/5 text-slate-600'" x-text="(i < f.stage ? '✓ ' : '') + s"></span>
+              </template>
+            </div>
+          </div>
+        </template>
+        <p x-show="!(shadow?.forge?.length)" class="text-[10.5px] text-slate-500 italic">aucun chantier — « ⚒ forge R&D » sur un outil ci-dessus ouvre la boucle d'ingénieur</p>
+      </div>
+
+      <!-- outils maison de Mars (base d'outils) -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-500 mt-4 mb-2">🛠 Fabriqué maison par Mars <span class="normal-case tracking-normal" x-text="'— ' + (shadow?.outils_mars?.length ?? 0) + ' outil(s) dans la base'"></span></h3>
+      <div class="flex flex-wrap gap-1.5">
+        <template x-for="r in (shadow?.outils_mars || []).slice().reverse()" :key="r.id">
+          <button @click="openModal('mars')" class="chip" :title="r.statut">
+            <span x-text="(r.data_kind || 'outil')"></span> · <span x-text="(r.besoin || '').slice(0, 34)"></span>
+          </button>
+        </template>
+        <p x-show="!(shadow?.outils_mars?.length)" class="text-[10.5px] text-slate-500 italic">l'armurerie est vide — demandez un outil à Mars</p>
+      </div>
+
+      <!-- équipe de Sera -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-500 mt-4 mb-2">👥 Équipe personnelle de Sera <span class="normal-case tracking-normal" x-text="'— ' + (shadow?.equipe?.length ?? 0) + ' assistant(s)'"></span></h3>
+      <div class="flex gap-1.5 mb-2">
+        <input x-model="hireMission" placeholder="mission de l'assistant : ex. recouper les flux ADS-B et AIS la nuit" class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-rose-500/60">
+        <button @click="hireAssistant()" :disabled="hireBusy" class="text-[11px] px-3 py-2 rounded-lg bg-rose-500/15 border border-rose-500/40 text-rose-200 hover:bg-rose-500/25 disabled:opacity-40" x-text="hireBusy ? '…' : '+ recruter'"></button>
+      </div>
+      <div class="space-y-1">
+        <template x-for="a in (shadow?.equipe || [])" :key="a.id">
+          <p class="text-[10px] text-slate-400">🕵 <span class="text-rose-300" x-text="a.name"></span> — <span x-text="(a.role || '').split('— ').pop()"></span></p>
+        </template>
+      </div>
+      <!-- missions types -->
+      <div class="flex flex-wrap gap-1.5 mt-3 pt-2 border-t border-white/5">
+        <template x-for="c in (shadow?.missions || [])" :key="c.id">
+          <span class="chip !text-[9.5px] !border-rose-500/25" :title="c.exemples.join(' · ')"><span x-text="c.nom"></span></span>
+        </template>
+      </div>
+      <p x-show="shadowMsg" class="text-[10.5px] mt-2 text-rose-300" x-text="shadowMsg"></p>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE 🔥 INFERNO — le royaume d'Hadès (corbeille du système) ══════════════ -->
+  <div x-show="modals.inferno" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('inferno')">
+    <div class="glass rounded-2xl w-full max-w-3xl max-h-[88vh] overflow-y-auto p-5 fade-in border-rose-500/20">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">🔥 INFERNO — le royaume d'Hadès ♇ &amp; Perséphone 🌸</h2>
+          <p class="text-[10.5px] text-slate-500">La corbeille du système : les entités fauchées ne disparaissent jamais vraiment — il reste une fraction de données, assez pour les reconstruire.</p>
+        </div>
+        <button @click="closeModal('inferno')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <p class="text-[10px] text-slate-500 mt-2 leading-snug" x-text="inferno?.loi || ''"></p>
+
+      <!-- régions -->
+      <div class="grid grid-cols-3 gap-2 mt-3">
+        <template x-for="(r, rid) in inferno?.regions || {}" :key="rid">
+          <div class="glass-card rounded-lg p-2.5" :class="rid==='tartare' ? 'border-rose-500/20' : rid==='elysees' ? 'border-amber-500/20' : 'border-white/10'">
+            <p class="text-[10.5px] font-semibold" :class="rid==='tartare' ? 'text-rose-300' : rid==='elysees' ? 'text-amber-300' : 'text-slate-300'" x-text="r.icon + ' ' + r.nom"></p>
+            <p class="text-[9px] text-slate-600 leading-snug" x-text="r.desc"></p>
+            <p class="mono text-lg mt-1" :class="rid==='tartare' ? 'text-rose-300' : rid==='elysees' ? 'text-amber-300' : 'text-slate-300'" x-text="inferno?.par_region?.[rid] ?? 0"></p>
+            <p class="text-[8.5px] text-slate-600">âmes</p>
+          </div>
+        </template>
+      </div>
+
+      <!-- gardiens -->
+      <div class="flex flex-wrap items-center gap-2 mt-3 text-[9.5px] text-slate-500">
+        <span class="glass-card rounded px-2 py-1">🐾 Cerbère garde la porte — aucune âme ne sort sans l'accord du souverain</span>
+        <span class="glass-card rounded px-2 py-1">⚰ Charon passeur · ☠ Styx fleuve</span>
+        <span class="glass-card rounded px-2 py-1">👑 Hadès ♇ &amp; Perséphone 🌸</span>
+        <span class="flex-1"></span>
+        <span class="mono" x-text="(inferno?.octets_au_royaume ?? 0).toLocaleString('fr-FR') + ' octets au royaume'"></span>
+      </div>
+
+      <!-- âmes -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-4 mb-1.5">Registre des âmes <span x-text="'(' + (inferno?.ames?.length ?? 0) + ')'"></span></h3>
+      <div class="space-y-1 max-h-72 overflow-y-auto pr-1">
+        <template x-for="s in inferno?.ames || []" :key="s.id">
+          <div class="glass-card rounded-lg px-3 py-2 flex items-center gap-2">
+            <span class="text-[11px]" x-text="({elysees:'🌟',asphodele:'🌾',tartare:'🔥'})[s.region]"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10.5px] text-slate-300 truncate mono" x-text="(s.trace?.tache || s.cible)"></p>
+              <p class="text-[9px] text-slate-600 truncate" x-text="(s.type) + ' · ' + (s.raison || '') + ' · fauchée ' + (s.ts||'').slice(0,16)"></p>
+            </div>
+            <span class="text-[9px] mono text-slate-500 shrink-0" x-text="s.octets >= 1024 ? (s.octets/1024).toFixed(1)+' Ko' : s.octets+' o'"></span>
+            <button @click="resurrectSoul(s.id)" class="text-[9.5px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 shrink-0" title="Cerbère laissera remonter cette âme (confirmation requise)">↺ ressusciter</button>
+          </div>
+        </template>
+        <p x-show="!(inferno?.ames?.length)" class="text-[11px] text-slate-500 italic">Le royaume est vide — aucune fauche encore. Hadès ♇ attend.</p>
+      </div>
+      <p x-show="infernoMsg" class="text-[10.5px] mt-2 text-emerald-300" x-text="infernoMsg"></p>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE 🪙 TOKENS ÉPARGNÉS — comment le chiffre est calculé (par-dessus Hadès) ══════════════ -->
+  <div x-show="modals.tokens" x-cloak class="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('tokens')">
+    <div class="glass rounded-2xl w-full max-w-2xl max-h-[88vh] overflow-y-auto p-5 fade-in border-emerald-500/20">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">🪙 Tokens épargnés — d'où vient ce chiffre ?</h2>
+          <p class="text-[10.5px] text-slate-500">Le détail complet du calcul, mesuré sur le disque · fenêtre au-dessus de la fiche Hadès</p>
+        </div>
+        <button @click="closeModal('tokens')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <!-- ① Mesuré -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-emerald-400/90 mt-4 mb-1.5">① Mesuré — tailles réelles des cibles</h3>
+      <div class="space-y-1">
+        <template x-for="d in hadesScan.prevision_tokens?.detail || []" :key="d.type">
+          <div class="glass-card rounded-lg px-3 py-2">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px]" x-text="{'run_outdated':'📦','junk_vide':'🕳️','doublon_memoire':'👯','journal':'📜'}[d.type]||'⚰'"></span>
+              <p class="text-[10.5px] text-slate-200 flex-1 min-w-0 truncate" x-text="d.type"></p>
+              <span class="mono text-[10px] text-slate-400" x-text="d.condamnes + ' × ' + Math.round(d.taille_moyenne_octets/1024*10)/10 + ' Ko'"></span>
+            </div>
+            <p class="text-[9.5px] text-slate-500 mt-0.5" x-text="d.quoi"></p>
+            <p class="text-[9.5px] mono text-slate-400" x-text="d.octets.toLocaleString('fr-FR') + ' octets → ' + d.tokens.toLocaleString('fr-FR') + ' tokens'"></p>
+          </div>
+        </template>
+      </div>
+
+      <!-- ② Estimé -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-amber-400/90 mt-4 mb-1.5">② Estimé — le calcul en 3 étapes</h3>
+      <div class="space-y-1.5">
+        <template x-for="(c, i) in hadesScan.prevision_tokens?.calcul || []" :key="i">
+          <div class="flex items-start gap-2.5 glass-card rounded-lg px-3 py-2">
+            <span class="text-[9.5px] font-semibold text-amber-300 shrink-0 mt-0.5" x-text="c.etape"></span>
+            <div class="min-w-0 flex-1">
+              <p class="text-[9.5px] text-slate-500" x-text="c.detail"></p>
+            </div>
+            <span class="mono text-[11px] text-amber-200 shrink-0" x-text="c.valeur"></span>
+          </div>
+        </template>
+      </div>
+      <div class="mt-2 rounded-xl border border-emerald-500/25 bg-emerald-500/[.05] px-4 py-3 text-center">
+        <p class="text-[9px] uppercase text-emerald-400/80">Résultat</p>
+        <p class="mono text-2xl text-emerald-300" x-text="(hadesScan.prevision_tokens?.estime ?? 0).toLocaleString('fr-FR') + ' tokens'"></p>
+        <p class="text-[9.5px] text-slate-500 mt-1" x-text="hadesScan.prevision_tokens?.ce_que_ca_veut_dire || ''"></p>
+      </div>
+      <p class="text-[9.5px] text-slate-500 mt-2 leading-snug" x-text="hadesScan.prevision_tokens?.pourquoi_ratio || ''"></p>
+
+      <!-- ③ Limites -->
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-rose-400/90 mt-4 mb-1.5">③ Limites — à lire avant de s'y fier</h3>
+      <div class="space-y-1">
+        <template x-for="(l, i) in hadesScan.prevision_tokens?.limites || []" :key="i">
+          <p class="text-[9.5px] text-slate-400">• <span x-text="l"></span></p>
+        </template>
+      </div>
+      <p class="text-[9px] text-slate-600 mt-3">Principe affiché partout dans Cognitorium : distinguer le <b class="text-emerald-400/80">mesuré</b>, l'<b class="text-amber-300/80">estimé</b> et ses <b class="text-rose-300/80">limites</b> — jamais de certitude artificielle.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE MARS ♂ (armurerie du système) ══════════════ -->
+  <div x-show="modals.mars" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('mars')">
+    <div class="glass rounded-2xl w-full max-w-2xl max-h-[88vh] overflow-y-auto p-5 fade-in">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">♂ Mars — armurier du système solaire</h2>
+          <p class="text-[10.5px] text-slate-500">Cherche des solutions aux problèmes des autres agents · ◂ Phobos (software) · ◦ Deimos (conception)</p>
+        </div>
+        <button @click="closeModal('mars')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <div class="glass-card rounded-xl p-3 mt-4 text-[11px] text-slate-400 leading-relaxed">
+        <b class="text-slate-200">Protocole armurier</b> — un agent a besoin d'un outil pour calculer et visualiser des données complexes :
+        <span class="text-cyan-300">1.</span> Mars cherche un outil <b>open source</b> à reproduire et utiliser ;
+        à défaut <span class="text-cyan-300">2.</span> ◦ Deimos conçoit une <b>maquette</b> ;
+        <span class="text-cyan-300">3.</span> ▂ Phobos <b>forge</b> l'outil fonctionnel (calculs réels) ;
+        <span class="text-cyan-300">4.</span> livraison approuvée par ☉ SOL.
+      </div>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Inventaire de l'armurerie <span x-text="'(' + armory.length + ' · ' + (armoryCats || []).length + ' catégorie(s))'"></span></h3>
+      <!-- ✂ élagage : Deimos audite, Hadès fauche les inutiles (résidu conservé) -->
+      <div class="rounded-xl border border-orange-500/20 bg-orange-500/[.03] p-2.5 mb-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <p class="text-[10px] text-orange-200/90 flex-1 min-w-[180px]">✂ <span class="font-semibold">Élagage Deimos</span> <span class="text-slate-500">— doublons fonctionnels &amp; maquettes mortes → Hadès (résidu conservé)</span></p>
+          <button @click="pruneArmory(false)" :disabled="pruneBusy" class="text-[9.5px] px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 disabled:opacity-40" x-text="pruneBusy ? '…' : '🔍 auditer (dry-run)'"></button>
+          <button @click="pruneArmory(true)" :disabled="pruneBusy" class="text-[9.5px] px-2 py-1 rounded-lg bg-rose-500/15 border border-rose-500/40 text-rose-300 hover:bg-rose-500/25 disabled:opacity-40">✂ faucher</button>
+        </div>
+        <p x-show="pruneMsg" class="text-[9.5px] mt-1.5 text-orange-200/90 leading-snug" x-text="pruneMsg"></p>
+        <div x-show="pruneAudit && pruneAudit.condamnes && pruneAudit.condamnes.length" class="mt-1.5 max-h-28 overflow-y-auto space-y-0.5">
+          <template x-for="c in pruneAudit.condamnes.slice(0, 12)" :key="c.id">
+            <p class="text-[8.5px] text-slate-500 leading-tight">• <span class="text-slate-400" x-text="c.besoin"></span> <span class="text-rose-300/80" x-text="'— ' + c.raison"></span></p>
+          </template>
+          <p class="text-[8.5px] text-slate-600" x-show="pruneAudit.condamnes.length > 12" x-text="'+ ' + (pruneAudit.condamnes.length - 12) + ' autre(s)'"></p>
+        </div>
+      </div>
+      <template x-for="g in armoryCats" :key="g.categorie.id">
+        <div class="mb-3">
+          <p class="text-[10px] font-semibold text-slate-400 mb-1.5"><span x-text="g.categorie.icon"></span> <span x-text="g.categorie.nom"></span> <span class="text-slate-600 font-normal" x-text="'— ' + g.outils.length + ' outil(s)'"></span></p>
+          <div class="space-y-2">
+            <template x-for="r in g.outils" :key="r.id">
+          <div class="glass-card rounded-lg p-3">
+            <div class="flex items-start gap-2">
+              <span class="text-base mt-0.5" x-text="{'outil livré':'⚒','maquette conçue':'📐','opensource recommandé':'♻'}[r.statut] || '♂'"></span>
+              <div class="flex-1 min-w-0">
+                <p class="text-[11.5px] text-slate-200" x-text="r.besoin"></p>
+                <p class="text-[9px] text-slate-600 mono mt-0.5" x-text="r.id + ' · ' + r.agent + ' · ' + r.data_kind + ' · ' + (r.opensource && r.opensource.length ? 'oss : ' + r.opensource.map(o => o.name).join(', ') : 'aucun outil libre trouvé')"></p>
+                <p class="text-[9.5px] text-emerald-300/80 mt-1" x-show="r.recommandation" x-text="r.recommandation ? '→ ' + r.recommandation.consigne : ''"></p>
+              </div>
+              <div class="flex flex-col gap-1 shrink-0">
+                <a x-show="r.maquette" :href="'/api/mars/file?kind=maquette&id=' + encodeURIComponent(r.id)" target="_blank" @click="markToolUsed(r.id)" class="text-[9.5px] px-2 py-1 rounded bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20">📐 maquette</a>
+                <a x-show="r.outil" :href="'/api/mars/file?kind=outil&id=' + encodeURIComponent(r.id)" target="_blank" class="text-[9.5px] px-2 py-1 rounded bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 text-center">⚒ outil</a>
+                <button x-show="r.maquette && !r.outil" @click="forgeTool(r.id)" class="text-[9.5px] px-2 py-1 rounded bg-indigo-500/15 border border-indigo-500/40 text-indigo-200 hover:bg-indigo-500/25">▸ Phobos forge</button>
+              </div>
+            </div>
+          </div>
+            </template>
+          </div>
+        </div>
+      </template>
+      <p x-show="!armory.length" class="text-[11px] text-slate-600 italic">Aucune demande — décrivez un besoin ci-dessous.</p>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Demander un outil à Mars</h3>
+      <div class="flex flex-col gap-2">
+        <div class="flex gap-2">
+          <select x-model="marsReq.agent" class="bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-300">
+            <template x-for="b in [{id:'user',l:'◍ Moi'},{id:'uranus',l:'♅ Uranus'},{id:'venus',l:'♀ Vénus'},{id:'sebas',l:'◉ Sebas'},{id:'sol',l:'☉ SOL'}]" :key="b.id">
+              <option :value="b.id" x-text="b.l"></option>
+            </template>
+          </select>
+          <input x-model="marsReq.besoin" placeholder="besoin : ex. calculer et visualiser la corrélation charge cognitive / qualité de soudure" class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-red-500">
+        </div>
+        <button @click="requestTool()" :disabled="!marsReq.besoin.trim()" class="w-full py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-orange-500 disabled:opacity-40">♂ Envoyer à l'armurerie (recherche open source d'abord)</button>
+        <p x-show="marsMsg" class="text-[10.5px] text-red-300" x-text="marsMsg"></p>
+      </div>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Catalogue open source de référence</h3>
+      <div class="flex flex-wrap gap-1.5">
+        <template x-for="t in ossCatalogue" :key="t.id">
+          <span class="chip" :title="t.pourquoi" x-text="t.name + ' · ' + t.licence"></span>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE LAPLACE ✳ (créateur de nébuleuse) ══════════════ -->
+  <div x-show="modals.laplace" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('laplace')">
+    <div class="glass rounded-2xl w-full max-w-2xl max-h-[88vh] overflow-y-auto p-5 fade-in">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">✳ Laplace — créateur de nébuleuse du savoir</h2>
+          <p class="text-[10.5px] text-slate-500">Crée des agents à tous les niveaux, des systèmes solaires complets · les modifie, les améliore, les teste</p>
+        </div>
+        <button @click="closeModal('laplace')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Agents créés <span x-text="'(' + laplace.agents.length + ')'"></span></h3>
+      <div class="space-y-1.5">
+        <template x-for="a in laplace.agents" :key="a.id">
+          <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+            <span class="text-lg text-purple-300">✦</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-slate-200 mono truncate" x-text="a.id + (a.name ? ' · ' + a.name : '')"></p>
+              <p class="text-[10px] text-slate-500 truncate" x-text="a.role || '(rôle à définir)'"></p>
+              <p class="text-[9px] text-slate-600 mono" x-text="'parent ' + a.parent + ' · ' + a.kind + ' · ' + a.tests + ' test(s) · ' + a.statut"></p>
+            </div>
+            <button @click="improveAgent(a.id)" class="text-[9.5px] px-2 py-1 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20">améliorer</button>
+            <button @click="testAgent(a.id)" class="text-[9.5px] px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20">tester</button>
+          </div>
+        </template>
+        <p x-show="!laplace.agents.length" class="text-[11px] text-slate-600 italic">Aucun agent créé pour l'instant — Laplace attend vos instructions.</p>
+      </div>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">✦ Métatron — méta-prompting (comprend & enrichir vos requêtes)</h3>
+      <div class="flex gap-2">
+        <input x-model="metatronBox.query" placeholder="tapez une requête à analyser (intention, domaines, prompt enrichi)…" class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-purple-500">
+        <button @click="metatronAnalyze()" class="px-3 py-2 rounded-lg text-xs text-white bg-purple-600 hover:bg-purple-500">analyser</button>
+        <button @click="metatronSuggest()" class="px-3 py-2 rounded-lg text-xs text-indigo-200 bg-indigo-500/20 border border-indigo-500/40 hover:bg-indigo-500/30" title="Métatron spécifie l'agent idéal pour cette mission et pré-remplit le formulaire">✦ → agent</button>
+      </div>
+      <div x-show="metatronBox.result" x-cloak class="glass-card rounded-lg p-3 mt-2 text-[11px] leading-relaxed">
+        <p><b class="text-purple-300">intention :</b> <span class="mono" x-text="metatronBox.result?.intention"></span>
+           · <b class="text-purple-300">style :</b> <span x-text="metatronBox.result?.style"></span>
+           <span x-show="metatronBox.result?.livrable"> · <b class="text-purple-300">livrable :</b> <span x-text="metatronBox.result?.livrable"></span></span></p>
+        <p class="mt-1"><b class="text-purple-300">méta-prompt :</b> <span class="text-slate-400" x-text="metatronBox.result?.meta_prompt"></span></p>
+        <p class="mt-1 text-slate-500" x-show="metatronBox.result?.clarifications?.length" x-text="'clarifications : ' + (metatronBox.result?.clarifications || []).join(' · ')"></p>
+        <p class="mt-1 text-indigo-300" x-show="metatronBox.result?.suggestion" x-text="metatronBox.result?.suggestion ? '✦ agent spécifié : ' + metatronBox.result.suggestion.name + ' → ' + metatronBox.result.suggestion.parent + ' (' + metatronBox.result.suggestion.kind + ') — formulaire pré-rempli ci-dessous' : ''"></p>
+      </div>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Créer un agent</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <input x-model="nlAgent.name" placeholder="nom (ex : Hélios)" class="bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-purple-500 focus:outline-none">
+        <input x-model="nlAgent.role" placeholder="rôle (ex : veille solaire énergétique)" class="bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-purple-500 focus:outline-none">
+        <select x-model="nlAgent.parent" class="bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-300 focus:border-purple-500">
+          <template x-for="b in [{id:'uranus',l:'♅ Uranus — recherche'},{id:'venus',l:'♀ Vénus — finances'},{id:'sol',l:'☉ SOL — orchestration'},{id:'laplace',l:'✳ Laplace — création'},{id:'sebas',l:'◉ Sebas — terrain'}]" :key="b.id">
+            <option :value="b.id" x-text="b.l"></option>
+          </template>
+        </select>
+        <select x-model="nlAgent.kind" class="bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-300 focus:border-purple-500">
+          <option value="satellite">satellite</option><option value="analyste">analyste</option>
+          <option value="planet">planète</option><option value="agent">agent</option><option value="star">étoile</option>
+        </select>
+      </div>
+      <button @click="createAgent()" class="mt-2 w-full py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 disabled:opacity-40" :disabled="!nlAgent.name.trim()">✦ Créer l'agent</button>
+      <p class="text-[10px] text-slate-600 mt-1.5">Chaque création passe par l'approbation de ☉ SOL et se synchronise au registre de la nébuleuse.</p>
+
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Systèmes solaires créés <span x-text="'(' + laplace.systems.length + ')'"></span></h3>
+      <div class="space-y-1.5">
+        <template x-for="s in laplace.systems" :key="s.id">
+          <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+            <span class="text-lg text-amber-300">☉</span>
+            <div class="flex-1"><p class="text-xs text-slate-200 mono" x-text="s.id + ' · ' + s.star_name"></p>
+            <p class="text-[9.5px] text-slate-600" x-text="'créé ' + s.created + ' · ' + s.agents.length + ' agent(s)'"></p></div>
+          </div>
+        </template>
+      </div>
+      <div class="flex gap-2 mt-2">
+        <input x-model="nlSystem.name" placeholder="nom du système (ex : Nébuleuse-BTP)" class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-purple-500">
+        <button @click="createSystem()" :disabled="!nlSystem.name.trim()" class="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-500 disabled:opacity-40">☉ Créer système</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE SEBAS ◉ (exécutant terrain) ══════════════ -->
+  <div x-show="modals.sebas" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('sebas')">
+    <div class="glass rounded-2xl w-full max-w-xl max-h-[88vh] overflow-y-auto p-5 fade-in">
+      <div class="flex items-start justify-between">
+        <div>
+          <h2 class="text-sm font-semibold">◉ Sebas — exécutant de Laplace</h2>
+          <p class="text-[10.5px] text-slate-500">L'homme de terrain — capteurs webcam, wifi, téléphone · Laplace gère le savoir, Sebas agit</p>
+        </div>
+        <button @click="closeModal('sebas')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Capteurs</h3>
+      <div class="space-y-2">
+        <template x-for="s in sebas" :key="s.id">
+          <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+            <span class="text-lg" x-text="s.icon"></span>
+            <div class="flex-1">
+              <p class="text-xs text-slate-200" x-text="s.nom"></p>
+              <p class="text-[10px] text-slate-500" x-text="s.description"></p>
+            </div>
+            <span class="text-[9.5px] mono px-2 py-1 rounded" :class="s.connecte ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30' : 'bg-slate-500/10 text-slate-500 border border-slate-600/40'" x-text="s.statut"></span>
+          </div>
+        </template>
+      </div>
+      <p class="text-[10px] text-amber-300/80 mt-2">⚠️ Environnement sandbox sans périphérique : interfaces prêtes, aucune donnée fabriquée.</p>
+      <h3 class="text-[10px] uppercase tracking-[.14em] text-slate-600 mt-5 mb-2">Enregistrer une observation terrain</h3>
+      <div class="flex gap-2">
+        <select x-model="obs.sensor" class="bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-300">
+          <option value="webcam">📷 webcam</option><option value="wifi">📶 wifi</option><option value="telephone">📱 téléphone</option>
+        </select>
+        <input x-model="obs.contenu" placeholder="ce que Sebas observe…" class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-emerald-500">
+        <button @click="recordObs()" :disabled="!obs.contenu.trim()" class="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40">◉ consigner</button>
+      </div>
+      <p x-show="obsMsg" class="text-[10.5px] text-emerald-300 mt-2" x-text="obsMsg"></p>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE SOL (chat + vues) ══════════════ -->
+  <div x-show="modals.sol" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('sol')">
+    <div class="glass rounded-2xl w-full h-[88vh] flex shadow-2xl fade-in" :class="split ? 'max-w-6xl' : 'max-w-4xl'">
+      <!-- ◀ FICHE RÉACTIVE (côté gauche, reste visible pendant le chat) -->
+      <div x-show="split" x-cloak class="w-[400px] shrink-0 border-r border-white/5 flex flex-col min-h-0">
+        <div class="px-4 py-2.5 border-b border-white/5 flex items-center gap-2">
+          <span class="text-[10px] uppercase tracking-[.12em] text-slate-500">Fiche</span>
+          <span class="text-[11px] font-semibold text-amber-200" x-text="({sol:'☉ SOL', hades:'♇ Hadès & Moires', profil:'✦ Profil cognitif', etat:'🟢 État du système', divination:'🏆 Apollon', sebas:'◉ Sebas', mars:'♂ Mars', themis:'⚖ Thémis — justice divine'})[sideView] || '—'"></span>
+          <span class="flex-1"></span>
+          <button @click="closeSplit()" class="text-[9.5px] px-2 py-0.5 rounded bg-white/5 border border-white/10 text-slate-400 hover:text-white">replier ✕</button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-3.5 space-y-2.5">
+
+          <!-- vue : identité SOL -->
+          <template x-if="sideView==='sol' && sideSol">
+            <div class="space-y-2.5">
+              <div class="flex items-start gap-3">
+                <div class="text-3xl leading-none">☉</div>
+                <div>
+                  <p class="text-sm font-semibold text-white" x-text="sideSol.body.name"></p>
+                  <p class="text-[10.5px] text-amber-300/90" x-text="sideSol.body.departement"></p>
+                  <p class="text-[10px] text-slate-400 mt-1 leading-snug" x-text="sideSol.body.role"></p>
+                </div>
+              </div>
+              <div class="grid grid-cols-4 gap-1.5">
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Interactions</div><div class="mono text-sm text-emerald-300" x-text="sideSol.stats.interactions"></div></div>
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Mémoire</div><div class="mono text-sm text-amber-300" x-text="sideSol.stats.memoire"></div></div>
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Concepts</div><div class="mono text-sm text-indigo-300" x-text="sideSol.stats.concepts"></div></div>
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Réf.</div><div class="mono text-sm text-cyan-300" x-text="sideSol.stats.references"></div></div>
+              </div>
+              <div class="glass-card rounded-lg p-2.5">
+                <p class="text-[10px] text-slate-500 mb-1">Cour de SOL</p>
+                <template x-for="c in sideSol.body.court || []" :key="c.id">
+                  <p class="text-[10.5px] text-slate-300">🏆 <b x-text="c.name"></b> — <span class="text-slate-500" x-text="c.role"></span></p>
+                </template>
+              </div>
+              <p class="text-[9.5px] text-slate-600">La fiche change selon vos demandes : cliquez « scan Hadès », « profil », « divination »… ou posez la question librement.</p>
+            </div>
+          </template>
+
+          <!-- vue : Hadès (scan réactif) -->
+          <template x-if="sideView==='hades'">
+            <div class="space-y-2.5">
+              <div class="grid grid-cols-2 gap-1.5">
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Condamnés</div><div class="mono text-base text-rose-300" x-text="hadesScan.stats?.condamnes ?? '—'"></div></div>
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Libérable</div><div class="mono text-base text-rose-300" x-text="(hadesScan.stats?.ko ?? 0) + ' Ko'"></div></div>
+                <div class="glass-card rounded-lg p-2"><div class="text-[8.5px] uppercase text-slate-600">Données vues</div><div class="mono text-base text-slate-300" x-text="(hadesScan.stats?.mo_octets ?? '—') + ' Mo'"></div></div>
+                <div class="glass-card rounded-lg p-2 border-emerald-500/25"><div class="text-[8.5px] uppercase text-emerald-400/90">🪙 Tokens épargnés</div><div class="mono text-base text-emerald-300" x-text="(hadesScan.prevision_tokens?.estime ?? 0).toLocaleString('fr-FR')"></div></div>
+              </div>
+              <div class="glass-card rounded-lg p-2.5">
+                <p class="text-[9px] uppercase text-slate-600 mb-1">Traitement des données</p>
+                <template x-for="(t, i) in hadesScan.traitement || []" :key="i">
+                  <p class="text-[10px] text-slate-400"><span class="mono text-rose-400/70" x-text="(i+1)+'.'"></span> <b class="text-slate-300" x-text="t.etape"></b> — <span x-text="t.detail"></span></p>
+                </template>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5">
+                <div class="glass-card rounded-lg p-2 border-pink-500/15"><p class="text-[10px] text-pink-300 font-semibold">🧵 Clotho</p><p class="mono text-sm text-pink-300" x-text="hadesScan.moires?.clotho?.naissance_24h ?? '—'"></p><p class="text-[8.5px] text-slate-600">naissances/24 h</p></div>
+                <div class="glass-card rounded-lg p-2 border-pink-500/15"><p class="text-[10px] text-violet-300 font-semibold">📏 Lachésis</p><p class="mono text-sm text-violet-300" x-text="(hadesScan.moires?.lachesis?.age_moyen_runs_jours ?? '—') + ' j'"></p><p class="text-[8.5px] text-slate-600">âge moyen</p></div>
+                <div class="glass-card rounded-lg p-2 border-pink-500/15"><p class="text-[10px] text-rose-300 font-semibold">✂️ Atropos</p><p class="mono text-sm text-rose-300" x-text="hadesScan.moires?.atropos?.condamnes ?? '—'"></p><p class="text-[8.5px] text-slate-600">condamnés</p></div>
+              </div>
+              <div class="glass-card rounded-lg p-2.5">
+                <p class="text-[9px] uppercase text-slate-600 mb-1">Condamnés (top 5)</p>
+                <template x-for="(t, i) in (hadesScan.targets || []).slice(0,5)" :key="i">
+                  <p class="text-[10px] text-slate-400 truncate mono" x-text="t.cible"></p>
+                </template>
+                <p x-show="!(hadesScan.targets?.length)" class="text-[10px] text-emerald-300/80 italic">système propre — rien à faucher</p>
+              </div>
+              <div class="glass-card rounded-lg p-2.5">
+                <p class="text-[9px] uppercase text-slate-600 mb-1">Pourquoi faucher ? (quoi / raison / conservé)</p>
+                <template x-for="(pk, tid) in (hadesScan.pourquoi || {})" :key="tid">
+                  <p class="text-[9.5px] text-slate-400 leading-snug" x-show="(hadesScan.stats?.par_type?.[tid]||0)>0">
+                    <span x-text="{'run_outdated':'📦','junk_vide':'🕳️','doublon_memoire':'👯','journal':'📜'}[tid]||'⚰'"></span>
+                    <b class="text-slate-300" x-text="tid"></b> : <span x-text="pk.quoi"></span> — <span x-text="pk.raison"></span>. <span class="text-emerald-300/70" x-text="'Conservé : '+pk.sur"></span>
+                  </p>
+                </template>
+                <p class="text-[9.5px] text-emerald-300/80 mt-1">🛡 <span x-text="hadesScan.ce_qui_est_conserve || ''"></span></p>
+              </div>
+              <button @click="loadHades(); openModal('hades')" class="w-full text-[10.5px] px-3 py-1.5 rounded-lg bg-slate-500/10 border border-slate-500/30 text-slate-300 hover:bg-slate-500/20">♇ modale Hadès complète ↗</button>
+            </div>
+          </template>
+
+          <!-- vue : profil cognitif -->
+          <template x-if="sideView==='profil'">
+            <div class="space-y-2">
+              <template x-for="d in sideProfil.dimensions || []" :key="d.id">
+                <div>
+                  <div class="flex justify-between text-[10.5px]"><span class="text-slate-300" x-text="d.label"></span><span class="mono text-indigo-300" x-text="d.valeur"></span></div>
+                  <div class="h-1.5 bg-black/30 rounded-full overflow-hidden mt-0.5"><div class="h-full bg-indigo-500/60 rounded-full" :style="'width:'+d.valeur+'%'"></div></div>
+                </div>
+              </template>
+              <p class="text-[9px] uppercase text-slate-600 pt-1">Biais induits</p>
+              <template x-for="b in sideProfil.biais || []" :key="b.id">
+                <div>
+                  <div class="flex justify-between text-[10.5px]"><span class="text-slate-300" x-text="b.label"></span><span class="mono" :class="b.valeur>=70?'text-rose-300':b.valeur>=40?'text-amber-300':'text-emerald-300'" x-text="b.valeur+'%'"></span></div>
+                  <div class="h-1.5 bg-black/30 rounded-full overflow-hidden mt-0.5"><div class="h-full rounded-full" :class="b.valeur>=70?'bg-rose-500/70':b.valeur>=40?'bg-amber-500/70':'bg-emerald-500/70'" :style="'width:'+b.valeur+'%'"></div></div>
+                </div>
+              </template>
+              <p class="text-[9px] text-slate-600">⚠️ heuristiques statistiques — pas un test psychométrique validé</p>
+            </div>
+          </template>
+
+          <!-- vue : état système -->
+          <template x-if="sideView==='etat' && sideEtat">
+            <div class="space-y-2">
+              <div class="glass-card rounded-lg p-3"><div class="text-[9px] uppercase text-slate-600">Intégrité</div>
+                <div class="mono text-lg" :class="sideEtat.integrite.statut==='stable'?'text-emerald-300':'text-amber-300'" x-text="sideEtat.integrite.score+'/100 · '+sideEtat.integrite.statut"></div></div>
+              <div class="glass-card rounded-lg p-3"><div class="text-[9px] uppercase text-slate-600">Corps en ligne</div>
+                <div class="mono text-lg text-slate-300" x-text="(sideEtat.corps||[]).length"></div></div>
+              <div class="glass-card rounded-lg p-3"><div class="text-[9px] uppercase text-slate-600">Dépense du jour</div>
+                <div class="mono text-lg text-amber-300" x-text="sideEtat.budget.spend_today_usd.toFixed(4) + ' $ / ' + sideEtat.budget.daily_cap_usd + ' $'"></div></div>
+              <div class="glass-card rounded-lg p-3" x-show="sideEtat.integrite.alertes.length">
+                <p class="text-[9px] uppercase text-slate-600 mb-1">Alertes préventives</p>
+                <template x-for="(a, i) in sideEtat.integrite.alertes" :key="i"><p class="text-[10px] text-amber-300/90" x-text="'⚠️ ' + a"></p></template>
+              </div>
+            </div>
+          </template>
+
+          <!-- vue : divination Apollon -->
+          <template x-if="sideView==='divination' && sideDivination">
+            <div class="space-y-2">
+              <p class="text-[11px] text-amber-200 font-semibold" x-text="'🏆 ' + sideDivination.verdict"></p>
+              <template x-for="(pr, i) in sideDivination.presages || []" :key="i">
+                <div class="glass-card rounded-lg p-2.5 border-amber-500/15">
+                  <p class="text-[10.5px] text-amber-200 font-semibold" x-text="({bon:'🟢',moyen:'🟡',mauvais:'🔴'})[pr.tone] + ' ' + pr.titre"></p>
+                  <p class="text-[10px] text-slate-300 mt-0.5" x-text="pr.lecture"></p>
+                  <p class="text-[9.5px] text-slate-500 italic mt-1" x-text="'« ' + pr.oracle + ' »'"></p>
+                </div>
+              </template>
+              <p class="text-[9px] text-slate-600" x-text="sideDivination.methode"></p>
+            </div>
+          </template>
+
+          <!-- vue : Thémis (justice divine) -->
+          <template x-if="sideView==='themis' && sideThemis">
+            <div class="space-y-2">
+              <p class="text-[11px] text-amber-200 font-semibold" x-text="sideThemis.verdict"></p>
+              <div class="glass-card rounded-lg p-2.5">
+                <p class="text-[9px] uppercase text-slate-600 mb-1">Menaces instruites</p>
+                <template x-for="(m, i) in sideThemis.menaces || []" :key="i">
+                  <p class="text-[10px] text-slate-400">• <span class="text-rose-300/80" x-text="'['+m.gravite+']'"></span> <span x-text="m.quoi"></span> — <span class="text-slate-500" x-text="m.remede"></span></p>
+                </template>
+                <p x-show="!(sideThemis.menaces||[]).length" class="text-[10px] text-emerald-300/80 italic">aucune menace</p>
+              </div>
+              <div class="glass-card rounded-lg p-2.5">
+                <p class="text-[9px] uppercase text-slate-600 mb-1">Constitution (comme la démocratie)</p>
+                <template x-for="(c, i) in sideThemis.constitution || []" :key="i">
+                  <p class="text-[10px] text-slate-400"><b class="text-slate-300" x-text="c.organe"></b> <span class="text-slate-600" x-text="'('+c.pouvoir+')'"></span> — <span x-text="c.loi_vivante"></span></p>
+                </template>
+              </div>
+              <button @click="send('Thémis, applique la justice')" class="w-full text-[10.5px] px-3 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-200 hover:bg-amber-500/25">🗡 appliquer la justice (fauche réelle)</button>
+            </div>
+          </template>
+
+          <!-- vue : Sebas / Mars (identités) -->
+          <template x-if="sideView==='sebas' || sideView==='mars'">
+            <div class="space-y-2">
+              <div class="flex items-start gap-3">
+                <div class="text-3xl" x-text="sideView==='sebas' ? '◉' : '♂'"></div>
+                <div>
+                  <p class="text-sm font-semibold text-white" x-text="sideView==='sebas' ? 'Sebas — exécutant divin' : 'Mars — armurier'"></p>
+                  <p class="text-[10px] text-slate-400 mt-1 leading-snug" x-text="sideView==='sebas'
+                    ? 'Exécute les commandes divines de Laplace : observer, écouter, consigner, faucher, état. Capteurs non détectés en sandbox — observation déclarative, aucune donnée fabriquée.'
+                    : 'Forge les outils : recherche open source d\'abord, maquette Deimos puis forge Phobos si besoin.'"></p>
+                </div>
+              </div>
+              <button @click="sideView==='sebas' ? openBodySmart('sebas') : openBodySmart('mars')" class="w-full text-[10.5px] px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20">fiche complète ↗</button>
+              <!-- 👁 God's Eye View : l'outil de Sebas au service de Mercure/Hermès -->
+              <div x-show="sideView==='sebas'" class="mt-2.5 rounded-xl border border-cyan-500/25 bg-cyan-500/[.04] p-2.5">
+                <div class="flex items-center gap-2">
+                  <h4 class="text-[11px] font-semibold text-cyan-200">👁 God's Eye View</h4>
+                  <span class="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">MIT · OSS</span>
+                  <span class="flex-1"></span>
+                  <span class="text-[8.5px]" :class="godseye?.installe ? 'text-emerald-300' : 'text-slate-500'" x-text="godseye?.installe ? '● installé' : '○ non installé'"></span>
+                </div>
+                <p class="text-[9.5px] text-slate-400 leading-snug mt-1">Satellite-espion dans le navigateur, <span class="text-slate-200">données réelles</span> : aviation, navires, satellites, séismes, trafic, incendies (NASA FIRMS), caméras publiques, câbles sous-marins — globe 3D photoréaliste (CesiumJS). Sebas 🛠 manie l'œil pour aider <span class="text-sky-300">Mercure/Hermès ✉</span> : datas sur le monde et contexte pour vos interactions.</p>
+                <p class="text-[8.5px] text-slate-600 leading-snug mt-1">⚠ aucune reconnaissance faciale ni suivi de personnes · les données peuvent être retardées ou erronées (avis du projet)</p>
+                <div class="flex flex-wrap gap-1 mt-2">
+                  <a :href="godseye?.outil?.repo || 'https://github.com/bilawalsidhu/gods-eye-view'" target="_blank" rel="noopener" class="text-[9.5px] px-2 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-200 hover:bg-cyan-500/20">↗ ouvrir l'outil (accès utilisateur)</a>
+                  <button @click="send("parle-moi de l'outil god's eye view")" class="text-[9.5px] px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10">✳ demander à Laplace</button>
+                </div>
+                <div class="mt-2 pt-2 border-t border-white/5">
+                  <p class="text-[9px] uppercase tracking-[.14em] text-slate-500">🕵 agence de l'ombre <span class="normal-case tracking-normal" x-text="'— ' + (godseye?.agence?.length ?? 0) + ' astre(s)-espion(s) autour de Sebas'"></span></p>
+                  <div class="flex gap-1.5 mt-1.5">
+                    <input x-model="spyMission" placeholder="mission : ex. surveiller l'actualité aéronautique européenne" class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-2 py-1 text-[10px] text-slate-200 placeholder-slate-600 focus:border-cyan-500/60">
+                    <button @click="orderSpy()" :disabled="spyBusy" class="text-[9.5px] px-2.5 py-1 rounded-lg bg-cyan-500/15 border border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/25 disabled:opacity-40" x-text="spyBusy ? '…' : '+ astre espion'"></button>
+                  </div>
+                  <template x-for="a in (godseye?.agence || [])" :key="a.id">
+                    <p class="text-[9px] text-slate-500 mt-1 leading-snug">👁 <span class="text-cyan-300" x-text="a.name"></span> — <span x-text="(a.role || '').split('— ').pop()"></span></p>
+                  </template>
+                  <p x-show="spyMsg" class="text-[9.5px] mt-1 text-cyan-300" x-text="spyMsg"></p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ▶ COLONNE CHAT -->
+      <div class="flex-1 flex flex-col min-w-0 min-h-0">
+      <div class="px-4 py-3 border-b border-white/5 flex items-center gap-2.5">
+        <img src="/static/laplace_nebula.png" alt="Laplace — nébuleuse" class="w-9 h-9 rounded-full object-cover border border-violet-400/40 animate-pulse" style="box-shadow:0 0 16px rgba(167,139,250,.35)" title="Laplace ✳ — entité supérieure bienveillante, sans forme humaine : il crée ses constellations et ses systèmes pour interagir avec vous dans le meilleur alignement possible">
+        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-300/40 to-amber-600/20 border border-amber-400/40 flex items-center justify-center text-amber-200" title="☉ SOL approuve chaque réponse">☉</span>
+        <div class="flex-1"><h2 class="text-sm font-semibold">✳ Laplace — interlocuteur principal <span class="text-[9.5px] text-amber-300/80 font-normal">· ☉ SOL approuve chaque réponse</span></h2>
+        <p class="text-[10px] text-slate-600">réponses ancrées sur les données réelles · toute interaction inter-corps est approuvée & journalisée</p></div>
+        <button x-show="!split" @click="startSplit('sol')" class="text-[10px] px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white" title="afficher la fiche réactive à côté du chat">⬅ fiche</button>
+        <button @click="closeModal('sol')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <!-- vues -->
+      <div class="px-4 pt-3">
+        <div class="flex flex-wrap gap-1.5">
+          <button @click="setView('etat')" :class="view==='etat' && 'on'" class="view-btn">🟢 État système</button>
+          <button @click="setView('interactions')" :class="view==='interactions' && 'on'" class="view-btn">☰ Interactions</button>
+          <button @click="setView('budget')" :class="view==='budget' && 'on'" class="view-btn">♀ Budget</button>
+          <button @click="setView('constellation')" :class="view==='constellation' && 'on'" class="view-btn">✦ Constellation</button>
+          <span class="flex-1"></span>
+          <span class="text-[10px] text-slate-600 self-center">ex : « mission : méta-analyse attention 2024-2026 » · « je veux améliorer le BTP avec l'IA »</span>
+        </div>
+      </div>
+      <!-- panneau de vue -->
+      <div x-show="viewPanel" x-cloak class="mx-4 mt-3 glass-card rounded-xl p-3.5 max-h-[30vh] overflow-auto text-[12px] text-slate-300" x-html="viewPanel"></div>
+      <!-- messages -->
+      <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3" x-ref="msgs">
+        <template x-for="(m, i) in messages" :key="i">
+          <div class="fade-in">
+            <template x-if="m.role==='user'">
+              <div class="flex justify-end"><div class="max-w-[80%] bg-indigo-500/15 border border-indigo-500/30 text-slate-200 text-[12px] rounded-xl rounded-br-sm px-3 py-2" x-text="m.text"></div></div>
+            </template>
+            <template x-if="m.role!=='user'">
+              <div class="flex gap-2">
+                <span class="w-6 h-6 shrink-0 rounded-full bg-purple-400/15 border border-purple-400/30 flex items-center justify-center text-[11px] text-purple-300 mt-0.5">✳</span>
+                <div class="max-w-[88%] min-w-0">
+                  <div class="glass-card text-[12px] text-slate-300 leading-relaxed rounded-xl rounded-tl-sm px-3 py-2 whitespace-pre-wrap" x-text="m.text"></div>
+                  <div class="flex flex-wrap gap-1.5 mt-1.5" x-show="m.artifacts && m.artifacts.length">
+                    <template x-for="(a, j) in (m.artifacts || [])" :key="j">
+                      <button class="chip" @click="openArtifact(a.path)" x-text="a.icon + ' ' + a.name"></button>
+                    </template>
+                  </div>
+                  <div class="text-[9px] text-slate-700 mt-1 mono" x-show="m.intent" x-text="'intent : ' + m.intent"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+      <!-- ⚡ actions rapides : liste déroulante groupée + raccourcis majeurs -->
+      <div class="px-4 pt-2 flex flex-wrap gap-1.5 items-center">
+        <div class="relative">
+          <button @click="quickOpen = !quickOpen" class="chip !border-amber-400/50 !text-amber-200 !bg-amber-500/10" title="Toutes les actions rapides du système">⚡ actions rapides <span x-text="quickOpen ? '▴' : '▾'"></span></button>
+          <div x-show="quickOpen" @click.outside="quickOpen = false" x-cloak x-transition
+               class="absolute bottom-full mb-2 left-0 z-40 w-[600px] max-w-[92vw] max-h-[300px] overflow-y-auto glass rounded-xl border border-amber-500/25 p-3 shadow-2xl">
+            <template x-for="grp in quickGroups()" :key="grp.g">
+              <div class="mb-2.5 last:mb-0">
+                <p class="text-[9px] uppercase tracking-[.16em] text-amber-300/60 mb-1.5" x-text="grp.g"></p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1">
+                  <template x-for="a in grp.items" :key="a.l">
+                    <button @click="quickRun(a)" class="text-left text-[10.5px] leading-tight px-2 py-1.5 rounded-lg bg-white/[.03] hover:bg-amber-500/10 border border-white/5 hover:border-amber-400/40 text-slate-300 hover:text-amber-200 transition"
+                            :title="a.m || a.l">
+                      <span x-text="a.i"></span> <span x-text="a.l"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </template>
+            <p class="text-[9px] text-slate-600 pt-1 border-t border-white/5">chaque action parle à la divinité concernée — réponse réelle du système, aucune simulation</p>
+          </div>
+        </div>
+        <span class="text-[9px] text-slate-600 self-center mx-0.5">proposé :</span>
+        <button @click="send('état du système')" class="chip">🟢 état système</button>
+        <button @click="send('Thémis, juge le système')" class="chip">⚖ Thémis</button>
+        <button @click="setView('interactions')" class="chip">☰ interactions</button>
+        <button @click="apollonDivine()" class="chip !border-amber-400/50 !text-amber-200">🏆 divination</button>
+      </div>
+      <!-- saisie -->
+      <div class="px-4 pb-3 flex gap-2 items-end border-t border-white/5 pt-3">
+        <textarea x-model="input" rows="1" @keydown.enter.prevent="send()" placeholder="Parlez à Laplace ✳ — Métatron ✦ affine vos requêtes…"
+          class="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-xl px-3 py-2 text-[12px] text-slate-200 placeholder-slate-600 focus:border-amber-500/60 focus:outline-none resize-none max-h-24"></textarea>
+        <button @click="send()" :disabled="busy || !input.trim()"
+          class="px-3.5 py-2 rounded-xl text-xs font-semibold text-amber-100 bg-gradient-to-r from-amber-500/80 to-amber-600/80 hover:from-amber-400/90 disabled:opacity-40 transition" x-text="busy ? '…' : '➤'"></button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE URANUS (3D + constellations) ══════════════ -->
+  <div x-show="modals.uranus" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('uranus')">
+    <div class="glass rounded-2xl w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl fade-in">
+      <div class="px-4 py-3 border-b border-white/5 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/40 to-cyan-400/20 border border-indigo-400/40 flex items-center justify-center text-indigo-200">♅</span>
+        <div class="flex-1"><h2 class="text-sm font-semibold">Uranus — agent chercheur <span class="text-slate-500 font-normal">· recherche scientifique</span></h2>
+        <p class="text-[10px] text-slate-600">cliquez un satellite dans la vue 3D → sa constellation de connaissances s'affiche dessous</p></div>
+        <a href="/agent" class="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300">console missions →</a>
+        <button @click="closeModal('uranus')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <!-- vue 3D Uranus + satellites -->
+      <div class="mx-4 mt-3 glass-card rounded-xl relative overflow-hidden" style="height:280px">
+        <div id="uranus3d" class="absolute inset-0"></div>
+        <div class="absolute top-2 left-3 text-[10px] text-slate-500 pointer-events-none">vue 3D — Uranus, ses anneaux et ses 7 satellites (distances réelles relatives)</div>
+        <div class="absolute bottom-2 left-3 right-3 flex flex-wrap gap-1.5">
+          <button class="sat-chip" :class="selectedSat==='uranus' && 'on'" @click="selectSat('uranus')">♅ Uranus (global)</button>
+          <template x-for="s in satellites" :key="s.id">
+            <button class="sat-chip" :class="selectedSat===s.id && 'on'" @click="selectSat(s.id)" x-text="s.name"></button>
+          </template>
+        </div>
+      </div>
+      <!-- constellation de connaissances -->
+      <div class="mx-4 mt-3 mb-4 glass-card rounded-xl flex-1 min-h-0 flex flex-col">
+        <div class="px-3.5 py-2 border-b border-white/5 flex items-center gap-2">
+          <span class="text-[10px] uppercase tracking-[.12em] text-slate-500">Constellation de connaissances</span>
+          <span class="text-[11px] font-semibold text-indigo-300" x-text="selectedSatLabel"></span>
+          <span class="flex-1"></span>
+          <span class="text-[9.5px] text-slate-600" x-text="graphInfo"></span>
+        </div>
+        <svg id="constellation" class="flex-1 w-full" style="min-height:0"></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE VÉNUS (3D + finances) ══════════════ -->
+  <div x-show="modals.venus" x-cloak class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('venus')">
+    <div class="glass rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col shadow-2xl fade-in">
+      <div class="px-4 py-3 border-b border-white/5 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-300/40 to-orange-500/20 border border-amber-400/40 flex items-center justify-center text-amber-200">♀</span>
+        <div class="flex-1"><h2 class="text-sm font-semibold">Vénus — finances, valeur & bien-être <span class="text-slate-500 font-normal">· taureau ♉</span></h2>
+        <p class="text-[10px] text-slate-600">grande analyste · sa cour : Thalie (compta) · Euphrosyne (arbitrage) · Aglaé (prévisions) · Éros (contrats)</p></div>
+        <button @click="closeModal('venus')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <div class="mx-4 mt-3 glass-card rounded-xl relative overflow-hidden" style="height:230px">
+        <div id="venus3d" class="absolute inset-0"></div>
+        <div class="absolute top-2 left-3 text-[10px] text-slate-500 pointer-events-none">vue 3D — Vénus et sa cour (Vénus n'a pas de lunes : ses analystes sont mythologiques)</div>
+        <div class="absolute bottom-2 left-3 right-3 flex flex-wrap gap-1.5">
+          <button class="sat-chip" :class="selectedAnalyst==='venus' && 'on'" @click="selectAnalyst('venus')">♀ Vénus (global)</button>
+          <template x-for="c in court" :key="c.id">
+            <button class="sat-chip" :class="selectedAnalyst===c.id && 'on'" @click="selectAnalyst(c.id)" x-text="c.name"></button>
+          </template>
+        </div>
+      </div>
+      <div class="mx-4 mt-3 mb-4 glass-card rounded-xl flex-1 min-h-0 overflow-auto p-3.5">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+          <div class="glass rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Dépensé aujourd'hui</div><div class="text-sm mono text-amber-300" x-text="(venus.spend_today_usd ?? 0).toFixed(4) + ' $'"></div></div>
+          <div class="glass rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Cap jour / mois</div><div class="text-sm mono text-slate-300" x-text="(venus.budget?.daily_cap_usd ?? '—') + ' / ' + (venus.budget?.monthly_cap_usd ?? '—') + ' $'"></div></div>
+          <div class="glass rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Tokens aujourd'hui</div><div class="text-sm mono text-slate-300" x-text="(venus.tokens_today?.in ?? 0) + ' ↓ / ' + (venus.tokens_today?.out ?? 0) + ' ↑'"></div></div>
+          <div class="glass rounded-lg p-2.5"><div class="text-[9px] uppercase text-slate-600">Projection mois</div><div class="text-sm mono text-amber-300" x-text="(venus.forecast?.monthly_projection_usd ?? 0).toFixed(2) + ' $'"></div></div>
+        </div>
+        <svg id="venusgraph" class="w-full" style="height:300px"></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALE ARTEFACT (papier, dossier, graph…) ══════════════ -->
+  <div x-show="modals.artifact" x-cloak class="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-3 md:p-6" @click.self="closeModal('artifact')">
+    <div class="glass rounded-2xl w-full max-w-4xl h-[88vh] flex flex-col shadow-2xl fade-in">
+      <div class="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+        <span class="mono text-xs text-cyan-300 truncate" x-text="artifact.path?.split('/').pop()"></span>
+        <span class="text-[9px] text-slate-600 mono truncate hidden md:inline" x-text="artifact.path"></span>
+        <span class="flex-1"></span>
+        <button @click="closeModal('artifact')" class="text-slate-500 hover:text-white text-xl leading-none px-2">✕</button>
+      </div>
+      <div class="flex-1 overflow-auto p-5">
+        <div x-show="artifact.kind==='md'" class="md max-w-3xl mx-auto" x-html="artifact.html"></div>
+        <div x-show="artifact.kind==='html'" class="h-full"><iframe :srcdoc="artifact.raw" class="w-full h-[70vh] rounded-lg bg-white/95"></iframe></div>
+        <div x-show="artifact.kind==='graph'" class="h-full"><svg id="artifactgraph" class="w-full h-[70vh]"></svg></div>
+        <pre x-show="artifact.kind==='raw'" class="text-[11.5px] leading-relaxed text-slate-300 whitespace-pre-wrap mono" x-text="artifact.raw"></pre>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-[10px] text-slate-700 py-2 border-t border-white/5">
+    ☉ SOL · ♅ Uranus (recherche) · ♀ Vénus (finances) — journaux : <span class="mono">output/cosmos/</span>
+  </footer>
+</div>
+
+<script>
+// index satellite/cour → planète propriétaire, rempli par la scène 3D
+window.__moonOwner = {};
+function moonOwnerOf(id) { return window.__moonOwner[id] || null; }
+
+function solApp() {
+  return {
+    // état
+    bodies: [], satellites: [], court: [],
+    integ: {label: '…', statut: 'stable', score: null},
+    budget: {}, venus: {},
+    messages: [], input: '', busy: false, view: null, viewPanel: '',
+    modals: {sol: false, uranus: false, venus: false, artifact: false, laplace: false, sebas: false, mars: false, body: false, hades: false, tokens: false, aide: false, inferno: false, olympus: false, ombre: false},
+    olympus: null, olympusBeat: null, olyFeed: [], olyChat: [],
+    bodyData: null, inspectN: null, bodyToast: null,
+    hadesScan: {}, hadesMsg: '', hadesDone: false, targetOpen: null, targetDetail: null,
+    quickOpen: false,
+    quickActions: [
+      {g:'Système & état', i:'🟢', l:'état du système', m:'état du système'},
+      {g:'Système & état', i:'🪙', l:'budget & tokens épargnés', m:'budget du système'},
+      {g:'Système & état', i:'☰', l:'interactions récentes', m:'interactions'},
+      {g:'Système & état', i:'✦', l:'constellation entière', m:'constellation'},
+      {g:'Système & état', i:'👤', l:'mon profil cognitif', m:'mon profil cognitif'},
+      {g:'Divinités au travail', i:'⚖', l:'Thémis juge le système', m:'Thémis, juge le système'},
+      {g:'Divinités au travail', i:'🔨', l:'Thémis applique la justice', m:'Thémis, applique la justice'},
+      {g:'Divinités au travail', i:'◉', l:'Sebas observe le chantier', m:'Sebas, observe le chantier'},
+      {g:'Divinités au travail', i:'🏆', l:"divination d'Apollon", fn:'apollonDivine'},
+      {g:'Divinités au travail', i:'⛓', l:"Ananké & le fil du destin", m:"parle-moi d'Ananké et des Moires"},
+      {g:'Divinités au travail', i:'🛠', l:"l'armurerie de Mars", m:'armurerie'},
+      {g:'Divinités au travail', i:'👁', l:"God's Eye View (œil de Sebas)", m:"parle-moi de l'outil god's eye view"},
+      {g:'Divinités au travail', i:'🕵', l:"commander un astre espion (agence de l'ombre)", m:"Sebas, crée un astre espion de l'agence de l'ombre pour veiller sur le monde"},
+      {g:'Divinités au travail', i:'🕵', l:"Sera Victoria (bureau de l'ombre)", m:"parle-moi de Sera Victoria"},
+      {g:'Enfers & justice', i:'♇', l:'scan de Hadès : données, traitement, éligibles', m:'scan de Hadès : données, traitement, éligibles au fauchage'},
+      {g:'Enfers & justice', i:'⚰', l:'lancer la fauche', m:'Hadès, lance la fauche'},
+      {g:'Enfers & justice', i:'🔥', l:"le royaume d'Hadès (INFERNO)", m:'montre-moi les enfers'},
+      {g:'Enfers & justice', i:'🐾', l:"résurrection d'une âme", m:'comment ressusciter une entité supprimée ?'},
+      {g:'Enfers & justice', i:'💀', l:'ce que deviennent les supprimés', m:'que deviennent les entités supprimées ?'},
+      {g:'Recherche & production', i:'♅', l:'mission pour Uranus', m:"mission : dresse l'état de l'art sur la charge cognitive"},
+      {g:'Recherche & production', i:'🔬', l:'mission méthodologie', m:"mission : méthodologie d'étude comparative"},
+      {g:'Recherche & production', i:'⚔', l:'forge un outil sur mesure', m:"j'ai besoin d'un outil pour visualiser des réseaux"},
+      {g:'Recherche & production', i:'📈', l:'métriques du système', m:'montre-moi les métriques du système'},
+      {g:'Recherche & production', i:'🌾', l:'talents & recrutement (Cérès)', m:"parle-moi des talents de la cour de Cérès"},
+      {g:'Mémoire & identité', i:'📜', l:'qui suis-je ?', m:'qui suis-je ?'},
+      {g:'Mémoire & identité', i:'🧠', l:'mémoire du système', m:'que souvient le système de moi ?'},
+      {g:'Mémoire & identité', i:'🌌', l:"la nébuleuse d'agents", m:"montre la nébuleuse d'agents"},
+      {g:'Mémoire & identité', i:'🔧', l:'aide & gestes du système', m:'aide'},
+    ],
+    godseye: null, spyMission: '', spyBusy: false, spyMsg: '',
+    shadow: null, hireMission: '', hireBusy: false, shadowMsg: '', forgeBusy: false,
+    inferno: null, infernoMsg: '',
+    systemOn: true, skyMsg: '',
+    split: false, sideView: null, sideSol: null, sideProfil: {}, sideEtat: null, sideDivination: null, sideThemis: null,
+    metatronBox: {query: '', result: null},
+    laplace: {agents: [], systems: []}, sebas: [],
+    armory: [], armoryCats: [], pruneMsg: '', pruneAudit: null, pruneBusy: false, ossCatalogue: [],
+    marsReq: {agent: 'user', besoin: ''}, marsMsg: '',
+    nlAgent: {name: '', role: '', parent: 'uranus', kind: 'satellite'},
+    nlSystem: {name: ''}, obs: {sensor: 'webcam', contenu: ''}, obsMsg: '',
+    selectedSat: 'uranus', selectedAnalyst: 'venus',
+    graphs: {}, graphInfo: '', hover: {info: false, x: 0, y: 0, name: '', role: ''},
+    artifact: {path: '', kind: 'raw', raw: '', html: ''},
+    scenes: {},
+
+    async init() {
+      // arrivée depuis le dock MobiGlas : /sol?modal=<outil> ouvre la modale de l'outil
+      try {
+        const qm = new URLSearchParams(location.search).get('modal');
+        if (qm) setTimeout(() => this.openModal(qm), 350);
+      } catch (e) {}
+      try {
+        const st = await (await fetch('/api/cosmos/state')).json();
+        this.bodies = st.corps;
+        this.satellites = (st.corps.find(b => b.id === 'uranus') || {}).satellites || [];
+        this.refreshNebula();
+        this.court = (st.corps.find(b => b.id === 'venus') || {}).court || [];
+        this.setInteg(st.integrite);
+        this.buildSky();
+      } catch (e) { console.error(e); }
+      try { this.budget = await (await fetch('/api/cosmos/budget')).json(); } catch (e) {}
+      this.welcome();
+    },
+
+    welcome() {
+      this.messages.push({role: 'laplace', intent: 'accueil', text:
+        "✳ Laplace à votre écoute — Métatron ✦ analyse chacune de vos requêtes avant exécution. Demandez un outil (Mars ♂), une fauche (Pluton ♇), votre profil cognitif, ou lancez une mission.\n" +
+        "• Cliquez sur ♅ Uranus (vue 3D) → sa fenêtre : vue 3D de ses satellites + constellations de connaissances (cliquez Zêta…)\n" +
+        "• Cliquez sur ♀ Vénus → sa fenêtre financière\n" +
+        "• Demandez une méta-analyse → je fais générer le papier scientifique + sa documentation\n" +
+        "• Posez une transformation (« améliorer le BTP avec l'IA ») → dossier stratégique : plan, graphe, documentations"});
+    },
+
+    setInteg(i) {
+      this.integ = {statut: i.statut, score: i.score,
+        label: (i.statut === 'stable' ? '🟢' : i.statut === 'vigilance' ? '🟡' : '🔴') + ' ' + i.statut + ' · ' + i.score + '/100'};
+    },
+    integClass() {
+      return this.integ.statut === 'stable' ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+        : this.integ.statut === 'vigilance' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+        : 'bg-rose-500/10 text-rose-300 border-rose-500/30';
+    },
+
+    // ── Modales ─────────────────────────────────────────────
+    async loadArmory() {
+      try {
+        const r = await (await fetch('/api/mars/armory')).json();
+        this.armory = r.requests;
+        this.armoryCats = r.par_categorie || [];
+        this.ossCatalogue = r.catalogue_opensource;
+      } catch (e) {}
+    },
+    async requestTool() {
+      const r = await fetch('/api/mars/request', {method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.marsReq)});
+      const d = await r.json();
+      if (!r.ok) { this.marsMsg = d.detail || 'erreur'; return; }
+      this.marsMsg = d.statut === 'opensource recommandé'
+        ? '♻ ' + d.recommandation.outil + ' (' + d.recommandation.licence + ') couvre le besoin — pas de maquette nécessaire.'
+        : '📐 Maquette de Deimos prête — cliquez « Phobos forge » pour l\'outil fonctionnel.';
+      this.marsReq.besoin = '';
+      await this.loadArmory();
+      setTimeout(() => this.marsMsg = '', 6000);
+    },
+    async forgeTool(id) {
+      const r = await fetch('/api/mars/forge/' + encodeURIComponent(id), {method: 'POST'});
+      if (r.ok) { this.marsMsg = '⚒ Outil forgé et livré.'; await this.loadArmory(); }
+    },
+    openBodySmart(id) {
+      // modales dédiées pour les corps qui en ont une, fiche générique sinon
+      if (id === 'sol') this.openBody('sol');   // fiche standard, comme les planètes
+      else if (id === 'laplace') { this.refreshNebula(); this.openModal('laplace'); }
+      else if (id === 'sebas') { this.refreshNebula(); this.openModal('sebas'); }
+      else if (id === 'metatron') this.openBody('metatron');
+      else if (id === 'pluton' || id === 'charon' || id === 'styx') { this.loadHades(); this.openModal('hades'); }
+      else if (id === 'mars' || id === 'phobos' || id === 'deimos') { this.loadArmory(); this.openModal('mars'); }
+      else if (id === 'uranus') { this.selectedSat = 'uranus'; this.openModal('uranus'); }
+      else if (moonOwnerOf(id) === 'uranus') { this.selectedSat = id; this.openModal('uranus'); }
+      else if (id === 'venus') { this.selectedAnalyst = 'venus'; this.openModal('venus'); }
+      else if (moonOwnerOf(id) === 'venus') { this.selectedAnalyst = id; this.openModal('venus'); }
+      else this.openBody(id);
+    },
+    async followFromToast() {
+      const t = this.bodyToast; this.bodyToast = null;
+      if (t && this._skyFollow) this._skyFollow(t.id);
+    },
+    solQuick(text) { this.closeModal('body'); this.openModal('sol'); this.split = true; this.send(text); },
+    async startSplit(view) {
+      this.closeModal('body'); this.openModal('sol'); this.split = true;
+      await this.setSide(view || 'sol');
+    },
+    closeSplit() { this.split = false; this.sideView = null; },
+    reactSide(intent) {
+      // la fiche visible à côté du chat change selon la demande réelle
+      if (!this.split) return;
+      const map = {fauche: 'hades', etat: 'etat', profil: 'profil', divination: 'divination',
+                   commande_divine: 'sebas', budget: 'etat', armurerie: 'mars',
+                   justice: 'themis', justice_appliquee: 'themis'};
+      const v = map[intent];
+      if (v) this.setSide(v);
+    },
+    async setSide(view) {
+      this.sideView = view;
+      if (view === 'sol' && !this.sideSol) {
+        try { this.sideSol = await (await fetch('/api/cosmos/body/sol')).json(); } catch (e) {}
+      }
+      if (view === 'hades') await this.loadHades();
+      if (view === 'profil') { try { this.sideProfil = await (await fetch('/api/profile/cognitive')).json(); } catch (e) {} }
+      if (view === 'etat') { try { this.sideEtat = await (await fetch('/api/cosmos/state')).json(); } catch (e) {} }
+      if (view === 'divination') await this.apollonDivine();
+      if (view === 'themis') { try { this.sideThemis = await (await fetch('/api/themis/audit')).json(); } catch (e) {} }
+    },
+    async apollonDivine() {
+      let d;
+      try { d = await (await fetch('/api/apollon/divination', {method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question: 'comment le système fonctionnera-t-il ?'})})).json(); }
+      catch (e) { return; }
+      const cards = (d.presages||[]).map(pr =>
+        `<div class="glass-card rounded-lg p-2.5 border-amber-500/15">
+           <p class="text-[10.5px] text-amber-200 font-semibold">${pr.titre}</p>
+           <p class="text-[10px] text-slate-300 mt-0.5">${pr.lecture}</p>
+           <p class="text-[9.5px] text-slate-500 italic mt-1">« ${pr.oracle} »</p>
+         </div>`).join('');
+      const html = `<div class="rounded-xl border border-amber-500/30 bg-amber-500/[.05] p-3">
+        <p class="text-[11px] font-semibold text-amber-200 mb-0.5">🏆 ${d.devin||'Apollon'} — ${d.chariot||'chariot'}</p>
+        <p class="text-[11.5px] text-amber-100 mb-2">${d.verdict||''}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-1.5">${cards}</div>
+        <p class="text-[9px] text-slate-600 mt-2">${d.methode||''}</p>
+      </div>`;
+      // fiche SOL, panneau latéral du chat scindé, et/ou panneau de vue
+      const panel = document.getElementById('apollonPanel');
+      if (panel && this.modals.body) panel.innerHTML = html;
+      if (this.split) { this.sideDivination = d; this.sideView = 'divination'; }
+      else if (this.modals.sol) { this.view = 'divination'; this.viewPanel = html; }
+    },
+    async toggleTarget(t) {
+      if (this.targetOpen === t.cible) { this.targetOpen = null; this.targetDetail = null; return; }
+      this.targetOpen = t.cible; this.targetDetail = null;
+      try {
+        this.targetDetail = await (await fetch('/api/hades/target?type=' + encodeURIComponent(t.type)
+          + '&cible=' + encodeURIComponent(t.cible))).json();
+      } catch (e) { this.targetDetail = {type: t.type, cible: t.cible, contenu: [], supprime: 'dossier introuvable'}; }
+    },
+    openTokensDetail() { if (!this.hadesScan.prevision_tokens) this.loadHades().then(() => this.openModal('tokens')); else this.openModal('tokens'); },
+    async loadHades() {
+      try { this.hadesScan = await (await fetch('/api/hades/scan')).json(); this.hadesMsg = ''; }
+      catch (e) { this.hadesScan = {}; }
+    },
+    async reapHades() {
+      const st = this.hadesScan.stats, pq = this.hadesScan.pourquoi || {};
+      const detail = Object.entries(st?.par_type || {})
+        .map(([t, n]) => '• ' + n + ' × ' + t + (pq[t] ? ' — ' + pq[t].quoi : '')).join('\n');
+      if (!confirm(
+        '⚖ HADÈS VA DÉTRUIRE — DÉFINITIVEMENT — ' + (st?.condamnes ?? '?') + ' élément(s) :\n\n' +
+        detail + '\n\n' +
+        '🪙 ' + ((this.hadesScan.prevision_tokens?.estime ?? 0).toLocaleString('fr-FR')) + ' tokens épargnés (estimation).\n' +
+        '🛡 Conservé : ' + (this.hadesScan.ce_qui_est_conserve || 'les 25 derniers runs, la mémoire vivante, le grand livre') + '.\n\n' +
+        'Charon ⚰ exécute réellement la suppression. Continuer ?')) return;
+      const r = await (await fetch('/api/hades/reap', {method: 'POST',
+        headers: {'Content-Type': 'application/json'}, body: JSON.stringify({confirm: true})})).json();
+      this.hadesDone = r.supprimes !== undefined;
+      const bil = r.bilan ? Object.entries(r.bilan).map(([t, n]) => n + '×' + t).join(', ') : '';
+      this.hadesMsg = r.statut + (r.supprimes !== undefined
+        ? ' — ' + r.supprimes + ' condamnés détruits (' + bil + '), ' + (r.octets_liberes / 1024).toFixed(1) + ' Ko libérés, 🪙 ' + (r.tokens_epargnes || 0).toLocaleString('fr-FR') + ' tokens épargnés.' : '');
+      await this.loadHades();
+    },
+    async metatronAnalyze() {
+      if (!this.metatronBox.query.trim()) return;
+      const r = await fetch('/api/metatron/analyze', {method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: this.metatronBox.query})});
+      this.metatronBox.result = await r.json();
+    },
+    async metatronSuggest() {
+      const q = this.metatronBox.query.trim();
+      if (!q) return;
+      const r = await (await fetch('/api/metatron/suggest', {method: 'POST',
+        headers: {'Content-Type': 'application/json'}, body: JSON.stringify({mission: q})})).json();
+      this.nlAgent = {name: r.name, role: r.role, parent: r.parent, kind: r.kind};
+      this.metatronBox.result = {...this.metatronBox.result,
+        suggestion: r, meta_prompt: this.metatronBox.result?.meta_prompt || r.meta_prompt};
+      await this.refreshNebula();
+    },
+    quickGroups() {
+      const gs = [];
+      for (const a of this.quickActions) {
+        let g = gs.find(x => x.g === a.g);
+        if (!g) { g = {g: a.g, items: []}; gs.push(g); }
+        g.items.push(a);
+      }
+      return gs;
+    },
+    quickRun(a) {
+      this.quickOpen = false;
+      if (a.fn && typeof this[a.fn] === 'function') this[a.fn]();
+      else this.send(a.m || a.l);
+    },
+    async loadOlympus() {
+      try { this.olympus = await (await fetch('/api/olympus')).json(); } catch (e) { this.olympus = null; }
+    },
+    openOlympus() {
+      this.olyFeed = []; this.olyChat = [];
+      this.loadOlympus().then(() => {
+        this.openModal('olympus');
+        this.$nextTick(() => this.startOlympusEngine());
+      });
+    },
+    closeOlympus() { this.closeModal('olympus'); this.stopOlympusEngine(); },
+    startOlympusEngine() {
+      const cv = document.getElementById('olympusCanvas'); if (!cv || !this.olympus) return;
+      const ctx = cv.getContext('2d');
+      const W = 1000, H = 620;
+      cv.width = W; cv.height = H;
+      const data = () => this.olympus || {places: {}, agents: [], drama: {beats: []}};
+      const st = {pos: {}, beat: 0, tBeat: 0, last: 0, wraps: 0, _bi: -1};
+      for (const a of data().agents) {
+        const pl = (data().places[a.poste]) || {x: 500, y: 300};
+        st.pos[a.id] = {a, x: pl.x, y: pl.y, bob: Math.random() * 6.28};
+      }
+      const stars = Array.from({length: 110}, (_, i) =>
+        ({x: (i * 173.7) % W, y: (i * 97.3) % (H * 0.42), r: (i % 3) * 0.35 + 0.4, ph: (i % 11) / 11 * 6.28}));
+      const chemins = [['observatoire','trone'],['trone','scriptorium'],['trone','tribunal'],['tribunal','messagerie'],['tribunal','forge'],['forge','ateliers'],['ateliers','greniers'],['trone','tresor'],['tresor','bastion'],['bastion','labo'],['labo','galerie'],['forge','porte'],['labo','porte']];
+      const drawPlace = (pl, t) => {
+        const {x, y, type} = pl;
+        ctx.save();
+        // socle marbre
+        ctx.fillStyle = 'rgba(148,163,184,0.10)';
+        ctx.fillRect(x - 34, y + 10, 68, 8);
+        ctx.strokeStyle = 'rgba(148,163,184,0.25)';
+        ctx.strokeRect(x - 34, y + 10, 68, 8);
+        const glow = {forge: `rgba(248,113,113,${0.25 + 0.15 * Math.sin(t * 6)})`,
+                      porte: 'rgba(139,123,216,0.30)', tribunal: 'rgba(165,180,252,0.22)',
+                      labo: 'rgba(125,211,252,0.22)', trone: 'rgba(251,191,36,0.25)',
+                      observatoire: 'rgba(226,232,240,0.25)'}[type] || 'rgba(148,163,184,0.14)';
+        ctx.fillStyle = glow;
+        ctx.beginPath(); ctx.arc(x, y, 30, 0, 6.29); ctx.fill();
+        // colonnes
+        ctx.fillStyle = 'rgba(203,213,225,0.55)';
+        for (const dx of [-20, 0, 20]) ctx.fillRect(x + dx - 1.5, y - 16, 3, 26);
+        // toit / fronton
+        ctx.strokeStyle = 'rgba(203,213,225,0.5)';
+        ctx.beginPath(); ctx.moveTo(x - 26, y - 16); ctx.lineTo(x, y - 30); ctx.lineTo(x + 26, y - 16); ctx.closePath(); ctx.stroke();
+        if (type === 'forge') {  // feu
+          const f = 4 + Math.sin(t * 9) * 2;
+          ctx.fillStyle = 'rgba(251,146,60,0.85)';
+          ctx.beginPath(); ctx.arc(x, y - 2, f, 0, 6.29); ctx.fill();
+        }
+        if (type === 'porte') {  // escalier des enfers
+          ctx.strokeStyle = 'rgba(139,123,216,0.5)';
+          for (let i = 1; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(x - 26, y + 12 + i * 7); ctx.lineTo(x + 26, y + 12 + i * 7); ctx.stroke(); }
+        }
+        // étiquette
+        ctx.font = '9px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(148,163,184,0.85)';
+        ctx.fillText(pl.icon + ' ' + pl.nom, x, y + 32);
+        ctx.restore();
+      };
+      const loop = (ts) => {
+        if (!this.modals.olympus) { this._olyRaf = null; return; }
+        const t = ts / 1000, dt = Math.min(0.05, t - (st.last || t)); st.last = t;
+        const d = data();
+        const beats = (d.drama && d.drama.beats) || [];
+        // ── fond ──
+        const sky = ctx.createLinearGradient(0, 0, 0, H);
+        sky.addColorStop(0, '#0a0f1e'); sky.addColorStop(0.6, '#141025'); sky.addColorStop(1, '#1a1030');
+        ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+        for (const s of stars) {
+          ctx.globalAlpha = 0.35 + 0.3 * Math.sin(t * 1.5 + s.ph);
+          ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.29); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        // montagne
+        ctx.fillStyle = 'rgba(10,12,22,0.85)';
+        ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, 430); ctx.lineTo(300, 210); ctx.lineTo(500, 330); ctx.lineTo(760, 190); ctx.lineTo(W, 380); ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+        // chemins
+        ctx.strokeStyle = 'rgba(148,163,184,0.16)'; ctx.setLineDash([3, 5]);
+        for (const [a, b] of chemins) {
+          const pa = d.places[a], pb = d.places[b]; if (!pa || !pb) continue;
+          ctx.beginPath(); ctx.moveTo(pa.x, pa.y + 6); ctx.quadraticCurveTo((pa.x + pb.x) / 2, (pa.y + pb.y) / 2 + 24, pb.x, pb.y + 6); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        // ── lieux ──
+        for (const pl of Object.values(d.places || {})) drawPlace(pl, t);
+        // ── beat en cours ──
+        if (beats.length) {
+          const beat = beats[st.beat % beats.length];
+          st.tBeat += dt;
+          if (st.tBeat > (beat.duree || 2.5)) { st.tBeat = 0; st.beat++; if (st.beat >= beats.length) { st.beat = 0; st.wraps++; } }
+          if (st._bi !== st.beat) {
+            st._bi = st.beat;
+            const b2 = beats[st.beat % beats.length];
+            this.olympusBeat = b2;
+            // ☠ killchain — killfeed façon partie en cours
+            const noms = id => { const q = st.pos[id]; return q && q.a ? q.a.nom : id; };
+            this.olyFeed.unshift({ic: b2.ic, qui: b2.acteurs.map(noms).join(' + '), texte: b2.texte, kill: !!b2.kill});
+            if (this.olyFeed.length > 6) this.olyFeed.pop();
+            // 💬 le chat s'active selon leurs dialogues
+            for (const d of (b2.dialogues || [])) this.olyChat.push({nom: d.nom || d.qui, couleur: d.couleur || '#94a3b8', texte: d.texte});
+            while (this.olyChat.length > 9) this.olyChat.shift();
+          }
+          const pl = d.places[beat.lieu] || {x: 500, y: 300};
+          beat.acteurs.forEach((id, i) => {
+            const p = st.pos[id]; if (!p) return;
+            p.x += ((pl.x + (i - (beat.acteurs.length - 1) / 2) * 26) - p.x) * Math.min(1, dt * 2.4);
+            p.y += ((pl.y - 14) - p.y) * Math.min(1, dt * 2.4);
+          });
+        }
+        // ── personnages ──
+        for (const p of Object.values(st.pos)) {
+          const a = p.a, pl = (d.places[a.poste] || {x: 500, y: 300});
+          if (!beats.length || !(beats[st.beat % beats.length].acteurs || []).includes(a.id)) {
+            // idle : petite ronde autour du poste
+            p.x += ((pl.x + Math.sin(t * 0.5 + p.bob) * 10) - p.x) * Math.min(1, dt * 1.2);
+            p.y += ((pl.y + Math.cos(t * 0.4 + p.bob) * 5) - p.y) * Math.min(1, dt * 1.2);
+          }
+          const bobY = Math.sin(t * 2 + p.bob) * 1.6;
+          // halo d'activité réelle
+          if (a.niveau > 0) {
+            ctx.fillStyle = `rgba(52,211,153,${0.10 + a.niveau * 0.06})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y + bobY, 9 + a.niveau * 2, 0, 6.29); ctx.fill();
+          }
+          ctx.fillStyle = (a.couleur || '#94a3b8') + '55';
+          ctx.beginPath(); ctx.arc(p.x, p.y + bobY, 8.5, 0, 6.29); ctx.fill();
+          ctx.strokeStyle = a.couleur || '#94a3b8'; ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.font = '12px serif'; ctx.textAlign = 'center';
+          ctx.fillStyle = '#f1f5f9'; ctx.fillText(a.icon, p.x, p.y + bobY + 4);
+          ctx.font = '8px Inter, sans-serif'; ctx.fillStyle = 'rgba(148,163,184,0.9)';
+          ctx.fillText(a.nom, p.x, p.y + bobY + 19);
+        }
+        this._olyRaf = requestAnimationFrame(loop);
+      };
+      this._olyRaf = requestAnimationFrame(loop);
+      // rafraîchissement des données réelles
+      this._olyPoll = setInterval(async () => {
+        await this.loadOlympus();
+        const d = data();
+        for (const a of d.agents) if (st.pos[a.id]) st.pos[a.id].a = a;
+        st.beat = 0; st.tBeat = 0; st._bi = -1;
+      }, 24000);
+      // clic → fiche du personnage
+      cv.onclick = (e) => {
+        const r = cv.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+        let best = null, bd = 22;
+        for (const p of Object.values(st.pos)) {
+          const dd = Math.hypot(p.x - x, p.y - y);
+          if (dd < bd) { bd = dd; best = p.a; }
+        }
+        if (best && best.id !== 'cerbere') this.openBody(best.id);
+      };
+    },
+    stopOlympusEngine() {
+      if (this._olyRaf) cancelAnimationFrame(this._olyRaf); this._olyRaf = null;
+      if (this._olyPoll) clearInterval(this._olyPoll); this._olyPoll = null;
+    },
+    async loadArmoryQuiet() {
+      try {
+        const r = await (await fetch('/api/mars/armory')).json();
+        this.armory = r.requests || r || [];
+        this.armoryCats = r.par_categorie || [];
+      } catch (e) {}
+    },
+    async markToolUsed(id) {
+      try { await fetch('/api/mars/use', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id})}); } catch (e) {}
+    },
+    async pruneArmory(confirm) {
+      if (confirm && !this.pruneAudit) { await this.pruneArmory(false); }
+      if (confirm && !confirm('✂ Deimos va faucher les outils inutiles (âmes au Tartare, résidu conservé). Confirmer ?')) return;
+      this.pruneBusy = true;
+      try {
+        const r = await (await fetch('/api/mars/prune', {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({confirm})})).json();
+        this.pruneMsg = r.statut;
+        this.pruneAudit = r.audit || null;
+        if (r.ok && r.elagues) { await this.loadArmory(); if (!this.armoryCats.length) await this.loadArmoryQuiet(); else await this.loadArmoryQuiet(); }
+      } catch (e) { this.pruneMsg = '⚠️ ' + e.message; }
+      this.pruneBusy = false;
+    },
+    async loadGodseye() {
+      try { this.godseye = await (await fetch('/api/godseye')).json(); } catch (e) { this.godseye = null; }
+    },
+    async orderSpy() {
+      if (!this.spyMission.trim()) { this.spyMsg = '👤 précisez la mission de l’astre-espion.'; return; }
+      this.spyBusy = true; this.spyMsg = '';
+      try {
+        const r = await (await fetch('/api/godseye/spy', {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({mission: this.spyMission})})).json();
+        this.spyMsg = r.statut;
+        this.spyMission = '';
+        await this.loadGodseye();
+      } catch (e) { this.spyMsg = '⚠️ ' + e.message; }
+      this.spyBusy = false;
+    },
+    async loadShadow() {
+      if (!this.armory.length) this.loadArmoryQuiet();
+      try { this.shadow = await (await fetch('/api/shadow')).json(); } catch (e) { this.shadow = null; }
+    },
+    async hireAssistant() {
+      if (!this.hireMission.trim()) { this.shadowMsg = '🕵 précisez la mission de l’assistant.'; return; }
+      this.hireBusy = true; this.shadowMsg = '';
+      try {
+        const r = await (await fetch('/api/shadow/team', {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({mission: this.hireMission})})).json();
+        this.shadowMsg = r.statut; this.hireMission = '';
+        await this.loadShadow();
+      } catch (e) { this.shadowMsg = '⚠️ ' + e.message; }
+      this.hireBusy = false;
+    },
+    async advanceForge(outil) {
+      this.forgeBusy = true;
+      try {
+        const r = await (await fetch('/api/forge/oss', {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({outil})})).json();
+        this.shadowMsg = r.statut;
+        await this.loadShadow();
+      } catch (e) { this.shadowMsg = '⚠️ ' + e.message; }
+      this.forgeBusy = false;
+    },
+    forgeStage(f) { return f ? (f.stages[f.stage] || 'présenté') : ''; },
+    armoryMatch(nom) {
+      // si l'outil existe déjà dans la base d'outils (armurerie de Mars) → ouvrir
+      const n = (nom || '').toLowerCase();
+      return (this.armory || []).find(r => (r.outil || r.besoin || '').toLowerCase().includes(n.split(' ')[0])) || null;
+    },
+    openTool(o) {
+      const m = this.armoryMatch(o.nom);
+      if (m) { this.openModal('mars'); return; }               // existe dans la base → ouvrir
+      if (o.url) window.open(o.url, '_blank', 'noopener');      // sinon raccourci externe
+    },
+    async loadUnderworld() {
+      try { this.inferno = await (await fetch('/api/underworld')).json(); this.infernoMsg = ''; }
+      catch (e) { this.inferno = null; }
+    },
+    async resurrectSoul(id) {
+      if (!confirm('🐾 Cerbère garde la porte. Faire remonter cette âme parmi les vivants ?')) return;
+      try {
+        const r = await (await fetch('/api/underworld/restore', {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id, confirm: true})})).json();
+        this.infernoMsg = r.statut;
+        await this.loadUnderworld();
+      } catch (e) { this.infernoMsg = '⚠️ ' + e.message; }
+    },
+    toggleSystemLight() {
+      this.systemOn = !this.systemOn;
+      this.skyMsg = this.systemOn
+        ? '💡 Le système se rallume — toutes les orbites reprennent.'
+        : '💤 Le système est gelé — seuls Laplace ✳ et ses divinités orbitent encore.';
+      clearTimeout(this._skyMsgT);
+      this._skyMsgT = setTimeout(() => this.skyMsg = '', 4000);
+    },
+    goTo3D(id) {
+      this.closeModal('body');
+      if (this._skyFollow) this._skyFollow(id);       // vol + zoom + verrou caméra
+      else window.location.href = '/sol?body=' + encodeURIComponent(id);
+    },
+    goToObsidian(id) {
+      window.open('/?const=' + encodeURIComponent(id) + '&tab=graph', '_blank');
+    },
+    renderBodySchema(b) {
+      // schéma fonctionnel : centre = l'entité ; branches pouvoir/devoir/satellites
+      const svg = document.getElementById('bodySchema'); if (!svg || !b) return;
+      d3.select(svg).selectAll('*').remove();
+      const W = svg.clientWidth || 340, H = 150, cy = H / 2;
+      const g = d3.select(svg);
+      const satN = (b.satellites || b.court || []).slice(0, 5);
+      const branches = [
+        {y: 28, col: '#22d3ee', lbl: '📛 ' + (b.departement || b.kind || '').slice(0, 34)},
+        {y: cy, col: '#fbbf24', lbl: '⚡ ' + (b.pouvoir || 'pouvoir').slice(0, 40)},
+        {y: H - 26, col: '#34d399', lbl: '🛡 ' + (b.devoir || 'devoir').slice(0, 40)},
+      ];
+      branches.forEach((br, i) => {
+        g.append('line').attr('x1', 118).attr('y1', cy).attr('x2', 132).attr('y2', br.y)
+          .attr('stroke', br.col).attr('stroke-opacity', .45).attr('stroke-width', 1.2);
+        g.append('circle').attr('cx', 132).attr('cy', br.y).attr('r', 3).attr('fill', br.col);
+        g.append('text').attr('x', 140).attr('y', br.y + 3).attr('font-size', 9.5)
+          .attr('fill', '#cbd5e1').text(br.lbl);
+      });
+      // satellites / cour
+      satN.forEach((s, i) => {
+        const y = 24 + i * 24;
+        g.append('line').attr('x1', 104).attr('y1', cy).attr('x2', 84).attr('y2', y)
+          .attr('stroke', '#a78bfa').attr('stroke-opacity', .4).attr('stroke-width', 1);
+        g.append('circle').attr('cx', 84).attr('cy', y).attr('r', 2.6).attr('fill', '#a78bfa');
+        const lbl = g.append('text').attr('x', 78).attr('y', y + 3).attr('font-size', 9).attr('text-anchor', 'end')
+          .attr('fill', '#a5b4fc').text((s.name || s.id || '').slice(0, 22))
+          .style('cursor', 'pointer').style('text-decoration', 'underline dotted')
+          .attr('opacity', .95);
+        lbl.on('click', () => window._skyOpenBody && window._skyOpenBody(s.id))
+           .append('title').text(s.pouvoir ? ('⚡ ' + s.pouvoir + '\n🛡 ' + s.devoir) : 'ouvrir ' + (s.name || s.id));
+        lbl.on('mouseenter', function() { d3.select(this).attr('fill', '#e0e7ff'); })
+           .on('mouseleave', function() { d3.select(this).attr('fill', '#a5b4fc'); });
+      });
+      // centre
+      g.append('circle').attr('cx', 111).attr('cy', cy).attr('r', 17).attr('fill', 'rgba(8,12,24,.9)')
+        .attr('stroke', b.color || '#818cf8').attr('stroke-width', 1.4);
+      g.append('text').attr('x', 111).attr('y', cy + 5).attr('text-anchor', 'middle')
+        .attr('font-size', 13).text(b.icon || b.symbol || '●');
+      g.append('text').attr('x', 111).attr('y', cy + 32).attr('text-anchor', 'middle')
+        .attr('font-size', 9.5).attr('fill', '#e2e8f0').attr('font-weight', 600).text(b.name);
+    },
+    async openBody(id) {
+      window._skyOpenBody = (i) => this.openBody(i);   // navigation depuis le schéma SVG
+      try {
+        const r = await (await fetch('/api/cosmos/body/' + encodeURIComponent(id))).json();
+        this.bodyData = r;
+        this.openModal('body');
+        this.$nextTick(() => { this.renderGraph('bodygraph', r.graph); this.renderBodySchema(r.body); });
+      } catch (e) {}
+    },
+    connectedBodies(b) {
+      if (!b) return [];
+      const out = [];
+      if (b.parent && b.parent.id) out.push({id: b.parent.id, name: b.parent.name, rel: '⬆ parent'});
+      (b.satellites || []).forEach(s => out.push({id: s.id, name: s.name || s.id, rel: '● satellite', pouvoir: s.pouvoir, devoir: s.devoir}));
+      (b.court || []).forEach(s => out.push({id: s.id, name: s.name || s.id, rel: '♟ cour', pouvoir: s.pouvoir, devoir: s.devoir}));
+      return out;
+    },
+    inspect(d) { this.inspectN = d; },
+
+    async refreshNebula() {
+      if (!this.godseye) this.loadGodseye();
+      try {
+        const r = await (await fetch('/api/laplace')).json();
+        this.laplace = r;
+        this.sebas = await (await fetch('/api/sebas/sensors')).json();
+        if (this._nebulaSync) this._nebulaSync(r.agents);
+      } catch (e) {}
+    },
+    async createAgent() {
+      const r = await fetch('/api/laplace/agents', {method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.nlAgent)});
+      if (!r.ok) { alert((await r.json()).detail); return; }
+      this.nlAgent = {name: '', role: '', parent: 'uranus', kind: 'satellite'};
+      await this.refreshNebula();
+    },
+    async improveAgent(id) {
+      const role = prompt('Nouveau rôle / mission pour ' + id + ' :', '');
+      if (role === null) return;
+      const r = await fetch('/api/laplace/agents/' + id + '/improve', {method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({role: role || undefined})});
+      if (!r.ok) { alert((await r.json()).detail); return; }
+      await this.refreshNebula();
+    },
+    async testAgent(id) {
+      const r = await (await fetch('/api/laplace/agents/' + id + '/test', {method: 'POST'})).json();
+      alert(id + ' → ' + r.statut + (r.detail ? '\n' + r.detail : ''));
+      await this.refreshNebula();
+    },
+    async createSystem() {
+      const r = await fetch('/api/laplace/systems', {method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.nlSystem)});
+      if (!r.ok) { alert((await r.json()).detail); return; }
+      this.nlSystem = {name: ''};
+      await this.refreshNebula();
+    },
+    async recordObs() {
+      const r = await fetch('/api/sebas/observe', {method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.obs)});
+      if (!r.ok) { alert((await r.json()).detail); return; }
+      this.obsMsg = '◉ Observation ' + (await r.json()).id + ' consignée en mémoire (corps Sebas).';
+      this.obs.contenu = '';
+      setTimeout(() => this.obsMsg = '', 4000);
+    },
+    openModal(id) {
+      this.modals[id] = true;
+      if (id === 'sol') this.$nextTick(() => this.scrollMsgs());
+      if (id === 'uranus') this.$nextTick(async () => {
+        if (!this.scenes.uranus) this.scenes.uranus = this.buildPlanetScene('uranus3d', 'uranus');
+        await this.selectSat(this.selectedSat === 'uranus' ? 'uranus' : this.selectedSat);
+      });
+      if (id === 'venus') this.$nextTick(async () => {
+        if (!this.scenes.venus) this.scenes.venus = this.buildPlanetScene('venus3d', 'venus');
+        try { this.venus = await (await fetch('/api/cosmos/budget')).json(); } catch (e) {}
+        await this.selectAnalyst(this.selectedAnalyst);
+      });
+    },
+    closeModal(id) { this.modals[id] = false; },
+
+    get selectedSatLabel() {
+      if (this.selectedSat === 'uranus') return '♅ Uranus — graphe global';
+      const s = this.satellites.find(x => x.id === this.selectedSat);
+      return s ? s.name + (s.distance_km ? ' · ' + s.distance_km.toLocaleString('fr') + ' km' : '') : this.selectedSat;
+    },
+
+    async selectSat(id) {
+      this.selectedSat = id;
+      if (this.scenes.uranus) this.scenes.uranus.focus(id);
+      await this.loadGraph(id, 'constellation');
+    },
+    async selectAnalyst(id) {
+      this.selectedAnalyst = id;
+      await this.loadGraph(id, 'venusgraph');
+    },
+
+    async loadGraph(bodyId, svgId) {
+      if (!this.graphs[bodyId]) {
+        try { this.graphs[bodyId] = await (await fetch('/api/cosmos/knowledge/' + bodyId)).json(); }
+        catch (e) { this.graphs[bodyId] = {nodes: [], links: []}; }
+      }
+      const g = this.graphs[bodyId];
+      this.graphInfo = g.nodes.length + ' nœuds · ' + g.links.length + ' liens';
+      this.$nextTick(() => this.renderGraph(svgId, g));
+    },
+
+    // ── Chat SOL ────────────────────────────────────────────
+    async send(quick) {
+      const text = (quick || this.input).trim();
+      if (!text || this.busy) return;
+      this.input = '';
+      this.messages.push({role: 'user', text});
+      this.busy = true;
+      try {
+        const res = await fetch('/api/cosmos/chat', {method: 'POST',
+          headers: {'Content-Type': 'application/json'}, body: JSON.stringify({message: text})});
+        const data = await res.json();
+        const arts = data.data?.artifacts || data.artifacts || [];
+        this.messages.push({role: 'laplace', text: data.reply, intent: data.intent, artifacts: arts});
+        this.reactSide(data.intent);   // la fiche de côté s'actualise selon la demande
+        const graphPath = data.data?.graph || data.graph;
+        if (graphPath) { const g = await this.tryFetchGraph(graphPath); if (g) this.graphs['#dossier'] = g; }
+        try {
+          const st = await (await fetch('/api/cosmos/state')).json();
+          this.setInteg(st.integrite);
+          this.budget = await (await fetch('/api/cosmos/budget')).json();
+        } catch (e) {}
+      } catch (e) { this.messages.push({role: 'laplace', text: '⚠️ ' + e.message}); }
+      this.busy = false;
+      this.scrollMsgs();
+    },
+    scrollMsgs() { this.$nextTick(() => { this.$refs.msgs && (this.$refs.msgs.scrollTop = this.$refs.msgs.scrollHeight); }); },
+
+    async tryFetchGraph(path) {
+      try {
+        const r = await fetch('/api/agent/artifact?path=' + encodeURIComponent(path));
+        if (!r.ok) return null;
+        const g = JSON.parse(await r.text());
+        return (g.nodes && g.links) ? g : null;
+      } catch (e) { return null; }
+    },
+
+    // ── Vues (boutons) ──────────────────────────────────────
+    async setView(v) {
+      this.view = (this.view === v) ? null : v;
+      this.viewPanel = '';
+      if (!this.view) return;
+      try {
+        if (v === 'etat') {
+          const st = await (await fetch('/api/cosmos/state')).json();
+          this.viewPanel = `<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Intégrité</div><div class="mono text-sm ${st.integrite.statut === 'stable' ? 'text-emerald-300' : 'text-amber-300'}">${st.integrite.score}/100 · ${st.integrite.statut}</div></div>
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Interactions</div><div class="mono text-sm text-slate-300">${st.integrite.interactions_total} (échec ${Math.round(st.integrite.taux_echec * 100)}%)</div></div>
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Dépense jour</div><div class="mono text-sm text-amber-300">${st.budget.spend_today_usd.toFixed(4)} $ / ${st.budget.daily_cap_usd} $</div></div>
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Projection mois</div><div class="mono text-sm text-slate-300">${st.budget.forecast_month_usd.toFixed(2)} $</div></div></div>`
+            + (st.integrite.alertes.length ? '<div class="text-[11px] text-amber-300/90">' + st.integrite.alertes.map(a => '⚠️ ' + a).join('<br>') + '</div>' : '<div class="text-[11px] text-emerald-300/80">✓ aucune alerte préventive</div>');
+        } else if (v === 'interactions') {
+          const h = await (await fetch('/api/cosmos/interactions?limit=15')).json();
+          this.viewPanel = '<table class="w-full text-[11px]"><tr class="text-slate-600 text-left"><th>heure</th><th>source → cible</th><th>type</th><th>statut</th><th>raison</th></tr>'
+            + h.map(m => `<tr class="border-t border-white/5"><td class="mono text-slate-500">${(m.ts || '').slice(11, 19)}</td>
+              <td class="text-slate-300">${m.source} → ${m.target}</td><td class="mono text-indigo-300">${m.type}</td>
+              <td>${m.status === 'delivered' ? '✅' : m.status === 'denied' ? '⛔' : m.status === 'failed' ? '❌' : '✔︎'}</td>
+              <td class="text-slate-500 max-w-[260px] truncate">${(m.reason || '').slice(0, 70)}</td></tr>`).join('') + '</table>';
+        } else if (v === 'budget') {
+          const b = await (await fetch('/api/cosmos/budget')).json();
+          this.viewPanel = `<div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Aujourd'hui</div><div class="mono text-sm text-amber-300">${b.spend_today_usd.toFixed(4)} $</div></div>
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Mois</div><div class="mono text-sm text-slate-300">${b.spend_month_usd.toFixed(4)} $ / ${b.budget.monthly_cap_usd} $</div></div>
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Projection 7j</div><div class="mono text-sm text-slate-300">${(b.forecast.projection_cumulee[6] ?? 0).toFixed(4)} $</div></div>
+            <div class="glass rounded-lg p-2"><div class="text-[9px] uppercase text-slate-600">Net mois</div><div class="mono text-sm ${b.forecast.net_monthly_usd >= 0 ? 'text-emerald-300' : 'text-rose-300'}">${b.forecast.net_monthly_usd.toFixed(2)} $</div></div></div>
+            <div class="mt-2 text-[11px] text-slate-400">⚖️ ${b.advice.slice(0, 2).join('<br>⚖️ ')}</div>`;
+        } else if (v === 'constellation') {
+          this.viewPanel = '<svg id="viewconstellation" style="width:100%;height:150px"></svg>';
+          this.$nextTick(() => this.loadAndRender('sol', 'viewconstellation'));
+        }
+      } catch (e) { this.viewPanel = '⚠️ ' + e.message; }
+    },
+    async loadAndRender(id, svgId) {
+      if (!this.graphs[id]) this.graphs[id] = await (await fetch('/api/cosmos/knowledge/' + id)).json();
+      this.renderGraph(svgId, this.graphs[id]);
+    },
+
+    // ── Artefacts ───────────────────────────────────────────
+    async openArtifact(path) {
+      try {
+        const r = await fetch('/api/agent/artifact?path=' + encodeURIComponent(path));
+        if (!r.ok) { alert('Artefact introuvable'); return; }
+        const raw = await r.text();
+        this.artifact.path = path;
+        if (path.endsWith('.html')) { this.artifact = {path, kind: 'html', raw, html: ''}; }
+        else if (path.endsWith('.md')) { this.artifact = {path, kind: 'md', raw, html: this.mdToHtml(raw)}; }
+        else if (path.endsWith('_graph.json')) {
+          this.artifact = {path, kind: 'graph', raw, html: ''};
+          this.modals.artifact = true;
+          this.$nextTick(() => this.renderGraph('artifactgraph', JSON.parse(raw)));
+          return;
+        } else { this.artifact = {path, kind: 'raw', raw, html: ''}; }
+        this.modals.artifact = true;
+      } catch (e) { alert('Erreur artefact : ' + e.message); }
+    },
+
+    mdToHtml(md) {
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      let h = esc(md);
+      h = h.replace(/^###### (.*)$/gm, '<h3>$1</h3>').replace(/^##### (.*)$/gm, '<h3>$1</h3>')
+           .replace(/^#### (.*)$/gm, '<h3>$1</h3>').replace(/^### (.*)$/gm, '<h3>$1</h3>')
+           .replace(/^## (.*)$/gm, '<h2>$1</h2>').replace(/^# (.*)$/gm, '<h1>$1</h1>')
+           .replace(/^&gt; (.*)$/gm, '<blockquote>$1</blockquote>')
+           .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+           .replace(/\*(.+?)\*/g, '<em>$1</em>')
+           .replace(/`([^`]+)`/g, '<code>$1</code>')
+           .replace(/^\s*[-•] (.*)$/gm, '<li>$1</li>')
+           .replace(/^\s*\|(.+)\|\s*$/gm, m => '<tr>' + m.split('|').slice(1, -1).map(c => '<td>' + c.trim() + '</td>').join('') + '</tr>')
+           .replace(/(<tr>.*?<\/tr>)+/g, m => '<table>' + m + '</table>')
+           .replace(/^---+$/gm, '<hr>');
+      // paragraphes
+      h = h.split(/\n{2,}/).map(b => /^<(h\d|blockquote|table|hr|ul|li)/.test(b.trim()) ? b : '<p>' + b.replace(/\n/g, '<br>') + '</p>').join('');
+      return h;
+    },
+
+    // ── Graphe D3 générique ─────────────────────────────────
+    renderGraph(svgId, graph) {
+      const svg = document.getElementById(svgId);
+      if (!svg || !graph || !graph.nodes.length) return;
+      d3.select(svg).selectAll('*').remove();
+      const rect = svg.getBoundingClientRect();
+      const W = rect.width || 800, H = rect.height || 300;
+      const nodes = graph.nodes.map(d => ({...d}));
+      const links = graph.links.map(d => ({...d}));
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      const g = d3.select(svg).append('g');
+      // zoom
+      const zoom = d3.zoom().scaleExtent([0.3, 4]).on('zoom', e => g.attr('transform', e.transform));
+      d3.select(svg).call(zoom);
+      const sim = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(d => d.type === 'orbite' ? 70 : 45).strength(0.5))
+        .force('charge', d3.forceManyBody().strength(-160))
+        .force('center', d3.forceCenter(W / 2, H / 2))
+        .force('collide', d3.forceCollide(16));
+      const link = g.selectAll('line').data(links).join('line')
+        .attr('stroke', d => d.type === 'phase' || d.type === 'action' ? '#fbbf2455' : d.type === 'orbite' ? '#818cf855' : '#33415588')
+        .attr('stroke-width', d => d.type === 'action' || d.type === 'phase' ? 1.6 : 1)
+        .attr('stroke-dasharray', d => d.type === 'source' ? '3 3' : null);
+      const node = g.selectAll('g').data(nodes).join('g').style('cursor', 'pointer')
+        .call(d3.drag().on('start', (e, d) => { if (!e.active) sim.alphaTarget(.3).restart(); d.fx = d.x; d.fy = d.y; })
+                         .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+                         .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+      node.append('circle')
+        .attr('r', d => d.type === 'planet' || d.type === 'star' || d.type === 'racine' ? 16 : d.type === 'satellite' || d.type === 'phase' ? 9 : d.type === 'reference' ? 5 : 6.5)
+        .attr('fill', d => d.color || (d.type === 'reference' ? '#38bdf8' : d.type === 'concept' ? '#34d399' : '#818cf8'))
+        .attr('stroke', '#0d1320').attr('stroke-width', 1.5)
+        .attr('opacity', .95);
+      node.append('title').text(d => d.label + (d.doi ? '\nDOI: ' + d.doi : '') + (d.trust ? '\ntrust: ' + d.trust : ''));
+      node.append('text').text(d => d.label.length > 26 ? d.label.slice(0, 25) + '…' : d.label)
+        .attr('x', 11).attr('y', 3.5).attr('font-size', d => d.type === 'planet' || d.type === 'racine' ? 11 : 9)
+        .attr('fill', d => d.type === 'planet' || d.type === 'racine' ? '#c7d2fe' : '#94a3b8');
+      node.on('click', (e, d) => { e.stopPropagation(); this.inspect(d); });
+      sim.on('tick', () => {
+        link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        node.attr('transform', d => `translate(${Math.max(14, Math.min(W - 14, d.x))},${Math.max(10, Math.min(H - 10, d.y))})`);
+      });
+    },
+
+    // ── THREE.JS : scène principale du système ─────────────
+    buildSky() {
+      const container = document.getElementById('sky3d');
+      if (!container || !window.THREE) return;
+      const W = container.clientWidth, H = container.clientHeight;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 4000);
+      camera.position.set(0, 190, 420);
+      const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+      renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+      scene.add(new THREE.AmbientLight(0x334155, 1.1));
+      const sunLight = new THREE.PointLight(0xfbbf24, 2.2, 2000);
+      scene.add(sunLight);
+
+      // champ d'étoiles
+      const starGeo = new THREE.BufferGeometry();
+      const starPos = [];
+      for (let i = 0; i < 1500; i++) {
+        const r = 900 + Math.random() * 900, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+        starPos.push(r * Math.sin(ph) * Math.cos(th), r * Math.sin(ph) * Math.sin(th), r * Math.cos(ph));
+      }
+      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+      scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({color: 0xcbd5e1, size: 1.6, sizeAttenuation: false, transparent: true, opacity: .7})));
+
+      const clickables = [];
+      const label = (text, color = '#94a3b8', size = 42) => {
+        const cv = document.createElement('canvas');
+        cv.width = 256; cv.height = 64;
+        const ctx = cv.getContext('2d');
+        ctx.font = `600 ${size}px Inter, sans-serif`;
+        ctx.textAlign = 'center'; ctx.fillStyle = color;
+        ctx.shadowColor = 'rgba(3,5,8,.9)'; ctx.shadowBlur = 6;
+        ctx.fillText(text.length > 22 ? text.slice(0, 21) + '…' : text, 128, 44);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(cv), transparent: true}));
+        sp.scale.set(46, 11.5, 1);
+        return sp;
+      };
+      // 🪐 vraies incarnations : texture procédurale par astre (détails distinctifs)
+      const planetPainters = {
+        terre(c, W, H) {                                    // océans + continents + nuages + pôles
+          c.fillStyle = '#1d4ed8'; c.fillRect(0, 0, W, H);
+          c.fillStyle = '#1668b0';
+          for (let i = 0; i < 90; i++) c.fillRect(Math.random() * W, Math.random() * H, 14, 5);
+          const cont = ['#2f8a4e', '#3d9e5c', '#8a6d3b', '#2f8a4e'];
+          for (let i = 0; i < 16; i++) {                    // continents en blobs
+            c.fillStyle = cont[i % cont.length]; c.beginPath();
+            const x = (i * 61) % W, y = H * .18 + ((i * 37) % 100) / 100 * H * .62;
+            c.ellipse(x, y, 26 + (i % 4) * 12, 12 + (i % 3) * 9, i, 0, 6.29); c.fill();
+            c.beginPath(); c.ellipse(x + 20, y + 8, 14, 8, i + 2, 0, 6.29); c.fill();
+          }
+          c.fillStyle = 'rgba(255,255,255,.75)'; c.fillRect(0, 0, W, 8); c.fillRect(0, H - 8, W, 8);
+          c.fillStyle = 'rgba(255,255,255,.30)';
+          for (let i = 0; i < 22; i++) { c.beginPath(); c.ellipse(Math.random() * W, Math.random() * H, 16 + Math.random() * 18, 5, 0, 0, 6.29); c.fill(); }
+        },
+        mars(c, W, H) {                                     // oxyde ferrique + maria + calotte
+          c.fillStyle = '#b45309'; c.fillRect(0, 0, W, H);
+          c.fillStyle = '#92400e';
+          for (let i = 0; i < 60; i++) c.beginPath(), c.ellipse(Math.random() * W, Math.random() * H, 10 + Math.random() * 26, 6 + Math.random() * 12, Math.random() * 3, 0, 6.29), c.fill();
+          c.fillStyle = '#7c2d12';
+          for (let i = 0; i < 8; i++) { c.beginPath(); c.ellipse((i * 73) % W, H * .3 + (i % 3) * 30, 18, 10, i, 0, 6.29); c.fill(); }
+          c.fillStyle = '#f8fafc'; c.fillRect(0, 0, W, 10); c.beginPath(); c.ellipse(W * .3, 2, 40, 9, 0, 0, 6.29); c.fill();
+        },
+        jupiter(c, W, H) {                                  // bandes + grande tache rouge
+          const bands = ['#d97706', '#f59e0b', '#b45309', '#fbbf24', '#92400e', '#fcd34d', '#a16207'];
+          const bh = H / bands.length;
+          bands.forEach((b, i) => { c.fillStyle = b; c.fillRect(0, i * bh, W, bh + 1); });
+          for (let i = 0; i < 40; i++) { c.fillStyle = 'rgba(255,255,255,' + (.04 + Math.random() * .06) + ')'; c.fillRect(0, Math.random() * H, W, 2 + Math.random() * 4); }
+          c.fillStyle = '#dc2626'; c.beginPath(); c.ellipse(W * .68, H * .62, 26, 13, 0, 0, 6.29); c.fill();
+          c.fillStyle = '#ef4444'; c.beginPath(); c.ellipse(W * .68, H * .62, 17, 8, 0, 0, 6.29); c.fill();
+        },
+        venus(c, W, H) {                                    // nuages soufrés
+          c.fillStyle = '#d9a066'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 46; i++) { c.fillStyle = i % 2 ? 'rgba(252,211,77,.4)' : 'rgba(180,83,9,.3)'; c.beginPath(); c.ellipse((i * 53) % W, (i * 29) % H, 30 + Math.random() * 30, 7 + Math.random() * 8, .4, 0, 6.29); c.fill(); }
+        },
+        mercure(c, W, H) {                                  // gris cratérisé
+          c.fillStyle = '#64748b'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 70; i++) { const r = 2 + Math.random() * 7; c.fillStyle = 'rgba(15,23,42,.35)'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, r, 0, 6.29); c.fill(); c.fillStyle = 'rgba(203,213,225,.25)'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, r * .7, 0, 6.29); c.fill(); }
+        },
+        uranus(c, W, H) {                                   // cyan pâle lisse
+          c.fillStyle = '#7dd3fc'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 14; i++) { c.fillStyle = 'rgba(224,242,254,.25)'; c.fillRect(0, (i * 37) % H, W, 6); }
+        },
+        neptune(c, W, H) {                                  // bleu profond + tache sombre
+          c.fillStyle = '#1d4ed8'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 18; i++) { c.fillStyle = i % 2 ? 'rgba(30,64,175,.5)' : 'rgba(96,165,250,.3)'; c.fillRect(0, (i * 43) % H, W, 8); }
+          c.fillStyle = '#0c1a4a'; c.beginPath(); c.ellipse(W * .4, H * .45, 22, 11, 0, 0, 6.29); c.fill();
+        },
+        ceres(c, W, H) {                                    // roche sombre + points brillants (Occator)
+          c.fillStyle = '#475569'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 50; i++) { c.fillStyle = 'rgba(15,23,42,.4)'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, 2 + Math.random() * 5, 0, 6.29); c.fill(); }
+          c.fillStyle = '#fef9c3';
+          [[.3, .4], [.62, .55], [.7, .3]].forEach(([x, y]) => { c.beginPath(); c.arc(W * x, H * y, 3.5, 0, 6.29); c.fill(); });
+        },
+        pluton(c, W, H) {                                   // brûme + cœur caractéristique
+          c.fillStyle = '#8b7bd8'; c.fillRect(0, 0, W, H);
+          c.fillStyle = '#6d5db8';
+          for (let i = 0; i < 26; i++) { c.beginPath(); c.ellipse(Math.random() * W, Math.random() * H, 12 + Math.random() * 20, 6 + Math.random() * 8, 0, 0, 6.29); c.fill(); }
+          c.fillStyle = '#e7e0ff'; c.beginPath();            // Tombaugh Regio (le cœur)
+          c.moveTo(W * .52, H * .38); c.bezierCurveTo(W * .40, H * .22, W * .38, H * .66, W * .52, H * .62);
+          c.bezierCurveTo(W * .66, H * .66, W * .64, H * .22, W * .52, H * .38); c.fill();
+        },
+        lune(c, W, H) {                                     // gris cratères (toutes les lunes)
+          c.fillStyle = '#94a3b8'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 40; i++) { const r = 2 + Math.random() * 6; c.fillStyle = 'rgba(51,65,85,.4)'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, r, 0, 6.29); c.fill(); c.strokeStyle = 'rgba(226,232,240,.3)'; c.stroke(); }
+        },
+        sol(c, W, H) {                                      // granulation solaire
+          c.fillStyle = '#f59e0b'; c.fillRect(0, 0, W, H);
+          for (let i = 0; i < 260; i++) { c.fillStyle = i % 3 ? 'rgba(254,243,199,.35)' : 'rgba(180,83,9,.4)'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, 3 + Math.random() * 9, 0, 6.29); c.fill(); }
+          for (let i = 0; i < 7; i++) { c.fillStyle = '#451a03'; c.beginPath(); c.arc(Math.random() * W, Math.random() * H, 5 + Math.random() * 6, 0, 6.29); c.fill(); }
+        },
+      };
+      const body = (radius, color, glow = false, key = null) => {
+        const mat = {roughness: .72, metalness: .12,
+                     emissive: glow ? color : 0x000000, emissiveIntensity: glow ? .55 : 0};
+        if (key && planetPainters[key]) {
+          const cv = document.createElement('canvas'); cv.width = 512; cv.height = 256;
+          planetPainters[key](cv.getContext('2d'), 512, 256);
+          mat.map = new THREE.CanvasTexture(cv);
+          mat.color = 0xffffff;                              // la texture porte la couleur
+          if (glow) { mat.emissiveMap = mat.map; mat.emissive = 0xffffff; mat.emissiveIntensity = .35; }
+        } else mat.color = color;
+        return new THREE.Mesh(new THREE.SphereGeometry(radius, 40, 40), new THREE.MeshStandardMaterial(mat));
+      };
+
+      // 🎯 icônes fonctionnelles dans les astres (depthTest:false → toujours lisibles)
+      const iconSprite = (emoji, size = 26) => {
+        const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64;
+        const ctx = cv.getContext('2d');
+        ctx.font = '48px "Segoe UI Emoji", "Apple Color Emoji", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = 5;
+        ctx.fillText(emoji, 32, 36);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+          map: new THREE.CanvasTexture(cv), transparent: true, depthTest: false}));
+        sp.scale.set(size, size, 1);
+        return sp;
+      };
+
+      // ☉ SOL
+      const sol = new THREE.Group();
+      const solGlow = new THREE.Mesh(new THREE.SphereGeometry(34, 32, 32),
+        new THREE.MeshBasicMaterial({color: 0xfbbf24, transparent: true, opacity: .16}));
+      const solCore = body(19, 0xf59e0b, true, 'sol');
+      const solLbl = label('☉ SOL', '#fcd34d'); solLbl.position.y = 34;
+      sol.add(solGlow, solCore, solLbl);
+      sol.add(iconSprite('👑', 40));   // SOL = le souverain qui approuve
+      solCore.userData = {bodyId: 'sol', name: 'SOL', role: 'Orchestrateur — approuve, journalise, prévient'};
+      solGlow.userData = solCore.userData;
+      clickables.push(solCore, solGlow);
+      scene.add(sol);
+
+      // ✳ LAPLACE — nébuleuse au-dessus du soleil
+      const nebulaGrp = new THREE.Group();
+      nebulaGrp.position.set(0, 185, 0);
+      const nebPts = [];
+      for (let i = 0; i < 420; i++) {
+        const r = 30 + Math.pow(Math.random(), 1.6) * 95, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+        nebPts.push(r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph) * 0.55, r * Math.sin(ph) * Math.sin(th));
+      }
+      const nebGeo = new THREE.BufferGeometry();
+      nebGeo.setAttribute('position', new THREE.Float32BufferAttribute(nebPts, 3));
+      const nebulaCloud = new THREE.Points(nebGeo, new THREE.PointsMaterial({color: 0xc084fc, size: 2.1, transparent: true, opacity: .5}));
+      nebulaGrp.add(nebulaCloud);
+      const lapCore = body(9, 0xa855f7, true);
+      const lapLbl = label('✳ Laplace', '#d8b4fe'); lapLbl.position.y = 22;
+      lapCore.userData = {bodyId: 'laplace', name: '✳ Laplace', role: 'Créateur de nébuleuse du savoir — crée agents & systèmes, les améliore et les teste'};
+      nebulaGrp.add(lapCore, lapLbl);
+      nebulaGrp.add(iconSprite('🌀', 22));   // Laplace = la nébuleuse divine
+      const lapGlow = new THREE.Mesh(new THREE.SphereGeometry(17, 20, 20),
+        new THREE.MeshBasicMaterial({color: 0xc084fc, transparent: true, opacity: .12}));
+      lapGlow.userData = lapCore.userData;
+      nebulaGrp.add(lapGlow);
+      clickables.push(lapCore, lapGlow);
+      scene.add(nebulaGrp);
+      // ✦ étincelles = agents créés par Laplace
+      const sparks = [];
+      this._nebulaSync = agents => {
+        sparks.forEach(s => nebulaGrp.remove(s.mesh));
+        sparks.length = 0;
+        (agents || []).slice(0, 24).forEach((a, i) => {
+          const sp = new THREE.Mesh(new THREE.SphereGeometry(2.2, 8, 8),
+            new THREE.MeshBasicMaterial({color: 0xe9d5ff}));
+          sp.userData = {bodyId: 'laplace', name: '✦ ' + a.id, role: a.role || 'agent créé par Laplace'};
+          const ang = i * 1.7, rr = 52 + (i % 5) * 13;
+          sparks.push({mesh: sp, ang, rr, y: ((i % 7) - 3) * 9, sp: .0026 + (i % 5) * .0007});
+          nebulaGrp.add(sp);
+        });
+      };
+      // ⚛ ORBITES ATOMIQUES DE LAPLACE — réplique exacte du système solaire à l'échelle.
+      // Chaque divinité = une planète réelle : distance ∝ √demi-grand-axe (UA),
+      // vitesse angulaire ∝ 1/période (Kepler) — plans orbitaux inclinés (atome).
+      const SOLAR_SCALE = 92, SOLAR_K = 44, OMEGA_K = 0.004;   // Terre = référence
+      const atomPivots = [];   // {pivot, speed} — animés dans la boucle
+      const addAtomOrbiter = (cfg) => {
+        const dist = SOLAR_SCALE + SOLAR_K * Math.sqrt(cfg.a);   // distance à l'échelle
+        const speed = OMEGA_K / cfg.T * (cfg.retro ? -1 : 1);    // vitesse keplerienne
+        const tiltG = new THREE.Group();                          // plan orbital incliné (atome)
+        tiltG.rotation.x = cfg.tilt[0]; tiltG.rotation.z = cfg.tilt[1];
+        const pivot = new THREE.Group();
+        const grp = new THREE.Group(); grp.position.x = dist;
+        const mesh = body(cfg.radius, cfg.color, true);
+        mesh.userData = {bodyId: cfg.id, name: cfg.name, role: cfg.role};
+        grp.add(mesh);
+        const ic = iconSprite(cfg.icon, cfg.radius * 2.6);        // icône fonctionnelle DANS l'astre
+        grp.add(ic);
+        const lbl = label(cfg.name.replace(/[^ -~⌀-⌇─-⯿✀-➿]/gu, '').trim() || cfg.name, cfg.lblColor, 38);
+        lbl.scale.set(34, 8.5, 1); lbl.position.y = cfg.radius + 8;
+        grp.add(lbl);
+        if (cfg.build) cfg.build(grp);                            // satellites éventuels
+        pivot.add(grp);
+        const ring = new THREE.Mesh(new THREE.RingGeometry(dist - 0.5, dist + 0.3, 96),
+          new THREE.MeshBasicMaterial({color: cfg.color, side: THREE.DoubleSide, transparent: true, opacity: .16}));
+        ring.rotation.x = Math.PI / 2;
+        tiltG.add(ring, pivot);
+        nebulaGrp.add(tiltG);
+        clickables.push(mesh);
+        atomPivots.push({pivot, speed});
+        return {grp, mesh};
+      };
+
+      // Mercure (a=0.39 UA, T=0.24 an) — le plus rapide, le plus proche
+      addAtomOrbiter({id: 'sebas', name: '◉ Sebas 🛠️', icon: '🛠️', role: 'Exécutant des commandes divines de Laplace — capteurs webcam, wifi, téléphone · l\'homme de terrain',
+        a: 0.39, T: 0.24, radius: 5.5, color: 0x34d399, lblColor: '#6ee7b7', tilt: [0.55, 0.2]});
+      // Vénus (a=0.72, T=0.62)
+      addAtomOrbiter({id: 'metatron', name: 'Métatron', icon: '📝', role: 'Archange du méta-prompting — analyse vos requêtes (intention, domaines), les reformule en prompts enrichis et guide Laplace dans la création d\'agents.',
+        a: 0.72, T: 0.62, radius: 4.5, color: 0xe9d5ff, lblColor: '#e9d5ff', tilt: [-0.38, 0.14]});
+      // Terre (a=1.0, T=1.0) — la justice divine
+      const themisRef = addAtomOrbiter({id: 'themis', name: 'Thémis ⚖', icon: '⚖️', role: 'Justice divine, fille et bras armé de Laplace — balance ⚖ pour peser, épée 🗡 pour trancher. Juge, conseille et détruit les menaces à l\'ordre avec Ananké ⧉ et Hadès ♇. Constituée comme la démocratie : Eunomie 📜 (loi), Éirène 🕊️ (exécution), Dikè 🧑‍⚖️ (jugement), Censeur 🔎 (contre-pouvoir).',
+        a: 1.0, T: 1.0, radius: 7, color: 0xfbbf24, lblColor: '#fde68a', tilt: [0.14, -0.42],
+        build: (grp) => {
+          const P4 = [['eunomia', 'Eunomie 📜', 0xd9a066, 'Pouvoir législatif — écrit les lois du système (politique Styx, seuils) et propose les amendements.'],
+                      ['eirene', 'Éirène 🕊️', 0x93c5fd, 'Pouvoir exécutif — applique les décisions, rétablit l\'ordre, alertes préventives.'],
+                      ['dike', 'Dikè ⚖', 0xf9a8d4, 'Pouvoir judiciaire — instruit les dossiers des condamnés, vérifie les preuves.'],
+                      ['censeur', 'Censeur 🔎', 0xa3e635, 'Contre-pouvoir — audit, transparence, rend compte au souverain (vous).']];
+          P4.forEach(([id, nm, col, rl], i) => {
+            const pv = new THREE.Group();
+            const g2 = new THREE.Group();
+            const ang = i * (Math.PI / 2);
+            g2.position.set(Math.cos(ang) * 14.5, Math.sin(ang * 2) * 2.5, Math.sin(ang) * 14.5);
+            const mm = body(2.3, col, true, 'lune');
+            mm.userData = {bodyId: id, name: nm, role: rl};
+            g2.add(mm, iconSprite({eunomia: '📜', eirene: '🕊️', dike: '🧑\u200d⚖️', censeur: '🔎'}[id], 9));
+            pv.add(g2); grp.add(pv); atomPivots.push({pivot: pv, speed: 0.011 + i * 0.004});
+            clickables.push(mm);
+          });
+        }});
+      // Jupiter (a=5.2 UA, T=11.86 an) — la nécessité, lente et lointaine
+      addAtomOrbiter({id: 'ananke', name: 'Ananké ⧉', icon: '⛓️', role: 'Déesse primordiale de la nécessité inaltérable — la fatalité qui contraint tout le système ; ses 3 Moires secondent Hadès.',
+        a: 5.2, T: 11.86, radius: 6.5, color: 0xf472b6, lblColor: '#f9a8d4', tilt: [-0.1, 0.08],
+        build: (grp) => {
+          const ring = new THREE.Mesh(new THREE.RingGeometry(9.2, 10.4, 48),
+            new THREE.MeshBasicMaterial({color: 0xf472b6, side: THREE.DoubleSide, transparent: true, opacity: .35}));
+          ring.rotation.x = Math.PI / 2.4;
+          grp.add(ring);
+          const MOIRES = [
+            {id: 'clotho', nm: 'Clotho', ic: '🧵', role: 'la Fileuse — file le fil de chaque donnée à sa naissance', col: 0xf9a8d4},
+            {id: 'lachesis', nm: 'Lachésis', ic: '📏', role: 'la Répartitrice — mesure la durée de vie des données', col: 0xc4b5fd},
+            {id: 'atropos', nm: 'Atropos', ic: '✂️', role: 'l\'Inflexible — coupe le fil, prononce la mort des données', col: 0xfda4af}];
+          MOIRES.forEach((m, i) => {
+            const pv = new THREE.Group();
+            const g2 = new THREE.Group();
+            const ang = i * (Math.PI * 2 / 3);
+            g2.position.set(Math.cos(ang) * 13.5, Math.sin(ang * 2) * 2.5, Math.sin(ang) * 13.5);
+            const mm = body(2.3, m.col, true, 'lune');
+            mm.userData = {bodyId: m.id, name: m.ic + ' ' + m.nm, role: m.role};
+            const ml = label(m.nm, '#e9d5ff', 34); ml.scale.set(30, 7.5, 1); ml.position.y = 7;
+            g2.add(mm, ml, iconSprite(m.ic, 8));
+            pv.add(g2); grp.add(pv); atomPivots.push({pivot: pv, speed: 0.011 + i * 0.004});
+            clickables.push(mm);
+          });
+        }});
+
+      // 🏆 APOLLON — cour de SOL, devin du chariot
+      const apollonPivot = new THREE.Group();
+      const apollonGrp = new THREE.Group();
+      apollonGrp.position.set(58, 10, 0);
+      const apollonMesh = body(3.6, 0xfde047, true);
+      apollonMesh.userData = {bodyId: 'apollon', name: '🏆 Apollon',
+        role: 'Devin du chariot — lit les présages du système (trésor, santé, fardeau, feu des morts) et prononce des divinations.'};
+      const apollonLbl = label('🏆 Apollon', '#fde047', 36); apollonLbl.scale.set(34, 8.5, 1); apollonLbl.position.y = 11;
+      apollonGrp.add(apollonMesh, apollonLbl);
+      const apollonOrbit = new THREE.Mesh(new THREE.RingGeometry(57.5, 58.3, 80),
+        new THREE.MeshBasicMaterial({color: 0xfde047, side: THREE.DoubleSide, transparent: true, opacity: .22}));
+      apollonOrbit.rotation.x = Math.PI / 2;
+      sol.add(apollonOrbit);
+      apollonPivot.add(apollonGrp);
+      sol.add(apollonPivot);
+      clickables.push(apollonMesh);
+
+      // orbites + planètes — structure entreprise complète (toutes les planètes du registre)
+      const ORBIT = {mercure: 105, venus: 150, terre: 190, mars: 230, ceres: 258, jupiter: 300, uranus: 355, neptune: 405, pluton: 452};
+      const RADIUS = {mercure: 7, venus: 11, terre: 9, mars: 9, ceres: 5.5, jupiter: 14, uranus: 16, neptune: 12, pluton: 6};
+      const COLOR_FIX = {venus: 0xd9a066, uranus: 0x7dd3fc};
+      const planets = {};
+      const makePlanet = (id, symbol, name, role, radius, color, angle0, ringed) => {
+        const orbit = new THREE.Mesh(new THREE.RingGeometry(ORBIT[id] - .4, ORBIT[id] + .4, 128),
+          new THREE.MeshBasicMaterial({color: 0x1e293b, side: THREE.DoubleSide, transparent: true, opacity: .8}));
+        orbit.rotation.x = Math.PI / 2;
+        scene.add(orbit);
+        const pivot = new THREE.Group();          // rotation orbitale
+        const grp = new THREE.Group();            // position sur l'orbite
+        grp.position.x = ORBIT[id];
+        const mesh = body(radius, color, false, id);        // 🪐 texture = vraie incarnation
+        mesh.userData = {bodyId: id, name: symbol + ' ' + name, role};
+        clickables.push(mesh);
+        grp.add(mesh);
+        const lbl = label(symbol + ' ' + name, id === 'venus' ? '#fcd34d' : '#a5b4fc');
+        lbl.position.y = radius + 14;
+        grp.add(lbl);
+        pivot.add(grp);
+        pivot.rotation.y = angle0;
+        scene.add(pivot);
+        planets[id] = {pivot, grp, mesh, angle: angle0};
+        return grp;
+      };
+      const planetBodies = this.bodies.filter(b => b.kind === 'planet');
+      planetBodies.forEach((b, i) => {
+        const color = COLOR_FIX[b.id] !== undefined ? COLOR_FIX[b.id]
+          : parseInt((b.color || '#818cf8').replace('#', ''), 16);
+        makePlanet(b.id, b.symbol, b.name, b.role, RADIUS[b.id] || 9, color, -1.3 + i * 0.9, b.id === 'uranus', b.icon);
+      });
+      const uraGrp = planets.uranus.grp;
+
+      // anneaux d'Uranus (inclinés ~98°)
+      const ring = new THREE.Mesh(new THREE.RingGeometry(22, 40, 90),
+        new THREE.MeshBasicMaterial({color: 0x818cf8, side: THREE.DoubleSide, transparent: true, opacity: .34}));
+      ring.rotation.x = Math.PI / 2 - 0.5;
+      uraGrp.add(ring);
+      const ring2 = new THREE.Mesh(new THREE.RingGeometry(44, 47, 90),
+        new THREE.MeshBasicMaterial({color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: .2}));
+      ring2.rotation.x = Math.PI / 2 - 0.5;
+      uraGrp.add(ring2);
+
+      // lunes (distances réelles relatives, compressées par système) + cours
+      const moon = (parent, name, role, distPx, size, color, id) => {
+        const pivot = new THREE.Group();
+        const m = new THREE.Mesh(new THREE.SphereGeometry(size, 18, 18),
+          new THREE.MeshStandardMaterial({color, roughness: .8}));
+        m.position.x = distPx;
+        m.userData = {bodyId: id, name, role};
+        clickables.push(m);
+        const lbl = label(name, '#818cf8', 34); lbl.scale.set(30, 7.5, 1);
+        lbl.position.set(distPx, size + 8, 0);
+        pivot.add(m, lbl);
+        pivot.rotation.y = Math.random() * Math.PI * 2;
+        parent.add(pivot);
+        moonOwner[id] = parent.userData && parent.userData.planetId || null;
+        return pivot;
+      };
+      const moonOwner = {};           // satellite/cour → planète propriétaire
+      const moonPivots = [];          // lunes orbitales (distances réelles)
+      const courtPivots = [];         // cours mythologiques (Vénus, Mercure, Cérès)
+      const MOON_STYLE = {
+        uranus: {min: 52, range: 52, color: 0xa5b4fc, direct: true},
+        mars: {min: 18, range: 12, color: 0xfca5a5},
+        jupiter: {min: 26, range: 32, color: 0xfdba74},
+        neptune: {min: 18, range: 34, color: 0x93c5fd, sqrt: true},
+        pluton: {min: 14, range: 9, color: 0xe2e8f0},
+        terre: {min: 24, range: 0, color: 0xd1d5db},
+      };
+      planetBodies.forEach(b => {
+        planets[b.id].grp.userData = {planetId: b.id};
+        const sats = b.satellites || [];
+        if (!sats.length) return;
+        const st = MOON_STYLE[b.id] || {min: 24, range: 20, color: 0xa5b4fc};
+        const ds = sats.map(s => s.distance_km || 0);
+        const dmin = Math.min(...ds), dmax = Math.max(...ds);
+        sats.forEach(s => {
+          let t = dmax > dmin ? (s.distance_km - dmin) / (dmax - dmin) : 0;
+          if (st.sqrt) t = Math.sqrt(t);
+          const px = st.min + (st.direct ? (s.distance_km - 37850) / (583500 - 37850) * st.range : t * st.range);
+          const size = b.id === 'uranus' ? 2.2 + 1.6 * (1 - (s.distance_km - 37850) / 545650) : 2.4;
+          const pv = moon(planets[b.id].grp, s.name.split(' ')[0], s.role, px, size, st.color, s.id);
+          moonOwner[s.id] = b.id; window.__moonOwner[s.id] = b.id;
+          moonPivots.push(pv);
+        });
+      });
+      // cours (Vénus, Mercure, Cérès) — mythe : pas de lunes, cour d'analystes
+      const COURT_COLOR = {venus: 0xfcd34d, mercure: 0x7dd3fc, ceres: 0xa3e635};
+      planetBodies.filter(b => (b.court || []).length).forEach(b => {
+        const cour = b.court || [];
+        // 🛡 anti-collision : angles équirépartis + rayons échelonnés → aucun chevauchement possible
+        cour.forEach((c, i) => {
+          const pv = moon(planets[b.id].grp, c.name, c.role, 24 + (i * 7) % 9, 2.4, COURT_COLOR[b.id] || 0xfcd34d, c.id);
+          pv.rotation.y = i * (Math.PI * 2 / cour.length) + 0.6;
+          moonOwner[c.id] = b.id; window.__moonOwner[c.id] = b.id;
+          courtPivots.push(pv);
+        });
+      });
+      const marsMoons = moonPivots.filter((_, i) => true);  // toutes les lunes animées ci-dessous
+      // suivi par id (toast « suivre ») — expose le mapping vers les meshes cliquables
+      const meshIndex = {};
+      clickables.forEach(c => { if (c.userData && c.userData.bodyId) meshIndex[c.userData.bodyId] = c; });
+      // suivre = vol + zoom adapté à la taille de l'astre + verrouillage caméra
+      const focusDist = (o) => {
+        const r = (o.geometry && o.geometry.parameters) ? (o.geometry.parameters.radius || 8) : 8;
+        return Math.max(34, r * 7 + 22);
+      };
+      this._skyFollow = id => {
+        const o = meshIndex[id]; if (!o) return;
+        followObj = o; followDist = focusDist(o); selectBody(o);
+      };
+      const nebulaGrpRef = nebulaGrp;
+
+      // contrôles orbitaux complets : rotation (gauche), zoom (molette), pan (droite), focus (double-clic)
+      let theta = 0.35, phi = 1.12, dist = 640, drag = false, panning = false, lx = 0, ly = 0, moved = 0;
+      let followDist = null;   // distance de zoom verrouillée quand on suit un astre
+      const target = new THREE.Vector3(0, 0, 0);
+      let followObj = null;                      // corps suivi (double-clic)
+      const applyCam = () => {
+        camera.position.set(
+          target.x + dist * Math.sin(phi) * Math.cos(theta),
+          target.y + dist * Math.cos(phi),
+          target.z + dist * Math.sin(phi) * Math.sin(theta));
+        camera.lookAt(target);
+      };
+      applyCam();
+      // anneau de sélection — suit l'objet sélectionné
+      const selRing = new THREE.Mesh(new THREE.RingGeometry(1, 1.15, 48),
+        new THREE.MeshBasicMaterial({color: 0x34d399, side: THREE.DoubleSide, transparent: true, opacity: .9}));
+      selRing.visible = false;
+      scene.add(selRing);
+      let selObj = null;
+      const selectBody = obj3d => {
+        selObj = obj3d || null;
+        selRing.visible = !!selObj;
+      };
+      const el = renderer.domElement;
+      el.addEventListener('contextmenu', e => e.preventDefault());
+      el.addEventListener('wheel', e => {
+        e.preventDefault();
+        dist *= (1 + Math.sign(e.deltaY) * 0.11);
+        dist = Math.max(55, Math.min(1600, dist));
+        applyCam();
+      }, {passive: false});
+      el.addEventListener('pointerdown', e => {
+        drag = true; panning = (e.button === 2 || e.ctrlKey);
+        moved = 0; lx = e.clientX; ly = e.clientY;
+        el.setPointerCapture(e.pointerId);
+      });
+      el.addEventListener('pointermove', e => {
+        this.hoverMove(e);
+        if (!drag) return;
+        const dx = e.clientX - lx, dy = e.clientY - ly;
+        moved += Math.abs(dx) + Math.abs(dy);
+        if (panning) {
+          // pan : déplacer la cible dans le plan de la caméra
+          const scale = dist * 0.0016;
+          const right = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 0);
+          const up = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 1);
+          target.addScaledVector(right, -dx * scale).addScaledVector(up, dy * scale);
+          followObj = null;                        // pan manuel = on lâche le suivi
+        } else {
+          theta -= dx * 0.005;
+          phi = Math.max(.18, Math.min(Math.PI - .18, phi - dy * 0.005));
+        }
+        lx = e.clientX; ly = e.clientY;
+        applyCam();
+      });
+      el.addEventListener('pointerup', e => { drag = false; panning = false; });
+      const raycast = e => {
+        const ray = new THREE.Raycaster();
+        const r = el.getBoundingClientRect();
+        const m = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+        ray.setFromCamera(m, camera);
+        return ray.intersectObjects(clickables, false)[0];
+      };
+      el.addEventListener('dblclick', e => {
+        const hit = raycast(e);
+        if (!hit) return;
+        followObj = hit.object;                    // double-clic : suivre le corps
+        selectBody(hit.object);
+        dist = Math.max(55, Math.min(dist, 120));
+        const u = hit.object.userData || {};
+        if (u.bodyId) { this.bodyToast = null; this.openBodySmart(u.bodyId); }
+      });
+      el.addEventListener('click', e => {
+        if (moved > 6) return;   // c'était un drag
+        const hit = raycast(e);
+        if (!hit) { selectBody(null); followObj = null; this.bodyToast = null; return; }
+        const u = hit.object.userData;
+        if (!u || !u.bodyId) return;
+        selectBody(hit.object);                    // clic simple : sélection + fiche rapide
+        this.bodyToast = {id: u.bodyId, name: u.name || u.bodyId};
+        clearTimeout(this._toastT);
+        this._toastT = setTimeout(() => this.bodyToast = null, 6000);
+      });
+      window.addEventListener('resize', () => {
+        const w = container.clientWidth, h = container.clientHeight;
+        camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h);
+      });
+
+      const clock = new THREE.Clock();
+      const _wp = new THREE.Vector3();
+      const animate = () => {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+        planetBodies.forEach((b, i) => { planets[b.id].pivot.rotation.y += 0.0013 - i * 0.00008; });
+        nebulaGrp.rotation.y += 0.0007;
+        atomPivots.forEach(o => { o.pivot.rotation.y += o.speed; });   // ⚛ keplerien : vite à l'intérieur, lent à l'extérieur
+        apollonPivot.rotation.y -= 0.008;          // 🏆 chariot d'Apollon autour de SOL
+        sparks.forEach(s => { s.ang += s.sp; s.mesh.position.set(Math.cos(s.ang) * s.rr, s.y, Math.sin(s.ang) * s.rr); });
+        if (this.systemOn) {   // 💤 light OFF : le monde est gelé, les divinités de Laplace continuent
+          planetBodies.forEach(b => { planets[b.id].mesh.rotation.y += 0.004; });
+          moonPivots.forEach((p, i) => { p.rotation.y += 0.004 + i * 0.0009; });
+          courtPivots.forEach((p, i) => { p.rotation.y += 0.006 + i * 0.0012; });
+          solCore.rotation.y += 0.002;
+        }
+        // suivi du corps focus + anneau de sélection collé à l'objet
+        if (followObj) {
+          followObj.getWorldPosition(_wp); target.lerp(_wp, 0.12);          // centrage + verrou
+          if (followDist) dist += (followDist - dist) * 0.08;               // zoom fluide vers l'astre
+          applyCam();
+        }
+        if (selObj && selRing.visible) {
+          selObj.getWorldPosition(_wp);
+          selRing.position.copy(_wp);
+          selRing.quaternion.copy(camera.quaternion);
+          const rr = Math.max(6, (selObj.geometry && selObj.geometry.parameters
+                       ? selObj.geometry.parameters.radius : 8) * 2.1);
+          selRing.scale.set(rr, rr, 1);
+        }
+        renderer.render(scene, camera);
+      };
+      animate();
+    },
+
+    hoverMove(e) {
+      this.hover.x = e.clientX; this.hover.y = e.clientY;
+    },
+
+    // ── THREE.JS : scène 3D d'une planète (modales) ────────
+    buildPlanetScene(containerId, planetId) {
+      const container = document.getElementById(containerId);
+      if (!container || !window.THREE) return null;
+      const isUranus = planetId === 'uranus';
+      const W = container.clientWidth, H = container.clientHeight;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
+      camera.position.set(0, isUranus ? 120 : 90, isUranus ? 260 : 190);
+      const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+      renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+      scene.add(new THREE.AmbientLight(0x334155, 1.3));
+      scene.add(new THREE.PointLight(0xfbbf24, 1.6, 800));
+      const clickables = [];
+      const color = isUranus ? 0x7dd3fc : 0xd9a066;
+      const planet = new THREE.Mesh(new THREE.SphereGeometry(isUranus ? 42 : 34, 48, 48),
+        new THREE.MeshStandardMaterial({color, roughness: .7, metalness: .1}));
+      planet.userData = {bodyId: planetId};
+      clickables.push(planet);
+      scene.add(planet);
+      if (isUranus) {
+        const ring = new THREE.Mesh(new THREE.RingGeometry(56, 96, 96),
+          new THREE.MeshBasicMaterial({color: 0x818cf8, side: THREE.DoubleSide, transparent: true, opacity: .35}));
+        ring.rotation.x = Math.PI / 2 - 0.35;
+        scene.add(ring);
+      }
+      const members = isUranus ? this.satellites : this.court;
+      const pivots = {};
+      members.forEach((s, i) => {
+        const pivot = new THREE.Group();
+        const d = s.distance_km || (60000 + i * 40000);
+        const px = isUranus ? 105 + (d - 37850) / (583500 - 37850) * 105 : 62 + i * 16;
+        const size = isUranus ? 4.5 + 3 * (1 - (d - 37850) / 545650) : 5;
+        const m = new THREE.Mesh(new THREE.SphereGeometry(size, 20, 20),
+          new THREE.MeshStandardMaterial({color: isUranus ? 0xa5b4fc : 0xfcd34d, roughness: .8}));
+        m.position.x = px;
+        m.userData = {bodyId: s.id};
+        clickables.push(m);
+        // étiquette
+        const cv = document.createElement('canvas'); cv.width = 256; cv.height = 48;
+        const ctx = cv.getContext('2d');
+        ctx.font = '600 30px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = isUranus ? '#a5b4fc' : '#fcd34d';
+        ctx.shadowColor = 'rgba(3,5,8,.9)'; ctx.shadowBlur = 5;
+        ctx.fillText(s.name.split(' ')[0], 128, 34);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(cv), transparent: true}));
+        sp.scale.set(34, 6.4, 1); sp.position.set(px, size + 8, 0);
+        pivot.add(m, sp);
+        pivot.rotation.y = i * (Math.PI * 2 / members.length);
+        scene.add(pivot);
+        pivots[s.id] = pivot;
+      });
+      // halo de sélection
+      const selRing = new THREE.Mesh(new THREE.RingGeometry(1, 1.35, 40),
+        new THREE.MeshBasicMaterial({color: 0x34d399, side: THREE.DoubleSide, transparent: true, opacity: .85}));
+      scene.add(selRing);
+      const focus = id => {
+        const p = pivots[id];
+        if (!p) { selRing.visible = false; return; }
+        const child = p.children.find(c => c.isMesh);
+        if (!child) { selRing.visible = false; return; }
+        selRing.visible = true;
+        selRing.position.copy(child.getWorldPosition(new THREE.Vector3()));
+      };
+      focus(isUranus ? 'zeta' : 'thalie');
+      // interaction
+      const ray = new THREE.Raycaster();
+      let moved = 0, down = null;
+      const el = renderer.domElement;
+      el.addEventListener('pointerdown', e => { down = e; moved = 0; });
+      el.addEventListener('pointermove', e => { if (down) moved += 3; });
+      el.addEventListener('click', e => {
+        if (moved > 6) return;
+        const r = el.getBoundingClientRect();
+        const m = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+        ray.setFromCamera(m, camera);
+        const hit = ray.intersectObjects(clickables, false)[0];
+        if (!hit) return;
+        const id = hit.object.userData.bodyId;
+        if (id === planetId) return;
+        if (isUranus && this.satellites.some(s => s.id === id)) this.selectSat(id);
+        else if (!isUranus && this.court.some(c => c.id === id)) this.selectAnalyst(id);
+      });
+      let ry = 0, rx = 0.15, drag = false, lx = 0, ly = 0;
+      el.addEventListener('pointerdown', e => { drag = true; lx = e.clientX; ly = e.clientY; });
+      window.addEventListener('pointerup', () => drag = false);
+      el.addEventListener('pointermove', e => {
+        if (!drag) return;
+        ry += (e.clientX - lx) * 0.006; rx = Math.max(-1.2, Math.min(1.2, rx + (e.clientY - ly) * 0.004));
+        lx = e.clientX; ly = e.clientY;
+      });
+      const clock = new THREE.Clock();
+      const animate = () => {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+        planet.rotation.y += 0.003;
+        Object.values(pivots).forEach((p, i) => p.rotation.y += 0.0035 + i * 0.0008);
+        selRing.lookAt(camera.position);
+        selRing.scale.setScalar(6 + Math.sin(t * 2.5) * 0.7);
+        camera.position.set(340 * Math.sin(rx) * Math.sin(ry), 340 * Math.cos(rx) + 40, 340 * Math.sin(rx) * Math.cos(ry));
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+      };
+      animate();
+      return {focus};
+    },
+  };
+}
+</script>
+  <script src="/static/sol_widget.js" defer></script>
+</body>
+</html>
