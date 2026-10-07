@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-07T23:43:34.431350+00:00",
+  "generated_at": "2026-10-07T05:42:19.472794+00:00",
   "user": "Sathancabrol",
   "count": 9,
   "repos": [
@@ -283,7 +283,7 @@
       "private": false,
       "fork": false,
       "archived": false,
-      "size_kb": 10370,
+      "size_kb": 10403,
       "default_branch": "main",
       "updated_at": "2026-08-30T18:08:23Z",
       "pushed_at": "2026-09-07T23:36:03Z",
@@ -641,32 +641,223 @@
       "full_name": "Sathancabrol/monorepo",
       "html_url": "https://github.com/Sathancabrol/monorepo",
       "description": null,
-      "language": null,
-      "languages": {},
+      "language": "JavaScript",
+      "languages": {
+        "JavaScript": 11679009,
+        "TypeScript": 7221301,
+        "HTML": 6368958,
+        "Python": 469441,
+        "Rich Text Format": 267270,
+        "CSS": 257631,
+        "Shell": 45610,
+        "PowerShell": 13516
+      },
       "topics": [],
       "private": false,
       "fork": false,
       "archived": false,
-      "size_kb": 0,
+      "size_kb": 327432,
       "default_branch": "main",
-      "updated_at": "2026-09-07T23:17:49Z",
-      "pushed_at": "2026-09-07T23:17:44Z",
+      "updated_at": "2026-09-09T17:53:51Z",
+      "pushed_at": "2026-10-07T05:41:55Z",
       "is_monorepo": true,
       "branches": [
         {
+          "name": "arena/01a07e3c-monorepo",
+          "sha": "cd6e33e",
+          "full_sha": "cd6e33e64d174894f7d69017b8df14f72a2a3ed4"
+        },
+        {
+          "name": "arena/01a08168-monorepo",
+          "sha": "1ef0aa4",
+          "full_sha": "1ef0aa4059e972e46e318668dceaf96f9086bc4f"
+        },
+        {
+          "name": "arena/01a08203-monorepo",
+          "sha": "73fb7bb",
+          "full_sha": "73fb7bb6db4b3b8cc554556437f983bc8adaedf7"
+        },
+        {
+          "name": "arena/01a08277-monorepo",
+          "sha": "0c5741c",
+          "full_sha": "0c5741cd5a5372610780e3223067e6cc8d5eb58e"
+        },
+        {
+          "name": "arena/01a08385-monorepo",
+          "sha": "b6646a0",
+          "full_sha": "b6646a0796682220f614f35384cdb80df74138a0"
+        },
+        {
+          "name": "arena/01a08449-monorepo",
+          "sha": "0f76b6d",
+          "full_sha": "0f76b6dd503942bad108aefe17bbbda9d1ed7d1e"
+        },
+        {
           "name": "main",
-          "sha": "3d8a17e",
-          "full_sha": "3d8a17e03ceba9bc7b833bdeba4c3fe06b2adf1a"
+          "sha": "455f4af",
+          "full_sha": "455f4af3c6ea5329d143b13f2ee1869416db6fd8"
         }
       ],
       "commits": [
         {
-          "sha": "3d8a17e",
-          "full_sha": "3d8a17e03ceba9bc7b833bdeba4c3fe06b2adf1a",
-          "message": "Initial commit",
+          "sha": "455f4af",
+          "full_sha": "455f4af3c6ea5329d143b13f2ee1869416db6fd8",
+          "message": "Add files via upload",
           "author": "Sathancabrol",
-          "date": "2026-09-07T23:17:43Z",
-          "url": "https://github.com/Sathancabrol/monorepo/commit/3d8a17e03ceba9bc7b833bdeba4c3fe06b2adf1a"
+          "date": "2026-09-09T17:41:21Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/455f4af3c6ea5329d143b13f2ee1869416db6fd8"
+        },
+        {
+          "sha": "c039818",
+          "full_sha": "c039818be06c2f03afb6677cc3ed970922a8583b",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T04:02:17Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/c039818be06c2f03afb6677cc3ed970922a8583b"
+        },
+        {
+          "sha": "acde313",
+          "full_sha": "acde313b388cedb818987e2da88388ee7caf1409",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T04:00:21Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/acde313b388cedb818987e2da88388ee7caf1409"
+        },
+        {
+          "sha": "96d86d5",
+          "full_sha": "96d86d5ba45f07e3b4100f0ea2e938e85e612f23",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T04:00:19Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/96d86d5ba45f07e3b4100f0ea2e938e85e612f23"
+        },
+        {
+          "sha": "18c47c8",
+          "full_sha": "18c47c83b05c6ec8a0b05801b81e8be48c9d9828",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:59:22Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/18c47c83b05c6ec8a0b05801b81e8be48c9d9828"
+        },
+        {
+          "sha": "714ed3b",
+          "full_sha": "714ed3bf947068db34cd55b0ca4424e08a615234",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:56:06Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/714ed3bf947068db34cd55b0ca4424e08a615234"
+        },
+        {
+          "sha": "4d842f3",
+          "full_sha": "4d842f317a2e3d6e4724b2190fa095936edc5bf6",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:54:40Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/4d842f317a2e3d6e4724b2190fa095936edc5bf6"
+        },
+        {
+          "sha": "0e1f064",
+          "full_sha": "0e1f06441c4983589160f28a7870dd2dfeb5ba2f",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:50:51Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/0e1f06441c4983589160f28a7870dd2dfeb5ba2f"
+        },
+        {
+          "sha": "d3df9e7",
+          "full_sha": "d3df9e7029836296308f2980e2510c4ea18cf29d",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:50:37Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/d3df9e7029836296308f2980e2510c4ea18cf29d"
+        },
+        {
+          "sha": "93baedb",
+          "full_sha": "93baedb76d296d7a138ce60d1ab1b8899ed37561",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:43:34Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/93baedb76d296d7a138ce60d1ab1b8899ed37561"
+        },
+        {
+          "sha": "d293331",
+          "full_sha": "d2933312b9845f46ad7e3214081899d744839119",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:41:41Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/d2933312b9845f46ad7e3214081899d744839119"
+        },
+        {
+          "sha": "68629cc",
+          "full_sha": "68629ccceded64f034fd16b8a2c68ff07a25117d",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:39:34Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/68629ccceded64f034fd16b8a2c68ff07a25117d"
+        },
+        {
+          "sha": "ed395ab",
+          "full_sha": "ed395ab1da17b1215b1d3b52dc7353acf7292b1e",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:38:24Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/ed395ab1da17b1215b1d3b52dc7353acf7292b1e"
+        },
+        {
+          "sha": "d4ca3a8",
+          "full_sha": "d4ca3a8ca0e787ae7a23e907af465b856af038de",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:37:21Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/d4ca3a8ca0e787ae7a23e907af465b856af038de"
+        },
+        {
+          "sha": "d03ea22",
+          "full_sha": "d03ea2256e13e1b3f50091610c90992769c6a7f2",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:36:34Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/d03ea2256e13e1b3f50091610c90992769c6a7f2"
+        },
+        {
+          "sha": "482d578",
+          "full_sha": "482d578708dbd7d33191489ef151b2d1eb5c45dd",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:36:17Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/482d578708dbd7d33191489ef151b2d1eb5c45dd"
+        },
+        {
+          "sha": "8ed2304",
+          "full_sha": "8ed2304fc6d6932da0260a610093b70bdede0a47",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:35:39Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/8ed2304fc6d6932da0260a610093b70bdede0a47"
+        },
+        {
+          "sha": "3306674",
+          "full_sha": "3306674574acd8b4c41cd06f74a0c67c94b535eb",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:33:59Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/3306674574acd8b4c41cd06f74a0c67c94b535eb"
+        },
+        {
+          "sha": "276472b",
+          "full_sha": "276472b8bd8a80eec599a65e9e6f32e80fbc052c",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:32:27Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/276472b8bd8a80eec599a65e9e6f32e80fbc052c"
+        },
+        {
+          "sha": "50c9cf0",
+          "full_sha": "50c9cf091cc63c7abeb64f1f49aafae0d42479ff",
+          "message": "Add files via upload",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T03:29:28Z",
+          "url": "https://github.com/Sathancabrol/monorepo/commit/50c9cf091cc63c7abeb64f1f49aafae0d42479ff"
         }
       ],
       "modules": [],
@@ -679,7 +870,7 @@
       "description": "proto de l'app",
       "language": "TypeScript",
       "languages": {
-        "TypeScript": 7110120,
+        "TypeScript": 7690663,
         "HTML": 49065,
         "Python": 7224,
         "CSS": 853
@@ -688,10 +879,10 @@
       "private": false,
       "fork": false,
       "archived": false,
-      "size_kb": 95009,
+      "size_kb": 93965,
       "default_branch": "main",
-      "updated_at": "2026-08-26T13:15:30Z",
-      "pushed_at": "2026-08-26T13:12:00Z",
+      "updated_at": "2026-09-10T02:47:57Z",
+      "pushed_at": "2026-09-10T02:58:54Z",
       "is_monorepo": false,
       "branches": [
         {
@@ -725,12 +916,33 @@
           "full_sha": "f7861b58417f9fd0bb2dbe0723a0a3333648621c"
         },
         {
+          "name": "arena/01a08342-proto-cognitorium",
+          "sha": "c52a408",
+          "full_sha": "c52a4081916797039de641b61189f4f1abfd1fbd"
+        },
+        {
           "name": "main",
-          "sha": "f83042c",
-          "full_sha": "f83042c2a656a4384c2e04a0e4e50607fd323549"
+          "sha": "74e301e",
+          "full_sha": "74e301e455a23342b2389ac07a9a42cc7ec0ca6d"
         }
       ],
       "commits": [
+        {
+          "sha": "74e301e",
+          "full_sha": "74e301e455a23342b2389ac07a9a42cc7ec0ca6d",
+          "message": "feat(auth): implement onboarding and authentication flow",
+          "author": "Sathancabrol",
+          "date": "2026-09-10T02:47:52Z",
+          "url": "https://github.com/Sathancabrol/proto-cognitorium/commit/74e301e455a23342b2389ac07a9a42cc7ec0ca6d"
+        },
+        {
+          "sha": "7579fb0",
+          "full_sha": "7579fb0a69ab3cbbe12afb88b8922d27322af3ec",
+          "message": "feat: add user account, cognitive bias, and UI tools",
+          "author": "Sathancabrol",
+          "date": "2026-09-09T04:05:13Z",
+          "url": "https://github.com/Sathancabrol/proto-cognitorium/commit/7579fb0a69ab3cbbe12afb88b8922d27322af3ec"
+        },
         {
           "sha": "f83042c",
           "full_sha": "f83042c2a656a4384c2e04a0e4e50607fd323549",
@@ -874,22 +1086,6 @@
           "author": "Sathancabrol",
           "date": "2026-08-25T13:11:33Z",
           "url": "https://github.com/Sathancabrol/proto-cognitorium/commit/5626ab3a49ca79ec5b24203593cff65c62cbd0cc"
-        },
-        {
-          "sha": "b91e5df",
-          "full_sha": "b91e5dffe9a23ccf821caa6e50110b902fc0d623",
-          "message": "Make Savoirs arborescence switchable: outline, ontology graph, drill-down coverflow",
-          "author": "Sathancabrol",
-          "date": "2026-08-25T12:59:26Z",
-          "url": "https://github.com/Sathancabrol/proto-cognitorium/commit/b91e5dffe9a23ccf821caa6e50110b902fc0d623"
-        },
-        {
-          "sha": "d1ba0fa",
-          "full_sha": "d1ba0fa7b3b186c6eeaf6c34059668db7f81b4c7",
-          "message": "big update",
-          "author": "Sathancabrol",
-          "date": "2026-08-25T12:57:07Z",
-          "url": "https://github.com/Sathancabrol/proto-cognitorium/commit/d1ba0fa7b3b186c6eeaf6c34059668db7f81b4c7"
         }
       ],
       "modules": [
@@ -1115,12 +1311,17 @@
       "private": false,
       "fork": false,
       "archived": false,
-      "size_kb": 9322,
+      "size_kb": 9882,
       "default_branch": "main",
       "updated_at": "2026-09-07T05:43:22Z",
-      "pushed_at": "2026-09-07T06:00:00Z",
+      "pushed_at": "2026-10-07T00:03:40Z",
       "is_monorepo": false,
       "branches": [
+        {
+          "name": "arena/dec9cd88-watchtower",
+          "sha": "2e34c21",
+          "full_sha": "2e34c21e1aa82931cd7c234b1f593422d04ef166"
+        },
         {
           "name": "arena/01a06ebe-watchtower",
           "sha": "715bfa7",
@@ -1128,8 +1329,8 @@
         },
         {
           "name": "arena/01a072e1-watchtower",
-          "sha": "b16337b",
-          "full_sha": "b16337ba041631f5fe05a989752a6c4dffb5d283"
+          "sha": "db6e647",
+          "full_sha": "db6e6470c9d081e25c7d54503a968270ba58597a"
         },
         {
           "name": "arena/01a0730a-watchtower",
