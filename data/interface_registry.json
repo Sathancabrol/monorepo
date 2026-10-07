@@ -1,0 +1,392 @@
+{
+  "meta": {
+    "version": "0.1.0",
+    "date": "2026-10-07",
+    "principle": "Monorepo is the integration shell; source repos remain authoritative until a feature is migrated and verified."
+  },
+  "categories": [
+    {
+      "id": "command",
+      "label": "Command Center",
+      "icon": "⌂",
+      "color": "cyan",
+      "description": "Home, global status, navigation, workspace and cross-module orchestration",
+      "source": [
+        "monorepo"
+      ],
+      "status": "skeleton",
+      "features": [
+        "global dashboard",
+        "module launcher",
+        "system health",
+        "activity/timeline",
+        "global search",
+        "quick actions"
+      ]
+    },
+    {
+      "id": "world",
+      "label": "World / Territory",
+      "icon": "◎",
+      "color": "blue",
+      "description": "Geospatial world, 2D/3D maps, territory, places and time",
+      "source": [
+        "watchtower",
+        "monorepo/frontignan"
+      ],
+      "status": "partial",
+      "features": [
+        "globe 3D",
+        "IGN 2D",
+        "OSM",
+        "bâti 3D",
+        "cadastre",
+        "routes",
+        "entities",
+        "pins",
+        "place sheets",
+        "street imagery",
+        "territory dossiers",
+        "Thau / Frontignan atlas",
+        "solar system",
+        "camera / flight mode",
+        "weather",
+        "historical layers",
+        "map layers"
+      ]
+    },
+    {
+      "id": "intel",
+      "label": "Intel / OSINT",
+      "icon": "◈",
+      "color": "purple",
+      "description": "Evidence-driven intelligence, monitoring, sources and dossiers",
+      "source": [
+        "watchtower",
+        "COGNITORIUM/watchtower-mods",
+        "reaserch-engine"
+      ],
+      "status": "partial",
+      "features": [
+        "intel twin",
+        "OSINT case",
+        "evidence registry",
+        "source registry",
+        "official watch",
+        "veille",
+        "signals / gaps",
+        "economic footprint",
+        "risk data",
+        "CCTV",
+        "aircraft",
+        "ships",
+        "satellites",
+        "fires",
+        "earthquakes",
+        "radio",
+        "research dossier",
+        "claims / contradictions",
+        "provenance / uncertainty"
+      ]
+    },
+    {
+      "id": "projects",
+      "label": "Projects / BTP",
+      "icon": "▦",
+      "color": "orange",
+      "description": "Project, construction and operational workspace",
+      "source": [
+        "watchtower",
+        "monorepo/btp-conduite-travaux"
+      ],
+      "status": "partial",
+      "features": [
+        "project dossier",
+        "DCE / CCTP / CCAP / BPU / DQE",
+        "planning",
+        "phasing 4D",
+        "site documents",
+        "price studies",
+        "DT / DICT / AIPR",
+        "safety",
+        "quality",
+        "execution reports",
+        "DOE / reception",
+        "imprevus TP",
+        "cost / margin",
+        "equipment / inventory",
+        "site map",
+        "BIM / digital twin placeholder"
+      ]
+    },
+    {
+      "id": "human",
+      "label": "Human / Cognition",
+      "icon": "◉",
+      "color": "magenta",
+      "description": "Personal model, skills, experiences, evidence and cognitive state",
+      "source": [
+        "proto-cognitorium",
+        "HCSM",
+        "Language-decoder"
+      ],
+      "status": "partial",
+      "features": [
+        "profile",
+        "skills graph",
+        "capabilities",
+        "experience distillation",
+        "CV alignment",
+        "targeted CV",
+        "ROME matching",
+        "cognitive signature",
+        "cognitive biases",
+        "metacognition",
+        "decay timeline",
+        "evidence / proof",
+        "epistemic status",
+        "uncertainty",
+        "context / temporal state",
+        "decoded-human profile"
+      ]
+    },
+    {
+      "id": "knowledge",
+      "label": "Knowledge / Research",
+      "icon": "◇",
+      "color": "green",
+      "description": "Knowledge graph, scientific literature and evidence synthesis",
+      "source": [
+        "ETAT-DE-LART-PSYCHOLOGIE",
+        "reaserch-engine",
+        "HCSM"
+      ],
+      "status": "partial",
+      "features": [
+        "psychology atlas",
+        "concept taxonomy",
+        "knowledge graph",
+        "literature search",
+        "academic retrieval",
+        "research planner",
+        "evidence graph",
+        "contradiction analysis",
+        "source quality",
+        "sufficiency / stopping",
+        "research dossier",
+        "PRISMA",
+        "citation metrics",
+        "visualization",
+        "paper writing"
+      ]
+    },
+    {
+      "id": "learning",
+      "label": "Learning Engine",
+      "icon": "△",
+      "color": "gold",
+      "description": "Learning by situations, actions, consequences and transfer",
+      "source": [
+        "COGNITORIUM"
+      ],
+      "status": "prototype",
+      "features": [
+        "scenario engine",
+        "challenge engine",
+        "cognitive operations",
+        "skill graph state",
+        "adaptive loop",
+        "turboréacteur PoC",
+        "money PoC",
+        "concept emergence",
+        "feedback",
+        "transfer",
+        "local persistence"
+      ]
+    },
+    {
+      "id": "simulation",
+      "label": "Simulation / Lab",
+      "icon": "◌",
+      "color": "red",
+      "description": "Experiments, scenarios, cognitive simulation and visual labs",
+      "source": [
+        "proto-cognitorium",
+        "ETAT-DE-LART-PSYCHOLOGIE",
+        "animation-chronos"
+      ],
+      "status": "partial",
+      "features": [
+        "experiment studio",
+        "evaluation catalog",
+        "psychology lab",
+        "metacognition loop",
+        "temporal graph",
+        "network graph",
+        "interactive visualizations",
+        "Chronos stages",
+        "inspection lens",
+        "transition sequences",
+        "simulation sandbox placeholder"
+      ]
+    },
+    {
+      "id": "creation",
+      "label": "Design / CAD / Fabrication",
+      "icon": "✦",
+      "color": "teal",
+      "description": "Future creation chain from idea to 3D object and fabrication",
+      "source": [
+        "COGNITORIUM"
+      ],
+      "status": "missing",
+      "features": [
+        "3D object workspace",
+        "CAD placeholder",
+        "parametric modeling placeholder",
+        "geometry / CSG placeholder",
+        "3D import / export placeholder",
+        "slicer placeholder",
+        "manufacturing placeholder",
+        "verification placeholder"
+      ]
+    },
+    {
+      "id": "agents",
+      "label": "Nexus / Agents",
+      "icon": "⬢",
+      "color": "violet",
+      "description": "Agentic operating system, routing, skills, memory and execution",
+      "source": [
+        "monorepo/nexus_os",
+        "reaserch-engine"
+      ],
+      "status": "branch",
+      "features": [
+        "agent router",
+        "multi-provider LLM",
+        "fallback",
+        "agent registry",
+        "agent creator",
+        "skills registry",
+        "tool registry",
+        "MCP",
+        "persistent memory",
+        "runs / SSE",
+        "pipelines",
+        "sandbox",
+        "evals",
+        "instincts",
+        "research agent",
+        "coding agent",
+        "GIS agent",
+        "learning agent",
+        "simulation agent",
+        "project agent",
+        "verification agent"
+      ]
+    },
+    {
+      "id": "memory",
+      "label": "Data / Memory / Provenance",
+      "icon": "▤",
+      "color": "silver",
+      "description": "Local-first data, documents, graph, vectors and traceability",
+      "source": [
+        "HCSM",
+        "reaserch-engine",
+        "watchtower",
+        "monorepo"
+      ],
+      "status": "partial",
+      "features": [
+        "local files",
+        "SQLite / JSON",
+        "evidence provenance",
+        "source traceability",
+        "SHA-256 inventories",
+        "knowledge graph placeholder",
+        "vector search placeholder",
+        "document extraction placeholder",
+        "OCR placeholder",
+        "import / export",
+        "audit trail",
+        "privacy boundary",
+        "secrets vault placeholder"
+      ]
+    },
+    {
+      "id": "system",
+      "label": "System / Settings",
+      "icon": "⚙",
+      "color": "gray",
+      "description": "Providers, plugins, keys, privacy, diagnostics and application settings",
+      "source": [
+        "nexus_os",
+        "watchtower",
+        "monorepo"
+      ],
+      "status": "skeleton",
+      "features": [
+        "provider manager",
+        "API keys local vault",
+        "free / paid modes",
+        "plugins",
+        "feature flags",
+        "performance governor",
+        "diagnostics",
+        "data permissions",
+        "backup / restore",
+        "import / export",
+        "about / licenses"
+      ]
+    }
+  ],
+  "sourceCoverage": [
+    {
+      "repo": "COGNITORIUM",
+      "branchesAudited": 4,
+      "role": "learning + watchtower-mods + architecture/agents"
+    },
+    {
+      "repo": "proto-cognitorium",
+      "branchesAudited": 8,
+      "role": "main UI / human model / graph / CV / ROME / labs"
+    },
+    {
+      "repo": "ETAT-DE-LART-PSYCHOLOGIE",
+      "branchesAudited": 9,
+      "role": "scientific knowledge / psychology / agents / cosmos branches"
+    },
+    {
+      "repo": "HCSM",
+      "branchesAudited": 3,
+      "role": "canonical cognitive ontology / evidence / temporal model / validator"
+    },
+    {
+      "repo": "reaserch-engine",
+      "branchesAudited": 1,
+      "role": "research orchestration / evidence graph / provenance"
+    },
+    {
+      "repo": "Language-decoder",
+      "branchesAudited": 3,
+      "role": "decoded-human model / ontology / inference / dynamics / UI branch"
+    },
+    {
+      "repo": "watchtower",
+      "branchesAudited": 5,
+      "role": "world / territory / intel / OSINT / BTP / monitoring"
+    },
+    {
+      "repo": "animation-chronos",
+      "branchesAudited": 1,
+      "role": "temporal visual experience / inspection / progressive discovery"
+    },
+    {
+      "repo": "monorepo",
+      "branchesAudited": 8,
+      "role": "integration shell + BTP/Nexus/Frontignan/catalog branches"
+    }
+  ]
+}
