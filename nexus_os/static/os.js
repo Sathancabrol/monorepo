@@ -34,7 +34,8 @@ function show(v) {
   $$(".view").forEach((x) => x.classList.toggle("active", x.id === `view-${v}`));
   $$(".rail-btn").forEach((b) => b.classList.toggle("active", b.dataset.view === v));
   ({ control: loadControl, agents: loadAgents, skills: loadSkills, harness: loadHarness,
-     mcp: loadMcp, instincts: loadInstincts,
+     mcp: loadMcp, instincts: loadInstincts, tasks: loadTasks, evals: loadEvals,
+     plugins: loadPlugins,
      router: loadRouter, logs: loadLogs, files: () => loadFiles(""), memory: loadMemory,
      board: loadBoard }[v] || (() => {}))();
 }
@@ -628,6 +629,183 @@ $("#ins-test").addEventListener("click", async () => {
     ? r.items.slice(0, r.injected).map((i) =>
         `- ${i.rule}  [score agent ${i.agent_id || "tous"} · ${i.hits}×]`).join("\n")
     : "rien ne serait injecté pour cette tâche — aucun déclencheur ne correspond.";
+});
+
+/* ─────────────────── TÂCHES ASYNCHRONES ─────────────────── */
+let _tkTimer = null, _tkSel = "";
+
+async function loadTasks() {
+  if (!S.agents.length) S.agents = await api("api/agents");
+  const sel = $("#tk-agent");
+  if (!sel.options.length) {
+    sel.innerHTML = S.agents.map((a) =>
+      `<option value="${esc(a.id)}"${a.id === "orchestrator" ? " selected" : ""}>${esc(a.emoji)} ${esc(a.name)}</option>`).join("");
+  }
+  await refreshTasks();
+  clearInterval(_tkTimer);
+  _tkTimer = setInterval(() => { if ($("#tk-poll").checked) refreshTasks(); }, 2500);
+}
+async function refreshTasks() {
+  const r = await api("api/tasks?limit=25");
+  const by = r.summary.by_state;
+  $("#tk-count").textContent = r.summary.count;
+  $("#tk-states").textContent = Object.entries(by).filter(([, v]) => v)
+    .map(([k, v]) => `${k} ${v}`).join(" · ") || "aucune";
+  $("#tk-running").textContent = r.summary.running;
+  $("#tk-kinds").textContent = Object.keys(by).length;
+  $("#tk-list").innerHTML = r.items.map((t) => `
+    <div class="item${t.id === _tkSel ? " on" : ""}" data-t="${esc(t.id)}">
+      <div class="n">${esc(t.task.slice(0, 70))}</div>
+      <div class="m">${esc(t.agent_id)} · <b class="${t.state === "completed" ? "yes" : t.state === "failed" ? "no" : ""}">${esc(t.state)}</b>
+        · ${esc(t.id)} · ${t.duration_ms} ms</div>
+      <div class="row" style="margin-top:6px">
+        <button class="sm primary" data-open="${esc(t.id)}">Ouvrir</button>
+        ${["working", "input_required"].includes(t.state) ? `<button class="sm danger" data-cancel="${esc(t.id)}">Annuler</button>` : ""}
+        ${t.state === "input_required" ? `<button class="sm" data-ok="${esc(t.id)}">Autoriser</button>` : ""}
+      </div>
+    </div>`).join("") || `<div class="empty">Aucune tâche lancée.</div>`;
+  $$("[data-open]").forEach((b) => b.addEventListener("click", () => { _tkSel = b.dataset.open; openTask(_tkSel); }));
+  $$("[data-cancel]").forEach((b) => b.addEventListener("click", async () => {
+    await fetch(`api/tasks/${b.dataset.cancel}/cancel`, { method: "POST" }); refreshTasks();
+  }));
+  $$("[data-ok]").forEach((b) => b.addEventListener("click", async () => {
+    const r = await post(`api/tasks/${b.dataset.ok}/approve`, {});
+    _tkSel = r.superseded_by; openTask(_tkSel); refreshTasks();
+  }));
+}
+async function openTask(id) {
+  const t = await api(`api/tasks/${id}?tail=60`);
+  $("#tk-detail-state").textContent = t.state;
+  $("#tk-detail-state").className = `badge ${t.state === "completed" ? "ok" : t.state === "failed" ? "err" : "acc"}`;
+  const lines = [
+    `tâche : ${t.task}`,
+    `agent : ${t.agent_id} · approbation ${t.approval}`,
+    `état : ${t.state} · ${t.duration_ms} ms`,
+    `étapes ${t.progress.steps} · ${nf(t.progress.tokens)} tokens · ${t.progress.events} événements`,
+    t.progress.artifacts.length ? `artéfacts : ${t.progress.artifacts.join(", ")}` : "",
+    t.progress.pending_tools.length ? `en attente d'autorisation : ${t.progress.pending_tools.join(", ")}` : "",
+    t.error ? `erreur : ${t.error}` : "",
+    "", "── derniers événements ──",
+    ...t.events.map((e) => `${e.type}${e.name ? " " + e.name : ""}` +
+      (e.ok === false ? " ✗" : "")).slice(-25),
+    "", "── résultat ──", t.result || "(pas encore)",
+  ];
+  $("#tk-detail").textContent = lines.filter(Boolean).join("\n");
+}
+$("#tk-submit").addEventListener("click", async () => {
+  const task = $("#tk-task").value.trim();
+  if (!task) { $("#tk-msg").textContent = "tâche requise"; return; }
+  try {
+    const r = await post("api/tasks", { task, agent_id: $("#tk-agent").value,
+                                        approval: $("#tk-approval").value });
+    $("#tk-msg").textContent = `lancée : ${r.id}`;
+    _tkSel = r.id; $("#tk-task").value = "";
+    await refreshTasks(); openTask(r.id);
+  } catch (e) { $("#tk-msg").textContent = "échec : " + e.message; }
+});
+$("#tk-refresh").addEventListener("click", refreshTasks);
+
+/* ───────────────────────── BARÈME ───────────────────────── */
+async function loadEvals() {
+  if (!S.agents.length) S.agents = await api("api/agents");
+  const sel = $("#ev-agent");
+  if (sel.options.length <= 1) {
+    sel.innerHTML = '<option value="">tous les agents</option>' +
+      S.agents.map((a) => `<option value="${esc(a.id)}">${esc(a.emoji)} ${esc(a.name)}</option>`).join("");
+  }
+  const r = await api("api/evals");
+  $("#ev-suite-n").textContent = `${r.suite.length} cas`;
+  $("#ev-suite").textContent = r.suite.map((c) => {
+    const wants = [];
+    if (c.produces_artifact) wants.push("artéfact");
+    if (c.no_tool_failure) wants.push("aucun échec d'outil");
+    if (c.confidence) wants.push(`confiance ${c.confidence}`);
+    if (c.min_steps) wants.push(`≥ ${c.min_steps} étape(s)`);
+    if (c.tools_used.length) wants.push(`outils ${c.tools_used.join("|")}`);
+    c.mentions.forEach((m) => wants.push(`mentionne « ${m} »`));
+    c.forbidden.forEach((f) => wants.push(`n'écrit pas « ${f} »`));
+    return `${c.id}  [${c.agent_id}]\n  ${c.task}\n  attend : ${wants.join(" · ")}`;
+  }).join("\n\n");
+  paintScorecard(r.last);
+}
+function paintScorecard(sc) {
+  if (!sc) {
+    $("#ev-cases").textContent = $("#ev-passed").textContent =
+      $("#ev-failed").textContent = $("#ev-ms").textContent = "—";
+    $("#ev-list").innerHTML = `<div class="empty">Barème jamais joué — lance-le.</div>`;
+    return;
+  }
+  $("#ev-cases").textContent = sc.cases;
+  $("#ev-passed").textContent = sc.passed;
+  $("#ev-failed").textContent = sc.failed;
+  $("#ev-failed").className = `v ${sc.failed ? "err" : ""}`;
+  $("#ev-ms").textContent = `${sc.duration_ms} ms`;
+  $("#ev-score").textContent = `${(sc.score * 100).toFixed(0)} % · ${new Date(sc.run_at * 1000).toLocaleString("fr-FR")}`;
+  $("#ev-list").innerHTML = sc.results.map((r) => `
+    <div class="item"><div class="n">${r.passed ? "✓" : "✗"} ${esc(r.id)}</div>
+      <div class="m">${esc(r.agent_id)} · ${r.duration_ms} ms${r.error ? " · " + esc(r.error) : ""}</div>
+      <div class="m">${r.checks.map((c) =>
+        `<span class="${c.ok ? "yes" : "no"}">${c.ok ? "✓" : "✗"} ${esc(c.check)}</span>`).join("  ")}</div>
+      ${r.checks.filter((c) => !c.ok).map((c) => `<div class="m no">↳ ${esc(c.detail || "")}</div>`).join("")}
+    </div>`).join("");
+}
+$("#ev-run").addEventListener("click", async () => {
+  $("#ev-run").disabled = true; $("#ev-run").textContent = "en cours…";
+  try {
+    const sc = await post("api/evals", { agent_id: $("#ev-agent").value });
+    paintScorecard(sc);
+  } catch (e) { alert("échec : " + e.message); }
+  $("#ev-run").disabled = false; $("#ev-run").textContent = "Jouer le barème";
+});
+
+/* ───────────────────────── PLUGINS ───────────────────────── */
+async function loadPlugins() {
+  const r = await api("api/plugins");
+  $("#pl-count").textContent = r.count;
+  $("#pl-count-d").textContent = r.broken ? `${r.broken} en erreur` : "tous valides";
+  $("#pl-active").textContent = r.active;
+  $("#pl-skills").textContent = r.skills;
+  $("#pl-agents").textContent = r.agents;
+  $("#pl-list").innerHTML = r.items.map((p) => `
+    <div class="item">
+      <div class="n">${esc(p.name)} <span class="m">v${esc(p.version)}</span>
+        <span class="badge ${p.status === "ok" ? "ok" : p.status === "erreur" ? "err" : ""}">${esc(p.status)}</span></div>
+      <div class="d">${esc(p.description)}</div>
+      <div class="m">compétences ${esc(p.skills.join(", ") || "—")} · agents ${esc(p.agents.join(", ") || "—")}</div>
+      <div class="m">${esc(p.path)}</div>
+      ${p.problems.map((x) => `<div class="m no">· ${esc(x)}</div>`).join("")}
+      <div class="row" style="margin-top:6px">
+        <button class="sm" data-toggle="${esc(p.name)}" data-on="${p.enabled ? "0" : "1"}">
+          ${p.enabled ? "Désactiver" : "Activer"}</button>
+        <button class="sm danger" data-uninstall="${esc(p.name)}">Désinstaller</button>
+      </div>
+    </div>`).join("") || `<div class="empty">Aucun plugin installé.</div>`;
+  $$("[data-toggle]").forEach((b) => b.addEventListener("click", async () => {
+    await post(`api/plugins/${b.dataset.toggle}/toggle`, { enabled: b.dataset.on === "1" });
+    await loadPlugins(); loadStatus();
+  }));
+  $$("[data-uninstall]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm(`Désinstaller ${b.dataset.uninstall} ?`)) return;
+    await fetch(`api/plugins/${b.dataset.uninstall}?delete_files=true`, { method: "DELETE" });
+    await loadPlugins(); loadStatus();
+  }));
+}
+$("#pl-install").addEventListener("click", async () => {
+  const path = $("#pl-path").value.trim();
+  if (!path) { $("#pl-msg").textContent = "chemin requis"; return; }
+  try {
+    const r = await post("api/plugins", { path, copy: $("#pl-copy").checked });
+    $("#pl-msg").textContent = `${r.plugin.name} installé`;
+    $("#pl-path").value = "";
+    await loadPlugins(); await loadStatus();
+  } catch (e) { $("#pl-msg").textContent = "échec : " + e.message; }
+});
+$("#pl-sample").addEventListener("click", async () => {
+  try {
+    const r = await post("api/plugins/sample", {});
+    $("#pl-path").value = r.path;
+    $("#pl-msg").textContent = "exemple généré — installe-le";
+  } catch (e) { $("#pl-msg").textContent = e.message; }
 });
 
 /* ───────────────────────── ROUTEUR ───────────────────────── */

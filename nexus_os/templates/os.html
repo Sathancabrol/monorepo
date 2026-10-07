@@ -41,6 +41,10 @@
     <button class="rail-btn" data-view="harness" data-tip="Harness & portabilité">🔌</button>
     <button class="rail-btn" data-view="mcp" data-tip="Serveurs MCP">🔗</button>
     <button class="rail-btn" data-view="instincts" data-tip="Instincts appris">⚡</button>
+    <div class="rail-sep"></div>
+    <button class="rail-btn" data-view="tasks" data-tip="Tâches asynchrones">⏱</button>
+    <button class="rail-btn" data-view="evals" data-tip="Barème des agents">📈</button>
+    <button class="rail-btn" data-view="plugins" data-tip="Plugins">🧩</button>
     <button class="rail-btn" data-view="router" data-tip="Routeur de modèles">🛰</button>
     <div class="rail-sep"></div>
     <button class="rail-btn" data-view="logs" data-tip="Journaux">🧾</button>
@@ -314,6 +318,123 @@
             <div class="row"><button id="ins-test">Voir ce qui serait injecté</button></div>
           </div>
           <pre class="md" id="ins-preview">—</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ TÂCHES ASYNCHRONES ══════════ -->
+    <section class="view" id="view-tasks">
+      <div class="page-head"><div><h1>Tâches asynchrones</h1>
+        <p>Motif <code>call-now / fetch-later</code> (primitive Tasks de MCP) : on lance,
+        on reçoit un identifiant, on revient chercher l'état. Ferme l'onglet, la tâche
+        continue.</p></div></div>
+      <div class="grid g-3" style="margin-bottom:14px">
+        <div class="card tight kpi"><span class="l">Tâches</span><span class="v" id="tk-count">—</span>
+          <span class="d" id="tk-states">—</span></div>
+        <div class="card tight kpi"><span class="l">En cours</span><span class="v acc" id="tk-running">—</span>
+          <span class="d">threads actifs</span></div>
+        <div class="card tight kpi"><span class="l">États possibles</span><span class="v" id="tk-kinds">—</span>
+          <span class="d">working · input_required · completed · failed · cancelled</span></div>
+      </div>
+      <div class="split-r">
+        <div class="card">
+          <div class="card-head"><h2>Tâches</h2>
+            <span class="row"><button class="sm" id="tk-refresh">Rafraîchir</button>
+              <label class="chk"><input type="checkbox" id="tk-poll" checked> suivi auto</label></span></div>
+          <div class="list" id="tk-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Lancer en arrière-plan</h2></div>
+          <div class="form">
+            <label>Tâche<textarea id="tk-task" rows="3" placeholder="Audite la structure du dépôt"></textarea></label>
+            <label>Agent<select id="tk-agent"></select></label>
+            <label>Approbation<select id="tk-approval">
+              <option value="smart">smart</option><option value="off">off</option>
+              <option value="manuel">manuel</option></select></label>
+            <div class="row"><button class="primary" id="tk-submit">Lancer</button>
+              <span class="badge" id="tk-msg">—</span></div>
+          </div>
+          <div class="card-head"><h2>Détail</h2><span class="badge" id="tk-detail-state">—</span></div>
+          <pre class="md" id="tk-detail">Choisis une tâche.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ BARÈME ══════════ -->
+    <section class="view" id="view-evals">
+      <div class="page-head"><div><h1>Barème des agents</h1>
+        <p>Un agent qui « a l'air de marcher » n'est pas un agent qui marche. Chaque cas
+        est une attente vérifiable sur une exécution réelle : artéfact, outil en échec,
+        confiance, outils appelés, étapes, mentions obligatoires.</p></div></div>
+      <div class="grid g-4" style="margin-bottom:14px">
+        <div class="card tight kpi"><span class="l">Cas</span><span class="v" id="ev-cases">—</span>
+          <span class="d">au barème</span></div>
+        <div class="card tight kpi"><span class="l">Réussis</span><span class="v acc" id="ev-passed">—</span>
+          <span class="d" id="ev-score">—</span></div>
+        <div class="card tight kpi"><span class="l">Échoués</span><span class="v" id="ev-failed">—</span>
+          <span class="d">régressions détectées</span></div>
+        <div class="card tight kpi"><span class="l">Durée</span><span class="v" id="ev-ms">—</span>
+          <span class="d">exécution réelle, sans LLM</span></div>
+      </div>
+      <div class="split-r">
+        <div class="card">
+          <div class="card-head"><h2>Résultats</h2>
+            <span class="row"><select id="ev-agent" style="width:auto;min-width:140px">
+              <option value="">tous les agents</option></select>
+              <button class="sm primary" id="ev-run">Jouer le barème</button></span></div>
+          <div class="list" id="ev-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Cas</h2><span class="badge" id="ev-suite-n">—</span></div>
+          <pre class="md" id="ev-suite">—</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ PLUGINS ══════════ -->
+    <section class="view" id="view-plugins">
+      <div class="page-head"><div><h1>Plugins</h1>
+        <p>« Everything is a plugin » : un dossier de <b>données</b> — compétences et agents —
+        jamais de code. Un manifeste invalide est signalé, pas chargé ; désactiver un plugin
+        redonne exactement l'OS d'avant.</p></div></div>
+      <div class="grid g-4" style="margin-bottom:14px">
+        <div class="card tight kpi"><span class="l">Plugins</span><span class="v" id="pl-count">—</span>
+          <span class="d" id="pl-count-d">—</span></div>
+        <div class="card tight kpi"><span class="l">Actifs</span><span class="v acc" id="pl-active">—</span>
+          <span class="d">chargés au démarrage</span></div>
+        <div class="card tight kpi"><span class="l">Compétences ajoutées</span><span class="v" id="pl-skills">—</span>
+          <span class="d">par les plugins actifs</span></div>
+        <div class="card tight kpi"><span class="l">Agents ajoutés</span><span class="v" id="pl-agents">—</span>
+          <span class="d">source <code>plugin</code></span></div>
+      </div>
+      <div class="split-r">
+        <div class="card">
+          <div class="card-head"><h2>Installés</h2><span class="badge" id="pl-msg">—</span></div>
+          <div class="list" id="pl-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Installer</h2></div>
+          <div class="form">
+            <label>Chemin du dossier<input id="pl-path" placeholder="/chemin/vers/mon-plugin"></label>
+            <label class="chk"><input type="checkbox" id="pl-copy" checked>
+              copier dans <code>.nexus/plugins/</code> (sinon : référence sur place)</label>
+            <div class="row"><button class="primary" id="pl-install">Installer</button>
+              <button id="pl-sample">Générer un exemple</button></div>
+          </div>
+          <div class="card-head"><h2>Contrat</h2></div>
+          <pre class="md">mon-plugin/
+  plugin.json                    ← manifeste
+  skills/ma-methode/SKILL.md
+  agents/mon-agent.json
+
+{
+  "name": "mon-plugin",
+  "version": "0.1.0",
+  "description": "Ce que ça apporte",
+  "skills": ["skills/ma-methode"],
+  "agents": ["agents/mon-agent.json"],
+  "requires": ["read_file"]
+}</pre>
         </div>
       </div>
     </section>

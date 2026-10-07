@@ -81,6 +81,14 @@ lançable seul : `uvicorn nexus_os.app:app --port 8124`). Détails :
   précédentes, injectées dans le prompt de l'agent concerné, reprenables à la main.
 - **Approbations** : modes `off` / `smart` / `manuel`, confiance binaire
   (« confiant » / « à vérifier »), kanban partagé entre agents.
+- **Tâches asynchrones** (primitive Tasks de MCP) : `call-now / fetch-later` —
+  on lance, on reçoit un identifiant, on revient chercher l'état. États
+  `working` / `input_required` / `completed` / `failed` / `cancelled`.
+- **Plugins** (« everything is a plugin ») : un dossier de données — compétences
+  et agents, jamais de code. Manifeste invalidé = signalé, pas chargé.
+- **Barème des agents** : 10 cas d'évaluation rejouables qui confrontent une
+  exécution réelle à des attentes vérifiables (artéfact, outil en échec,
+  confiance, outils appelés). `python -m nexus_os evals`.
 - **Cycle de vie** (façon ECC) : plan → recherche → implémentation → revue →
   vérification → mémorisation → amélioration, avec outils réellement exécutés.
 - **Sandbox** : les agents n'écrivent que dans `.nexus/workspace/`, les secrets
@@ -91,14 +99,14 @@ python -m nexus_os status                                   # état du système
 python -m nexus_os route "rédige une landing page"          # qui doit traiter ?
 python -m nexus_os run "audite la structure du dépôt"       # exécute (streaming)
 python -m nexus_os create "un agent qui relit les contrats" # crée un agent
-.venv/bin/python -m pytest nexus_os/tests -q                # 124 tests
+.venv/bin/python -m pytest nexus_os/tests -q                # 147 tests
 ```
 
 ## 🧪 Tests
 
 ```bash
 pip install -r requirements-dev.txt
-python -m pytest nexus_os/tests -q        # 124 tests : routeur, skills, sandbox,
+python -m pytest nexus_os/tests -q        # 147 tests : routeur, skills, sandbox,
                                           # créateur, runtime, SSE, montage /os,
                                           # MCP (contre un vrai serveur), A2A
 ```

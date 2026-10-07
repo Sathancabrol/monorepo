@@ -124,6 +124,22 @@ class AgentRegistry:
                 except TypeError:
                     continue
                 found[spec.id] = spec  # l'utilisateur écrase l'intégré à id égal
+
+        # Agents apportés par les plugins actifs (source = "plugin").
+        try:
+            from nexus_os.plugins import agent_files as _plugin_agent_files
+
+            for f in _plugin_agent_files():
+                try:
+                    data = json.loads(f.read_text(encoding="utf-8"))
+                    data.setdefault("id", f.stem)
+                    data["builtin"] = False
+                    data["source"] = "plugin"
+                    found[data["id"]] = AgentSpec.from_dict(data)
+                except Exception:
+                    continue      # un agent de plugin invalide est ignoré, pas fatal
+        except Exception:
+            pass
         self._cache = found
         return found
 

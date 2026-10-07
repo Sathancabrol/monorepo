@@ -119,6 +119,17 @@ class OfflinePlanner:
             if "read_file" in tools:
                 return "read_file", {"path": "README.md"}
         if phase == "implement":
+            # L'intention de la tâche prime sur l'ordre des outils : demander un
+            # graphique et recevoir une page HTML, c'est un livrable à côté.
+            if "render_chart" in tools and _wants_chart(task):
+                freq = _word_frequencies(" ".join(observations) or task)
+                if freq:
+                    return "render_chart", {
+                        "title": _slug(task) or "donnees",
+                        "kind": "bar",
+                        "labels": ", ".join(w for w, _ in freq[:6]),
+                        "values": ", ".join(str(n) for _, n in freq[:6]),
+                    }
             if "diagram" in tools:
                 edges = "; ".join(f"{kw[i]}-->{kw[i+1]}" for i in range(min(5, len(kw) - 1)))
                 return "diagram", {
@@ -146,10 +157,19 @@ class OfflinePlanner:
             if "grep" in tools and kw:
                 return "grep", {"pattern": kw[-1], "limit": 10}
         if phase == "verify":
-            if "python_exec" in tools:
+            # Ne jamais planifier un outil que l'environnement interdit : l'échec
+            # serait prévisible, et compté à tort comme une faute de l'agent.
+            if "python_exec" in tools and config.ALLOW_SHELL:
                 return "python_exec", {"code": "print('vérification : environnement Python OK')"}
-            if "shell" in tools:
+            if "shell" in tools and config.ALLOW_SHELL:
                 return "shell", {"command": "ls -1 | head -20"}
+            # Vérification réelle sans exécution : relire ce qui a été produit.
+            if observations and "read_file" in tools:
+                target = _first_workspace_path(" ".join(observations))
+                if target:
+                    return "read_file", {"path": target, "max_chars": 2000}
+            if "grep" in tools and kw:
+                return "grep", {"pattern": kw[0], "limit": 5}
         if phase == "remember":
             if "memory_remember" in tools:
                 return "memory_remember", {
@@ -166,6 +186,32 @@ def _keywords(text: str) -> list[str]:
             continue
         out.append(w)
     return out[:10]
+
+
+CHART_HINTS = ("graphique", "courbe", "chart", "histogramme", "visualis", "camembert",
+               "barres", "diagramme à", "plot")
+
+
+def _wants_chart(task: str) -> bool:
+    low = (task or "").lower()
+    return any(h in low for h in CHART_HINTS)
+
+
+def _word_frequencies(text: str, limit: int = 8) -> list[tuple[str, int]]:
+    """Fréquences réelles des mots du texte — la seule donnée honnête hors-ligne.
+
+    Comptage direct (et non via `_keywords`, qui déduplique) : un graphique où
+    toutes les barres valent 1 ne dit rien.
+    """
+    counts: dict[str, int] = {}
+    for w in re.findall(r"[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9_-]{2,}", text or ""):
+        key = w.lower()
+        if key in STOP_WORDS or key.isdigit():
+            continue
+        counts[key] = counts.get(key, 0) + 1
+    ranked = [(k, n) for k, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])) if n > 1]
+    return ranked[:limit] or sorted(counts.items(), key=lambda kv: kv[0])[:limit] \
+        or [("tâche", 1)]
 
 
 def _slug(text: str) -> str:

@@ -23,6 +23,11 @@ from nexus_os.creator import create_and_save, draft
 from nexus_os import context as context_mod
 from nexus_os import harness as harness_mod
 from nexus_os import mcp as mcp_mod
+from nexus_os import plugins as plugins_mod
+from nexus_os import tasks as tasks_mod
+from nexus_os import evals as evals_mod
+from nexus_os.plugins import PluginError
+from nexus_os.tasks import TaskError
 from nexus_os.instincts import book as instincts
 from nexus_os.db import store as db_store
 from nexus_os.llm import router as llm_router, system_mode
@@ -287,6 +292,130 @@ def api_context_clear() -> dict[str, Any]:
 
 
 # --------------------------------------------------------------------------- #
+# Plugins — « everything is a plugin »
+# --------------------------------------------------------------------------- #
+@app.get("/api/plugins")
+def api_plugins() -> dict[str, Any]:
+    return plugins_mod.summarize()
+
+
+@app.post("/api/plugins")
+def api_plugin_install(payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    path = str(payload.get("path", "")).strip()
+    if not path:
+        raise HTTPException(400, "chemin du dossier requis")
+    try:
+        info = plugins_mod.register(path, copy=bool(payload.get("copy", True)))
+    except PluginError as e:
+        raise HTTPException(400, str(e)) from e
+    _reload_registries()
+    return {"ok": True, "plugin": info.to_dict(), "runtime": api_status()["runtime"]}
+
+
+@app.post("/api/plugins/sample")
+def api_plugin_sample() -> dict[str, Any]:
+    """Génère un plugin d'exemple valide dans la sandbox — gabarit prêt à installer."""
+    target = Path(config.WORKSPACE_DIR) / "plugins"
+    target.mkdir(parents=True, exist_ok=True)
+    root = plugins_mod.make_sample(target)
+    return {"ok": True, "path": str(root),
+            "manifest": plugins_mod.read_manifest(root)}
+
+
+@app.post("/api/plugins/{name}/toggle")
+def api_plugin_toggle(name: str, payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    if not plugins_mod.set_enabled(name, bool(payload.get("enabled", False))):
+        raise HTTPException(404, f"plugin inconnu : {name}")
+    _reload_registries()
+    return {"ok": True, "plugin": plugins_mod.describe(name).to_dict(),
+            "runtime": api_status()["runtime"]}
+
+
+@app.delete("/api/plugins/{name}")
+def api_plugin_remove(name: str, delete_files: bool = Query(False)) -> dict[str, Any]:
+    if not plugins_mod.unregister(name, delete_files=delete_files):
+        raise HTTPException(404, f"plugin inconnu : {name}")
+    _reload_registries()
+    return {"ok": True, "removed": name}
+
+
+# --------------------------------------------------------------------------- #
+# Tâches asynchrones — call-now / fetch-later (primitive Tasks de MCP)
+# --------------------------------------------------------------------------- #
+@app.get("/api/tasks")
+def api_tasks(limit: int = Query(20, ge=1, le=200), state: str | None = Query(None)) -> dict[str, Any]:
+    return {"summary": tasks_mod.summarize(), "items": tasks_mod.list_tasks(limit=limit, state=state)}
+
+
+@app.post("/api/tasks")
+def api_task_submit(payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    agent_id = str(payload.get("agent_id", "orchestrator"))
+    try:
+        task_id = tasks_mod.submit(
+            str(payload.get("task", "")), agent_id,
+            approval=str(payload.get("approval", "smart")),
+            session_id=payload.get("session_id"),
+            max_steps=payload.get("max_steps"))
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    except KeyError as e:
+        raise HTTPException(404, str(e.args[0])) from e
+    return {"ok": True, "id": task_id, "state": "working"}
+
+
+@app.get("/api/tasks/{task_id}")
+def api_task_get(task_id: str, tail: int = Query(40, ge=0, le=200)) -> dict[str, Any]:
+    try:
+        return tasks_mod.get(task_id, tail=tail)
+    except TaskError as e:
+        raise HTTPException(404, str(e)) from e
+
+
+@app.get("/api/tasks/{task_id}/events")
+def api_task_events(task_id: str, since: int = Query(0, ge=0),
+                    limit: int = Query(200, ge=1, le=1000)) -> dict[str, Any]:
+    try:
+        return tasks_mod.events(task_id, since=since, limit=limit)
+    except TaskError as e:
+        raise HTTPException(404, str(e)) from e
+
+
+@app.post("/api/tasks/{task_id}/cancel")
+def api_task_cancel(task_id: str) -> dict[str, Any]:
+    try:
+        tasks_mod.cancel(task_id)
+    except TaskError as e:
+        raise HTTPException(409, str(e)) from e
+    return {"ok": True, "state": "cancelled"}
+
+
+@app.post("/api/tasks/{task_id}/approve")
+def api_task_approve(task_id: str, payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    try:
+        new_id = tasks_mod.approve(task_id, [str(t) for t in (payload.get("tools") or [])])
+    except TaskError as e:
+        raise HTTPException(409, str(e)) from e
+    return {"ok": True, "superseded_by": new_id}
+
+
+# --------------------------------------------------------------------------- #
+# Évaluations — barème reproductible des agents
+# --------------------------------------------------------------------------- #
+@app.get("/api/evals")
+def api_evals() -> dict[str, Any]:
+    return {"suite": evals_mod.suite(), "last": evals_mod.last()}
+
+
+@app.post("/api/evals")
+def api_evals_run(payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    agent_id = str(payload.get("agent_id", "")).strip() or None
+    try:
+        return evals_mod.run_suite(agent_id)
+    except KeyError as e:
+        raise HTTPException(404, str(e.args[0])) from e
+
+
+# --------------------------------------------------------------------------- #
 # A2A — un agent NEXUS·OS délégable depuis un autre agent
 # --------------------------------------------------------------------------- #
 @app.get("/api/a2a/{agent_id}/card")
@@ -361,6 +490,12 @@ def api_route(payload: dict[str, Any] = Body(...)) -> dict[str, Any]:
 
 def _sse(payload: dict[str, Any]) -> str:
     return f"data: {json.dumps(payload, ensure_ascii=False, default=str)}\n\n"
+
+
+def _reload_registries() -> None:
+    """Un plugin installé/retiré change les compétences et les agents disponibles."""
+    skill_library().load(force=True)
+    agent_registry().load(force=True)
 
 
 def _collect(gen: Any) -> tuple[list[dict[str, Any]], Any]:

@@ -55,6 +55,9 @@ nexus_os/
 ├─ mcp_demo.py     serveur MCP de référence, pour brancher l'OS hors-ligne
 ├─ context.py      résultats référencés + compression d'historique
 ├─ instincts.py    règles apprises des exécutions (couche ECC)
+├─ plugins.py      plugins : dossier de données, manifeste validé
+├─ tasks.py        tâches asynchrones (call-now / fetch-later, primitive Tasks)
+├─ evals.py        barème reproductible des agents
 ├─ memory.py       mémoire persistante : facts, décisions, leçons
 ├─ agents.py       specs d'agents (JSON) + registre + scoring d'affinité
 ├─ creator.py      créateur d'agents : description → spec complète
@@ -64,7 +67,7 @@ nexus_os/
 ├─ agents/         22 agents intégrés (JSON)
 ├─ skills/         30 compétences intégrées (SKILL.md)
 ├─ templates/ static/   interface « bureau »
-└─ tests/          124 tests (pytest)
+└─ tests/          147 tests (pytest)
 ```
 
 ### 1. Routeur de modèles (façon OmniRoute)

@@ -116,6 +116,65 @@ def cmd_create(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_plugins(args: argparse.Namespace) -> int:
+    from nexus_os import plugins
+
+    if args.install:
+        info = plugins.register(args.install, copy=not args.link)
+        print(f"✔ plugin installé : {info.name} v{info.version}")
+        print(f"  {info.description}")
+        print(f"  compétences : {', '.join(info.skills) or 'aucune'}")
+        print(f"  agents      : {', '.join(info.agents) or 'aucun'}")
+        return 0
+    s = plugins.summarize()
+    if not s["count"]:
+        print("aucun plugin installé — `python -m nexus_os plugins --install <dossier>`")
+        return 0
+    print(f"plugins : {s['active']}/{s['count']} actif(s) — "
+          f"{s['skills']} compétence(s), {s['agents']} agent(s) ajoutés")
+    for it in s["items"]:
+        mark = {"ok": "✔", "erreur": "✗", "inactif": "○"}[it["status"]]
+        print(f"  {mark} {it['name']} v{it['version']} — {it['description']}")
+        for pb in it["problems"]:
+            print(f"      · {pb}")
+    return 0
+
+
+def cmd_tasks(args: argparse.Namespace) -> int:
+    from nexus_os import tasks
+
+    if args.submit:
+        task_id = tasks.submit(args.submit, args.agent, approval=args.approval)
+        rec = tasks.wait(task_id, timeout=args.timeout)
+        print(f"tâche {task_id} — {rec['state']} en {rec['duration_ms']} ms")
+        if rec["result"]:
+            print(rec["result"])
+        if rec["error"]:
+            print(f"erreur : {rec['error']}")
+        return 0 if rec["state"] == "completed" else 1
+    s = tasks.summarize()
+    if not s["count"]:
+        print("aucune tâche — lance avec : python -m nexus_os tasks --submit 'ma tâche'")
+        return 0
+    print(f"tâches : {s['count']} — " +
+          ", ".join(f"{k} {v}" for k, v in s["by_state"].items() if v))
+    for t in s["recent"]:
+        print(f"  [{t['state']:14s}] {t['id']} {t['agent_id']:12s} {t['task'][:60]}")
+    return 0
+
+
+def cmd_evals(args: argparse.Namespace) -> int:
+    from nexus_os import evals
+
+    if args.list:
+        for c in evals.suite():
+            print(f"  {c['id']:28s} {c['agent_id']:12s} {c['task'][:60]}")
+        return 0
+    scorecard = evals.run_suite(args.agent)
+    print(evals.render(scorecard))
+    return 0 if scorecard["failed"] == 0 else 1
+
+
 def cmd_serve(args: argparse.Namespace) -> int:
     import uvicorn
 
@@ -148,6 +207,23 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--offline", action="store_true", help="moteur de règles, sans modèle live")
     c.add_argument("--dry-run", action="store_true", help="affiche la spec sans l'enregistrer")
     c.set_defaults(fn=cmd_create)
+
+    pl = sub.add_parser("plugins", help="plugins installés / installation")
+    pl.add_argument("--install", default="", help="dossier du plugin à installer")
+    pl.add_argument("--link", action="store_true", help="référence sur place, sans copier")
+    pl.set_defaults(fn=cmd_plugins)
+
+    tk = sub.add_parser("tasks", help="tâches asynchrones (call-now / fetch-later)")
+    tk.add_argument("--submit", default="", help="tâche à lancer en arrière-plan")
+    tk.add_argument("--agent", default="orchestrator")
+    tk.add_argument("--approval", default="off", choices=["off", "smart", "manuel"])
+    tk.add_argument("--timeout", type=float, default=120.0)
+    tk.set_defaults(fn=cmd_tasks)
+
+    ev = sub.add_parser("evals", help="barème reproductible des agents")
+    ev.add_argument("agent", nargs="?", default=None)
+    ev.add_argument("--list", action="store_true", help="liste les cas sans les jouer")
+    ev.set_defaults(fn=cmd_evals)
 
     s = sub.add_parser("serve", help="démarre l'interface web")
     s.add_argument("--host", default="0.0.0.0")

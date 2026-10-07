@@ -101,13 +101,32 @@ class Skill:
 
 class SkillLibrary:
     def __init__(self, dirs: Iterable[Path] | None = None) -> None:
-        self.dirs = list(dirs) if dirs else [config.BUILTIN_SKILLS_DIR, config.USER_SKILLS_DIR]
+        self._auto = dirs is None
+        self.dirs = list(dirs) if dirs else self._default_dirs()
         self._cache: dict[str, Skill] | None = None
+
+    @staticmethod
+    def _default_dirs() -> list[Path]:
+        """Bibliothèque intégrée + utilisateur + plugins actifs.
+
+        Recalculé à chaque `load(force=True)` : un plugin installé après le
+        démarrage doit être vu sans redémarrer l'OS.
+        """
+        out = [config.BUILTIN_SKILLS_DIR, config.USER_SKILLS_DIR]
+        try:
+            from nexus_os.plugins import skill_dirs as _plugin_skill_dirs
+
+            out += _plugin_skill_dirs()
+        except Exception:
+            pass              # un plugin cassé ne doit pas priver l'OS de compétences
+        return out
 
     # --- découverte --------------------------------------------------------
     def load(self, force: bool = False) -> dict[str, Skill]:
         if self._cache is not None and not force:
             return self._cache
+        if force and self._auto:
+            self.dirs = self._default_dirs()
         found: dict[str, Skill] = {}
         for d in self.dirs:
             if not d.exists():

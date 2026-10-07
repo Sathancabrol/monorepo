@@ -38,7 +38,12 @@ def test_planner_phase_par_phase(monkeypatch):
     assert p.plan_for("plan", task, agent, [])[0] is None
     assert p.plan_for("research", task, agent, [])[0] == "web_search"
     assert p.plan_for("implement", task, agent, ["x"])[0] == "write_file"
+    # Vérification : l'exécution n'est planifiée que si l'environnement l'autorise.
+    monkeypatch.setattr(config, "ALLOW_SHELL", True)
     assert p.plan_for("verify", task, agent, [])[0] == "python_exec"
+    monkeypatch.setattr(config, "ALLOW_SHELL", False)
+    assert p.plan_for("verify", task, agent, [])[0] == "grep", \
+        "sans exécution autorisée, la vérification doit retomber sur un outil qui marche"
     assert p.plan_for("remember", task, agent, ["x"])[0] == "memory_remember"
 
 

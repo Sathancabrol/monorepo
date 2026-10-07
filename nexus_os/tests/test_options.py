@@ -113,13 +113,27 @@ def test_modes_disponibles():
     assert APPROVAL_MODES == ("off", "manuel", "smart")
 
 
-def test_smart_bloque_les_outils_sensibles(isolated_workspace):
+def test_smart_bloque_les_outils_sensibles(isolated_workspace, monkeypatch):
+    from nexus_os import config
+
+    # Exécution autorisée : le planificateur la prévoit, l'approbation doit la retenir.
+    monkeypatch.setattr(config, "ALLOW_SHELL", True)
     rt = Runtime()
-    ctx = ToolContext()
     res = rt._run_impl("lance une commande shell", "coder", session_id=None, max_steps=None,
                        depth=0, context="", emit=lambda e: None, approval="smart")
     assert res.pending_approvals, "un outil sensible aurait dû attendre une autorisation"
     assert res.confidence == "à vérifier"
+
+
+def test_sans_execution_autorisee_aucun_echec_previsible(isolated_workspace):
+    """Le planificateur ne doit pas prévoir un outil que l'environnement interdit :
+    l'échec serait certain et compté à tort comme une faute de l'agent."""
+    rt = Runtime()
+    res = rt._run_impl("analyse la consommation de tokens et produis un graphique",
+                       "analyst", session_id=None, max_steps=None, depth=0, context="",
+                       emit=lambda e: None, approval="off")
+    assert res.tool_failures == 0, "un outil refusé par la config a été planifié"
+    assert any(a.endswith(".svg") for a in res.artifacts), "le graphique demandé manque"
 
 
 def test_off_autorise_mais_le_shell_reste_desactive_par_config(isolated_workspace):
