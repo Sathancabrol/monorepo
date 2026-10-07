@@ -3,6 +3,8 @@
 > **Nature de ce document** : photographie exhaustive à date — qui fait quoi, quelle branche apporte quoi, quels besoins sont couverts. C'est le **point zéro** à partir duquel la roadmap (`audit/ROADMAP-2050-2026.md`) descend vers maintenant.
 > **Sources** : `audit/AUDIT-2026-10.md`, `audit/ANALYSE-V1-V5.md`, `audit/data/branches-all.json` (live 2026-10-07), `data/interface_registry.json`.
 > **Conventions** : v1→v5 = vague d'intégration (ANALYSE-V1-V5) · domaines D1–D12 = domaines de l'interface finale · `+n` = commits d'avance sur `main` · statut live.
+> **Révision du 2026-10-07 (soir)** : la matinée du 07/10 a produit un chantier nouveau (**Carré d'As** + dossier **recherche** + récupération `_incoming` + module **mail-organizer**) après mon relevé matinal. Intégré ici ; contrôle complet : `audit/notes/S5-controle-completude.md`.
+> **Nommage acté par ce chantier** : **Cognitorium** = le système/écosystème (horizon) · **Carré d'As** = **l'application** (V1 installable, cible association loi 1901, Windows d'abord).
 
 ---
 
@@ -26,10 +28,15 @@
 | 2026-09-10 | Dernier push de `proto-cognitorium` (registre d'audit SEC-04/UX-04) — **la copie locale du monorepo reste 25 fichiers en retard** | `drift.json` |
 | 2026-09-20 | « Cognitorium est en ligne » — vitrine hébergée Polsia (20 $/mois), cible à trancher (techniques/élus) | Gmail |
 | 2026-10-01 | Relance Polsia : « Une piste pour Cognitorium » | Gmail |
-| **2026-10-07** | **Journée charnière** : PR #2 fusionnée (index 220 docs) · **PR #3 ouverte** (watchtower INTEL, CI verte) · création des branches `nexus_os`, BTP, interface finale, catalogue, atlas · 2 branches Language-decoder (moteur) · espace **Linear** créé · PR #3 enrichie de l'audit | GitHub + connecteurs |
-| **2026-10-07** | **Cet audit** : 52 findings, 79 éléments classés v1→v5, mémoire opérationnelle (`audit/`) | cet audit |
+| **2026-10-07** (matin) | **Journée charnière** : PR #2 fusionnée (index 220 docs) · **PR #3 ouverte** (watchtower INTEL, CI verte) · création des branches `nexus_os`, BTP, interface finale, catalogue, atlas · 2 branches Language-decoder (moteur) · espace **Linear** créé · audit produit (52 findings, 79 éléments v1→v5) | GitHub + connecteurs |
+| **2026-10-07** 12:38 | Brief de recherche pour agent + **matrice de 80 domaines** (P0→P3) | branche `arena/0034230e` |
+| 13:05 | **Carré d'As** : cadrage V1 + contrat de module + principes UI + spécification du module BTP | idem |
+| 14:23 | **3 interfaces cliquables** (Le Carré · L'Atelier · L'Arbre) + réponses (licence/monétisation, séquence P0→P6, chronologie réelle) + écosystème local gratuit | idem |
+| 14:38 | **Récupération complète** : 1 026 fichiers de toutes les branches (786 uniques, 240 doublons retirés) rangés dans `projects/_incoming/` avec `_PROVENANCE.md` + `verif-completude-repos.py` | idem |
+| 14:39 | **Resync proto** (12 fichiers) + variante `frontignan/index.html` ; frontignan passe de 28 à 49 fichiers dans le monorepo | idem |
+| 14:45 | Module **`mail-organizer`** (tri d'emails IMAP, 19 tests, stdlib) | branche `arena/93b54a79` |
 
-**Lecture** : tout le projet a ~2 mois (02/08 → 07/10/2026). En 9 semaines : 9 dépôts, 283 478 lignes de code, 43 branches, 16 PR fusionnées, 1 PR ouverte, **et zéro Core construit**.
+**Lecture** : tout le projet a ~2 mois (02/08 → 07/10/2026). En 9 semaines : 9 dépôts, 283 478 lignes de code, **46 branches** (36 hors `main`, **17 avec travail non fusionné**), 16 PR fusionnées, 1 PR ouverte, **et zéro Core construit** — mais désormais un **nom, une cible et un contrat** (Carré d'As).
 
 ---
 
@@ -52,7 +59,22 @@
 
 ---
 
-## 3. Quelle branche de quel dépôt ajoute quoi (les 15 branches actives)
+## 2 bis. Modules et chantiers (tout ce qui n'est ni dépôt ni copie)
+
+| Module / chantier | Où | Contenu réel vérifié | Domaine | v |
+|---|---|---|---|---|
+| **Carré d'As** (le dossier de cadrage de l'app) | `docs/carre-das/` — branche `arena/0034230e` | 8 documents : cadrage V1 (installation 1 fichier, < 150 Mo, premier résultat < 5 min, hors ligne par défaut, données exportables), **contrat de module plug in/out** (manifeste `module.json`, permissions « rien par défaut », bus d'événements), principes UI (10 règles d'affordance), **spécification du module BTP** (7 piliers, 3D en 3 paliers), 9 concept arts + **3 interfaces cliquables**, réponses (licence recommandée **cœur Apache-2.0/MIT + services AGPL-3.0**, séquence P0→P6, ordre chronologique réel), écosystème local gratuit (modèles ≤ 6 Go de VRAM, 6 briques à créer), inventaire « rien ne manque » | D1 | **v1** |
+| **Dossier recherche** (à confier à un agent) | `docs/recherche/` — même branche | Brief auto-suffisant + prompt + **matrice de 80 domaines** (`D01→D80`, priorités P0→P3, pistes vérifiées le 07/10 : Tauri 2, PGlite, LadybugDB (succède à Kuzu archivé), Graphiti/Zep, Extism, MCP/A2A…) + 10 chantiers P0 + enrichissements/arbitrages | D1/D11 | **v1** |
+| **Récupération `_incoming`** | `projects/_incoming/` — même branche | **786 fichiers uniques** (1 026 importés − 240 doublons exacts) : 16 dossiers, chacun avec `_PROVENANCE.md` (dépôt, branche, SHA, écartés) — dont les **25 composants proto perdus** (onboarding, graphe Obsidian, CV ciblé, biais cognitifs, auth) | D11/accueil | **v1** |
+| **Module BTP** (la brique forte) | `projects/btp-conduite-travaux/` — branche `arena/01a08449` + spec `03-MODULE-BTP.md` | **174 fichiers** : 154 documents (7 familles, 3 chantiers), 9 rapports (00→08) dont schéma directeur A→Z, données avec **SHA-256 par document**, **28 sous-détails de prix** avec simulateur déboursé sec/marge, dashboard 1,2 Mo, `engine/btp_multi_agent.py` ; spec cible : DCE/DQE/métrés, suivi, carte 2D IGN, 3D (3 paliers), IA locale (Granite 4.2 pour l'extraction) | D4 | **v3** |
+| **nexus_os** (orchestration d'agents) | branche `arena/01a08385` | 85 fichiers : **22 agents**, 8 fournisseurs / 20 modèles avec fallback, 22 outils, **serveur MCP**, mémoire, runs/SSE, sandbox, evals — **~147 tests** (146 fonctions vérifiées) | D10 | **v3** |
+| **mail-organizer** | branche `arena/93b54a79` | Tri automatique d'emails IMAP (règles configurables, jamais de suppression, extraction de pièces jointes, mode watch, statistiques), **19 tests**, zéro dépendance Python | D11 | **v3** |
+| **OSINT Workbench** | branche `COGNITORIUM/watchtower/osint-workbench-v0.1` (12 fichiers récupérés) | Registre, dossier, preuves, démo + **OSINT-MASTER-SPEC** et roadmap | D3 | **v3** |
+| **Atlas Frontignan** | branche monorepo `arena/01a08203` (21 fichiers) | Données, cartes, nœuds, communes du THAU — atlas interactif du dossier territoire | D2 | **v3** |
+
+---
+
+## 3. Quelle branche de quel dépôt ajoute quoi (les 17 branches actives)
 
 > Chaque ligne = une branche avec du travail non fusionné (`ahead > 0`), au 2026-10-07. Colonnes : **fonctionnalité** (ce qu'elle ajoute), **possibilité** (ce qu'elle rend faisable), **besoin** (à quoi ça répond), domaine, vague.
 
@@ -73,6 +95,8 @@
 | 13 | `ETAT-DE-LART` · `arena/01a07d32` | 5 | Route `/download/monorepo.bundle` (secours push 403) | Transférer un dépôt **sans push Git** | **Contourner les blocages d'accès** (livraison) | D1 | v2 |
 | 14 | `ETAT-DE-LART` · `arena/01a03aac` | 2 | « Cognitorium v8 » : graphe 3D, 40 fiches concept | Explorer le savoir **en 3D** | **Comprendre les liens** entre concepts | D6 | v3 |
 | 15 | `ETAT-DE-LART` · `arena/01a045a1` | 1 | Agent de recherche littéraire **v1** (précurseur de #3) | Automatiser la veille scientifique | **Automatiser la connaissance** | D6 | v2 |
+| 16 | `monorepo` · `arena/0034230e` **_(07/10 après-midi)_** | 5 | **Carré d'As** (cadrage, contrat de module, UI, BTP, 3 interfaces + maquettes, réponses, écosystème local, inventaire) · **dossier recherche** (80 domaines) · **`_incoming`** (786 fichiers tracés) · **resync proto** (12 fichiers) · variante frontignan | **Nommer, cadrer et contractualiser la V1** ; rendre visible tout le travail des branches ; réparer la perte de 25 composants | **Étape 0 + spécification de la V1** | D1/D11 | **v1** |
+| 17 | `monorepo` · `arena/93b54a79` **_(07/10 après-midi)_** | 1 | Module **`mail-organizer`** : tri d'emails IMAP par règles, extraction de pièces jointes, watch, stats ; 19 tests | **Ingérer la boîte mail** dans l'app (sources documentaires) | **Flux entrant** (emails → connaissances) | D11 | v3 |
 
 ### Les 19 branches mortes (0 commit d'avance) — aucune perte, mais du bruit
 
@@ -126,14 +150,15 @@ Leur contenu est **déjà dans `main`** (ahead = 0 ⇒ la branche est un ancêtr
 |---|---|---|
 | Dépôts | 9 (+1 projet hors GitHub) | GitHub |
 | Lignes de code (9 projets) | 283 478 | `inventory.json` |
-| Documents | 237 (projets) + 220 (racine) + 14 (audit) | inventaire |
-| Branches | 43 au total : 9 en `main`, **15 avec travail non fusionné**, 19 mortes | `branches-all.json` |
-| Commits non fusionnés | **153** | idem |
+| Documents | 237 (projets) + 220 (racine) + 16 (audit) + 20 (Carré d'As / recherche) | inventaire + branches |
+| Branches | **46 au total** : 9 en `main`, **17 avec travail non fusionné**, 19 mortes, +2 nouvelles du 07/10 après-midi | GitHub live |
+| Commits non fusionnés | **159** (153 + 6) | idem |
+| Modules hors dépôt | **8** : Carré d'As, recherche, `_incoming` (786 fichiers), BTP, nexus_os, mail-organizer, OSINT workbench, atlas Frontignan | `S5-controle-completude.md` |
 | PR | 16 fusionnées, **1 ouverte (CI verte)**, 16 fermées sans fusion | GitHub |
 | CI | **1 dépôt sur 9** | GitHub |
 | Tests | 221 fichiers (3 projets sur 9) ; 2 rouges | exécutions |
 | Core (schéma/base/vecteurs) | **0 fichier construit** | inventaire |
-| Éléments classés v1→v5 | 79 (v1=20, v2=23, v3=16, v4=10, v5=2, v0=8) | `importance.json` |
+| Éléments classés v1→v5 | **91** (v1=29, v2=24, v3=18, v4=10, v5=2, v0=8) — révision du soir incluse | `importance.json` |
 | Audit | 52 findings | `AUDIT-2026-10.md` |
 | Poids Git | ~317 Mo `monorepo` (289 Mo de binaires) | GitHub |
 

@@ -1,7 +1,7 @@
 # MEMORY — Audit monorepo (index généré)
 
 > **NE PAS ÉDITER À LA MAIN** — généré par `python3 scripts/audit_memory.py render`
-> depuis `audit/state.json`. Mis à jour : 2026-10-07T14:47:50Z
+> depuis `audit/state.json`. Mis à jour : 2026-10-07T14:56:28Z
 
 ## Où est quoi
 
@@ -23,9 +23,10 @@
 
 ## Prochaines actions
 
-- DECISION ATTENDUE : valider la grille v1→v5 + Etape 0 (hygiene) — cf. ROADMAP-2050-2026.md, palier 2026
-- Puis Etape 0 : PR#3, resync proto, 2 tests rouges, licences, CI, snapshot, 289 Mo hors Git, 19 branches mortes
-- Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes
+- 1. OUVRIR LA PR de la branche arena/0034230e-monorepo (Carre d'As V1 + _incoming + resync proto) — elle porte l'Etape 0
+- 2. PR #3 watchtower (CI verte) + 2 tests rouges reaserch + licence (recommandation incluse) + CI minimale
+- 3. Lancer le dossier docs/recherche (matrice 80 domaines, 10 chantiers P0) via un agent de recherche
+- 4. Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes
 - Restructuration : non commencee (analyse uniquement)
 
 ## Projets

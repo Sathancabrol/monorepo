@@ -11,8 +11,8 @@
 | Question | Réponse (résumé) |
 |---|---|
 | Qu'est-ce que l'application finale ? | **12 domaines d'interface** (Command Center → System), **8 entités Core** (User·Project·Knowledge·Skill·Object·Place·Task·Event), une chaîne de valeur en 11 étapes (comprendre → … → apprendre du résultat). |
-| Combien d'éléments classés ? | **79 éléments** dans 9 dépôts + 8 branches + 2 dossiers locaux (détail machine : `audit/data/importance.json`). |
-| Répartition | **v1 = 20** · **v2 = 23** · **v3 = 16** · **v4 = 10** · **v5 = 2** · **v0/archive = 8**. |
+| Combien d'éléments classés ? | **91 éléments** dans 9 dépôts + 8 branches + 2 dossiers locaux (détail machine : `audit/data/importance.json`) — voir la **révision du soir §11** (+12 éléments : Carré d'As, recherche, `_incoming`, mail-organizer). |
+| Répartition | **v1 = 29** · **v2 = 24** · **v3 = 18** · **v4 = 10** · **v5 = 2** · **v0/archive = 8**. |
 | Le constat central | Le « Core » (v1) **n'existe quasi nulle part en code** : il est spécifié (ADR-007, data-model, HCSM) mais non construit. À l'inverse, les briques **v2/v3 existent déjà en abondance** (watchtower, proto, ETAT, reaserch-engine) — **mais sur des branches non fusionnées**. |
 | Ce que dit l'international | Les plateformes de référence (Palantir, Graphiti/Zep, World Monitor, Earth AI) convergent sur : **ontologie opérationnelle centrale**, **bi-temporalité native**, **provenance par épisode**, **fusion multi-source avouant ses lacunes**, **orchestration agentique au-dessus**, **contrats d'interface**. Ce sont exactement les briques v1 à ne pas improviser. |
 | La conséquence pour la restructuration | On ne range pas par projet (9 dépôts) mais **par domaine cible** (12) → les dépôts deviennent des **fournisseurs** ; la coquille `monorepo` les assemble. L'ordre v1→v5 est la séquence de restructuration. |
@@ -313,6 +313,34 @@ Six références examinées, six leçons directement applicables au classement v
 
 ## 10. Suite
 
-- Machine : `audit/data/importance.json` (79 éléments : `id`, `element`, `source`, `domaine`, `etat`, `v`, `action`, triés v1→v0) — régénérable par script.
+- Machine : `audit/data/importance.json` (**91 éléments** : `id`, `element`, `source`, `domaine`, `etat`, `v`, `action`, triés v1→v0) — régénérable par script (`scripts/audit_importance.py`) ; la révision du soir est appliquée dans le JSON.
 - Mémoire : `audit/state.json` (`analyse.v1v5`), journal, `MEMORY.md`.
 - **La restructuration n'a pas commencé** : ce document est l'entrée de la phase suivante (« ordonner puis restructurer »). Prochaine décision attendue : **valider la grille v1→v5 et l'Étape 0**.
+
+---
+
+## 11. Révision du 2026-10-07 (soir) — +12 éléments (chantier « Carré d'As »)
+
+Découverts après la passe GitHub du matin (commits 12:38→14:45 UTC) : voir `audit/notes/S5-controle-completude.md`.
+
+| Élément | Source | État | v | Pourquoi ce niveau |
+|---|---|---|---|---|
+| **Carré d'As — cadrage V1** (`00-CADRAGE`) : nom de l'app, cible association loi 1901, définition du « fini » (1 fichier, < 150 Mo, résultat < 5 min, hors ligne) | `docs/carre-das/` — branche `arena/0034230e` | branche | **v1** | Nomme et rend mesurable la V1 ; le « fini » est désormais testable |
+| **Contrat de module plug in/out** (`01-CONTRAT-MODULE`) : manifeste, cycle de vie, permissions « rien par défaut », bus d'événements | idem | branche | **v1** | Les 12 domaines de l'interface trouvent leur **mécanique** ; conditionne la restructuration |
+| **Décision licence** (recommandation cœur Apache-2.0/MIT + services AGPL-3.0) + RGPD + accessibilité + financement | `00` §2, `05` | branche | **v1** | Lève le blocage « 6 projets sans licence » avec une stratégie, pas juste un choix |
+| **Principes UI** (`02`) + **3 interfaces comparées** (`04` + 4 maquettes cliquables) | `docs/carre-das/maquettes/` | branche | **v1** | La V1 a un design system et un choix d'interface (Le Carré / L'Atelier / L'Arbre) |
+| **Séquence P0→P6 expliquée en clair** + chronologie réelle des travaux + politique corpus | `05-REPONSES-AUX-QUESTIONS` | branche | **v1** | Répond aux 7 questions du 07/10 (dont monétisation) |
+| **Matrice de 80 domaines de recherche** (`D01→D80`, P0→P3, pistes vérifiées le 07/10) + brief + prompt | `docs/recherche/` | branche | **v1** | C'est le **plan de décision d'architecture** (dont D02 Core canonique, D03 event bus, D04 persistance, D05 graphe, D07 RAG local) |
+| **`_incoming` + `verif-completude-repos.py`** : 786 fichiers uniques tracés, contrôle par empreinte Git | `projects/_incoming/` + `scripts/` | branche | **v1** | Rétablit la **visibilité du travail des branches** et fournit un contrôle de complétude rejouable |
+| **25 composants proto restaurés** (onboarding, graphe Obsidian, CV ciblé, biais cognitifs, auth, splash…) | `_incoming/proto-cognitorium/` | branche | **v1** | Réparé la plus grosse perte silencieuse ; ce sont des briques d'accueil (V1) |
+| **Écosystème local gratuit** (`06`) : modèles ≤ 6 Go de VRAM (Qwen 3.5 9B, Granite 4.2 8B extraction, Gemma 4 12B vision), Ollama/Whisper/Piper/OCR, **6 briques à créer** (routeur de modèles, cache, mode dégradé) | `docs/carre-das/` | branche | **v2** | Rend le « local-first gratuit » **exécutable** sur la machine cible |
+| **Spécification module BTP — 7 piliers, 3D en 3 paliers** (`03-MODULE-BTP`) + « assembler, pas réécrire un modeleur » | `docs/carre-das/` | branche | **v3** | Le BTP passe de « données à fusionner » à **brique forte spécifiée** |
+| **Module `mail-organizer`** (IMAP, règles, pièces jointes, watch, 19 tests) | branche `arena/93b54a79` | branche | **v3** | Nouveau flux entrant (emails → documents → connaissances) |
+| **Résolution du risque « bus factor » identifié** (documentation, modules découplés, données exportables, zéro dépendance payante) | `00` §2.2 | branche | **v1** | C'est le risque n°1 du passage en association, désormais nommé |
+
+**Nouvelle répartition (91 éléments)** : **v1 = 29** · v2 = 24 · v3 = 18 · v4 = 10 · v5 = 2 · v0 = 8 (comptage machine : `audit/data/importance.json`).
+
+**Trois conséquences pour la suite**
+1. L'**Étape 0** que je recommandais est **déjà partiellement faite** par la branche `arena/0034230e` (resync proto, complétude, licence cadrée, index) — mais **pas fusionnée** : elle devient la **première PR à ouvrir** (elle porte la V1 nommée et le contrôle de complétude).
+2. Le **contrat de module** (`01`) et la **matrice de 80 domaines** (`recherche`) remplacent avantageusement plusieurs de mes recommandations v1 : à intégrer au registre de décisions (ADR).
+3. Le mot d'ordre change : on ne parle plus de « fusionner 17 branches », mais de **fusionner la V1 nommée (Carré d'As)**, les branches devenant des fournisseurs rangés par module.

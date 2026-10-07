@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-07T14:47:50Z",
+ "generated_at": "2026-10-07T14:56:28Z",
  "nodes": [
   {
    "id": "project:COGNITORIUM",
@@ -300,6 +300,10 @@
   },
   {
    "id": "audit/ROADMAP-2050-2026.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/notes/S5-controle-completude.md",
    "type": "artifact"
   }
  ],

@@ -2,7 +2,7 @@
  "audit": "audit-2026-10",
  "genere": "2026-10-07",
  "grille": "v1 socle | v2 coeur d'usage | v3 puissance | v4 conception | v5 horizon | v0 archive",
- "total": 79,
+ "total": 91,
  "elements": [
   {
    "id": "D11-06",
@@ -125,6 +125,56 @@
    "v_ordre": 1
   },
   {
+   "id": "D1-06",
+   "element": "Carre d'As — cadrage V1 (nom, cible association, definition du fini)",
+   "source": "branche arena/0034230e-monorepo (docs/carre-das/00)",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "integrer a la PR V1",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-07",
+   "element": "Contrat de module plug in/out (manifeste, permissions rien par defaut, bus)",
+   "source": "branche arena/0034230e (docs/carre-das/01)",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "adopter comme ADR",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-09",
+   "element": "Principes UI (5 regles, 10 affordances) + 3 interfaces comparees + 4 maquettes cliquables",
+   "source": "branche arena/0034230e (docs/carre-das/02, 04, maquettes)",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "choisir l'interface V1",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-10",
+   "element": "Sequence P0→P6 en clair + chronologie reelle des travaux + politique corpus",
+   "source": "branche arena/0034230e (docs/carre-das/05)",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "valider la sequence",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-11",
+   "element": "Matrice de 80 domaines de recherche (D01→D80, P0→P3) + brief agent + prompt",
+   "source": "branche arena/0034230e (docs/recherche/00-03)",
+   "domaine": "D1",
+   "etat": "branche",
+   "v": "v1",
+   "action": "lancer la recherche P0",
+   "v_ordre": 1
+  },
+  {
    "id": "D11-01",
    "element": "Base unique PostgreSQL + pgvector + Apache AGE + PostGIS (ADR-007)",
    "source": "architecture/target.md + data-model.md",
@@ -162,6 +212,36 @@
    "etat": "existe",
    "v": "v1",
    "action": "outil de pilotage",
+   "v_ordre": 1
+  },
+  {
+   "id": "D11-08",
+   "element": "_incoming : 786 fichiers uniques traces avec _PROVENANCE.md (depot/branche/SHA)",
+   "source": "branche arena/0034230e (projects/_incoming)",
+   "domaine": "D11",
+   "etat": "branche",
+   "v": "v1",
+   "action": "conserver comme source",
+   "v_ordre": 1
+  },
+  {
+   "id": "D11-09",
+   "element": "scripts/verif-completude-repos.py : controle de completude par empreinte Git",
+   "source": "branche arena/0034230e",
+   "domaine": "D11",
+   "etat": "branche",
+   "v": "v1",
+   "action": "rejouer avant chaque fusion",
+   "v_ordre": 1
+  },
+  {
+   "id": "D1-08",
+   "element": "Decision licence : coeur Apache-2.0/MIT + services AGPL-3.0 (+ RGPD, accessibilite)",
+   "source": "branche arena/0034230e (docs/carre-das/00, 05)",
+   "domaine": "D12",
+   "etat": "branche",
+   "v": "v1",
+   "action": "acter en ADR",
    "v_ordre": 1
   },
   {
@@ -222,6 +302,16 @@
    "etat": "doublon",
    "v": "v1",
    "action": "fermer ADR-009",
+   "v_ordre": 1
+  },
+  {
+   "id": "D5-07",
+   "element": "25 composants proto restaures (onboarding, graphe Obsidian, CV cible, biais, auth)",
+   "source": "branche arena/0034230e (_incoming)",
+   "domaine": "D5",
+   "etat": "branche",
+   "v": "v1",
+   "action": "integrer a l'accueil V1",
    "v_ordre": 1
   },
   {
@@ -342,6 +432,16 @@
    "etat": "branche/skeleton",
    "v": "v2",
    "action": "reutiliser",
+   "v_ordre": 2
+  },
+  {
+   "id": "D12-06",
+   "element": "Ecosysteme local gratuit : modeles <=6 Go VRAM, Ollama/Whisper/Piper/OCR, 6 briques a creer",
+   "source": "branche arena/0034230e (docs/carre-das/06)",
+   "domaine": "D12",
+   "etat": "branche",
+   "v": "v2",
+   "action": "executer le local-first",
    "v_ordre": 2
   },
   {
@@ -545,6 +645,16 @@
    "v_ordre": 3
   },
   {
+   "id": "D11-10",
+   "element": "Module mail-organizer : tri IMAP par regles, pieces jointes, watch (19 tests)",
+   "source": "branche arena/93b54a79-monorepo",
+   "domaine": "D11",
+   "etat": "branche",
+   "v": "v3",
+   "action": "evaluer comme flux entrant",
+   "v_ordre": 3
+  },
+  {
    "id": "D2-05",
    "element": "Atlas interactif Frontignan / Cognitarium City",
    "source": "branche arena/01a08203-monorepo",
@@ -622,6 +732,16 @@
    "etat": "fragment",
    "v": "v3",
    "action": "aligner sur module BTP",
+   "v_ordre": 3
+  },
+  {
+   "id": "D4-06",
+   "element": "Specification module BTP : 7 piliers, 3D en 3 paliers, sync multi-comptes, IA locale",
+   "source": "branche arena/0034230e (docs/carre-das/03)",
+   "domaine": "D4",
+   "etat": "branche",
+   "v": "v3",
+   "action": "industrialiser le module",
    "v_ordre": 3
   },
   {
@@ -794,5 +914,6 @@
    "action": "plus tard",
    "v_ordre": 5
   }
- ]
+ ],
+ "revision": "2026-10-07 soir — +12 elements (Carre d'As, recherche, _incoming, mail-organizer)"
 }

@@ -4,7 +4,7 @@
     "id": "audit-2026-10",
     "title": "Audit complet monorepo Sathancabrol",
     "started_at": "2026-10-07T12:22:19Z",
-    "updated_at": "2026-10-07T14:47:50Z",
+    "updated_at": "2026-10-07T14:56:28Z",
     "operator": "agent"
   },
   "phase": {
@@ -232,9 +232,10 @@
     "connecteurs_interroges": 4
   },
   "next_actions": [
-    "DECISION ATTENDUE : valider la grille v1→v5 + Etape 0 (hygiene) — cf. ROADMAP-2050-2026.md, palier 2026",
-    "Puis Etape 0 : PR#3, resync proto, 2 tests rouges, licences, CI, snapshot, 289 Mo hors Git, 19 branches mortes",
-    "Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes",
+    "1. OUVRIR LA PR de la branche arena/0034230e-monorepo (Carre d'As V1 + _incoming + resync proto) — elle porte l'Etape 0",
+    "2. PR #3 watchtower (CI verte) + 2 tests rouges reaserch + licence (recommandation incluse) + CI minimale",
+    "3. Lancer le dossier docs/recherche (matrice 80 domaines, 10 chantiers P0) via un agent de recherche",
+    "4. Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes",
     "Restructuration : non commencee (analyse uniquement)"
   ],
   "artifacts": [
@@ -273,7 +274,8 @@
     "audit/data/importance.json",
     "scripts/audit_importance.py",
     "audit/SYNTHESE-TIMELINE-2026-10.md",
-    "audit/ROADMAP-2050-2026.md"
+    "audit/ROADMAP-2050-2026.md",
+    "audit/notes/S5-controle-completude.md"
   ],
   "publication": {
     "plateforme": "GitHub",
@@ -290,11 +292,11 @@
     "machine": "audit/data/importance.json",
     "generateur": "scripts/audit_importance.py",
     "grille": "v1 socle | v2 coeur d'usage | v3 puissance | v4 conception | v5 horizon | v0 archive",
-    "total_elements": 79,
+    "total_elements": 91,
     "repartition": {
-      "v1": 20,
-      "v2": 23,
-      "v3": 16,
+      "v1": 29,
+      "v2": 24,
+      "v3": 18,
       "v4": 10,
       "v5": 2,
       "v0": 8
@@ -308,7 +310,8 @@
       "Multi-INT (raisonnement spatial/temporel/hierarchique)",
       "OSIRIS (canevas multi-flux)"
     ],
-    "prochaine_decision": "valider la grille v1→v5 et l'Etape 0 (hygiene)"
+    "prochaine_decision": "valider la grille v1→v5 et l'Etape 0 (hygiene)",
+    "revision": "2026-10-07 soir +12 (Carre d'As, recherche, _incoming, mail-organizer)"
   },
   "timeline": {
     "document": "audit/SYNTHESE-TIMELINE-2026-10.md",
@@ -325,5 +328,33 @@
       "2027 Core v1",
       "2026 maintenant"
     ]
+  },
+  "chantier_carre_das": {
+    "revele_le": "2026-10-07 12:38-14:45 UTC (apres le releve matinal)",
+    "branche": "arena/0034230e-monorepo (+5 commits) + arena/93b54a79-monorepo (+1)",
+    "apport": [
+      "cadrage V1 (nom Carre d'As, cible association loi 1901, definition du fini)",
+      "contrat de module plug in/out",
+      "licence recommandee coeur Apache-2.0/MIT + services AGPL-3.0",
+      "3 interfaces comparees + 4 maquettes cliquables",
+      "matrice de 80 domaines de recherche (P0->P3)",
+      "projects/_incoming : 786 fichiers uniques de toutes les branches avec _PROVENANCE.md",
+      "scripts/verif-completude-repos.py",
+      "resync proto (12 fichiers)",
+      "25 composants proto restaures (onboarding, graphe Obsidian, CV)",
+      "specification module BTP : 7 piliers, 3D en 3 paliers",
+      "ecosysteme local gratuit (modeles <=6 Go VRAM)",
+      "module mail-organizer (19 tests)"
+    ],
+    "completude": {
+      "branches_avec_travail": 17,
+      "commits_non_fusionnes": 159,
+      "couverture_depots": "100% selon 07-INVENTAIRE (786 uniques, 240 doublons retires)",
+      "mon_controle": "audit/notes/S5-controle-completude.md"
+    },
+    "nommage": {
+      "Cognitorium": "systeme/ecosysteme (horizon)",
+      "Carre d'As": "l'application V1 installable"
+    }
   }
 }
