@@ -1,0 +1,139 @@
+{
+  "version": "0.1.0",
+  "generated_at": "2026-10-07",
+  "canonical_repo": "Sathancabrol/monorepo",
+  "sources": [
+    {
+      "id": "watchtower",
+      "repo": "Sathancabrol/watchtower",
+      "role": "tool-registry-and-gis-osint"
+    },
+    {
+      "id": "watchtower-mods",
+      "path": "projects/COGNITORIUM/watchtower-mods",
+      "role": "integrated-watchtower-modules"
+    },
+    {
+      "id": "chantier-corpus",
+      "path": ".",
+      "role": "btp-tp-document-corpus"
+    },
+    {
+      "id": "research-engine",
+      "repo": "Sathancabrol/reaserch-engine",
+      "role": "research-and-evidence"
+    },
+    {
+      "id": "hcsm",
+      "repo": "Sathancabrol/HCSM",
+      "role": "cognitive-evidence-ontology"
+    },
+    {
+      "id": "cognitorium",
+      "repo": "Sathancabrol/COGNITORIUM",
+      "role": "knowledge-learning-agents"
+    },
+    {
+      "id": "proto-cognitorium",
+      "repo": "Sathancabrol/proto-cognitorium",
+      "role": "frontend-and-source-corpus"
+    },
+    {
+      "id": "frontignan",
+      "path": "projects/frontignan",
+      "role": "territorial-analysis"
+    },
+    {
+      "id": "animation-chronos",
+      "repo": "Sathancabrol/animation-chronos",
+      "role": "temporal-visualization"
+    }
+  ],
+  "capability_domains": [
+    {
+      "id": "gis",
+      "label": "Cartographie / GIS",
+      "sources": [
+        "watchtower",
+        "watchtower-mods",
+        "frontignan"
+      ]
+    },
+    {
+      "id": "territory",
+      "label": "Territoire",
+      "sources": [
+        "frontignan",
+        "watchtower",
+        "chantier-corpus"
+      ]
+    },
+    {
+      "id": "btp",
+      "label": "BTP / TP / chantier",
+      "sources": [
+        "chantier-corpus",
+        "proto-cognitorium",
+        "watchtower-mods"
+      ]
+    },
+    {
+      "id": "osint",
+      "label": "OSINT / investigation",
+      "sources": [
+        "watchtower",
+        "research-engine"
+      ]
+    },
+    {
+      "id": "research",
+      "label": "Recherche / evidence",
+      "sources": [
+        "research-engine",
+        "hcsm"
+      ]
+    },
+    {
+      "id": "cognition",
+      "label": "Cognition / connaissances",
+      "sources": [
+        "hcsm",
+        "cognitorium",
+        "proto-cognitorium"
+      ]
+    },
+    {
+      "id": "learning",
+      "label": "Apprentissage",
+      "sources": [
+        "cognitorium",
+        "proto-cognitorium"
+      ]
+    },
+    {
+      "id": "3d",
+      "label": "3D / simulation / fabrication",
+      "sources": [
+        "cognitorium",
+        "watchtower-mods",
+        "animation-chronos"
+      ]
+    },
+    {
+      "id": "agents",
+      "label": "Agents / orchestration",
+      "sources": [
+        "cognitorium",
+        "research-engine"
+      ]
+    }
+  ],
+  "integration_principles": [
+    "reference-before-copy",
+    "adapter-before-duplicate",
+    "canonical-data-before-ui",
+    "preserve-provenance",
+    "preserve-license",
+    "separate-fact-inference-hypothesis"
+  ]
+}\n
