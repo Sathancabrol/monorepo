@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Record",
+  "type": "object",
+  "required": ["id", "type", "source", "status"],
+  "properties": {
+    "id": {"type": "string"},
+    "type": {"type": "string"},
+    "label": {"type": ["string", "null"]},
+    "source": {"type": "string"},
+    "source_url": {"type": ["string", "null"]},
+    "retrieved_at": {"type": ["string", "null"], "format": "date-time"},
+    "observed_at": {"type": ["string", "null"], "format": "date-time"},
+    "valid_from": {"type": ["string", "null"], "format": "date-time"},
+    "valid_to": {"type": ["string", "null"], "format": "date-time"},
+    "geometry": {},
+    "provenance": {"type": ["object", "null"]},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "license": {"type": ["string", "null"]},
+    "status": {"enum": ["fact", "inference", "hypothesis", "unknown"]},
+    "relations": {"type": "array", "items": {"type": "object"}}
+  }
+}
