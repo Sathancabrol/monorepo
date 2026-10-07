@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carré d'As — maquettes à comparer</title>
+<style>
+  :root{--bg:#0a0f1e;--card:#141c38;--line:#26315c;--txt:#eaeefb;--dim:#9aa6c9;--dim2:#6f7ca3;
+        --accent:#5ad1ff;--accent2:#8b7bff;--sans:"Segoe UI",system-ui,-apple-system,sans-serif}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1000px 600px at 50% -10%,#1a2450,var(--bg) 60%);color:var(--txt);
+       font-family:var(--sans);padding:34px 26px;min-height:100vh}
+  h1{margin:0 0 6px;font-size:24px}
+  .sub{color:var(--dim);font-size:14px;max-width:820px;line-height:1.6;margin-bottom:26px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1180px}
+  .card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;display:flex;flex-direction:column}
+  .card h2{margin:0 0 4px;font-size:17px}
+  .tag{font-size:11.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+  ul{margin:0;padding-left:18px;color:var(--dim);font-size:13.5px;line-height:1.75}
+  .go{margin-top:16px;display:inline-block;text-align:center;padding:11px 16px;border-radius:10px;text-decoration:none;
+      color:#08101f;font-weight:650;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  .rec{border-color:#33507f;background:linear-gradient(180deg,#18224a,var(--card))}
+  .rec::after{content:"recommandée";position:absolute}
+  .badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;background:rgba(90,209,255,.14);
+         color:var(--accent);border:1px solid rgba(90,209,255,.35);margin-left:8px;vertical-align:middle}
+  .note{margin-top:26px;max-width:1180px;border-top:1px solid var(--line);padding-top:18px;color:var(--dim);font-size:13.5px;line-height:1.7}
+  code{background:#131a35;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px}
+</style>
+</head>
+<body>
+  <h1>🃏 Carré d'As — trois interfaces à comparer</h1>
+  <div class="sub">Chaque maquette est une page HTML autonome (aucune dépendance, rien à installer) : clique pour l'ouvrir dans ton navigateur.
+  Les trois partagent le même fond, le même rail, la même barre d'état et la même palette <code>Ctrl+K</code>. Elles diffèrent par <b>ce qui est au centre</b>.</div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>V1 — Le Carré <span class="badge">accueil</span></h2>
+      <div class="tag">La simplicité assumée</div>
+      <ul>
+        <li>Quatre portes : Projets · Carte · Documents · Agents</li>
+        <li>Reprises, activité, à traiter — rien d'autre</li>
+        <li>Compréhensible en 5 secondes, clavier d'abord</li>
+        <li>Idéal : nouvel utilisateur, association, mairie</li>
+      </ul>
+      <a class="go" href="v1-le-carre.html">Ouvrir V1</a>
+    </div>
+
+    <div class="card">
+      <h2>V2 — L'Atelier <span class="badge">travail</span></h2>
+      <div class="tag">Le poste de travail métier</div>
+      <ul>
+        <li>Le projet est le conteneur (chantier Barbazan)</li>
+        <li>Onglets : Documents · Prix · Métrés · Planning · Carte · 3D…</li>
+        <li>Panneau détails + provenance, dock d'outils, journal</li>
+        <li>Idéal : usage quotidien, 154 documents, module BTP</li>
+      </ul>
+      <a class="go" href="v2-l-atelier.html">Ouvrir V2</a>
+    </div>
+
+    <div class="card">
+      <h2>V3 — L'Arbre <span class="badge">exploration</span></h2>
+      <div class="tag">La carte cognitive</div>
+      <ul>
+        <li>Arbre de compétences + axe de vie + fiche liée</li>
+        <li>Chaque nœud : statut, preuves, disponibilité estimée</li>
+        <li>Zoom sémantique, 5 représentations interchangeables</li>
+        <li>Contient un <b>mode liste</b> équivalent (accessibilité)</li>
+      </ul>
+      <a class="go" href="v3-l-arbre.html">Ouvrir V3</a>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Ma recommandation :</b> V1 comme <b>accueil par défaut</b> + V2 comme <b>espace de travail</b> + V3 comme <b>module d'exploration</b>.<br>
+    <b>Pourquoi :</b> ton cahier des charges impose « simplicité en surface, profondeur à la demande » (UX-01), deux densités d'information (UX-07)
+    et « le graphe n'est pas l'unique porte d'entrée » (UX-10). Cette combinaison est aussi la seule qui reste fluide sur une GTX 1060 6 Go.<br>
+    <b>Analyse détaillée :</b> <code>docs/carre-das/04-INTERFACES-3-PROPOSITIONS.md</code>
+  </div>
+</body>
+</html>

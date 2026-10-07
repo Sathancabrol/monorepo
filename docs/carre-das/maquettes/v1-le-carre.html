@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carré d'As — V1 « Le Carré »</title>
+<style>
+  :root{
+    --bg:#0b1020; --bg2:#111834; --card:#151d3b; --line:#26315c;
+    --txt:#eaeefb; --dim:#9aa6c9; --dim2:#6f7ca3;
+    --accent:#5ad1ff; --accent2:#8b7bff; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    --r:14px; --sans:"Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#1a2450 0%,var(--bg) 55%,#070a15 100%);
+       color:var(--txt);font-family:var(--sans);min-height:100vh}
+  button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  .app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+
+  /* barre haute */
+  .top{display:flex;align-items:center;gap:18px;padding:10px 16px;background:rgba(11,16,32,.82);
+       border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.3px}
+  .glyph{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:14px;
+         background:linear-gradient(135deg,var(--accent),var(--accent2));color:#08101f;font-weight:900}
+  .chip{padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--dim)}
+  .chip.on{color:#08101f;background:var(--accent);border-color:transparent;font-weight:600}
+  .search{flex:1;max-width:520px;display:flex;align-items:center;gap:10px;padding:9px 14px;
+          border:1px solid var(--line);border-radius:999px;color:var(--dim2);background:rgba(255,255,255,.03)}
+  .search kbd{margin-left:auto;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--dim)}
+  .right{display:flex;align-items:center;gap:14px;margin-left:auto;color:var(--dim);font-size:13px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--ok)}
+
+  /* corps */
+  .body{display:grid;grid-template-columns:216px 1fr;min-height:0}
+  .rail{padding:14px 10px;border-right:1px solid var(--line);background:rgba(9,13,27,.55)}
+  .rail .item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--dim);
+              font-size:14px;margin-bottom:4px;width:100%;text-align:left}
+  .rail .item .ic{width:20px;text-align:center;font-size:15px}
+  .rail .item.active{background:rgba(90,209,255,.12);color:var(--txt);box-shadow:inset 2px 0 0 var(--accent)}
+  .rail hr{border:none;border-top:1px solid var(--line);margin:12px 4px}
+  .main{padding:20px 22px;overflow:auto}
+
+  h1{margin:2px 0 4px;font-size:22px}
+  .sub{color:var(--dim);font-size:13.5px;margin-bottom:18px}
+  .doors{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .door{position:relative;padding:18px;border-radius:var(--r);border:1px solid var(--line);text-align:left;
+        background:linear-gradient(180deg,var(--card),#121936);transition:transform .12s,border-color .12s;width:100%}
+  .door:hover{transform:translateY(-2px);border-color:#3a4a86}
+  .door .ico{font-size:22px;margin-bottom:12px;display:block}
+  .door .t{font-weight:650;font-size:15px;margin-bottom:4px}
+  .door .n{font-size:26px;font-weight:700;letter-spacing:-.5px}
+  .door .h{color:var(--dim);font-size:12.5px;margin-top:6px;line-height:1.45}
+  .door .badge{position:absolute;top:14px;right:14px;font-size:11px;padding:3px 8px;border-radius:999px;
+               background:rgba(251,191,36,.15);color:var(--warn);border:1px solid rgba(251,191,36,.3)}
+  .door .badge.ok{background:rgba(74,222,128,.13);color:var(--ok);border-color:rgba(74,222,128,.3)}
+
+  .grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;margin-top:22px}
+  .panel{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:16px}
+  .panel h2{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim2);font-weight:600}
+  .row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(38,49,92,.5);font-size:14px}
+  .row:last-child{border-bottom:none}
+  .row .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+  .row .meta{margin-left:auto;color:var(--dim2);font-size:12.5px;white-space:nowrap}
+  .prov{font-size:11px;color:var(--dim2);border:1px dashed var(--line);border-radius:6px;padding:1px 6px;white-space:nowrap}
+
+  /* barre d'état */
+  .status{display:flex;align-items:center;gap:18px;padding:7px 16px;border-top:1px solid var(--line);
+          background:rgba(9,13,27,.8);color:var(--dim2);font-size:12px}
+  .status b{color:var(--dim);font-weight:600}
+  .status .sp{margin-left:auto}
+  .toast{position:fixed;left:50%;bottom:52px;transform:translateX(-50%);background:#141c38;border:1px solid var(--line);
+         border-radius:10px;padding:10px 16px;font-size:13px;color:var(--dim);opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="glyph">🃏</span> CARRÉ D'AS</div>
+    <button class="chip on" id="scope">Projet : Barbazan ▾</button>
+    <button class="search" id="search"><span>⌕</span> Rechercher un document, un prix, un lieu, une action… <kbd>Ctrl+K</kbd></button>
+    <div class="right">
+      <span><span class="dot"></span> dossier local</span>
+      <button class="chip" id="ia">Mode IA : local</button>
+      <button class="chip" id="bell">🔔 3</button>
+      <span class="chip">NC ▾</span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="rail">
+      <button class="item active"><span class="ic">⌂</span> Accueil</button>
+      <button class="item"><span class="ic">🏗</span> Projets</button>
+      <button class="item"><span class="ic">🗺</span> Carte</button>
+      <button class="item"><span class="ic">📄</span> Documents</button>
+      <button class="item"><span class="ic">🤖</span> Agents</button>
+      <button class="item"><span class="ic">📊</span> Analyses</button>
+      <hr>
+      <button class="item"><span class="ic">🔌</span> Modules</button>
+      <button class="item"><span class="ic">⚙</span> Réglages</button>
+    </nav>
+
+    <main class="main">
+      <h1>Bonjour. Par où veux-tu commencer ?</h1>
+      <div class="sub">Trois chantiers sont ouverts, 154 documents sont indexés localement. Tout fonctionne hors ligne.</div>
+
+      <div class="doors">
+        <button class="door" data-go="projets">
+          <span class="ico">🏗</span><div class="t">Projets</div><div class="n">3</div>
+          <div class="h">Chantiers, plans, prix, planning, qualité.</div>
+        </button>
+        <button class="door" data-go="carte">
+          <span class="ico">🗺</span><div class="t">Carte</div>
+          <div class="h">Parcelles, réseaux, DVF, risques, terrain.</div>
+        </button>
+        <button class="door" data-go="docs">
+          <span class="ico">📄</span><div class="t">Documents</div><div class="n">154</div>
+          <div class="h">Retrouver, comparer, extraire. Zéro recherche manuelle.</div>
+          <span class="badge">12 à trier</span>
+        </button>
+        <button class="door" data-go="agents">
+          <span class="ico">🤖</span><div class="t">Agents</div><div class="n">22</div>
+          <div class="h">Métrés, DQE, contrôle de cohérence, veille.</div>
+          <span class="badge ok">2 en cours</span>
+        </button>
+      </div>
+
+      <div class="grid2">
+        <section class="panel">
+          <h2>Reprendre · activité récente</h2>
+          <div class="row"><span class="tag">DQE</span> Lecture du DQE — lot Terrassements (Barbazan)
+            <span class="prov">✅ page 12</span><span class="meta">il y a 20 min</span></div>
+          <div class="row"><span class="tag">Métré</span> Écart détecté : 4 200 € sur le lot 3
+            <span class="prov">⚠ à vérifier</span><span class="meta">il y a 1 h</span></div>
+          <div class="row"><span class="tag">Carte</span> Emprises récupérées (IGN APICarto)
+            <span class="prov">✅ source IGN</span><span class="meta">hier</span></div>
+          <div class="row"><span class="tag">Agent</span> Veille réglementaire — DTU 13.1
+            <span class="prov">🔮 hypothèse</span><span class="meta">hier</span></div>
+          <div class="row"><span class="tag">Doc</span> 12 pièces déposées sans classement
+            <span class="prov">à décider</span><span class="meta">aujourd'hui</span></div>
+        </section>
+
+        <section class="panel">
+          <h2>À traiter aujourd'hui</h2>
+          <div class="row">✅ Valider 6 propositions extraites du CCTP<span class="meta">6 →</span></div>
+          <div class="row">📅 Contrôle du planning — réunion jeudi<span class="meta">jeudi</span></div>
+          <div class="row">⚠ Secteur à risque inondation sur 2 parcelles<span class="meta">2 →</span></div>
+          <div class="row">🔮 Compétence à réactiver : métrés VRD<span class="meta">3 preuves</span></div>
+          <div class="row">🔌 Module « Bâti 3D » disponible<span class="meta">installer</span></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="status">
+    <span><b>Dossier local</b> · 154 documents · 62 Mo indexés</span>
+    <span class="sp">hors ligne</span>
+    <span><b>v0.1</b> · modules : 4/9</span>
+    <span>🃏 Carré d'As — V1 « Le Carré »</span>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  const t = document.getElementById('toast');
+  function say(msg){ t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+  document.getElementById('search').onclick = ()=> say('Palette de commandes (Ctrl+K) — maquette');
+  document.getElementById('scope').onclick = ()=> say('Changement de périmètre : projet / territoire / personne');
+  document.getElementById('ia').onclick = (e)=>{ const on = e.currentTarget.classList.toggle('on'); e.currentTarget.textContent = 'Mode IA : ' + (on?'local':'cloud'); };
+  document.getElementById('bell').onclick = ()=> say('3 alertes : 1 retard de pièce, 1 écart de prix, 1 risque');
+  document.querySelectorAll('.door').forEach(d=> d.onclick = ()=> say('Ouverture de « ' + d.querySelector('.t').textContent + ' »'));
+  document.querySelectorAll('.rail .item').forEach(i=> i.onclick = ()=> say('« ' + i.textContent.trim() + ' »'));
+</script>
+</body>
+</html>

@@ -10,6 +10,12 @@
 | **`01-CONTRAT-MODULE.md`** | Le contrat qui rend un module **plug in/out** : manifeste (`module.json`), cycle de vie sans redémarrage, permissions « rien par défaut », bus d'événements, points d'extension d'interface, propriété des données, versionnement, critères d'acceptation |
 | **`02-UI-PRINCIPES-ET-INSPIRATIONS.md`** | L'interface : 5 règles non négociables, structure du shell (rail, zone de travail, panneaux, dock, palette), écrans de la V1, 10 règles d'affordance vérifiables, inspirations des branches et de l'extérieur, anti-patterns, indicateurs à mesurer |
 | **`03-MODULE-BTP.md`** | La brique BTP : ce qui existe déjà (154 documents, 7 rapports, 28 sous-détails de prix), les 7 piliers, la décision 3D en trois paliers, la synchronisation multi-comptes, le modèle de données, la feuille de route, les risques |
+| **`04-INTERFACES-3-PROPOSITIONS.md`** | Analyse des **9 concept arts retrouvés** (ADN commun, divergences, ce qu'on retire) + **3 propositions d'interface** comparées et recommandation : V1 « Le Carré » (accueil), V2 « L'Atelier » (travail), V3 « L'Arbre » (exploration) |
+| **`maquettes/`** | Les maquettes **cliquables**, autonomes (aucune dépendance) : `index.html` (comparateur) · `v1-le-carre.html` · `v2-l-atelier.html` · `v3-l-arbre.html` |
+| **`05-REPONSES-AUX-QUESTIONS.md`** | Réponses aux 7 points du 2026-10-07 : **licence sous l'angle monétisation** (association + open core + CLA), **séquence P0→P6 expliquée en clair**, **ordre chronologique réel des travaux** (retrouvé sur GitHub + Drive), **corpus conservé dans Git** (proposition retirée et remplacée par une politique) |
+| **`06-ECOSYSTEME-LOCAL-GRATUIT.md`** | L'écosystème libre et hors ligne : **modèles IA locaux** tenant dans 6 Go de VRAM, écosystème « prepper » (Kiwix, Project NOMAD, pimaps, Organic Maps, ODK/Kobo), **cartes et fiches ID**, précautions de licence, **liste des 6 briques à créer** |
+
+**Rappel des livrables antérieurs** : `00` à `03` sont commités (`df13086`) ; `04` à `06` et les maquettes sont postérieurs.
 
 ## À lire avec
 

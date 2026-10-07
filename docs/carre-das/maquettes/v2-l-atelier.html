@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carré d'As — V2 « L'Atelier »</title>
+<style>
+  :root{
+    --bg:#0a0f1e; --card:#141c38; --card2:#101733; --line:#26315c;
+    --txt:#eaeefb; --dim:#9aa6c9; --dim2:#6f7ca3;
+    --accent:#5ad1ff; --accent2:#8b7bff; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    --r:12px; --sans:"Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--sans);height:100vh;overflow:hidden}
+  button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  .app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+
+  .top{display:flex;align-items:center;gap:14px;padding:9px 14px;background:var(--card2);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700}
+  .glyph{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px;
+         background:linear-gradient(135deg,var(--accent),var(--accent2));color:#08101f;font-weight:900}
+  .crumb{color:var(--dim);font-size:13px}
+  .crumb b{color:var(--txt);font-weight:600}
+  .search{flex:1;max-width:420px;margin-left:auto;display:flex;align-items:center;gap:9px;padding:8px 13px;
+          border:1px solid var(--line);border-radius:999px;color:var(--dim2);background:rgba(255,255,255,.03);font-size:13px}
+  .search kbd{margin-left:auto;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--dim)}
+  .icobtn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;color:var(--dim)}
+  .icobtn:hover{border-color:#3a4a86;color:var(--txt)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+
+  .body{display:grid;grid-template-columns:200px 1fr;min-height:0}
+  .rail{border-right:1px solid var(--line);background:var(--card2);padding:12px 8px;overflow:auto}
+  .rail .item{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;color:var(--dim);
+              font-size:13.5px;margin-bottom:3px;width:100%;text-align:left}
+  .rail .item.active{background:rgba(90,209,255,.12);color:var(--txt);box-shadow:inset 2px 0 0 var(--accent)}
+  .rail hr{border:none;border-top:1px solid var(--line);margin:10px 4px}
+
+  /* onglets de contexte */
+  .tabs{display:flex;gap:2px;padding:0 14px;background:var(--card2);border-bottom:1px solid var(--line);overflow-x:auto}
+  .tab{padding:11px 14px;font-size:13.5px;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap}
+  .tab.active{color:var(--txt);border-bottom-color:var(--accent);font-weight:600}
+  .tab:hover{color:var(--txt)}
+
+  .work{display:grid;grid-template-columns:1fr 320px;min-height:0;overflow:hidden}
+  .zone{padding:16px;overflow:auto}
+  .side{border-left:1px solid var(--line);background:var(--card2);overflow:auto}
+  .side .blk{padding:14px 15px;border-bottom:1px solid var(--line)}
+  .side h3{margin:0 0 10px;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim2);font-weight:600}
+
+  h1{margin:0 0 4px;font-size:17px}
+  .meta{color:var(--dim);font-size:13px;margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:left;color:var(--dim2);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
+     padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid rgba(38,49,92,.55)}
+  tr:hover td{background:rgba(90,209,255,.05)}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+  .pill.ok{color:var(--ok);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.1)}
+  .pill.warn{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.1)}
+  .pill.bad{color:var(--bad);border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.1)}
+  .prov{font-size:11px;color:var(--dim2);border:1px dashed var(--line);border-radius:6px;padding:1px 6px;white-space:nowrap}
+  .neg{color:var(--bad)}
+
+  .kv{display:flex;gap:8px;font-size:13px;padding:5px 0;color:var(--dim)}
+  .kv b{color:var(--txt);font-weight:600;margin-left:auto}
+  .act{display:flex;gap:8px;margin-top:10px}
+  .act button{flex:1;padding:8px 10px;border-radius:9px;font-size:12.5px;border:1px solid var(--line);color:var(--dim)}
+  .act button.primary{background:rgba(90,209,255,.14);border-color:rgba(90,209,255,.4);color:var(--txt);font-weight:600}
+  .act button:hover{color:var(--txt);border-color:#3a4a86}
+
+  .log{font-size:12.5px;color:var(--dim);line-height:1.75}
+  .log b{color:var(--txt);font-weight:600}
+
+  /* dock */
+  .dock{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--card2);border-top:1px solid var(--line);overflow-x:auto}
+  .dock .tool{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);
+              color:var(--dim);font-size:13px;white-space:nowrap}
+  .dock .tool.active{background:rgba(139,123,255,.16);border-color:rgba(139,123,255,.45);color:var(--txt)}
+  .dock .tool:hover{color:var(--txt)}
+  .dock .sp{margin-left:auto;color:var(--dim2);font-size:12px;white-space:nowrap}
+  .toast{position:fixed;left:50%;bottom:64px;transform:translateX(-50%);background:#141c38;border:1px solid var(--line);
+         border-radius:10px;padding:10px 16px;font-size:13px;color:var(--dim);opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="glyph">🃏</span> CARRÉ D'AS</div>
+    <div class="crumb">Projets › <b>Chantier Barbazan</b> › giratoire RD12 — phase 3</div>
+    <button class="search" id="search"><span>⌕</span> Chercher dans ce chantier… <kbd>Ctrl+K</kbd></button>
+    <button class="icobtn" id="sync" title="Synchroniser">⇅</button>
+    <button class="icobtn" id="bell" title="Alertes">🔔</button>
+    <button class="icobtn" id="user" title="Compte">NC</button>
+  </header>
+
+  <div class="body">
+    <nav class="rail">
+      <button class="item active"><span>🏗</span> Projets</button>
+      <button class="item"><span>🗺</span> Carte</button>
+      <button class="item"><span>📄</span> Documents</button>
+      <button class="item"><span>🤖</span> Agents</button>
+      <button class="item"><span>📊</span> Analyses</button>
+      <hr>
+      <button class="item"><span>📚</span> Référentiels</button>
+      <button class="item"><span>⏱</span> Journal</button>
+      <button class="item"><span>🔌</span> Modules</button>
+      <button class="item"><span>⚙</span> Réglages</button>
+    </nav>
+
+    <div style="display:grid;grid-template-rows:auto 1fr auto;min-height:0">
+      <nav class="tabs">
+        <button class="tab active" data-t="Documents">Documents</button>
+        <button class="tab" data-t="Prix">Prix</button>
+        <button class="tab" data-t="Métrés">Métrés</button>
+        <button class="tab" data-t="Planning">Planning</button>
+        <button class="tab" data-t="Qualité">Qualité</button>
+        <button class="tab" data-t="Carte">Carte</button>
+        <button class="tab" data-t="Bâti 3D">Bâti 3D</button>
+        <button class="tab" data-t="Réseaux">Réseaux</button>
+        <button class="tab" data-t="Sécurité">Sécurité</button>
+      </nav>
+
+      <div class="work">
+        <section class="zone" id="zone">
+          <h1 id="zTitle">Documents du chantier</h1>
+          <div class="meta" id="zMeta">154 pièces · 7 familles · indexation locale · 42 pièces validées</div>
+          <table id="tab">
+            <thead><tr><th>Pièce</th><th>Famille</th><th>Statut</th><th>Provenance</th><th class="num">Taille</th></tr></thead>
+            <tbody>
+              <tr><td>CCTP — Terrassements</td><td>Marché</td><td><span class="pill ok">validé</span></td><td><span class="prov">✅ page 12</span></td><td class="num">1,2 Mo</td></tr>
+              <tr><td>DQE — Lot 3 VRD</td><td>Prix</td><td><span class="pill warn">à valider</span></td><td><span class="prov">✅ extrait tableur</span></td><td class="num">340 Ko</td></tr>
+              <tr><td>Plan de récolement réseaux</td><td>Réseaux</td><td><span class="pill ok">validé</span></td><td><span class="prov">✅ DWG + calque</span></td><td class="num">8,4 Mo</td></tr>
+              <tr><td>Étude géotechnique G2</td><td>Études</td><td><span class="pill ok">validé</span></td><td><span class="prov">✅ page 8</span></td><td class="num">5,1 Mo</td></tr>
+              <tr><td>PAQ — phase 3</td><td>Qualité</td><td><span class="pill">en attente</span></td><td><span class="prov">🔮 à confirmer</span></td><td class="num">820 Ko</td></tr>
+              <tr><td>PV de réunion de chantier n°14</td><td>Suivi</td><td><span class="pill ok">validé</span></td><td><span class="prov">✅ signé</span></td><td class="num">210 Ko</td></tr>
+              <tr><td>Photo terrain — 14/09</td><td>Terrain</td><td><span class="pill">non classée</span></td><td><span class="prov">⚠ sans source</span></td><td class="num">4,6 Mo</td></tr>
+              <tr><td>Facture n°2026-118</td><td>Comptable</td><td><span class="pill bad">à vérifier</span></td><td><span class="prov">🔮 écart détecté</span></td><td class="num">96 Ko</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <aside class="side">
+          <div class="blk">
+            <h3>Détails — DQE Lot 3</h3>
+            <div class="kv">Montant proposé <b>128 400 €</b></div>
+            <div class="kv">Écart vs. estimation <b class="neg">−4 200 €</b></div>
+            <div class="kv">Postes concernés <b>6</b></div>
+            <div class="kv">Confiance <b>élevée · 3 preuves</b></div>
+            <div class="act">
+              <button class="primary" data-a="Accepter">Accepter</button>
+              <button data-a="Modifier">Modifier</button>
+              <button data-a="Refuser">Refuser</button>
+            </div>
+          </div>
+          <div class="blk">
+            <h3>Activité</h3>
+            <div class="log">
+              <b>Agent Métré</b> — écart relevé sur 6 postes · il y a 1 h<br>
+              <b>Toi</b> — validation du CCTP · hier 17:40<br>
+              <b>Agent Veille</b> — DTU 13.1 mis à jour · hier 09:12<br>
+              <b>Import</b> — 12 pièces ajoutées · hier 08:05
+            </div>
+          </div>
+          <div class="blk">
+            <h3>Territoire</h3>
+            <div class="kv">Parcelles <b>7</b></div>
+            <div class="kv">Risque inondation <b class="neg">2 parcelles</b></div>
+            <div class="kv">VRD — linéaire <b>412 m</b></div>
+            <div class="act"><button data-a="Ouvrir la carte">Ouvrir la carte</button></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="dock">
+        <button class="tool active" data-d="2D">🗺 2D</button>
+        <button class="tool" data-d="Bâti 3D">🧊 Bâti 3D</button>
+        <button class="tool" data-d="Calques">🗂 Calques</button>
+        <button class="tool" data-d="DQE / BPU">💶 DQE / BPU</button>
+        <button class="tool" data-d="Métrés">📐 Métrés</button>
+        <button class="tool" data-d="Journal">⏺ Journal</button>
+        <button class="tool" data-d="Agents">🤖 Agents</button>
+        <span class="sp"><span class="dot"></span> local · hors ligne · v0.1</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  const t=document.getElementById('toast');
+  const say=m=>{t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2100);};
+  document.getElementById('search').onclick=()=>say('Palette de commandes (Ctrl+K) — maquette');
+  document.getElementById('sync').onclick=()=>say('Synchronisation : local = vérité · jamais d’écrasement · conflits signalés');
+  document.getElementById('bell').onclick=()=>say('3 alertes : écart de prix, pièce non classée, risque inondation');
+  document.getElementById('user').onclick=()=>say('Comptes : Google Drive (appdata) · OneDrive · WebDAV · local');
+  const views={
+    Documents:['Documents du chantier','154 pièces · 7 familles · indexation locale · 42 pièces validées'],
+    Prix:['Prix et sous-détails','128 postes · 28 sous-détails de prix · écart global −4 200 €'],
+    'Métrés':['Métrés et quantités','6 lots · 412 m linéaires · contrôle automatique de cohérence'],
+    Planning:['Planning de la phase 3','14 jalons · 2 retards potentiels · chemin critique : terrassements'],
+    'Qualité':['Qualité et non-conformités','3 NC ouvertes · 1 essai manquant · PAQ en attente de validation'],
+    Carte:['Vue cartographique','7 parcelles · réseaux secs · DVF · aléas Géorisques'],
+    'Bâti 3D':['Bâti 3D (module)','Palier 1 : voir et mesurer — web-ifc + three.js · 2D par défaut'],
+    'Réseaux':['Réseaux secs','412 m · 8 regards · 3 conflits potentiels détectés'],
+    'Sécurité':['Sécurité et modes opératoires','3 dangers relevés · 1 AIPR à renouveler · plan de prévention à jour']
+  };
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+    const v=views[b.dataset.t]||[b.dataset.t,''];document.getElementById('zTitle').textContent=v[0];document.getElementById('zMeta').textContent=v[1];
+  });
+  document.querySelectorAll('.dock .tool').forEach(x=>x.onclick=()=>{
+    document.querySelectorAll('.dock .tool').forEach(y=>y.classList.remove('active'));x.classList.add('active');say('Outil « '+x.dataset.d+' »');
+  });
+  document.querySelectorAll('.act button').forEach(b=>b.onclick=()=>say('Action « '+b.dataset.a+' » — validation humaine obligatoire'));
+  document.querySelectorAll('.rail .item').forEach(i=>i.onclick=()=>say('« '+i.textContent.trim()+' »'));
+</script>
+</body>
+</html>

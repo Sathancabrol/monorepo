@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carré d'As — V3 « L'Arbre »</title>
+<style>
+  :root{
+    --bg:#080d1c; --card:#131a35; --card2:#0f1631; --line:#25305a;
+    --txt:#eaeefb; --dim:#9aa6c9; --dim2:#6f7ca3;
+    --accent:#5ad1ff; --accent2:#8b7bff; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    --r:14px; --sans:"Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1100px 620px at 55% 8%,#182247 0%,var(--bg) 58%,#05080f 100%);
+       color:var(--txt);font-family:var(--sans);height:100vh;overflow:hidden}
+  button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  .app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+  .top{display:flex;align-items:center;gap:14px;padding:9px 14px;background:rgba(8,13,28,.85);
+       border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700}
+  .glyph{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px;
+         background:linear-gradient(135deg,var(--accent),var(--accent2));color:#08101f;font-weight:900}
+  .chip{padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;color:var(--dim)}
+  .chip.on{color:#08101f;background:var(--accent);border-color:transparent;font-weight:600}
+  .search{flex:1;max-width:400px;margin-left:auto;display:flex;align-items:center;gap:9px;padding:8px 13px;
+          border:1px solid var(--line);border-radius:999px;color:var(--dim2);background:rgba(255,255,255,.03);font-size:13px}
+  .search kbd{margin-left:auto;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--dim)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+
+  .body{display:grid;grid-template-columns:196px 1fr 330px;min-height:0}
+  .rail{border-right:1px solid var(--line);background:rgba(8,13,28,.6);padding:12px 8px}
+  .rail .item{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;color:var(--dim);
+              font-size:13.5px;margin-bottom:3px;width:100%;text-align:left}
+  .rail .item.active{background:rgba(90,209,255,.12);color:var(--txt);box-shadow:inset 2px 0 0 var(--accent)}
+  .rail hr{border:none;border-top:1px solid var(--line);margin:10px 4px}
+
+  .stage{position:relative;min-height:0;display:grid;grid-template-rows:1fr auto}
+  .canvaswrap{position:relative;overflow:hidden}
+  svg{width:100%;height:100%;display:block}
+  .axis{position:absolute;left:26px;right:26px;bottom:14px;display:flex;justify-content:space-between;
+        color:var(--dim2);font-size:11px;letter-spacing:.03em;border-top:1px solid var(--line);padding-top:7px}
+  .axis span{position:relative;padding-top:8px}
+  .axis span::before{content:"";position:absolute;top:-4px;left:50%;width:6px;height:6px;border-radius:50%;
+        background:var(--line);transform:translateX(-50%)}
+  .axis span.now{color:var(--txt)}
+  .axis span.now::before{background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  .legend{position:absolute;left:22px;top:18px;font-size:11.5px;color:var(--dim2);line-height:1.9}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+  .hint{position:absolute;right:20px;top:18px;font-size:11.5px;color:var(--dim2);text-align:right;line-height:1.7}
+
+  .side{border-left:1px solid var(--line);background:rgba(15,22,49,.82);overflow:auto}
+  .side .blk{padding:15px;border-bottom:1px solid var(--line)}
+  .side h3{margin:0 0 10px;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim2);font-weight:600}
+  .side h2{margin:0 0 4px;font-size:16px}
+  .kv{display:flex;gap:8px;font-size:13px;padding:5px 0;color:var(--dim)}
+  .kv b{color:var(--txt);font-weight:600;margin-left:auto;text-align:right}
+  .prov{font-size:11px;color:var(--dim2);border:1px dashed var(--line);border-radius:6px;padding:1px 6px}
+  .evidence{font-size:12.5px;color:var(--dim);padding:6px 0 6px 14px;border-left:2px solid var(--line);margin-bottom:6px}
+  .act{display:flex;gap:8px;margin-top:10px}
+  .act button{flex:1;padding:8px 10px;border-radius:9px;font-size:12.5px;border:1px solid var(--line);color:var(--dim)}
+  .act button.primary{background:rgba(90,209,255,.14);border-color:rgba(90,209,255,.4);color:var(--txt);font-weight:600}
+
+  .dock{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(8,13,28,.85);
+        border-top:1px solid var(--line);overflow-x:auto}
+  .dock .tool{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);
+              color:var(--dim);font-size:13px;white-space:nowrap}
+  .dock .tool.active{background:rgba(139,123,255,.16);border-color:rgba(139,123,255,.45);color:var(--txt)}
+  .dock .sp{margin-left:auto;color:var(--dim2);font-size:12px;white-space:nowrap}
+  .status{display:flex;gap:16px;padding:6px 14px;border-top:1px solid var(--line);color:var(--dim2);font-size:11.5px}
+  .status .sp{margin-left:auto}
+
+  /* mode liste (équivalent accessibilité) */
+  .listmode{display:none;padding:18px;overflow:auto}
+  .listmode.on{display:block}
+  .listmode table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .listmode th{text-align:left;color:var(--dim2);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
+               padding:8px 10px;border-bottom:1px solid var(--line)}
+  .listmode td{padding:9px 10px;border-bottom:1px solid rgba(37,48,90,.55)}
+  .toast{position:fixed;left:50%;bottom:74px;transform:translateX(-50%);background:#131a35;border:1px solid var(--line);
+         border-radius:10px;padding:10px 16px;font-size:13px;color:var(--dim);opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="glyph">🃏</span> CARRÉ D'AS</div>
+    <button class="chip on" id="level">Niveau : Personne ▾</button>
+    <button class="chip" id="dom">Domaine : BTP ▾</button>
+    <button class="search" id="search"><span>⌕</span> Chercher un savoir, une preuve, un projet… <kbd>Ctrl+K</kbd></button>
+    <span class="chip" id="ia">Mode IA : local</span>
+    <span class="chip">🔔</span>
+  </header>
+
+  <div class="body">
+    <nav class="rail">
+      <button class="item active"><span>🌳</span> Arbre</button>
+      <button class="item"><span>🕸</span> Graphe</button>
+      <button class="item"><span>⏱</span> Axe de vie</button>
+      <button class="item"><span>▦</span> Tableau</button>
+      <button class="item"><span>🎯</span> Métiers</button>
+      <hr>
+      <button class="item"><span>📄</span> Documents</button>
+      <button class="item"><span>🏗</span> Projets</button>
+      <button class="item"><span>🗺</span> Carte</button>
+      <button class="item"><span>🔌</span> Modules</button>
+      <button class="item"><span>⚙</span> Réglages</button>
+    </nav>
+
+    <section class="stage">
+      <div class="canvaswrap" id="canvaswrap">
+        <svg viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="Arbre de compétences : racines (expériences), tronc (savoirs transversaux), branches (compétences et projets)">
+          <defs>
+            <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#1b2a5e" stop-opacity=".85"/>
+              <stop offset="100%" stop-color="#0b1020" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="trunk" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#5ad1ff"/><stop offset="100%" stop-color="#8b7bff"/>
+            </linearGradient>
+          </defs>
+          <rect width="900" height="520" fill="url(#glow)"/>
+          <!-- sol -->
+          <ellipse cx="450" cy="452" rx="300" ry="26" fill="#16224a" opacity=".9"/>
+          <!-- racines = expériences -->
+          <g stroke="#4a5c9e" stroke-width="2" fill="none" opacity=".95">
+            <path d="M450 405 C420 430 380 440 320 452"/>
+            <path d="M450 405 C440 436 420 452 400 466"/>
+            <path d="M450 405 C462 432 486 446 512 462"/>
+            <path d="M450 405 C488 428 540 438 596 450"/>
+          </g>
+          <g font-size="11.5" fill="#8ea0d6">
+            <text x="300" y="470" text-anchor="middle">Licence psycho.</text>
+            <text x="398" y="484" text-anchor="middle">M2 cognition</text>
+            <text x="520" y="480" text-anchor="middle">AFPA TP/VRD</text>
+            <text x="608" y="466" text-anchor="middle">Chantiers · SNCF · CATIE</text>
+          </g>
+          <!-- tronc = savoirs transversaux -->
+          <path d="M450 405 C446 340 452 300 450 236" stroke="url(#trunk)" stroke-width="16" fill="none" stroke-linecap="round" opacity=".95"/>
+          <g font-size="11.5" fill="#c9d4f5">
+            <text x="470" y="386">coordination</text>
+            <text x="470" y="352">méthode</text>
+            <text x="470" y="318">analyse</text>
+            <text x="470" y="284">transmission</text>
+          </g>
+          <!-- branches = compétences -->
+          <g stroke="#6f86d8" stroke-width="2" fill="none">
+            <path d="M450 250 C400 232 350 216 300 196"/>
+            <path d="M450 250 C420 214 392 178 372 140"/>
+            <path d="M450 250 C486 226 528 206 572 190"/>
+            <path d="M450 250 C500 224 566 214 632 208"/>
+            <path d="M450 250 C452 200 456 158 462 112"/>
+            <path d="M450 250 C494 258 548 266 606 272"/>
+          </g>
+          <!-- feuilles / nœuds -->
+          <g>
+            <circle cx="300" cy="196" r="13" fill="#4a5c9e"/><text x="300" y="172" font-size="12" fill="#c9d4f5" text-anchor="middle">métrés VRD</text>
+            <circle cx="372" cy="140" r="11" fill="#4a5c9e"/><text x="360" y="116" font-size="12" fill="#c9d4f5" text-anchor="middle">planning</text>
+            <circle cx="572" cy="190" r="10" fill="#4a5c9e"/><text x="590" y="172" font-size="12" fill="#c9d4f5" text-anchor="middle">budget</text>
+            <circle cx="632" cy="208" r="10" fill="#4a5c9e"/><text x="660" y="232" font-size="12" fill="#c9d4f5" text-anchor="middle">réseaux secs</text>
+            <circle cx="462" cy="112" r="16" fill="#5ad1ff" opacity=".95"/><text x="462" y="82" font-size="13" fill="#eaeefb" text-anchor="middle" font-weight="600">protocoles expérimentaux</text>
+            <circle cx="606" cy="272" r="10" fill="#8b7bff" opacity=".9"/><text x="640" y="296" font-size="12" fill="#c9d4f5" text-anchor="middle">eye-tracking</text>
+          </g>
+          <!-- preuve reliée -->
+          <g opacity=".9">
+            <line x1="462" y1="112" x2="700" y2="72" stroke="#2c3a6e" stroke-dasharray="4 4"/>
+            <text x="712" y="66" font-size="11.5" fill="#8ea0d6">preuve · CV + projet + rapport</text>
+          </g>
+          <text x="450" y="34" font-size="14" fill="#eaeefb" text-anchor="middle" font-weight="600">Cognitorium · lecture « arbre » du même modèle de connaissances</text>
+        </svg>
+        <div class="legend">
+          <div><i style="background:#5ad1ff"></i>confirmé · preuves</div>
+          <div><i style="background:#4a5c9e"></i>estimé · à réactiver</div>
+          <div><i style="background:#8b7bff"></i>inféré · à valider</div>
+        </div>
+        <div class="hint">clic sur un nœud →<br>fiche à droite<br><br>molette = zoom sémantique<br>Échap → niveau supérieur</div>
+        <div class="axis">
+          <span>Naissance</span><span>École</span><span>Études sup.</span><span class="now">Aujourd'hui</span><span>Projets</span><span>Transmission</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="blk">
+        <h2>Protocoles expérimentaux</h2>
+        <div style="color:var(--dim2);font-size:12.5px;margin-bottom:10px">Compétence · confirmée</div>
+        <div class="kv">Disponibilité estimée <b>forte</b></div>
+        <div class="kv">Dernière pratique <b>2026 · R&amp;D</b></div>
+        <div class="kv">Statut <b><span class="prov">✅ confirmé par toi</span></b></div>
+        <div class="kv">Contexte <b>recherche cognitive</b></div>
+        <div class="act">
+          <button class="primary" data-a="Valider">Valider</button>
+          <button data-a="Modifier">Modifier</button>
+          <button data-a="Refuser">Refuser</button>
+        </div>
+      </div>
+      <div class="blk">
+        <h3>Preuves (3)</h3>
+        <div class="evidence">Protocoles d'expérience — projet de recherche</div>
+        <div class="evidence">Expériences réalisées — SNCF</div>
+        <div class="evidence">Rapport d'évaluation — CATIE</div>
+        <div style="font-size:12px;color:var(--dim2)">Astuce : ouvre un document pour voir la page exacte.</div>
+      </div>
+      <div class="blk">
+        <h3>Passerelles</h3>
+        <div class="kv">Chargé d'études VRD <b>forte</b></div>
+        <div class="kv">Coordinateur de travaux <b>forte</b></div>
+        <div class="kv">Chef de projet R&amp;D <b>modérée · écart ↗</b></div>
+        <div style="font-size:12px;color:var(--dim2);margin-top:6px">Chaque score affiche toujours : pourquoi · preuves · écarts · étapes.</div>
+      </div>
+      <div class="blk">
+        <h3>Accessibilité</h3>
+        <div class="act"><button id="listToggle" data-a="Mode liste">Mode liste équivalent</button></div>
+        <div style="font-size:12px;color:var(--dim2);margin-top:8px">La même information, sans graphique (lecteurs d'écran, RGAA).</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="dock">
+    <button class="tool active" data-d="Arbre">🌳 Arbre</button>
+    <button class="tool" data-d="Vue métier">🎯 Vue métier</button>
+    <button class="tool" data-d="Vue compétence">🔎 Vue compétence</button>
+    <button class="tool" data-d="Vue mission">🧩 Vue mission</button>
+    <button class="tool" data-d="Timeline">⏱ Timeline</button>
+    <button class="tool" data-d="Tableau">▦ Tableau</button>
+    <button class="tool" data-d="Confiance confort">👁 Confort / Dense</button>
+    <span class="sp"><span class="dot"></span> local · 1 247 nœuds · 3 918 relations</span>
+  </div>
+</div>
+
+<div class="listmode" id="listmode" style="background:var(--bg);position:fixed;inset:0;z-index:20">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+    <h1 style="margin:0;font-size:16px">Protocoles expérimentaux — équivalent textuel</h1>
+    <button class="chip" id="listClose" style="margin-left:auto">◀ Revenir à l'arbre</button>
+  </div>
+  <table>
+    <thead><tr><th>Élément</th><th>Type</th><th>Statut</th><th>Preuves</th><th>Période</th></tr></thead>
+    <tbody>
+      <tr><td>Protocoles expérimentaux</td><td>Compétence</td><td>Confirmé</td><td>3 (rapport, expérience, évaluation)</td><td>2024 → 2026</td></tr>
+      <tr><td>Eye-tracking</td><td>Compétence</td><td>Inféré — à valider</td><td>1</td><td>2025</td></tr>
+      <tr><td>Métrés VRD</td><td>Compétence</td><td>Estimé — à réactiver</td><td>4</td><td>2019 → 2023</td></tr>
+      <tr><td>Coordination d'équipes</td><td>Capacité</td><td>Confirmé</td><td>2</td><td>2021 → 2026</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+  const t=document.getElementById('toast');
+  const say=m=>{t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2100);};
+  document.getElementById('search').onclick=()=>say('Palette de commandes (Ctrl+K) — maquette');
+  document.getElementById('level').onclick=()=>say('Niveaux : Personne · Projet · Territoire — le même modèle, trois zooms');
+  document.getElementById('dom').onclick=()=>say('Domaines : BTP · Recherche · Numérique · Associatif');
+  document.getElementById('ia').onclick=e=>{const on=e.currentTarget.classList.toggle('on');e.currentTarget.textContent='Mode IA : '+(on?'local':'cloud');};
+  document.querySelectorAll('.dock .tool').forEach(x=>x.onclick=()=>{
+    document.querySelectorAll('.dock .tool').forEach(y=>y.classList.remove('active'));x.classList.add('active');
+    say('Représentation « '+x.dataset.d+' » — mêmes données, autre vue');
+  });
+  document.querySelectorAll('.act button').forEach(b=>b.onclick=()=>say('Action « '+b.dataset.a+' »'));
+  document.querySelectorAll('.rail .item').forEach(i=>i.onclick=()=>say('« '+i.textContent.trim()+' »'));
+  document.querySelectorAll('#canvaswrap svg circle').forEach(c=>c.onclick=()=>say('Nœud sélectionné — fiche et preuves à droite'));
+  document.getElementById('listToggle').onclick=()=>document.getElementById('listmode').classList.add('on');
+  document.getElementById('listClose').onclick=()=>document.getElementById('listmode').classList.remove('on');
+</script>
+</body>
+</html>
