@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Cognitorium — Interface intégrée{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/interface.css">{% endblock %}
+{% block content %}
+<div class="fi-shell">
+  <aside class="fi-sidebar">
+    <div class="fi-brand"><span class="fi-mark">⬢</span><div><strong>COGNITORIUM</strong><small>Integrated Workspace</small></div></div>
+    <div class="fi-mode"><span class="dot"></span> LOCAL-FIRST <span class="badge">SKELETON</span></div>
+    <nav id="fi-nav"></nav>
+    <div class="fi-side-bottom">
+      <button data-action="global-search">⌕ Recherche globale</button>
+      <button data-action="settings">⚙ Système</button>
+    </div>
+  </aside>
+  <main class="fi-main">
+    <header class="fi-topbar">
+      <div><span class="eyebrow">MONOREPO / FINAL INTERFACE</span><h1 id="fi-title">Command Center</h1></div>
+      <div class="fi-top-actions"><span class="status">● 12 domaines cartographiés</span><button class="fi-btn" data-action="global-search">⌕</button><button class="fi-btn">⋮</button></div>
+    </header>
+    <section class="fi-hero">
+      <div><span class="eyebrow">SYSTEM MAP</span><h2>Un espace unique pour les modules Cognitorium.</h2><p>Le squelette expose les capacités déjà présentes, celles récupérables depuis les branches et les zones encore à construire.</p></div>
+      <div class="fi-orbit"><div class="orbit-core">COG</div><span>HUMAN</span><span>WORLD</span><span>KNOWLEDGE</span><span>AGENTS</span><span>PROJECTS</span></div>
+    </section>
+    <section id="fi-dashboard" class="fi-grid"></section>
+    <section class="fi-workspace">
+      <div class="fi-panel"><div class="panel-head"><strong id="fi-panel-title">Module</strong><span id="fi-panel-status" class="badge"></span></div><div id="fi-panel-body"></div></div>
+      <div class="fi-panel"><div class="panel-head"><strong>Migration matrix</strong><span class="muted">source → cible</span></div><div id="fi-matrix"></div></div>
+    </section>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/interface.js"></script>{% endblock %}
