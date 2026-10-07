@@ -1,7 +1,7 @@
 # MEMORY — Audit monorepo (index généré)
 
 > **NE PAS ÉDITER À LA MAIN** — généré par `python3 scripts/audit_memory.py render`
-> depuis `audit/state.json`. Mis à jour : 2026-10-07T12:34:11Z
+> depuis `audit/state.json`. Mis à jour : 2026-10-07T12:35:30Z
 
 ## Où est quoi
 
@@ -18,14 +18,16 @@
 ## État courant
 
 - Audit : `audit-2026-10` — Audit complet monorepo Sathancabrol
-- Phase courante : **P7 — Contrôle qualité & publication**
+- Phase courante : **P7 (audit terminé) — **
 - Compteurs : {"findings": 52, "fichiers_locaux_mesures": 1362, "fichiers_lus_en_profondeur": "470+", "tables_produites": 13, "branches_analysees": 34, "depots_github_verifies": 9, "connecteurs_interroges": 4}
 
 ## Prochaines actions
 
-- P7 — vérification finale des chiffres (fait : 1119/283478/237/221 ✅)
-- P7 — commit + push branche arena/171a1f38-monorepo
-- P7 — PR vers main avec le dossier audit/
+- Hors audit — recommandations P0 du livrable (AUDIT-2026-10.md §9) :
+- 1. Fusionner la PR #3 watchtower (CI verte) puis ouvrir la PR de la branche +43 commits
+- 2. PR Language-decoder (arena/01a05471 : moteur + tests) vers main
+- 3. Revuer/fusionner ETAT-DE-LART arena/01a04f7b (+38 commits, agent complet)
+- 4. Resynchroniser projects/proto-cognitorium sur main (74e301e4)
 
 ## Projets
 
@@ -50,4 +52,4 @@
 - [x] P4 Audit transversal
 - [x] P5 Audit externe (GitHub + connecteurs)
 - [x] P6 Synthèse & tableaux
-- [>] P7 Contrôle qualité & publication
+- [x] P7 Contrôle qualité & publication

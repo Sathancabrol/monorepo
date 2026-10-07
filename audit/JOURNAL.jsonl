@@ -5,3 +5,4 @@
 {"ts": "2026-10-07T12:34:10Z", "tag": "P5", "msg": "P5 externe terminé (S3-github.md + S4-externe.md, 4 connecteurs)"}
 {"ts": "2026-10-07T12:34:11Z", "tag": "P6", "msg": "P6 synthèse terminée (AUDIT-2026-10.md + .csv, 13 sections)"}
 {"ts": "2026-10-07T12:34:11Z", "tag": "P7", "msg": "P7 démarré : vérif chiffres OK, publication en cours"}
+{"ts": "2026-10-07T12:35:30Z", "tag": "P7", "msg": "P7 terminé : commit d077e76 poussé, PR #3 ouverte"}

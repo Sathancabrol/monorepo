@@ -4,11 +4,11 @@
     "id": "audit-2026-10",
     "title": "Audit complet monorepo Sathancabrol",
     "started_at": "2026-10-07T12:22:19Z",
-    "updated_at": "2026-10-07T12:34:10Z",
+    "updated_at": "2026-10-07T12:35:30Z",
     "operator": "agent"
   },
   "phase": {
-    "current": "P7",
+    "current": "P7 (audit terminé)",
     "done": [
       "P0",
       "P1",
@@ -16,7 +16,8 @@
       "P3",
       "P4",
       "P5",
-      "P6"
+      "P6",
+      "P7"
     ],
     "phases": {
       "P0": "Cadrage & plan",
@@ -231,9 +232,11 @@
     "connecteurs_interroges": 4
   },
   "next_actions": [
-    "P7 — vérification finale des chiffres (fait : 1119/283478/237/221 ✅)",
-    "P7 — commit + push branche arena/171a1f38-monorepo",
-    "P7 — PR vers main avec le dossier audit/"
+    "Hors audit — recommandations P0 du livrable (AUDIT-2026-10.md §9) :",
+    "1. Fusionner la PR #3 watchtower (CI verte) puis ouvrir la PR de la branche +43 commits",
+    "2. PR Language-decoder (arena/01a05471 : moteur + tests) vers main",
+    "3. Revuer/fusionner ETAT-DE-LART arena/01a04f7b (+38 commits, agent complet)",
+    "4. Resynchroniser projects/proto-cognitorium sur main (74e301e4)"
   ],
   "artifacts": [
     "audit/AUDIT-2026-10.md",
@@ -267,5 +270,13 @@
     "scripts/audit_inventory.py",
     "scripts/audit_s0_map.py",
     "scripts/audit_gh_drift.py"
-  ]
+  ],
+  "publication": {
+    "plateforme": "GitHub",
+    "depot": "Sathancabrol/monorepo",
+    "branche": "arena/171a1f38-monorepo",
+    "commit": "d077e76",
+    "pr": "https://github.com/Sathancabrol/monorepo/pull/3",
+    "date": "2026-10-07T12:35:30Z"
+  }
 }
