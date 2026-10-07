@@ -102,3 +102,22 @@ Le monorepo possède maintenant un index de convergence :
 - `data/tool_registry.json` — registre canonique consommable par l'interface et les agents.
 
 Le registre détaillé des logiciels externes reste dans Watchtower (`audit/reference/REGISTRE-OUTILS.json`). Le monorepo sert de **carte de convergence** entre Watchtower, chantier/BTP, recherche, HCSM, Cognitorium et territoire.
+
+## Architecture modulaire (2026-10)
+
+Le monorepo est désormais organisé comme une **couche d'intégration** plutôt qu'un simple dossier de projets.
+
+```
+apps/        → shells / interfaces
+core/        → contrats canoniques, provenance, événements
+modules/     → capacités fonctionnelles
+adapters/    → ponts vers les projets existants
+data/        → registres + données normalisées
+projects/    → projets sources conservés autonomes
+```
+
+Le registre des capacités est dans `data/module_registry.json`, le graphe dans `data/integration_graph.json` et les contrats dans `core/contracts/`. La documentation complète est dans `docs/MONOREPO-ARCHITECTURE.md`.
+
+**Principe :** référencer → adapter → normaliser → extraire le partagé. On évite de recopier les fonctionnalités entre Watchtower, Cognitorium, Research Engine, HCSM et les autres projets.
+
+**APIs d'intégration :** `GET /api/modules` et `GET /api/integration-graph`.
