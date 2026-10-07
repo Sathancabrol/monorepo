@@ -34,6 +34,17 @@
   {% endfor %}
 </div>
 
+<div class="card" style="margin-top:16px">
+  <h2 style="margin-top:0">Architecture modulaire</h2>
+  <p class="muted" style="font-size:12px">Les projets sources alimentent des modules via des contrats communs. Les modules peuvent ensuite travailler ensemble sans copier leur code.</p>
+  <div id="module-grid" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"></div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn" href="/api/modules" target="_blank">Registre modules</a>
+    <a class="btn" href="/api/integration-graph" target="_blank">Graphe intégration</a>
+    <a class="btn" href="/monorepo">Shell / explorateur</a>
+  </div>
+</div>
+
 {% if snapshot %}
 <div class="card" style="margin-top:16px">
   <h2 style="margin-top:0">Snapshot GitHub — fusion logique (sans copier le code)</h2>
