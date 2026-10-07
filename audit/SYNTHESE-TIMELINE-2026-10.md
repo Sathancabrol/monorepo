@@ -35,6 +35,10 @@
 | 14:38 | **Récupération complète** : 1 026 fichiers de toutes les branches (786 uniques, 240 doublons retirés) rangés dans `projects/_incoming/` avec `_PROVENANCE.md` + `verif-completude-repos.py` | idem |
 | 14:39 | **Resync proto** (12 fichiers) + variante `frontignan/index.html` ; frontignan passe de 28 à 49 fichiers dans le monorepo | idem |
 | 14:45 | Module **`mail-organizer`** (tri d'emails IMAP, 19 tests, stdlib) | branche `arena/93b54a79` |
+| 14:54 | **Dashboard BTP « 21 modules »** (HUD une ligne, alias d'onglets universels) — la branche BTP est réécrite : 239 → 83 fichiers (documents dédupliqués vers la racine) | branche `arena/01a08449` |
+| 15:03 | **`FEATURES-INVENTORY.md`** — inventaire des features de tous les modules/apps | branche `arena/93b54a79` |
+| 15:06 | **`shell/` : squelette UX/UI Carré d'As — 14 modules · 104 fonctionnalités** (62 dispo / 24 à porter / 18 à construire), assistant JARVIS, sons Web Audio, design system repris du prototype d'origine | branche `arena/0034230e` |
+| 15:06 | Portail `index-acces.html` | idem |
 
 **Lecture** : tout le projet a ~2 mois (02/08 → 07/10/2026). En 9 semaines : 9 dépôts, 283 478 lignes de code, **46 branches** (36 hors `main`, **17 avec travail non fusionné**), 16 PR fusionnées, 1 PR ouverte, **et zéro Core construit** — mais désormais un **nom, une cible et un contrat** (Carré d'As).
 
@@ -66,9 +70,11 @@
 | **Carré d'As** (le dossier de cadrage de l'app) | `docs/carre-das/` — branche `arena/0034230e` | 8 documents : cadrage V1 (installation 1 fichier, < 150 Mo, premier résultat < 5 min, hors ligne par défaut, données exportables), **contrat de module plug in/out** (manifeste `module.json`, permissions « rien par défaut », bus d'événements), principes UI (10 règles d'affordance), **spécification du module BTP** (7 piliers, 3D en 3 paliers), 9 concept arts + **3 interfaces cliquables**, réponses (licence recommandée **cœur Apache-2.0/MIT + services AGPL-3.0**, séquence P0→P6, ordre chronologique réel), écosystème local gratuit (modèles ≤ 6 Go de VRAM, 6 briques à créer), inventaire « rien ne manque » | D1 | **v1** |
 | **Dossier recherche** (à confier à un agent) | `docs/recherche/` — même branche | Brief auto-suffisant + prompt + **matrice de 80 domaines** (`D01→D80`, priorités P0→P3, pistes vérifiées le 07/10 : Tauri 2, PGlite, LadybugDB (succède à Kuzu archivé), Graphiti/Zep, Extism, MCP/A2A…) + 10 chantiers P0 + enrichissements/arbitrages | D1/D11 | **v1** |
 | **Récupération `_incoming`** | `projects/_incoming/` — même branche | **786 fichiers uniques** (1 026 importés − 240 doublons exacts) : 16 dossiers, chacun avec `_PROVENANCE.md` (dépôt, branche, SHA, écartés) — dont les **25 composants proto perdus** (onboarding, graphe Obsidian, CV ciblé, biais cognitifs, auth) | D11/accueil | **v1** |
-| **Module BTP** (la brique forte) | `projects/btp-conduite-travaux/` — branche `arena/01a08449` + spec `03-MODULE-BTP.md` | **174 fichiers** : 154 documents (7 familles, 3 chantiers), 9 rapports (00→08) dont schéma directeur A→Z, données avec **SHA-256 par document**, **28 sous-détails de prix** avec simulateur déboursé sec/marge, dashboard 1,2 Mo, `engine/btp_multi_agent.py` ; spec cible : DCE/DQE/métrés, suivi, carte 2D IGN, 3D (3 paliers), IA locale (Granite 4.2 pour l'extraction) | D4 | **v3** |
+| **Module BTP** — état **live 15:20** | `projects/btp-conduite-travaux/` — branche `arena/01a08449` **réécrite** : **21 onglets-modules** (cockpit, company, dépôt, projects_hub, planning, simulateur, flotte, catalogue, RH, OPPBTP, sécurité, RDC, compagnon mobile, obsidian, schémas, SDP, benchmark, procurement, ledger, docs, archives) + **~83 scripts** (build/patch v47→v53) + 2 HTML de 1,2 Mo | **concernant les 154 documents** (7 familles, 3 chantiers), 9 rapports (00→08), données SHA-256 + **28 sous-détails de prix**, `engine/btp_multi_agent.py` : **préservés dans `_incoming`** (branche `0034230e`) et à la racine — plus de copie dans le module (déduplication) | D4 | **v3** |
 | **nexus_os** (orchestration d'agents) | branche `arena/01a08385` | 85 fichiers : **22 agents**, 8 fournisseurs / 20 modèles avec fallback, 22 outils, **serveur MCP**, mémoire, runs/SSE, sandbox, evals — **~147 tests** (146 fonctions vérifiées) | D10 | **v3** |
 | **mail-organizer** | branche `arena/93b54a79` | Tri automatique d'emails IMAP (règles configurables, jamais de suppression, extraction de pièces jointes, mode watch, statistiques), **19 tests**, zéro dépendance Python | D11 | **v3** |
+| **`shell/` — squelette Carré d'As** | branche `arena/0034230e` (11 fichiers) | **14 modules / 104 fonctionnalités navigables** (8 portes), palette Ctrl+K, assistant JARVIS (orbe, voix, guidage, Ollama optionnel), sons Web Audio + pack uisfx CC0, design system du prototype `noeud neurono.html`, **104/104 fonctions adossées à une source** (contrôle auto) | D1 | **v1** |
+| **`docs/FEATURES-INVENTORY.md`** | branche `arena/93b54a79` | Inventaire des features de **tous** les modules/apps (app, scripts, mail-organizer, watchtower, proto, COGNITORIUM, ETAT, HCSM, reaserch, animation, frontignan) + patterns transverses + 6 lacunes détectées | D1/D11 | **v1** |
 | **OSINT Workbench** | branche `COGNITORIUM/watchtower/osint-workbench-v0.1` (12 fichiers récupérés) | Registre, dossier, preuves, démo + **OSINT-MASTER-SPEC** et roadmap | D3 | **v3** |
 | **Atlas Frontignan** | branche monorepo `arena/01a08203` (21 fichiers) | Données, cartes, nœuds, communes du THAU — atlas interactif du dossier territoire | D2 | **v3** |
 
@@ -151,9 +157,9 @@ Leur contenu est **déjà dans `main`** (ahead = 0 ⇒ la branche est un ancêtr
 | Dépôts | 9 (+1 projet hors GitHub) | GitHub |
 | Lignes de code (9 projets) | 283 478 | `inventory.json` |
 | Documents | 237 (projets) + 220 (racine) + 16 (audit) + 20 (Carré d'As / recherche) | inventaire + branches |
-| Branches | **46 au total** : 9 en `main`, **17 avec travail non fusionné**, 19 mortes, +2 nouvelles du 07/10 après-midi | GitHub live |
-| Commits non fusionnés | **159** (153 + 6) | idem |
-| Modules hors dépôt | **8** : Carré d'As, recherche, `_incoming` (786 fichiers), BTP, nexus_os, mail-organizer, OSINT workbench, atlas Frontignan | `S5-controle-completude.md` |
+| Branches | **46 au total** : 9 en `main`, **18 avec travail non fusionné**, 19 mortes | GitHub live 15:20 |
+| Commits non fusionnés | **167** (dont 6 = branche d'audit) | idem |
+| Modules hors dépôt | **10** : Carré d'As, recherches, `_incoming` (859 fichiers), BTP (21 onglets), nexus_os, mail-organizer, OSINT workbench, atlas Frontignan, **shell (14 modules/104 fonctions)**, **FEATURES-INVENTORY** | `audit/MODULES.md` |
 | PR | 16 fusionnées, **1 ouverte (CI verte)**, 16 fermées sans fusion | GitHub |
 | CI | **1 dépôt sur 9** | GitHub |
 | Tests | 221 fichiers (3 projets sur 9) ; 2 rouges | exécutions |

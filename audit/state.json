@@ -4,7 +4,7 @@
     "id": "audit-2026-10",
     "title": "Audit complet monorepo Sathancabrol",
     "started_at": "2026-10-07T12:22:19Z",
-    "updated_at": "2026-10-07T14:56:28Z",
+    "updated_at": "2026-10-07T15:22:46Z",
     "operator": "agent"
   },
   "phase": {
@@ -232,11 +232,12 @@
     "connecteurs_interroges": 4
   },
   "next_actions": [
-    "1. OUVRIR LA PR de la branche arena/0034230e-monorepo (Carre d'As V1 + _incoming + resync proto) — elle porte l'Etape 0",
-    "2. PR #3 watchtower (CI verte) + 2 tests rouges reaserch + licence (recommandation incluse) + CI minimale",
-    "3. Lancer le dossier docs/recherche (matrice 80 domaines, 10 chantiers P0) via un agent de recherche",
-    "4. Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes",
-    "Restructuration : non commencee (analyse uniquement)"
+    "0. (rappel) RELECTURE avant fusion : le projet produit un lot toutes les 20 min — relancer les compares",
+    "1. Fusionner arena/0034230e (Carre d'As + shell 14 modules + _incoming + resync proto)",
+    "2. Fusionner arena/93b54a79 (mail-organizer + FEATURES-INVENTORY) puis arena/01a08449 (BTP 21 modules)",
+    "3. PR #3 watchtower INTEL ; feat/final-interface-skeleton + feat/tool-data-catalog ; branches ETAT/Language-decoder",
+    "4. Trancher la taxonomie canonique (shell 14 modules = produit ; 12 domaines = couverture)",
+    "5. Brancher le premier module reel dans #slot-btp (corpus racine, sans copie)"
   ],
   "artifacts": [
     "audit/AUDIT-2026-10.md",
@@ -275,7 +276,8 @@
     "scripts/audit_importance.py",
     "audit/SYNTHESE-TIMELINE-2026-10.md",
     "audit/ROADMAP-2050-2026.md",
-    "audit/notes/S5-controle-completude.md"
+    "audit/notes/S5-controle-completude.md",
+    "audit/MODULES.md"
   ],
   "publication": {
     "plateforme": "GitHub",
@@ -355,6 +357,48 @@
     "nommage": {
       "Cognitorium": "systeme/ecosysteme (horizon)",
       "Carre d'As": "l'application V1 installable"
+    }
+  },
+  "modules": {
+    "registre": "audit/MODULES.md",
+    "date_releve": "2026-10-07T15:20Z",
+    "cible_shell": {
+      "modules": 14,
+      "fonctionnalites": 104,
+      "statuts": {
+        "dispo": 62,
+        "a_porter": 24,
+        "a_construire": 18
+      },
+      "paliers": {
+        "V1": 48,
+        "V1.5": 34,
+        "V2": 22
+      },
+      "portes": 8,
+      "fichiers": 11
+    },
+    "taxonomies": [
+      "phases 0-7 (constitution)",
+      "12 domaines (interface_registry)",
+      "14 modules / 8 portes (shell)",
+      "v1-v5+v0 (analyse)"
+    ],
+    "bpt_live": {
+      "onglets": 21,
+      "scripts": 83,
+      "html": 2,
+      "note": "branche reecrite; 154 documents dedupliques, preserves dans _incoming"
+    },
+    "incoming": {
+      "fichiers": 859,
+      "lots": 16
+    },
+    "compteurs_live": {
+      "branches": 46,
+      "actives": 18,
+      "mortes": 19,
+      "commits_non_fusionnes": 167
     }
   }
 }

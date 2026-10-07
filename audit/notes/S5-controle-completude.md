@@ -87,3 +87,24 @@
 | `state.json` | faits mis à jour (Carré d'As, 17 branches, 159 commits, 91 éléments) |
 
 **Leçon pour l'audit lui-même** : une passe GitHub n'est valable qu'**horodatée** ; tout livrable doit porter l'heure de ses relevés. Ajouté à la discipline de mémoire : `audit_memory.py log` horodate déjà chaque étape — d'où l'importance de **relancer le scan avant toute fusion**.
+
+---
+
+## 7. Addendum — 3ᵉ passe « l'intégralité des modules » (2026-10-07, 15:20 UTC)
+
+Déclencheur : « vérifie l'intégralité des modules, t'as raté des trucs ». Nouveau scan live + lecture des commits postérieurs (14:54 → 15:06). Registre exhaustif : **`audit/MODULES.md`**.
+
+**Raté à la 2ᵉ passe (corrigé) :**
+
+| Élément | Où |
+|---|---|
+| **`shell/`** — squelette UX/UI Carré d'As : **14 modules / 104 fonctionnalités** (62 dispo / 24 à porter / 18 à construire ; paliers V1=48, V1.5=34, V2=22), assistant JARVIS, sons Web Audio, design system du prototype `noeud neurono.html` | branche `0034230e`, commit `0ce2ddbb` (15:06) |
+| Portail `index-acces.html` | commit `85e423c2` |
+| **`docs/FEATURES-INVENTORY.md`** — features de tous les modules/apps + 6 lacunes | branche `93b54a79`, commit `dde1e2af` (15:03) |
+| **BTP réécrit** : 21 onglets-modules + ~83 scripts ; 154 documents dédupliqués (préservés dans `_incoming`) ; branche 239→83 fichiers | branche `01a08449`, commit `1b7627b0` (14:54) |
+| 5 modules ETAT récupérés d'un patch jamais appliqué (137 Ko : bias_cards, concept_details, experiment_templates, lab_endpoints, scientific_articles) | `_incoming/ETAT…` |
+| `_incoming` = **859 fichiers** (brut importé 1 026, 786 uniques après dédoublonnage — trois périmètres distincts) | 16 `_PROVENANCE.md` |
+
+**Compteurs live 15:20 UTC** : 46 branches · **18 actives** · 19 mortes · **167 commits non fusionnés** · 9 dépôts.
+
+**Leçon** : le projet produit un lot toutes les ~20 minutes (12:38 → 15:06 : 10 commits majeurs). Toute vérification doit être horodatée, et le registre `MODULES.md` rafraîchi **avant chaque fusion**.

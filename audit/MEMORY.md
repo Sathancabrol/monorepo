@@ -1,7 +1,7 @@
 # MEMORY — Audit monorepo (index généré)
 
 > **NE PAS ÉDITER À LA MAIN** — généré par `python3 scripts/audit_memory.py render`
-> depuis `audit/state.json`. Mis à jour : 2026-10-07T14:56:28Z
+> depuis `audit/state.json`. Mis à jour : 2026-10-07T15:22:46Z
 
 ## Où est quoi
 
@@ -23,11 +23,12 @@
 
 ## Prochaines actions
 
-- 1. OUVRIR LA PR de la branche arena/0034230e-monorepo (Carre d'As V1 + _incoming + resync proto) — elle porte l'Etape 0
-- 2. PR #3 watchtower (CI verte) + 2 tests rouges reaserch + licence (recommandation incluse) + CI minimale
-- 3. Lancer le dossier docs/recherche (matrice 80 domaines, 10 chantiers P0) via un agent de recherche
-- 4. Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes
-- Restructuration : non commencee (analyse uniquement)
+- 0. (rappel) RELECTURE avant fusion : le projet produit un lot toutes les 20 min — relancer les compares
+- 1. Fusionner arena/0034230e (Carre d'As + shell 14 modules + _incoming + resync proto)
+- 2. Fusionner arena/93b54a79 (mail-organizer + FEATURES-INVENTORY) puis arena/01a08449 (BTP 21 modules)
+- 3. PR #3 watchtower INTEL ; feat/final-interface-skeleton + feat/tool-data-catalog ; branches ETAT/Language-decoder
+- 4. Trancher la taxonomie canonique (shell 14 modules = produit ; 12 domaines = couverture)
+- 5. Brancher le premier module reel dans #slot-btp (corpus racine, sans copie)
 
 ## Projets
 

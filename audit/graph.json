@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-07T14:56:28Z",
+ "generated_at": "2026-10-07T15:22:46Z",
  "nodes": [
   {
    "id": "project:COGNITORIUM",
@@ -304,6 +304,10 @@
   },
   {
    "id": "audit/notes/S5-controle-completude.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/MODULES.md",
    "type": "artifact"
   }
  ],
