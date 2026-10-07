@@ -1,8 +1,26 @@
 # BRIEF DE RECHERCHE — Cognitorium / « Carré d'As »
 
 **Document à remettre tel quel à un agent de recherche (ArenaAI ou équivalent).**
-Version 1.0 · 7 octobre 2026 · dépôt `Sathancabrol/monorepo` (branche `arena/0034230e-monorepo`)
-Fichiers compagnons : `01-PROMPT-A-COLLER.md` · `02-MATRICE-DOMAINES.csv` · `03-ENRICHISSEMENTS-ET-ARBITRAGES.md`
+Version 1.1 · 7 octobre 2026 · dépôt `Sathancabrol/monorepo` (branche `arena/0034230e-monorepo`)
+Fichiers compagnons : `01-PROMPT-A-COLLER.md` · `02-MATRICE-DOMAINES.csv` (85 domaines) · `03-ENRICHISSEMENTS-ET-ARBITRAGES.md` · **`../carre-das/`** (cadrage V1 : architecture modulaire, contrat de module, UI, module BTP)
+
+---
+
+## ⚠️ MISE À JOUR DU 2026-10-07 — décisions de l'utilisateur (à lire d'abord)
+
+Ces décisions **corrigent et précisent** le brief ci-dessous. En cas de contradiction, ce sont elles qui font foi.
+
+| Décision | Conséquence sur la mission |
+|---|---|
+| **Cible = association** (loi 1901), pas entreprise | La licence, la gouvernance, le financement et la pérennité deviennent des sujets de **premier plan** (voir nouveau domaine **D84**). L'accessibilité reste visée (WCAG 2.2 AA / RGAA 4.1) mais **n'est pas une obligation légale automatique** pour une association à but non lucratif — sauf financement/contrôle public majoritaire ou service essentiel au public. Ne pas présenter le RGAA comme une obligation générale pour ce cas précis. |
+| **L'application s'appelle « Carré d'As »** | C'est la **première itération de l'application Cognitorium finale**, et le **point d'accès unique** aux fonctionnalités des modules. Le dépôt `monorepo` sera renommé `carre-das`. Cognitorium reste le nom du système global. |
+| **Windows d'abord, navigateur ensuite** | Toutes les recommandations doivent être **faisables sur Windows 10/11 sans prérequis** (ni Node, ni Python, ni Docker), puis vérifiées pour un mode navigateur (capacités systématiques réduites : le dire honnêtement). |
+| **Architecture : repo → sous-repo = module, plug in / plug out** | Un module doit pouvoir être installé, activé, **désactivé et désinstallé sans redémarrer l'application**, sans casser les autres. Nouveau domaine **D81** (cycle de vie et contrats) — s'appuyer sur le travail déjà fait (`core/contracts/module.schema.json`, `data/module_registry.json`, `docs/carre-das/01-CONTRAT-MODULE.md`). |
+| **Le module BTP doit devenir une brique puissante** : modélisation 3D, moteur desktop, carte, stats, mise à jour via compte Google (ou autre) | Nouveaux domaines **D82** (moteur 3D desktop, scan, photogrammétrie) et **D83** (synchronisation et comptes). Le corpus réel de 154 documents BTP est le jeu de test officiel. |
+| **Interface simple et affordante** | C'est un critère d'évaluation, pas un détail : voir `docs/carre-das/02-UI-PRINCIPES-ET-INSPIRATIONS.md` (5 règles, 10 règles d'affordance, inspirations issues des branches et de l'extérieur). |
+| **Priorité actuelle : analyse, pas implémentation** | Tu produis des **décisions et des plans**, pas du code. Chaque recommandation doit être applicable plus tard sans être à refaire. |
+
+**Acquis à ne pas refaire — branches identifiées (gisement interne) :** `arena/01a08385` (NEXUS·OS : 22 agents, routeur multi-fournisseurs, MCP, 147 tests) · `arena/01a08449` (module BTP : 154 documents, 7 rapports, 28 sous-détails de prix) · `feat/final-interface-skeleton-2026-10-07` (squelette d'interface, 12 catégories) · `feat/tool-data-catalog-2026-10` (contrats de module, registre, catalogue outils) · `arena/171a1f38` (audit : 52 constats) · branches watchtower `arena/01a072e1` (UI : barre unique, volant, bascule 2D/3D) et `arena/dec9cd88` (hub INTEL territorial).
 
 ---
 
@@ -150,8 +168,9 @@ Ce qui existe déjà · ce qui est partiel · ce qui est prévu · ce qui doit �
 
 ## §4 — La matrice des domaines (80 domaines)
 
-> Tableau de pilotage. **Version longue et exploitable machine : `02-MATRICE-DOMAINES.csv`** (mêmes identifiants `D01→D80`, avec questions de recherche, pistes à vérifier et critères de succès).
+> Tableau de pilotage. **Version longue et exploitable machine : `02-MATRICE-DOMAINES.csv`** (mêmes identifiants `D01→D85`, avec questions de recherche, pistes à vérifier et critères de succès).
 > Légende priorités : **P0** = fondation, conditionne le reste · **P1** = enrichissement à forte valeur · **P2** = laboratoire/spécialisé · **P3** = écosystème.
+> **Ajoutés le 2026-10-07 (décisions utilisateur)** — à traiter en priorité, détaillés dans le CSV : **D81** contrat de module et cycle de vie plug in/out · **D82** moteur 3D desktop, modélisation et scan (BTP) · **D83** synchronisation et comptes (Google/OneDrive/WebDAV) · **D84** gouvernance associative, licence et financement · **D85** statistiques et visualisation de données.
 
 ### 4.1 Fondations (D01–D28)
 
@@ -594,18 +613,20 @@ L'objectif final n'est pas une liste d'outils : c'est **une application unifiée
 
 ---
 
-## §10 — Questions ouvertes à l'utilisateur (ne pas trancher seul)
+## §10 — Questions ouvertes à l'utilisateur
 
-1. **Nom du produit** : « Cognitorium » est le nom du projet global, mais l'application unifiée n'a pas de nom arrêté (« Carré d'As » a été évoqué, absent du dépôt). Quel nom retenir pour l'app ?
-2. **Priorité commerciale** : outil personnel d'abord, ou produit pour collectivités/entreprises d'abord ? (Cela change l'ordre des chantiers.)
-3. **Multi-utilisateur** : est-ce un besoin réel à 12 mois, ou le mono-poste suffit-il à moyen terme ?
-4. **Acceptation du cloud** : zéro cloud, ou cloud plafonné toléré pour la qualité (recherche, LLM) ?
-5. **Données clients** : les documents BTP réels peuvent-ils servir de jeu de test (avec anonymisation) ? Cela accélérerait énormément CH-2, CH-8.
-6. **Matériel** : un investissement GPU (12–16 Go) est-il envisageable, ou faut-il concevoir strictement pour 6 Go de VRAM ?
-7. **Ouverture** : le projet est-il destiné à rester privé, à être open source, ou à une licence mixte (open-core) ?
-8. **Temps disponible** : combien d'heures par semaine l'utilisateur peut-il consacrer aux décisions et aux validations ?
-9. **Ambition V1** : une seule tranche verticale parfaite (chantier) ou une large couverture superficielle ?
-10. **Langue** : le français est-il la seule langue de l'interface v1 ?
+> **Mise à jour du 2026-10-07 :** les questions 1 (nom), 2 (priorité), 3 (multi-utilisateur), 4 (cloud), 6 (GPU), 9 (ambition V1) et 10 (langue) ont reçu une réponse — voir la mise à jour en tête de document et `../carre-das/00-CADRAGE-CARRE-D-AS.md`. Restent ouvertes : **5** (usage des documents clients comme jeu de test — réponse partielle : le corpus BTP sert de jeu de test, l'anonymisation reste à décider), **7** (licence : à trancher, recommandation Apache-2.0 + AGPL-3.0 dans le cadrage) et **8** (temps disponible pour les validations).
+
+1. **Nom du produit** — ✅ tranché : **Carré d'As** (application), Cognitorium (système).
+2. **Priorité commerciale** — ✅ tranché : **association**, sans objectif de profit ; les modules métier (BTP) restent la valeur démontrable.
+3. **Multi-utilisateur** — ✅ mono-poste d'abord, multi-poste via synchronisation ensuite.
+4. **Acceptation du cloud** — ✅ optionnel et explicite uniquement (comptes Google/OneDrive/WebDAV), jamais requis.
+5. **Données clients** : les documents BTP réels servent-ils de jeu de test officiel (avec anonymisation) ?
+6. **Matériel** — ✅ concevoir pour 6 Go de VRAM (GTX 1060) ; documenter ce que 12-16 Go apporteraient.
+7. **Ouverture / licence** : privé, open source, ou mixte ? (recommandation au §2.3 du cadrage)
+8. **Temps disponible** : combien d'heures par semaine pour décider et valider ?
+9. **Ambition V1** — ✅ **une tranche verticale parfaite** (chantier + documents + carte + agents).
+10. **Langue** — ✅ français d'abord.
 
 ---
 

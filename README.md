@@ -21,7 +21,8 @@ monorepo/
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
 ├─ scripts/github_inventory.py  Inventaire GitHub (stdlib, 62 appels max, snapshot JSON)
 ├─ data/github_inventory.json   Snapshot (cache serveur, refresh via POST)
-├─ docs/recherche/              Dossier de recherche (brief à donner à un agent + matrice 80 domaines)
+├─ docs/recherche/              Dossier de recherche (brief à donner à un agent + matrice 85 domaines)
+├─ docs/carre-das/              Cadrage de la V1 « Carré d'As » (architecture modules, UI, BTP)
 ├─ MANIFEST.json                Provenance (URL, branche, SHA)
 └─ requirements.txt             fastapi, uvicorn, jinja2
 ```
@@ -100,6 +101,15 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 - **`03-ENRICHISSEMENTS-ET-ARBITRAGES.md`** — analyse de la discussion initiale, corrections, domaines manquants, propositions de stack, premier palier démontrable.
 
 > Règle de lecture : les « pistes à vérifier » du dossier sont des points de départ, pas des recommandations. Chaque candidat doit être confirmé (licence, activité, performance, coût) par l'agent avant décision.
+
+## 🃏 Cadrage « Carré d'As » — la V1
+
+`docs/carre-das/` définit ce que sera l'application : **Carré d'As**, première itération installable de Cognitorium, cible **association**, **Windows d'abord puis navigateur**, architecture **shell + modules plug in/out**.
+
+- **`00-CADRAGE-CARRE-D-AS.md`** — cible association (licence, RGPD, accessibilité, financement), définition du « fini », **gisement déjà écrit dans les branches** (NEXUS·OS, module BTP, interface, contrat de module), architecture, séquence V1, risques, décisions.
+- **`01-CONTRAT-MODULE.md`** — comment un module s'installe, s'active, se désactive **sans redémarrer** : manifeste, permissions « rien par défaut », bus d'événements, points d'extension.
+- **`02-UI-PRINCIPES-ET-INSPIRATIONS.md`** — interface simple et affordante : 5 règles, structure du shell, 10 règles d'affordance, inspirations (branches + extérieur), indicateurs.
+- **`03-MODULE-BTP.md`** — la brique BTP : 7 piliers, décision 3D en trois paliers, synchronisation Google/OneDrive/WebDAV, feuille de route.
 
 ## 📚 Fusion réelle (option b)
 
