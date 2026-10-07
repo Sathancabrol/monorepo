@@ -21,6 +21,7 @@ monorepo/
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
 ├─ scripts/github_inventory.py  Inventaire GitHub (stdlib, 62 appels max, snapshot JSON)
 ├─ data/github_inventory.json   Snapshot (cache serveur, refresh via POST)
+├─ docs/recherche/              Dossier de recherche (brief à donner à un agent + matrice 80 domaines)
 ├─ MANIFEST.json                Provenance (URL, branche, SHA)
 └─ requirements.txt             fastapi, uvicorn, jinja2
 ```
@@ -88,6 +89,17 @@ git push -u origin arena/01a07e3c-monorepo   # cette branche
 ```
 
 Si push 403 → vérifier dans GitHub → Settings → Applications → Installed GitHub Apps → Arena → Repository access : ajouter `monorepo` (ou passer en All repositories), puis reconnecter Arena pour régénérer le token.
+
+## 🧪 Dossier de recherche — préparer la réorganisation complète
+
+`docs/recherche/` contient le **brief à remettre à un agent de recherche** (ArenaAI ou autre) pour préparer la réorganisation totale de l'application :
+
+- **`00-BRIEF-ARENA-RECHERCHE.md`** — brief auto-suffisant : vision, état réel des actifs, acquis à ne pas refaire, **matrice de 80 domaines**, 10 chantiers P0 détaillés, méthode de recherche, format de sortie imposé, règles de conduite épistémique.
+- **`01-PROMPT-A-COLLER.md`** — prompt prêt à coller + critères pour vérifier la qualité du travail rendu.
+- **`02-MATRICE-DOMAINES.csv`** — le tableau exploitable machine (80 domaines, priorités, décisions attendues).
+- **`03-ENRICHISSEMENTS-ET-ARBITRAGES.md`** — analyse de la discussion initiale, corrections, domaines manquants, propositions de stack, premier palier démontrable.
+
+> Règle de lecture : les « pistes à vérifier » du dossier sont des points de départ, pas des recommandations. Chaque candidat doit être confirmé (licence, activité, performance, coût) par l'agent avant décision.
 
 ## 📚 Fusion réelle (option b)
 
