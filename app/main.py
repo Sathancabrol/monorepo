@@ -14,8 +14,10 @@ BASE = Path(__file__).resolve().parent.parent
 PROJECTS = BASE / "projects"
 DATA_SNAPSHOT = BASE / "data" / "github_inventory.json"
 MANIFEST = BASE / "MANIFEST.json"
+MODULE_REGISTRY = BASE / "data" / "module_registry.json"
+INTEGRATION_GRAPH = BASE / "data" / "integration_graph.json"
 
-app = FastAPI(title="Sathancabrol Monorepo — Panorama & Preview")
+app = FastAPI(title="Sathancabrol Monorepo — Modular Integration Shell")
 
 templates = Jinja2Templates(directory=str(BASE / "app" / "templates"))
 # ensure mimetypes for wasm, etc.
@@ -125,6 +127,28 @@ def api_fusion():
     if not snap:
         raise HTTPException(404, "Snapshot manquant")
     return JSONResponse(snap.get("fusion", {}))
+
+def load_json_file(path: Path):
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+@app.get("/api/modules")
+def api_modules():
+    registry = load_json_file(MODULE_REGISTRY)
+    if not registry:
+        raise HTTPException(404, "Registre des modules manquant")
+    return JSONResponse(registry)
+
+@app.get("/api/integration-graph")
+def api_integration_graph():
+    graph = load_json_file(INTEGRATION_GRAPH)
+    if not graph:
+        raise HTTPException(404, "Graphe d'integration manquant")
+    return JSONResponse(graph)
 
 @app.post("/api/github/refresh")
 def api_refresh():
