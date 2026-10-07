@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mail-organizer"
+version = "0.1.0"
+description = "Tri automatique d'une boîte mail via IMAP : classement en dossiers par règles, extraction de pièces jointes, mode watch. Zéro dépendance (stdlib)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Sathancabrol" }]
+dependencies = []
+
+[project.scripts]
+mail-organizer = "mail_organizer.cli:main"
+
+[tool.setuptools]
+packages = ["mail_organizer"]

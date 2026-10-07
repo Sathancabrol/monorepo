@@ -1,0 +1,4 @@
+# Secrets et état local — jamais commités
+.env
+var/
+config.json

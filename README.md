@@ -15,7 +15,8 @@ monorepo/
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
-│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  ├─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  └─ mail-organizer/           Tri auto de boîte mail via IMAP (stdlib, Gmail + Hotmail)
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)

@@ -1,0 +1,56 @@
+{
+  "_comment": "Copiez ce fichier en config.json puis adaptez-le. Première règle qui gagne = dossier cible. Les dossiers sont créés automatiquement.",
+  "source_folder": "INBOX",
+  "default_folder": "À trier",
+  "rules": [
+    {
+      "folder": "Administratif et factures",
+      "from_domains": ["impots.gouv.fr", "ameli.fr", "caf.fr", "francetravail.fr", "pole-emploi.fr", "urssaf.fr", "edf.fr", "engie.fr", "saur.fr", "orange.fr"],
+      "subject_contains": ["facture", "invoice", "avis d'echeance", "avis d’échéance", "reçu", "recu de paiement", "justificatif", "attestation", "diplome", "diplôme", "carte d'identité", "carte nationale", "remboursement", "echeancier", "échéancier"]
+    },
+    {
+      "folder": "Compte et sécurité/Alertes de connexion",
+      "from_domains": ["accounts.google.com"],
+      "subject_contains": ["alerte de securite", "alerte de sécurité", "nouvelle connexion", "new sign-in", "new login", "login detected", "sign-in activity", "security alert", "connexion suspecte"]
+    },
+    {
+      "folder": "Compte et sécurité/Comptes liés Google",
+      "from_contains": ["noreply-accounts@google.com"],
+      "subject_contains": ["vous avez partagé", "vous avez partage", "you've shared your google account data"]
+    },
+    {
+      "folder": "Compte et sécurité/Codes de vérification",
+      "subject_contains": ["verification code", "code de verification", "code de vérification", "code de validation", "one-time code", "otp"]
+    },
+    {
+      "folder": "Achats et jeux vidéo",
+      "from_domains": ["instant-gaming.com", "steampowered.com", "epicgames.com", "amazon.fr", "amazon.com", "fnac.com", "cdiscount.com", "micromania.fr"],
+      "subject_contains": ["merci pour votre commande", "confirmation de commande", "order confirmation", "votre colis", "suivi de commande"]
+    },
+    {
+      "folder": "Projets et travail/Polsia - Cognitorium et Mnéoterr",
+      "from_domains": ["polsia.com", "polsia.app"]
+    },
+    {
+      "folder": "Projets et travail/Slack Cognitrum",
+      "from_domains": ["slack.com"]
+    },
+    {
+      "folder": "Projets et travail/Vercel",
+      "from_domains": ["vercel.com"]
+    },
+    {
+      "folder": "Projets et travail/Drafted",
+      "from_domains": ["drafted.ai"]
+    },
+    {
+      "folder": "Newsletters tech et IA",
+      "from_domains": ["vizard.ai", "llamaindex.ai", "elicit.com", "exa.ai", "happyscribe.com", "sider.ai", "lilys.ai", "youmind.ai", "getmindmap.com", "answersocrates.com", "birdseyes.app", "linear.app", "wikiwand.com", "acreom.com", "sloyd.ai", "autodesk.com"]
+    },
+    {
+      "_comment": "Filet de sécurité : tout mail avec un lien de désinscription est une newsletter.",
+      "folder": "Newsletters et promotions",
+      "has_header": ["list-unsubscribe"]
+    }
+  ]
+}
