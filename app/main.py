@@ -104,6 +104,17 @@ def monorepo_page(request: Request):
     snap = load_snapshot()
     return templates.TemplateResponse(request, "monorepo.html", {"projects": projects, "snapshot": snap})
 
+@app.get("/interface", response_class=HTMLResponse)
+def interface_page(request: Request):
+    return templates.TemplateResponse(request, "interface.html", {})
+
+@app.get("/api/interface-registry")
+def api_interface_registry():
+    path = BASE / "data" / "interface_registry.json"
+    if not path.exists():
+        raise HTTPException(404, "Interface registry manquant")
+    return JSONResponse(json.loads(path.read_text(encoding="utf-8")))
+
 # --- API ---
 @app.get("/api/github/snapshot")
 def api_snapshot():
