@@ -33,3 +33,8 @@
 ## Non importés (à récupérer depuis la branche si nécessaire)
 
 - `projects/frontignan/index.html` — >2 Mo
+
+## Reprise de seconde passe (2026-10-07)
+
+- `projects/frontignan/index.html` (2,5 Mo) — n'avait pas été importé lors de la première passe (fichier > 2 Mo).
+  C'est une **variante différente** de celle présente dans `projects/frontignan/index.html` : elle est conservée ici.
