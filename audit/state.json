@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "audit": {
+    "id": "audit-2026-10",
+    "title": "Audit complet monorepo Sathancabrol",
+    "started_at": "2026-10-07T12:22:19Z",
+    "updated_at": "2026-10-07T12:34:10Z",
+    "operator": "agent"
+  },
+  "phase": {
+    "current": "P7",
+    "done": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6"
+    ],
+    "phases": {
+      "P0": "Cadrage & plan",
+      "P1": "Mémoire & instrumentation",
+      "P2": "Inventaire factuel",
+      "P3": "Audit par projet",
+      "P4": "Audit transversal",
+      "P5": "Audit externe (GitHub + connecteurs)",
+      "P6": "Synthèse & tableaux",
+      "P7": "Contrôle qualité & publication"
+    }
+  },
+  "scope": {
+    "root_dossier_documents": 220,
+    "projects": [
+      "COGNITORIUM",
+      "proto-cognitorium",
+      "HCSM",
+      "reaserch-engine",
+      "ETAT-DE-LART-PSYCHOLOGIE",
+      "watchtower",
+      "animation-chronos",
+      "Language-decoder",
+      "frontignan"
+    ],
+    "other_docs": 7,
+    "root_files": 224,
+    "projects_files": 1119,
+    "external": {
+      "drive": "13 fichiers pertinents dont 2 prompts AI Studio (85 Mo) matrices de proto-cognitorium et frontignan",
+      "notion": "0 document projet",
+      "linear": "espace cognitorium créé 2026-10-07, 0 tache reelle",
+      "gmail": "vitrine Polsia 'Cognitorium' 20 $/mois non declaree",
+      "note": "audit/notes/S4-externe.md"
+    }
+  },
+  "projects": {
+    "COGNITORIUM": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-COGNITORIUM.md",
+      "facts": {
+        "files": 131,
+        "size_mo": 22.9,
+        "loc": 27691,
+        "tests": 0,
+        "docs": 53,
+        "maturite": "M2",
+        "risk": "moyen",
+        "branches_actives": 1,
+        "repo": "Sathancabrol/COGNITORIUM"
+      },
+      "repo": null
+    },
+    "proto-cognitorium": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "élevé",
+      "notes": "audit/notes/P-proto-cognitorium.md",
+      "facts": {
+        "files": 161,
+        "size_mo": 73.8,
+        "loc": 53334,
+        "tests": 0,
+        "docs": 57,
+        "maturite": "M3",
+        "risk": "élevé",
+        "branches_actives": 1,
+        "repo": "Sathancabrol/proto-cognitorium",
+        "drift_local_vs_main": 25
+      },
+      "repo": null
+    },
+    "HCSM": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "faible",
+      "notes": "audit/notes/P-HCSM.md",
+      "facts": {
+        "files": 87,
+        "size_mo": 0.27,
+        "loc": 1917,
+        "tests": 30,
+        "docs": 52,
+        "maturite": "M2",
+        "risk": "faible",
+        "branches_actives": 0,
+        "repo": "Sathancabrol/HCSM"
+      },
+      "repo": null
+    },
+    "reaserch-engine": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-reaserch-engine.md",
+      "facts": {
+        "files": 61,
+        "size_mo": 0.13,
+        "loc": 1167,
+        "tests": 12,
+        "docs": 16,
+        "maturite": "M2",
+        "risk": "moyen",
+        "branches_actives": 0,
+        "repo": "Sathancabrol/reaserch-engine",
+        "tests_rouges": 2
+      },
+      "repo": null
+    },
+    "ETAT-DE-LART-PSYCHOLOGIE": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "élevé",
+      "notes": "audit/notes/P-ETAT-DE-LART-PSYCHOLOGIE.md",
+      "facts": {
+        "files": 37,
+        "size_mo": 3.6,
+        "loc": 2569,
+        "tests": 0,
+        "docs": 20,
+        "maturite": "M2",
+        "risk": "élevé",
+        "branches_actives": 4,
+        "repo": "Sathancabrol/ETAT-DE-LART-PSYCHOLOGIE"
+      },
+      "repo": null
+    },
+    "watchtower": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-watchtower.md",
+      "facts": {
+        "files": 583,
+        "size_mo": 22.8,
+        "loc": 190453,
+        "tests": 208,
+        "docs": 35,
+        "maturite": "M3",
+        "risk": "moyen",
+        "branches_actives": 2,
+        "repo": "Sathancabrol/watchtower",
+        "ci": true
+      },
+      "repo": null
+    },
+    "animation-chronos": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "faible",
+      "notes": "audit/notes/P-animation-chronos.md",
+      "facts": {
+        "files": 30,
+        "size_mo": 3.8,
+        "loc": 2583,
+        "tests": 0,
+        "docs": 0,
+        "maturite": "M2",
+        "risk": "faible",
+        "branches_actives": 0,
+        "repo": "Sathancabrol/animation-chronos"
+      },
+      "repo": null
+    },
+    "Language-decoder": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "élevé",
+      "notes": "audit/notes/P-Language-decoder.md",
+      "facts": {
+        "files": 1,
+        "size_mo": 2e-05,
+        "loc": 0,
+        "tests": 1,
+        "docs": 1,
+        "maturite": "M0",
+        "risk": "élevé",
+        "branches_actives": 2,
+        "repo": "Sathancabrol/Language-decoder",
+        "main_bytes": 19
+      },
+      "repo": null
+    },
+    "frontignan": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-frontignan.md",
+      "facts": {
+        "files": 28,
+        "size_mo": 13.6,
+        "loc": 3764,
+        "tests": 0,
+        "docs": 3,
+        "maturite": "M2",
+        "risk": "moyen",
+        "branches_actives": 1,
+        "repo": null
+      },
+      "repo": null
+    }
+  },
+  "counters": {
+    "findings": 52,
+    "fichiers_locaux_mesures": 1362,
+    "fichiers_lus_en_profondeur": "470+",
+    "tables_produites": 13,
+    "branches_analysees": 34,
+    "depots_github_verifies": 9,
+    "connecteurs_interroges": 4
+  },
+  "next_actions": [
+    "P7 — vérification finale des chiffres (fait : 1119/283478/237/221 ✅)",
+    "P7 — commit + push branche arena/171a1f38-monorepo",
+    "P7 — PR vers main avec le dossier audit/"
+  ],
+  "artifacts": [
+    "audit/AUDIT-2026-10.md",
+    "audit/AUDIT-2026-10.csv",
+    "audit/PLAN.md",
+    "audit/CATEGORIES.md",
+    "audit/state.json",
+    "audit/MEMORY.md",
+    "audit/JOURNAL.jsonl",
+    "audit/graph.json",
+    "audit/notes/S0-racine.md",
+    "audit/notes/S1-infra.md",
+    "audit/notes/S2-inventaire.md",
+    "audit/notes/S3-github.md",
+    "audit/notes/S4-transverse.md",
+    "audit/notes/S4-externe.md",
+    "audit/notes/P-COGNITORIUM.md",
+    "audit/notes/P-proto-cognitorium.md",
+    "audit/notes/P-HCSM.md",
+    "audit/notes/P-reaserch-engine.md",
+    "audit/notes/P-ETAT-DE-LART-PSYCHOLOGIE.md",
+    "audit/notes/P-watchtower.md",
+    "audit/notes/P-animation-chronos.md",
+    "audit/notes/P-Language-decoder.md",
+    "audit/notes/P-frontignan.md",
+    "audit/data/inventory.json",
+    "audit/data/S0-mapping.json",
+    "audit/data/drift.json",
+    "audit/data/branches-all.json",
+    "scripts/audit_memory.py",
+    "scripts/audit_inventory.py",
+    "scripts/audit_s0_map.py",
+    "scripts/audit_gh_drift.py"
+  ]
+}

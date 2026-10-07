@@ -1,6 +1,6 @@
 # Sathancabrol — Monorepo unifié
 
-> **Un seul dépôt, 8 projets, navigation + previews intégrées.** Agrégation visuelle et cartographie logique sans casser les projets individuels. Token GitHub côté serveur uniquement (jamais exposé au client).
+> **Un seul dépôt, 9 projets, navigation + previews intégrées.** Agrégation visuelle et cartographie logique sans casser les projets individuels. Token GitHub côté serveur uniquement (jamais exposé au client).
 
 ## 🗂 Structure
 
@@ -38,7 +38,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
 
 ## 🔍 Panorama GitHub
 
-- **Page `/repos`** : cartes des 8 dépôts, graphe de fusion (D3), hiérarchie `repo > branches > modules`, drawer détails (commits, fichiers, dépendances).
+- **Page `/repos`** : cartes des 9 dépôts, graphe de fusion (D3), hiérarchie `repo > branches > modules`, drawer détails (commits, fichiers, dépendances).
 - **API** : `GET /api/github/snapshot` · `/api/github/repos` · `/api/github/fusion` · `POST /api/github/refresh` (régénère le snapshot côté serveur, token jamais exposé).
 - **Inventaire** : `scripts/github_inventory.py` (stdlib uniquement, paginate, rate-limit). Stocke `data/github_inventory.json` → sert de cache, pas d'appel direct API depuis le navigateur.
 - **Module** = dossier à manifeste (`package.json`, `pyproject.toml`, `go.mod`, …) + détection langage/stack auto.
@@ -91,4 +91,18 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 
 ## 📚 Fusion réelle (option b)
 
-Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+Le code est déjà importé dans `projects/` (≈148 Mo, 1 119 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+
+## 🔎 Audit complet (2026-10)
+
+L'état des lieux réel des 9 projets (tableaux par catégorie C1–C12, findings, recommandations) est dans **`audit/AUDIT-2026-10.md`** (export `audit/AUDIT-2026-10.csv`).
+
+Pour reprendre le travail en autonomie :
+
+```bash
+python3 scripts/audit_memory.py status   # où en est l'audit (phases, compteurs)
+python3 scripts/audit_memory.py next     # prochaines actions
+cat audit/MEMORY.md                      # index de la mémoire d'audit (compact)
+```
+
+Mémoire : `audit/state.json` (machine) · `audit/MEMORY.md` (index) · `audit/JOURNAL.jsonl` (journal) · `audit/notes/*.md` (fiches). Plan et taxonomie : `audit/PLAN.md`, `audit/CATEGORIES.md`.

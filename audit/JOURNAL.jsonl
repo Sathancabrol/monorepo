@@ -1,0 +1,7 @@
+{"ts": "2026-10-07T12:22:19Z", "tag": "P0", "msg": "P0/P1 terminés : plan, taxonomie, mémoire instrumentée (state.json + CLI + render)"}
+{"ts": "2026-10-07T12:24:03Z", "tag": "P2", "msg": "P2 terminé : S0 (220 docs, 12 familles), S1 (infra 753+708 lignes), S2 (9 projets, 1 119 fichiers, 283 478 LOC-code, 221 tests)"}
+{"ts": "2026-10-07T12:30:24Z", "tag": "P3", "msg": "P3 terminé : 9 fiches projets (C1-C12), 40 findings, tests exécutés (HCSM 29 ok/23 cas, reaserch 2 rouges, watchtower 109 échecs env.)"}
+{"ts": "2026-10-07T12:34:10Z", "tag": "P4", "msg": "P4 transverse terminé (S4-transverse.md, 9 findings)"}
+{"ts": "2026-10-07T12:34:10Z", "tag": "P5", "msg": "P5 externe terminé (S3-github.md + S4-externe.md, 4 connecteurs)"}
+{"ts": "2026-10-07T12:34:11Z", "tag": "P6", "msg": "P6 synthèse terminée (AUDIT-2026-10.md + .csv, 13 sections)"}
+{"ts": "2026-10-07T12:34:11Z", "tag": "P7", "msg": "P7 démarré : vérif chiffres OK, publication en cours"}

@@ -1,0 +1,308 @@
+{
+ "COGNITORIUM": {
+  "default": "main",
+  "main_sha": "5348d4cbc15311647cf59f36f854b96f0988d9c1",
+  "branches": [
+   {
+    "name": "arena/01a05ef8-cognitorium",
+    "sha": "cbf65391",
+    "files": 83,
+    "size": 23857933,
+    "ahead": 0,
+    "behind": 3,
+    "date": "2026-09-03",
+    "msg": "v14: poste de commandement (5 missions de démarrage), MOI (GPS+manuel+"
+   },
+   {
+    "name": "arena/01a06876-cognitorium",
+    "sha": "01f58796",
+    "files": 131,
+    "size": 23997537,
+    "ahead": 0,
+    "behind": 1,
+    "date": "2026-09-05",
+    "msg": "docs: gouvernance, état des lieux, audits et architecture Cognitorium"
+   },
+   {
+    "name": "watchtower/osint-workbench-v0.1",
+    "sha": "0e2bef16",
+    "files": 143,
+    "size": 24050799,
+    "ahead": 13,
+    "behind": 0,
+    "date": "2026-09-07",
+    "msg": "docs(watchtower): align OSINT roadmap with master spec"
+   }
+  ]
+ },
+ "proto-cognitorium": {
+  "default": "main",
+  "main_sha": "74e301e455a23342b2389ac07a9a42cc7ec0ca6d",
+  "branches": [
+   {
+    "name": "arena/01a033e8-proto-cognitorium",
+    "sha": "05058b39",
+    "files": 30,
+    "size": 537329,
+    "ahead": 0,
+    "behind": 54,
+    "date": "2026-08-24",
+    "msg": "feat: add five-level graph hierarchy"
+   },
+   {
+    "name": "arena/01a034f2-proto-cognitorium",
+    "sha": "383b86be",
+    "files": 432,
+    "size": 90616738,
+    "ahead": 0,
+    "behind": 38,
+    "date": "2026-08-24",
+    "msg": "Add files via upload"
+   },
+   {
+    "name": "arena/01a035a5-proto-cognitorium",
+    "sha": "639a43ee",
+    "files": 99,
+    "size": 47897761,
+    "ahead": 0,
+    "behind": 31,
+    "date": "2026-08-24",
+    "msg": "chore: réintroduire package-lock.json (build reproductible de la V0.1 "
+   },
+   {
+    "name": "arena/01a0369e-proto-cognitorium",
+    "sha": "6267c64f",
+    "files": 100,
+    "size": 47927523,
+    "ahead": 0,
+    "behind": 29,
+    "date": "2026-08-25",
+    "msg": "Add temporal network view with progressive node and edge activation"
+   },
+   {
+    "name": "arena/01a03436-proto-cognitorium",
+    "sha": "b75f700f",
+    "files": 31,
+    "size": 537913,
+    "ahead": 0,
+    "behind": 52,
+    "date": "2026-08-24",
+    "msg": "Add raw/ folder for unprocessed project data"
+   },
+   {
+    "name": "arena/01a03899-proto-cognitorium",
+    "sha": "f7861b58",
+    "files": 507,
+    "size": 97283792,
+    "ahead": 0,
+    "behind": 5,
+    "date": "2026-08-26",
+    "msg": "Merge main into Savoirs branch and resolve PR conflicts"
+   },
+   {
+    "name": "arena/01a08342-proto-cognitorium",
+    "sha": "c52a4081",
+    "files": 173,
+    "size": 77356568,
+    "ahead": 5,
+    "behind": 2,
+    "date": "2026-09-10",
+    "msg": "audit: registre a jour pour main 74e301e (SEC-04, UX-04, 3 aggravation"
+   }
+  ]
+ },
+ "HCSM": {
+  "default": "main",
+  "main_sha": "c8fe0e3f7b8717fc5e3aeae3c5f84defbb4d7a57",
+  "branches": [
+   {
+    "name": "arena/01a03a6b-hcsm",
+    "sha": "162ca5fb",
+    "files": 55,
+    "size": 184135,
+    "ahead": 0,
+    "behind": 3,
+    "date": "2026-08-25",
+    "msg": "Structure HCSM as a scientific research framework (v0.1)"
+   },
+   {
+    "name": "arena/01a03a93-hcsm",
+    "sha": "74fb35a2",
+    "files": 87,
+    "size": 279572,
+    "ahead": 0,
+    "behind": 1,
+    "date": "2026-08-25",
+    "msg": "feat(validator): Phase 1 V1 form + V5 admissibility contract"
+   }
+  ]
+ },
+ "reaserch-engine": {
+  "default": "main",
+  "main_sha": "ed4640d177f138ad4c752e02bcd98ce75e520166",
+  "branches": []
+ },
+ "ETAT-DE-LART-PSYCHOLOGIE": {
+  "default": "main",
+  "main_sha": "258ddadf1eb01d5bc433e5895b53010fe87c06b2",
+  "branches": [
+   {
+    "name": "arena/01a03aac-etat-de-lart-psychologie",
+    "sha": "e16980ba",
+    "files": 39,
+    "size": 3561510,
+    "ahead": 2,
+    "behind": 1,
+    "date": "2026-08-25",
+    "msg": "feat: Cognitorium v8 complète — graphe 3D, 40 fiches concepts/biais/ou"
+   },
+   {
+    "name": "arena/01a03adf-etat-de-lart-psychologie",
+    "sha": "da06a378",
+    "files": 33,
+    "size": 3205763,
+    "ahead": 0,
+    "behind": 1,
+    "date": "2026-08-25",
+    "msg": "Merge pull request #2 from Sathancabrol/arena/01a0389d-etat-de-lart-ps"
+   },
+   {
+    "name": "arena/01a04f7b-etat-de-lart-psychologie",
+    "sha": "11fefa8f",
+    "files": 1818,
+    "size": 20582279,
+    "ahead": 38,
+    "behind": 1,
+    "date": "2026-09-02",
+    "msg": "fix: homepage noire + vues cassées — TDZ planets0/ovals (ReferenceErro"
+   },
+   {
+    "name": "arena/01a07d32-etat-de-lart-psychologie",
+    "sha": "f3114908",
+    "files": 46,
+    "size": 4021886,
+    "ahead": 5,
+    "behind": 0,
+    "date": "2026-09-07",
+    "msg": "Route /download/monorepo.bundle : secours push 403 (bundle git complet"
+   },
+   {
+    "name": "arena/01a035f7-etat-de-lart-psychologie",
+    "sha": "89b21dd5",
+    "files": 24,
+    "size": 3037790,
+    "ahead": 0,
+    "behind": 15,
+    "date": "2026-08-25",
+    "msg": "feat: consolidation complète projet dans repo - tout le projet"
+   },
+   {
+    "name": "arena/01a045a1-etat-de-lart-psychologie",
+    "sha": "a4f04368",
+    "files": 54,
+    "size": 3319744,
+    "ahead": 1,
+    "behind": 1,
+    "date": "2026-09-07",
+    "msg": "feat(agent): agent de recherche littéraire scientifique v1"
+   },
+   {
+    "name": "arena/01a0369b-etat-de-lart-psychologie",
+    "sha": "5c91021f",
+    "files": 33,
+    "size": 3117911,
+    "ahead": 0,
+    "behind": 3,
+    "date": "2026-08-25",
+    "msg": "fix: réécriture ultra-épurée et robuste du graphe D3 (sans dépendance "
+   },
+   {
+    "name": "arena/01a0389d-etat-de-lart-psychologie",
+    "sha": "c37d2af6",
+    "files": 33,
+    "size": 3205763,
+    "ahead": 0,
+    "behind": 2,
+    "date": "2026-08-25",
+    "msg": "feat: Cognitorium v7 — Graphe Obsidian 99 nœuds, 137 liens, 38 sources"
+   }
+  ]
+ },
+ "watchtower": {
+  "default": "main",
+  "main_sha": "d44ef7c4c3a768613c190e8d220a55243869398e",
+  "branches": [
+   {
+    "name": "arena/dec9cd88-watchtower",
+    "sha": "4151e2e2",
+    "files": 623,
+    "size": 24986041,
+    "ahead": 7,
+    "behind": 0,
+    "date": "2026-10-07",
+    "msg": "INTEL — vue TERRAIN (6 sources officielles), gabarit CHANTIER et regis"
+   },
+   {
+    "name": "arena/01a06ebe-watchtower",
+    "sha": "715bfa79",
+    "files": 564,
+    "size": 23245530,
+    "ahead": 0,
+    "behind": 11,
+    "date": "2026-09-06",
+    "msg": "docs: état de reprise (sauvegarde de session it. 21 — HEAD 55e553b)"
+   },
+   {
+    "name": "arena/01a072e1-watchtower",
+    "sha": "be0cceff",
+    "files": 650,
+    "size": 24015352,
+    "ahead": 43,
+    "behind": 10,
+    "date": "2026-10-07",
+    "msg": "fix(intel): la vue INTEL etait mal calee — trois chevauchements"
+   },
+   {
+    "name": "arena/01a0730a-watchtower",
+    "sha": "500b9125",
+    "files": 583,
+    "size": 23918304,
+    "ahead": 0,
+    "behind": 1,
+    "date": "2026-09-07",
+    "msg": "Merge origin/main dans la branche d'audit (PR sans destruction)"
+   }
+  ]
+ },
+ "animation-chronos": {
+  "default": "main",
+  "main_sha": "38c57a364c36c58514838e1d05eff4f0c7f385ab",
+  "branches": []
+ },
+ "Language-decoder": {
+  "default": "main",
+  "main_sha": "583f37ab4d75ec759fc279f7918e6b3ce7ebd4b4",
+  "branches": [
+   {
+    "name": "arena/01a05429-language-decoder",
+    "sha": "112d2875",
+    "files": 27,
+    "size": 612039,
+    "ahead": 7,
+    "behind": 0,
+    "date": "2026-10-07",
+    "msg": "Add a Home page with simple schemas of purpose and tools"
+   },
+   {
+    "name": "arena/01a05471-language-decoder",
+    "sha": "9a535193",
+    "files": 24,
+    "size": 2118816,
+    "ahead": 3,
+    "behind": 0,
+    "date": "2026-10-07",
+    "msg": "feat(ui): add visual home onboarding schemas and action potential guid"
+   }
+  ]
+ }
+}
