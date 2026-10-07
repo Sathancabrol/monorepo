@@ -4,7 +4,7 @@
     "id": "audit-2026-10",
     "title": "Audit complet monorepo Sathancabrol",
     "started_at": "2026-10-07T12:22:19Z",
-    "updated_at": "2026-10-07T14:31:14Z",
+    "updated_at": "2026-10-07T14:47:50Z",
     "operator": "agent"
   },
   "phase": {
@@ -232,9 +232,9 @@
     "connecteurs_interroges": 4
   },
   "next_actions": [
-    "DECISION ATTENDUE : valider la grille v1→v5 et l'Etape 0 (ANALYSE-V1-V5.md §7)",
-    "Puis : Etape 0 hygiene (PR#3, resync proto, tests rouges, licences, CI, snapshot)",
-    "Puis : Etape 1 v1 socle (interface skeleton + Core bi-temporel + HCSM contrat + registre de claims)",
+    "DECISION ATTENDUE : valider la grille v1→v5 + Etape 0 (hygiene) — cf. ROADMAP-2050-2026.md, palier 2026",
+    "Puis Etape 0 : PR#3, resync proto, 2 tests rouges, licences, CI, snapshot, 289 Mo hors Git, 19 branches mortes",
+    "Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes",
     "Restructuration : non commencee (analyse uniquement)"
   ],
   "artifacts": [
@@ -271,7 +271,9 @@
     "scripts/audit_gh_drift.py",
     "audit/ANALYSE-V1-V5.md",
     "audit/data/importance.json",
-    "scripts/audit_importance.py"
+    "scripts/audit_importance.py",
+    "audit/SYNTHESE-TIMELINE-2026-10.md",
+    "audit/ROADMAP-2050-2026.md"
   ],
   "publication": {
     "plateforme": "GitHub",
@@ -307,5 +309,21 @@
       "OSIRIS (canevas multi-flux)"
     ],
     "prochaine_decision": "valider la grille v1→v5 et l'Etape 0 (hygiene)"
+  },
+  "timeline": {
+    "document": "audit/SYNTHESE-TIMELINE-2026-10.md",
+    "date": "2026-10-07",
+    "contenu": "chronologie 2018→2026, fiches role des 9 depots, 15 branches actives (fonctionnalite/possibilite/besoin), 19 branches mortes deja contenues dans main, matrice domaines, besoins couverts/manquants",
+    "roadmap": "audit/ROADMAP-2050-2026.md",
+    "roadmap_horizons": [
+      "2050 Semantic OS",
+      "2045 monde simulable",
+      "2040 concevoir/fabriquer",
+      "2035 intelligence multimodale",
+      "2030 v3 puissance",
+      "2028 v2-v3 public",
+      "2027 Core v1",
+      "2026 maintenant"
+    ]
   }
 }

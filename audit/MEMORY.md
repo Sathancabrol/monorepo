@@ -1,7 +1,7 @@
 # MEMORY — Audit monorepo (index généré)
 
 > **NE PAS ÉDITER À LA MAIN** — généré par `python3 scripts/audit_memory.py render`
-> depuis `audit/state.json`. Mis à jour : 2026-10-07T14:31:14Z
+> depuis `audit/state.json`. Mis à jour : 2026-10-07T14:47:50Z
 
 ## Où est quoi
 
@@ -23,9 +23,9 @@
 
 ## Prochaines actions
 
-- DECISION ATTENDUE : valider la grille v1→v5 et l'Etape 0 (ANALYSE-V1-V5.md §7)
-- Puis : Etape 0 hygiene (PR#3, resync proto, tests rouges, licences, CI, snapshot)
-- Puis : Etape 1 v1 socle (interface skeleton + Core bi-temporel + HCSM contrat + registre de claims)
+- DECISION ATTENDUE : valider la grille v1→v5 + Etape 0 (hygiene) — cf. ROADMAP-2050-2026.md, palier 2026
+- Puis Etape 0 : PR#3, resync proto, 2 tests rouges, licences, CI, snapshot, 289 Mo hors Git, 19 branches mortes
+- Puis Etape 1 (v1) : Core bi-temporel + HCSM contrat + interface/catalogue fusionnes
 - Restructuration : non commencee (analyse uniquement)
 
 ## Projets

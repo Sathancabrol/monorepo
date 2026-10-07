@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-07T14:31:14Z",
+ "generated_at": "2026-10-07T14:47:50Z",
  "nodes": [
   {
    "id": "project:COGNITORIUM",
@@ -292,6 +292,14 @@
   },
   {
    "id": "scripts/audit_importance.py",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/SYNTHESE-TIMELINE-2026-10.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/ROADMAP-2050-2026.md",
    "type": "artifact"
   }
  ],
