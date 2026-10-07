@@ -35,7 +35,7 @@ from nexus_os.agents import AgentSpec
 #: Ordre d'affichage dans l'UI.
 TARGETS: tuple[str, ...] = (
     "claude-code", "codex", "opencode", "cline", "cursor", "goose",
-    "gemini", "qwen", "hermes", "agentskills", "nexus",
+    "gemini", "qwen", "hermes", "agentskills", "a2a", "nexus",
 )
 
 
@@ -94,6 +94,11 @@ TARGET_SPECS: dict[str, HarnessTarget] = {
         "agentskills", "agentskills.io / openai", "skills/{id}/SKILL.md", "skill",
         "Compétence SKILL.md standard (openai/skills, marketingskills, diagram-design…).",
         "agentskills.io"),
+    "a2a": HarnessTarget(
+        "a2a", "A2A (Agent2Agent)", ".well-known/agent-card.json", "card",
+        "Carte d'agent signable du protocole A2A : un autre agent peut découvrir "
+        "celui-ci et lui déléguer du travail.",
+        "a2a-protocol.org"),
     "nexus": HarnessTarget(
         "nexus", "NEXUS·OS", "agents/{id}.json", "json",
         "Spec native, réimportable telle quelle.", ""),
@@ -261,6 +266,34 @@ def _skill_md(spec: AgentSpec, *, hermes: bool) -> str:
     )
 
 
+def _a2a_card(spec: AgentSpec) -> str:
+    """Agent Card A2A : découverte et délégation entre agents hétérogènes."""
+    card = {
+        "protocolVersion": "1.0",
+        "name": spec.name,
+        "description": f"{spec.role}. {spec.description}"[:500],
+        "version": "1.0.0",
+        "url": f"http://localhost:8124/api/a2a/{spec.id}",
+        "provider": {"organization": "NEXUS·OS", "url": "http://localhost:8124/os/"},
+        "capabilities": {"streaming": True, "pushNotifications": False,
+                         "stateTransitionHistory": True},
+        "defaultInputModes": ["text/plain"],
+        "defaultOutputModes": ["text/plain", "text/markdown"],
+        "skills": [{
+            "id": spec.id,
+            "name": spec.role or spec.name,
+            "description": spec.description[:400],
+            "tags": list(spec.tags or []) + list(spec.skills),
+            "examples": [f"{t.capitalize()}…" for t in spec.triggers[:3]],
+        }],
+        "securitySchemes": {"bearer": {"type": "http", "scheme": "bearer"}},
+        "supportsAuthenticatedExtendedCard": False,
+        "x-nexus": {"agent_id": spec.id, "autonomy": spec.autonomy,
+                    "tools": list(spec.tools), "lifecycle": list(spec.lifecycle)},
+    }
+    return json.dumps(card, ensure_ascii=False, indent=2) + "\n"
+
+
 def _nexus_json(spec: AgentSpec) -> str:
     return json.dumps(spec.to_dict(), ensure_ascii=False, indent=2) + "\n"
 
@@ -271,6 +304,7 @@ _EXPORTERS = {
     "cursor": _cursor,
     "hermes": lambda s: _skill_md(s, hermes=True),
     "agentskills": lambda s: _skill_md(s, hermes=False),
+    "a2a": _a2a_card,
     "nexus": _nexus_json,
 }
 
@@ -303,7 +337,7 @@ def summarize(spec: AgentSpec) -> dict[str, Any]:
             loses.append("cycle de vie non exécutable (documenté en commentaire)")
         if tgt.kind == "skill":
             loses.append("déclenchement par le harness, pas par routage interne")
-        if tgt.kind == "json":
+        if tgt.kind in {"json", "card"}:
             loses = []
         out.append({
             **tgt.to_dict(),

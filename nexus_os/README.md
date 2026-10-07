@@ -2,7 +2,7 @@
 
 Un système d'exploitation pour agents IA, dans ce monorepo. Un seul point d'entrée,
 plusieurs fournisseurs de modèles, un runtime d'agents, un **créateur d'agent
-intégré** et **10 agents spécialisés** prêts à l'emploi.
+intégré** et **22 agents spécialisés** prêts à l'emploi.
 
 > Inspiré de [OmniRoute](https://github.com/diegosouzapw/OmniRoute) (passerelle
 > multi-fournisseurs avec repli), [ECC](https://github.com/affaan-m/ECC) (cycle
@@ -34,7 +34,7 @@ CLI :
 
 ```bash
 python -m nexus_os status                                   # état du système
-python -m nexus_os agents                                   # les 10 agents
+python -m nexus_os agents                                   # les 22 agents
 python -m nexus_os route "rédige une landing page"          # qui doit traiter ?
 python -m nexus_os run "audite la structure du dépôt"       # exécute (streaming)
 python -m nexus_os create "un agent qui relit les contrats" # crée un agent
@@ -50,16 +50,21 @@ nexus_os/
 ├─ providers.py    routeur de modèles : catalogue, quota-aware, repli automatique
 ├─ llm.py          complétion unifiée (OpenAI / Anthropic / moteur local) + bascule
 ├─ skills.py       framework SKILL.md : découverte, frontmatter, scoring par triggers
-├─ tools.py        14 outils sandboxés (fs, grep, exec opt-in, net, mémoire, diagram…)
+├─ tools.py        22 outils sandboxés (fs, grep, exec opt-in, net, mémoire, MCP…)
+├─ mcp.py          client MCP 2026-07-28 (stateless) + Server Cards
+├─ mcp_demo.py     serveur MCP de référence, pour brancher l'OS hors-ligne
+├─ context.py      résultats référencés + compression d'historique
+├─ instincts.py    règles apprises des exécutions (couche ECC)
 ├─ memory.py       mémoire persistante : facts, décisions, leçons
 ├─ agents.py       specs d'agents (JSON) + registre + scoring d'affinité
 ├─ creator.py      créateur d'agents : description → spec complète
-├─ runtime.py      boucle d'exécution par phases, délégation, pipelines
+├─ harness.py      export d'un agent vers 12 harness (Claude Code, Codex, A2A…)
+├─ runtime.py      boucle d'exécution par phases, délégation, flotte parallèle
 ├─ app.py          API JSON + SSE + bureau web
-├─ agents/         10 agents intégrés (JSON)
-├─ skills/         14 compétences intégrées (SKILL.md)
+├─ agents/         22 agents intégrés (JSON)
+├─ skills/         30 compétences intégrées (SKILL.md)
 ├─ templates/ static/   interface « bureau »
-└─ tests/          59 tests (pytest)
+└─ tests/          124 tests (pytest)
 ```
 
 ### 1. Routeur de modèles (façon OmniRoute)

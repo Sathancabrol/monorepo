@@ -31,10 +31,10 @@ def client():
 # -------------------------------------------------------------------------- #
 # Portabilité multi-harness
 # -------------------------------------------------------------------------- #
-def test_11_harness_cibles():
-    assert len(TARGETS) == 11
+def test_12_harness_cibles():
+    assert len(TARGETS) == 12
     assert {"claude-code", "codex", "opencode", "cline", "cursor", "goose", "gemini",
-            "qwen", "hermes", "agentskills", "nexus"} == set(TARGETS)
+            "qwen", "hermes", "agentskills", "a2a", "nexus"} == set(TARGETS)
 
 
 def test_export_pour_chaque_harness():
@@ -81,7 +81,7 @@ def test_harness_inconnu_refuse():
 
 def test_summarize_indique_les_pertes():
     s = summarize(registry().require("coder"))
-    assert s["agent_id"] == "coder" and len(s["targets"]) == 11
+    assert s["agent_id"] == "coder" and len(s["targets"]) == 12
     nexus = next(t for t in s["targets"] if t["id"] == "nexus")
     assert nexus["loses"] == ["rien — export sans perte"]
     codex = next(t for t in s["targets"] if t["id"] == "codex")
@@ -95,7 +95,7 @@ def test_export_all_couvre_tout():
 
 
 def test_api_harness(client):
-    assert len(client.get("/api/harnesses").json()) == 11
+    assert len(client.get("/api/harnesses").json()) == 12
     r = client.get("/api/agents/coder/harness/claude-code")
     assert r.status_code == 200
     body = r.json()
@@ -197,8 +197,8 @@ def test_api_parallel(client):
 def test_outils_supplementaires_enregistres():
     names = set(ToolRegistry().names())
     assert {"diff_files", "render_chart", "task_board", "export_harness",
-            "create_skill"} <= names
-    assert len(names) == 19
+            "create_skill", "mcp_servers", "context_report", "learn_instinct"} <= names
+    assert len(names) == 22
 
 
 def test_diff_files(isolated_workspace):

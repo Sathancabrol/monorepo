@@ -189,7 +189,7 @@ def test_create_agent_depuis_le_runtime(isolated_workspace, tmp_path, monkeypatc
 
 def test_statut_du_runtime(isolated_workspace):
     st = Runtime().status()
-    assert st["agents"] >= 22 and st["skills"] == 24 and st["tools"] >= 19
+    assert st["agents"] >= 22 and st["skills"] == 30 and st["tools"] >= 22
     assert st["mode"] in {"live", "offline"}
 
 

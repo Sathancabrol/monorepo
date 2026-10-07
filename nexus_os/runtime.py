@@ -29,6 +29,8 @@ from nexus_os import config
 from nexus_os.agents import AgentSpec, registry as agent_registry
 from nexus_os.db import store as db_store
 from nexus_os.llm import Completion, complete, router as llm_router
+from nexus_os import context as context_ref
+from nexus_os.instincts import book as instincts
 from nexus_os.memory import memory
 from nexus_os.providers import MODEL_INDEX, ModelRequest
 from nexus_os.skills import library as skill_library
@@ -347,6 +349,7 @@ class Runtime:
                   emit: Callable[[Event], None], approval: str = "smart",
                   approved_tools: Sequence[str] = ()) -> RunResult:
         started = time.time()
+        self.tools.refresh_mcp()   # serveurs MCP ajoutés depuis le dernier run
         agent = self.agents.get(agent_id) or self.agents.require("orchestrator")
         run_id = self.db.start_run(agent.id, task, session_id)
         result = RunResult(run_id=run_id, agent_id=agent.id)
@@ -394,7 +397,8 @@ class Runtime:
                            (self.skills.select(agent.skills) + self.skills.match(task, limit=2))
                            }.values())
         system_prompt = agent.base_prompt(self.skills.render(skill_objs),
-                                          memory().render(task, limit=4))
+                                          memory().render(task, limit=4),
+                                          instincts().render(task, agent.id))
         tool_specs = self.tools.specs(agent.tools)
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": system_prompt},
@@ -480,6 +484,13 @@ class Runtime:
             out, ok = f"erreur {type(e).__name__}: {e}", False
         if not ok:
             result.tool_failures += 1
+        elif len(out) > context_ref.THRESHOLD_CHARS:
+            # Résultat référencé (motif context-mode / roadmap MCP) : l'agent
+            # reçoit une empreinte + un aperçu, et charge le reste s'il le faut.
+            compacted = context_ref.reference(ctx, out, kind=f"tool:{name}")
+            emit({"type": "context_reference", "name": name, "chars": len(out),
+                  "saved_tokens": (len(out) - len(compacted)) // context_ref.CHARS_PER_TOKEN})
+            out = compacted
         emit({"type": "tool_result", "name": name, "ok": ok,
               "result": out[:config.MAX_TOOL_RESULT_CHARS]})
         for m in re.finditer(r"workspace/([\w./-]+)", out):
@@ -532,6 +543,15 @@ class Runtime:
             phases=[e.get("phase") for e in result.events if e.get("type") == "phase"],
             model=model, provider=provider, mode=mode, tokens=result.tokens,
             steps=result.steps, duration_ms=result.duration_ms)
+        if result.depth == 0:
+            # Couche « instincts » : ce run a quelque chose à apprendre au suivant.
+            try:
+                learned = instincts().learn_from_result(result, result.result)
+                if learned:
+                    emit({"type": "instincts_learned", "count": len(learned),
+                          "rules": [i.rule for i in learned]})
+            except Exception:
+                pass
         if session_id:
             self.db.add_message(session_id, "assistant", result.result,
                                 {"run_id": result.run_id, "model": model,
@@ -543,12 +563,22 @@ class Runtime:
               "model": model, "mode": mode})
 
 
+#: Événements opérationnels d'un sous-agent qui doivent remonter au parent :
+#: sans eux, l'apprentissage ne voit qu'une délégation vide et n'apprend rien.
+_MERGED_EVENTS = {"tool_call", "tool_result", "approval_required", "artifact",
+                  "context_reference", "error"}
+
+
 def _merge(target: RunResult, sub: RunResult) -> None:
     target.tokens += sub.tokens
     target.steps += sub.steps
     target.artifacts += [a for a in sub.artifacts if a not in target.artifacts]
     target.models += sub.models
     target.modes += sub.modes
+    target.tool_failures += sub.tool_failures
+    target.pending_approvals += [p for p in sub.pending_approvals
+                                 if p not in target.pending_approvals]
+    target.events += [e for e in sub.events if e.get("type") in _MERGED_EVENTS]
 
 
 def _agent_card(a: AgentSpec) -> dict[str, Any]:

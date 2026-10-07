@@ -459,6 +459,83 @@ def uuid4_id() -> str:
     return uuid.uuid4().hex[:8]
 
 
+def t_mcp_servers(ctx: ToolContext, action: str = "list", name: str = "",
+                  url: str = "", description: str = "") -> str:
+    """Annuaire des serveurs MCP et état réel de chacun (carte, découverte, outils)."""
+    from nexus_os import mcp
+
+    action = (action or "list").strip().lower()
+    if action == "add":
+        if not name or not url:
+            raise ToolError("`name` et `url` sont requis pour ajouter un serveur")
+        try:
+            srv = mcp.add_server(name, url, description=description)
+        except ValueError as e:
+            raise ToolError(str(e)) from e
+        return f"serveur MCP ajouté : {srv.name} → {srv.url}"
+    if action == "remove":
+        if not name:
+            raise ToolError("`name` est requis pour retirer un serveur")
+        return (f"serveur retiré : {name}" if mcp.remove_server(name)
+                else f"serveur inconnu : {name}")
+    if action == "probe":
+        cfg = mcp.get_server(name) if name else None
+        if not cfg:
+            raise ToolError(f"serveur inconnu : {name or '(aucun)'}")
+        info = mcp.probe(cfg)
+        lines = [f"{info['name']} — {info['status']} — {info['url']}"]
+        if info["error"]:
+            lines.append(f"erreur : {info['error']}")
+        if isinstance(info.get("card"), dict):
+            c = info["card"]
+            lines.append("carte : " + (c.get("error") or
+                        f"{c.get('name')} v{c.get('version')}"))
+        if info.get("discover"):
+            d = info["discover"]
+            lines.append(f"protocole : {d['protocol_version']} — "
+                         f"capacités {', '.join(sorted(d['capabilities'])) or 'aucune'}")
+        lines.append(f"outils ({len(info['tools'])}) : " +
+                     (", ".join(t["name"] for t in info["tools"]) or "aucun"))
+        return "\n".join(lines)
+    rows = mcp.list_servers()
+    if not rows:
+        return ("aucun serveur MCP configuré — ajoute-en un avec "
+                "mcp_servers(action=add, name=…, url=…)")
+    return "\n".join(f"- {r.name} → {r.url} ({'actif' if r.enabled else 'inactif'})"
+                      for r in rows)
+
+
+def t_context_report(ctx: ToolContext, action: str = "stats", clear: str = "") -> str:
+    """Mesure ce que les résultats référencés ont économisé en tokens."""
+    from nexus_os import context as ctxmod
+
+    if action == "clear":
+        return f"{ctxmod.clear()} référence(s) supprimée(s)"
+    st = ctxmod.stats()
+    if not st["references"]:
+        return (f"aucune référence produite (seuil {st['threshold_chars']} caractères). "
+                "Les résultats courts restent inline, c'est voulu.")
+    return (f"{st['references']} référence(s) — {st['chars_referenced']:,} caractères "
+            f"sortis du contexte, {st['tokens_saved']:,} tokens économisés "
+            f"({st['ratio'] * 100:.1f} % du volume)\n"
+            f"seuil {st['threshold_chars']} car. · aperçu {st['preview_chars']} car.\n"
+            + "\n".join(f"- {r['id']} {r['path']} ({r['kind']}) {r['chars']:,} car."
+                         for r in st["recent"]))
+
+
+def t_learn_instinct(ctx: ToolContext, rule: str = "", triggers: str = "",
+                     agent_id: str = "") -> str:
+    """Fixe une règle de conduite apprise (couche « instincts »)."""
+    from nexus_os.instincts import book
+
+    try:
+        inst = book().add(rule, triggers=[t.strip() for t in triggers.split(",") if t.strip()],
+                          agent_id=agent_id or ctx.agent_id, source="manuel")
+    except ValueError as e:
+        raise ToolError(str(e)) from e
+    return (f"instinct {inst.id} enregistré ({inst.hits} renforcement(s)) : {inst.rule}")
+
+
 def t_export_harness(ctx: ToolContext, agent_id: str = "", target: str = "claude-code") -> str:
     """Exporte un agent au format d'un autre harness (Claude Code, Codex, Cline…)."""
     from nexus_os.agents import registry
@@ -609,6 +686,20 @@ BUILTIN_TOOLS: list[Tool] = [
                   "body": {**_STR, "description": "règles markdown"},
                   "tags": _STR}, ["name", "body"]),
          t_create_skill, tags=["meta", "learning"]),
+    Tool("mcp_servers", "Annuaire MCP : liste, ajoute, retire ou sonde un serveur "
+                        "(Model Context Protocol, révision 2026-07-28).",
+         _params({"action": {"type": "string",
+                             "enum": ["list", "add", "remove", "probe"]},
+                  "name": _STR, "url": _STR, "description": _STR}, ["action"]),
+         t_mcp_servers, tags=["mcp", "integration"]),
+    Tool("context_report", "Mesure les tokens économisés par les résultats référencés.",
+         _params({"action": {"type": "string", "enum": ["stats", "clear"]}}, ["action"]),
+         t_context_report, tags=["meta", "context"]),
+    Tool("learn_instinct", "Enregistre une règle de conduite apprise d'une exécution.",
+         _params({"rule": _STR,
+                  "triggers": {**_STR, "description": "mots-clés séparés par virgules"},
+                  "agent_id": _STR}, ["rule"]),
+         t_learn_instinct, tags=["meta", "learning"]),
     Tool("handoff", "Délègue une sous-tâche à un autre agent de l'OS.",
          _params({"agent_id": _STR, "task": _STR}, ["agent_id", "task"]),
          t_handoff, tags=["meta"]),
@@ -622,10 +713,33 @@ META_TOOLS = {"handoff", "create_agent"}  # interceptés par le runtime
 
 
 class ToolRegistry:
-    def __init__(self, extra: list[Tool] | None = None) -> None:
+    def __init__(self, extra: list[Tool] | None = None, *, with_mcp: bool = True) -> None:
         self.tools: dict[str, Tool] = dict(TOOL_BY_NAME)
+        if with_mcp:
+            # Les serveurs MCP configurés exposent leurs outils ici. Un serveur
+            # injoignable ne doit jamais empêcher l'OS de démarrer.
+            try:
+                from nexus_os.mcp import registry_tools
+
+                for t in registry_tools():
+                    self.tools[t.name] = t
+            except Exception:
+                pass
         for t in extra or []:
             self.tools[t.name] = t
+
+    def refresh_mcp(self) -> int:
+        """Réaligne les outils MCP sur le registre courant (serveurs ajoutés/retirés)."""
+        try:
+            from nexus_os.mcp import registry_tools
+
+            fresh = {t.name: t for t in registry_tools(force=True)}
+        except Exception:
+            return 0
+        for name in [n for n in self.tools if n.startswith("mcp__")]:
+            self.tools.pop(name, None)
+        self.tools.update(fresh)
+        return len(fresh)
 
     def register(self, tool: Tool) -> None:
         self.tools[tool.name] = tool

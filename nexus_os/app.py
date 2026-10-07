@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import time
 from pathlib import Path
 from typing import Any
 
@@ -19,7 +20,10 @@ from fastapi.templating import Jinja2Templates
 from nexus_os import __version__, config
 from nexus_os.agents import AgentSpec, registry as agent_registry
 from nexus_os.creator import create_and_save, draft
+from nexus_os import context as context_mod
 from nexus_os import harness as harness_mod
+from nexus_os import mcp as mcp_mod
+from nexus_os.instincts import book as instincts
 from nexus_os.db import store as db_store
 from nexus_os.llm import router as llm_router, system_mode
 from nexus_os.memory import memory
@@ -203,6 +207,132 @@ def api_agent_harness(agent_id: str, target: str, save: bool = Query(False)) -> 
 # --------------------------------------------------------------------------- #
 # Compétences & outils
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# MCP — Model Context Protocol (révision 2026-07-28, cœur stateless)
+# --------------------------------------------------------------------------- #
+@app.get("/api/mcp")
+def api_mcp() -> dict[str, Any]:
+    return mcp_mod.summarize()
+
+
+@app.post("/api/mcp")
+def api_mcp_add(payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    try:
+        srv = mcp_mod.add_server(str(payload.get("name", "")), str(payload.get("url", "")),
+                                 description=str(payload.get("description", "")),
+                                 auth_env=str(payload.get("auth_env", "")),
+                                 headers=payload.get("headers") or {})
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    rt.tools.refresh_mcp()      # les outils du serveur sont utilisables aussitôt
+    return {"ok": True, "server": srv.to_dict(), "status": api_status()["runtime"],
+            "mcp_tools": [t.name for t in rt.tools.select(
+                [n for n in rt.tools.names() if n.startswith("mcp__")])]}
+
+
+@app.delete("/api/mcp/{name}")
+def api_mcp_remove(name: str) -> dict[str, Any]:
+    if not mcp_mod.remove_server(name):
+        raise HTTPException(404, f"serveur inconnu : {name}")
+    rt.tools.refresh_mcp()
+    return {"ok": True, "removed": name}
+
+
+@app.get("/api/mcp/{name}/probe")
+def api_mcp_probe(name: str) -> dict[str, Any]:
+    cfg = mcp_mod.get_server(name)
+    if not cfg:
+        raise HTTPException(404, f"serveur inconnu : {name}")
+    return mcp_mod.probe(cfg)
+
+
+# --------------------------------------------------------------------------- #
+# Instincts (couche d'apprentissage) & contexte référencé
+# --------------------------------------------------------------------------- #
+@app.get("/api/instincts")
+def api_instincts(task: str = Query(""), agent: str = Query("")) -> dict[str, Any]:
+    rows = instincts().for_task(task, agent) if task else instincts().all()
+    return {"count": instincts().count(),
+            "injected": len(rows),
+            "items": [i.to_dict() for i in (rows or instincts().all())]}
+
+
+@app.post("/api/instincts")
+def api_instinct_add(payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    try:
+        inst = instincts().add(
+            str(payload.get("rule", "")),
+            triggers=[t.strip() for t in str(payload.get("triggers", "")).split(",") if t.strip()],
+            agent_id=str(payload.get("agent_id", "")), source="manuel")
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    return {"ok": True, "instinct": inst.to_dict(), "count": instincts().count()}
+
+
+@app.delete("/api/instincts/{instinct_id}")
+def api_instinct_forget(instinct_id: str) -> dict[str, Any]:
+    if not instincts().forget(instinct_id):
+        raise HTTPException(404, f"instinct inconnu : {instinct_id}")
+    return {"ok": True, "forgotten": instinct_id}
+
+
+@app.get("/api/context")
+def api_context() -> dict[str, Any]:
+    return context_mod.stats()
+
+
+@app.delete("/api/context")
+def api_context_clear() -> dict[str, Any]:
+    return {"ok": True, "cleared": context_mod.clear()}
+
+
+# --------------------------------------------------------------------------- #
+# A2A — un agent NEXUS·OS délégable depuis un autre agent
+# --------------------------------------------------------------------------- #
+@app.get("/api/a2a/{agent_id}/card")
+def api_a2a_card(agent_id: str) -> dict[str, Any]:
+    import json as _json
+
+    spec = agents.get(agent_id)
+    if not spec:
+        raise HTTPException(404, f"agent inconnu : {agent_id}")
+    return _json.loads(harness_mod.export_spec(spec, "a2a"))
+
+
+@app.post("/api/a2a/{agent_id}")
+def api_a2a_send(agent_id: str, payload: dict[str, Any] = Body(default={})) -> dict[str, Any]:
+    """`message/send` A2A : un agent externe délègue et reçoit une tâche A2A."""
+    spec = agents.get(agent_id)
+    if not spec:
+        raise HTTPException(404, f"agent inconnu : {agent_id}")
+    if payload.get("method") not in {None, "message/send"}:
+        raise HTTPException(400, f"méthode non prise en charge : {payload.get('method')}")
+    parts = (((payload.get("params") or {}).get("message") or {}).get("parts") or [])
+    text = " ".join(str(p.get("text", "")) for p in parts if isinstance(p, dict)).strip()
+    if not text:
+        raise HTTPException(400, "params.message.parts[].text est requis")
+
+    events, result = _collect(rt.run(text, agent_id))
+    return {
+        "jsonrpc": "2.0", "id": payload.get("id", 1),
+        "result": {
+            "kind": "task", "id": result.run_id,
+            "contextId": f"nexus-{agent_id}",
+            "status": {"state": "completed" if result.status == "done" else "failed",
+                       "timestamp": int(time.time() * 1000)},
+            "artifacts": [{
+                "artifactId": f"a{i}", "name": a.split("/")[-1],
+                "parts": [{"kind": "text", "text": a}],
+            } for i, a in enumerate(result.artifacts)],
+            "history": [{"kind": "message", "role": "agent", "messageId": result.run_id,
+                         "parts": [{"kind": "text", "text": result.result}]}],
+            "metadata": {"agent": agent_id, "steps": result.steps,
+                         "tokens": result.tokens, "confidence": result.confidence,
+                         "events": len(events)},
+        },
+    }
+
+
 @app.get("/api/skills")
 def api_skills() -> list[dict[str, Any]]:
     return [s.to_dict() for s in skills.all()]
@@ -231,6 +361,16 @@ def api_route(payload: dict[str, Any] = Body(...)) -> dict[str, Any]:
 
 def _sse(payload: dict[str, Any]) -> str:
     return f"data: {json.dumps(payload, ensure_ascii=False, default=str)}\n\n"
+
+
+def _collect(gen: Any) -> tuple[list[dict[str, Any]], Any]:
+    """Consomme un générateur d'événements et rend (événements, RunResult)."""
+    events: list[dict[str, Any]] = []
+    try:
+        while True:
+            events.append(next(gen))
+    except StopIteration as stop:
+        return events, stop.value
 
 
 def _stream(gen) -> StreamingResponse:

@@ -28,7 +28,7 @@ def test_health(client):
     r = client.get("/health")
     assert r.status_code == 200
     body = r.json()
-    assert body["ok"] is True and body["agents"] >= 22 and body["skills"] == 24
+    assert body["ok"] is True and body["agents"] >= 22 and body["skills"] == 30
 
 
 def test_page_bureau_servie(client):
@@ -50,7 +50,7 @@ def test_assets_statiques(client):
 def test_status_expose_le_mode(client):
     body = client.get("/api/status").json()
     assert body["mode_info"]["mode"] in {"live", "offline"}
-    assert body["runtime"]["tools"] >= 19
+    assert body["runtime"]["tools"] >= 22
     assert set(body["flags"]) >= {"shell", "network", "workspace"}
 
 
@@ -74,7 +74,7 @@ def test_liste_agents_et_detail(client):
 
 def test_competences_et_outils(client):
     skills = client.get("/api/skills").json()
-    assert len(skills) == 24
+    assert len(skills) == 30
     body = client.get("/api/skills/diagram-design").json()
     assert "Une vue = une question" in body["body"]
     tools = client.get("/api/tools").json()

@@ -53,15 +53,34 @@ lançable seul : `uvicorn nexus_os.app:app --port 8124`). Détails :
 - **Routeur de modèles** (façon OmniRoute) : 8 fournisseurs, 20 modèles, un seul
   point d'entrée, sélection par quota du jour + coût, **bascule automatique** en
   cas d'erreur, repli sur un moteur local → l'OS tourne avec ou sans clé API.
-- **10 agents spécialisés** : 🧭 orchestrateur, 🔎 chercheur, 🛠️ ingénieur,
-  ✍️ rédacteur, 📐 architecte, 📊 analyste, 🛡️ revendeur, 🌐 pilote, 🎯 coach,
-  🧬 créateur. L'orchestrateur route automatiquement vers le bon spécialiste.
+- **22 agents spécialisés** : 🧭 orchestrateur, 🔎 chercheur, 🛠️ ingénieur,
+  ✍️ rédacteur, 📐 architecte, 📊 analyste, 🛡️ relecteur, 🌐 pilote, 🎯 coach,
+  🧬 créateur, 🛰️ veilleur, 🗺️ cartographe, 🎓 pédagogue, ⚖️ juriste, 🌍 traducteur,
+  🚀 déployeur, 📋 chef de produit, 🎨 designer, 🎬 vidéaste, 🧪 testeur,
+  📜 archiviste, 🔮 promptier. L'orchestrateur route automatiquement, et une
+  **flotte** peut travailler en parallèle.
 - **Créateur d'agent intégré** : une description → prompt système, compétences,
   outils, triggers, cycle de vie. Un agent peut même en créer un autre (outil
   `create_agent`).
-- **14 compétences `SKILL.md`** (recherche, code, tests, revue, sécurité,
-  copywriting, SEO, diagrammes, données, navigateur, HTML, sortie ADHD,
-  mémoire, conception d'agent) — les tiennes se posent dans `.nexus/skills/`.
+- **30 compétences `SKILL.md`** — dont `mcp-integration`, `context-compression`,
+  `vectorless-rag`, `agent-reach`, `design-impeccable`, `plugin-authoring`.
+  Les tiennes se posent dans `.nexus/skills/` ; l'outil `create_skill` en écrit
+  de nouvelles pendant une exécution.
+- **Client MCP** (Model Context Protocol, révision **2026-07-28**, cœur
+  *stateless*) : Server Card `.well-known/mcp.json`, `server/discover`,
+  `tools/list`, `tools/call` — les outils d'un serveur distant deviennent des
+  outils de l'OS sous `mcp__serveur__outil`. Serveur de démonstration inclus :
+  `python -m nexus_os.mcp_demo --port 8125`.
+- **Portabilité** : un agent s'exporte dans **12 harness** (Claude Code, Codex,
+  OpenCode, Cline, Cursor, Goose, Gemini, Qwen, Hermes, agentskills.io, A2A,
+  NEXUS) avec le fichier cible exact.
+- **Résultats référencés** : un résultat d'outil volumineux ne rentre pas dans le
+  contexte — il est écrit dans la sandbox et l'agent reçoit une empreinte +
+  un aperçu. Le gain en tokens est mesuré et affiché.
+- **Instincts** (couche ECC) : règles de conduite dérivées des exécutions
+  précédentes, injectées dans le prompt de l'agent concerné, reprenables à la main.
+- **Approbations** : modes `off` / `smart` / `manuel`, confiance binaire
+  (« confiant » / « à vérifier »), kanban partagé entre agents.
 - **Cycle de vie** (façon ECC) : plan → recherche → implémentation → revue →
   vérification → mémorisation → amélioration, avec outils réellement exécutés.
 - **Sandbox** : les agents n'écrivent que dans `.nexus/workspace/`, les secrets
@@ -72,15 +91,16 @@ python -m nexus_os status                                   # état du système
 python -m nexus_os route "rédige une landing page"          # qui doit traiter ?
 python -m nexus_os run "audite la structure du dépôt"       # exécute (streaming)
 python -m nexus_os create "un agent qui relit les contrats" # crée un agent
-.venv/bin/python -m pytest nexus_os/tests -q                # 59 tests
+.venv/bin/python -m pytest nexus_os/tests -q                # 124 tests
 ```
 
 ## 🧪 Tests
 
 ```bash
 pip install -r requirements-dev.txt
-python -m pytest nexus_os/tests -q        # 59 tests : routeur, skills, sandbox,
-                                          # créateur, runtime, SSE, montage /os
+python -m pytest nexus_os/tests -q        # 124 tests : routeur, skills, sandbox,
+                                          # créateur, runtime, SSE, montage /os,
+                                          # MCP (contre un vrai serveur), A2A
 ```
 
 ## 🔍 Panorama GitHub

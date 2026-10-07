@@ -79,10 +79,10 @@ def test_frontmatter_parse():
     assert body.startswith("# Corps")
 
 
-def test_24_competences_integrees_decouvertes():
+def test_30_competences_integrees_decouvertes():
     lib = SkillLibrary()
     names = {s.name for s in lib.all()}
-    assert len(names) == 24
+    assert len(names) == 30
     assert {"research-first", "diagram-design", "marketing-copy", "adhd-output",
             "agent-design"} <= names
     for s in lib.all():

@@ -53,7 +53,8 @@ class AgentSpec:
         return cls(**{k: v for k, v in data.items() if k in known})
 
     # --- prompt ------------------------------------------------------------
-    def base_prompt(self, skill_text: str = "", memory_text: str = "") -> str:
+    def base_prompt(self, skill_text: str = "", memory_text: str = "",
+                    instinct_text: str = "") -> str:
         parts = [
             f"# Agent : {self.name}",
             f"**Rôle** : {self.role}",
@@ -72,6 +73,8 @@ class AgentSpec:
             parts.append(f"- compétence : {s}")
         if skill_text:
             parts += ["", "## Compétences activées", skill_text]
+        if instinct_text:
+            parts += ["", instinct_text]
         if memory_text:
             parts += ["", "## Mémoire (rappel)", memory_text]
         return "\n".join(p for p in parts if p is not None)

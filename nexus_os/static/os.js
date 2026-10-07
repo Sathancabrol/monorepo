@@ -34,6 +34,7 @@ function show(v) {
   $$(".view").forEach((x) => x.classList.toggle("active", x.id === `view-${v}`));
   $$(".rail-btn").forEach((b) => b.classList.toggle("active", b.dataset.view === v));
   ({ control: loadControl, agents: loadAgents, skills: loadSkills, harness: loadHarness,
+     mcp: loadMcp, instincts: loadInstincts,
      router: loadRouter, logs: loadLogs, files: () => loadFiles(""), memory: loadMemory,
      board: loadBoard }[v] || (() => {}))();
 }
@@ -52,6 +53,14 @@ async function loadStatus() {
   $("#tel-skills").innerHTML = `compétences <b>${st.runtime.skills}</b>`;
   $("#tel-mem").innerHTML = `mémoire <b>${st.runtime.memory_items}</b>`;
   $("#tel-shell").innerHTML = `shell <b>${st.flags.shell ? "on" : "off"}</b>`;
+  try {
+    const cx = await api("api/context");
+    $("#tel-ctx").innerHTML = cx.references
+      ? `contexte <b>−${nf(cx.tokens_saved)}t</b>` : `contexte <b>inline</b>`;
+    $("#tel-ctx").title = cx.references
+      ? `${cx.references} résultat(s) référencé(s), ${(cx.ratio * 100).toFixed(1)} % du volume hors contexte`
+      : "aucun résultat n'a dépassé le seuil de référencement";
+  } catch {}
   $("#k-mode").textContent = live ? "LIVE" : "OFFLINE";
   $("#k-mode-d").textContent = live ? st.mode_info.providers_ready.join(", ")
     : "aucune clé API — moteur local";
@@ -287,6 +296,16 @@ function renderEvent(e) {
     case "artifact":
       push("ok", "artéfact", e.path);
       break;
+    case "context_reference":
+      push("route", "contexte",
+        `${e.name} : ${nf(e.chars)} caractères sortis du contexte ` +
+        `≈ ${nf(e.saved_tokens)} tokens économisés`, who);
+      break;
+    case "instincts_learned":
+      push("ok", "appris",
+        `${e.count} instinct(s) déduit(s) de cette exécution :\n` +
+        (e.rules || []).map((r) => `- ${r}`).join("\n"));
+      break;
     case "agent_created":
       push("ok", "agent créé", `${e.agent.emoji} ${e.agent.name} (${e.agent.id})\n` +
         (e.rationale || []).join("\n"));
@@ -489,6 +508,127 @@ async function renderHarnessPreview(save = false) {
 }
 $("#h-agent").addEventListener("change", (e) => { S.harnessAgent = e.target.value; renderHarnessPreview(); });
 $("#h-save").addEventListener("click", () => renderHarnessPreview(true));
+
+/* ───────────────────────── MCP ───────────────────────── */
+async function loadMcp() {
+  const [m, cx] = await Promise.all([api("api/mcp"), api("api/context")]);
+  $("#mcp-proto").textContent = m.protocol_version;
+  $("#mcp-count").textContent = m.count;
+  $("#mcp-count-d").textContent = m.count ? `${m.enabled} actif(s) · stateless` : "aucun serveur connecté";
+  $("#mcp-list-n").textContent = `${m.count}`;
+  $("#mcp-saved").textContent = nf(cx.tokens_saved);
+  $("#mcp-saved-d").textContent = cx.references
+    ? `${cx.references} référence(s) · ${(cx.ratio * 100).toFixed(1)} % du volume hors contexte`
+    : "rien au-dessus du seuil pour l'instant";
+  const remote = (await api("api/tools")).filter((t) => t.name.startsWith("mcp__"));
+  $("#mcp-tools").textContent = remote.length;
+  $("#mcp-list").innerHTML = m.servers.map((sv) => `
+    <div class="item" data-srv="${esc(sv.name)}">
+      <div class="n">${esc(sv.name)} ${sv.enabled ? "" : "(inactif)"}</div>
+      <div class="d">${esc(sv.description || sv.url)}</div>
+      <div class="m">${esc(sv.url)}${sv.auth_env ? ` · clé ${esc(sv.auth_env)}` : ""}</div>
+      <div class="row" style="margin-top:6px">
+        <button class="sm primary" data-probe="${esc(sv.name)}">Sonder</button>
+        <button class="sm danger" data-drop="${esc(sv.name)}">Retirer</button>
+      </div>
+    </div>`).join("") || `<div class="empty">Aucun serveur — ajoute-en un à gauche.</div>`;
+  $$("[data-probe]").forEach((b) => b.addEventListener("click", () => probeServer(b.dataset.probe)));
+  $$("[data-drop]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm(`Retirer le serveur ${b.dataset.drop} ?`)) return;
+    await fetch(`api/mcp/${encodeURIComponent(b.dataset.drop)}`, { method: "DELETE" });
+    loadMcp();
+  }));
+}
+async function probeServer(name) {
+  $("#mcp-probe-state").textContent = "sonde…";
+  $("#mcp-probe-out").textContent = "connexion…";
+  try {
+    const r = await api(`api/mcp/${encodeURIComponent(name)}/probe`);
+    $("#mcp-probe-state").textContent = r.status;
+    $("#mcp-probe-state").className = `badge ${r.status === "ok" ? "ok" : "err"}`;
+    const lines = [`${r.name} — ${r.url}`, `état : ${r.status}`];
+    if (r.error) lines.push(`erreur : ${r.error}`);
+    if (r.card) lines.push(r.card.error ? `Server Card : ${r.card.error}`
+      : `Server Card : ${r.card.name} v${r.card.version} — ` +
+        `capacités ${Object.keys(r.card.capabilities || {}).join(", ") || "aucune"}`);
+    if (r.discover) lines.push(`protocole : ${r.discover.protocol_version}\nserveur : ` +
+      `${JSON.stringify(r.discover.server_info)}\ncapacités : ` +
+      Object.keys(r.discover.capabilities || {}).join(", "));
+    lines.push(`outils (${r.tools.length}) :`);
+    r.tools.forEach((t) => lines.push(`  - mcp__${r.name}__${t.name} — ${t.description}`));
+    $("#mcp-probe-out").textContent = lines.join("\n");
+  } catch (e) {
+    $("#mcp-probe-state").textContent = "échec";
+    $("#mcp-probe-out").textContent = e.message;
+  }
+}
+$("#mcp-add").addEventListener("click", async () => {
+  const name = $("#mcp-name").value.trim(), url = $("#mcp-url").value.trim();
+  if (!name || !url) { $("#mcp-msg").textContent = "nom et URL requis"; return; }
+  try {
+    await post("api/mcp", { name, url, description: $("#mcp-desc").value.trim(),
+                            auth_env: $("#mcp-auth").value.trim() });
+    $("#mcp-msg").textContent = `${name} ajouté`;
+    $("#mcp-name").value = $("#mcp-url").value = $("#mcp-desc").value = $("#mcp-auth").value = "";
+    await loadMcp(); probeServer(name);
+  } catch (e) { $("#mcp-msg").textContent = "échec : " + e.message; }
+});
+$("#mcp-probe-all").addEventListener("click", async () => {
+  const m = await api("api/mcp");
+  if (!m.servers.length) { $("#mcp-msg").textContent = "aucun serveur à sonder"; return; }
+  const out = $("#mcp-probe-out");
+  out.textContent = "";
+  for (const sv of m.servers) {
+    out.textContent += `── ${sv.name} ──\n`;
+    const box = $("#mcp-probe-out");
+    await probeServer(sv.name);
+    out.textContent += box.textContent + "\n\n";
+  }
+});
+
+/* ──────────────────────── INSTINCTS ──────────────────────── */
+async function loadInstincts() {
+  if (!S.agents.length) S.agents = await api("api/agents");
+  const sel = $("#ins-agent");
+  if (sel.options.length <= 1) {
+    sel.innerHTML = '<option value="">tous les agents</option>' +
+      S.agents.map((a) => `<option value="${esc(a.id)}">${esc(a.emoji)} ${esc(a.name)}</option>`).join("");
+  }
+  const r = await api("api/instincts");
+  $("#ins-count").textContent = `${r.count}`;
+  $("#ins-list").innerHTML = r.items.map((i) => `
+    <div class="item"><div class="n">${esc(i.rule)}</div>
+      <div class="m">${i.agent_id ? esc(i.agent_id) : "tous les agents"} ·
+        ${i.hits} renforcement(s) · confiance ${i.confidence.toFixed(2)} ·
+        ${esc(i.source)} · ${esc((i.triggers || []).join(", ") || "sans déclencheur")}
+        <button class="sm danger" data-forget="${esc(i.id)}">oublier</button></div></div>`).join("")
+    || `<div class="empty">Aucun instinct appris. Lance des exécutions : l'OS en déduit.</div>`;
+  $$("[data-forget]").forEach((b) => b.addEventListener("click", async () => {
+    await fetch(`api/instincts/${b.dataset.forget}`, { method: "DELETE" });
+    loadInstincts();
+  }));
+}
+$("#ins-add").addEventListener("click", async () => {
+  const rule = $("#ins-rule").value.trim();
+  if (!rule) { $("#ins-msg").textContent = "règle requise"; return; }
+  try {
+    await post("api/instincts", { rule, triggers: $("#ins-triggers").value,
+                                  agent_id: $("#ins-agent").value });
+    $("#ins-msg").textContent = "enregistré";
+    $("#ins-rule").value = $("#ins-triggers").value = "";
+    loadInstincts();
+  } catch (e) { $("#ins-msg").textContent = "échec : " + e.message; }
+});
+$("#ins-test").addEventListener("click", async () => {
+  const task = $("#ins-task").value.trim();
+  if (!task) { $("#ins-preview").textContent = "écris une tâche à tester"; return; }
+  const r = await api(`api/instincts?task=${encodeURIComponent(task)}` +
+                      `&agent=${encodeURIComponent($("#ins-agent").value)}`);
+  $("#ins-preview").textContent = r.injected
+    ? r.items.slice(0, r.injected).map((i) =>
+        `- ${i.rule}  [score agent ${i.agent_id || "tous"} · ${i.hits}×]`).join("\n")
+    : "rien ne serait injecté pour cette tâche — aucun déclencheur ne correspond.";
+});
 
 /* ───────────────────────── ROUTEUR ───────────────────────── */
 async function loadRouter() {

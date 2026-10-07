@@ -24,6 +24,7 @@
     <span class="tel" id="tel-agents">agents <b>—</b></span>
     <span class="tel" id="tel-skills">compétences <b>—</b></span>
     <span class="tel" id="tel-mem">mémoire <b>—</b></span>
+    <span class="tel" id="tel-ctx">contexte <b>—</b></span>
     <span class="tel" id="tel-shell">shell <b>—</b></span>
   </div>
 </header>
@@ -38,6 +39,8 @@
     <div class="rail-sep"></div>
     <button class="rail-btn" data-view="skills" data-tip="Compétences">📚</button>
     <button class="rail-btn" data-view="harness" data-tip="Harness & portabilité">🔌</button>
+    <button class="rail-btn" data-view="mcp" data-tip="Serveurs MCP">🔗</button>
+    <button class="rail-btn" data-view="instincts" data-tip="Instincts appris">⚡</button>
     <button class="rail-btn" data-view="router" data-tip="Routeur de modèles">🛰</button>
     <div class="rail-sep"></div>
     <button class="rail-btn" data-view="logs" data-tip="Journaux">🧾</button>
@@ -241,6 +244,76 @@
             <button class="sm" id="h-save">Écrire dans workspace</button></span></div>
           <div class="note" id="h-file" style="margin:0 0 8px"></div>
           <pre class="md" id="h-body"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ MCP ══════════ -->
+    <section class="view" id="view-mcp">
+      <div class="page-head"><div><h1>Serveurs MCP</h1>
+        <p>Model Context Protocol, révision <code id="mcp-proto">—</code> — cœur <b>stateless</b> :
+        aucune session, chaque requête se décrit via <code>_meta</code>.
+        Découverte par Server Card <code>.well-known/mcp.json</code>.</p></div></div>
+      <div class="grid g-3" style="margin-bottom:14px">
+        <div class="card tight kpi"><span class="l">Serveurs</span><span class="v" id="mcp-count">—</span>
+          <span class="d" id="mcp-count-d">—</span></div>
+        <div class="card tight kpi"><span class="l">Outils distants</span><span class="v" id="mcp-tools">—</span>
+          <span class="d">exposés au runtime sous <code>mcp__serveur__outil</code></span></div>
+        <div class="card tight kpi"><span class="l">Tokens économisés</span><span class="v acc" id="mcp-saved">—</span>
+          <span class="d" id="mcp-saved-d">résultats référencés</span></div>
+      </div>
+      <div class="split">
+        <div class="card">
+          <div class="card-head"><h2>Connecter un serveur</h2></div>
+          <div class="form">
+            <label>Nom<input id="mcp-name" placeholder="github"></label>
+            <label>URL<input id="mcp-url" placeholder="https://serveur.example/mcp"></label>
+            <label>Description<input id="mcp-desc" placeholder="à quoi il sert"></label>
+            <label>Clé (nom de variable)<input id="mcp-auth" placeholder="GITHUB_TOKEN — optionnel"></label>
+            <div class="row">
+              <button class="primary" id="mcp-add">Ajouter</button>
+              <button id="mcp-probe-all">Sonder tout</button>
+              <span class="badge" id="mcp-msg">—</span>
+            </div>
+          </div>
+          <div class="card-head"><h2>Annuaire</h2><span class="badge" id="mcp-list-n">—</span></div>
+          <div class="list" id="mcp-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Sonde</h2><span class="badge" id="mcp-probe-state">—</span></div>
+          <pre class="md" id="mcp-probe-out">Choisis un serveur puis « Sonder ».</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ INSTINCTS ══════════ -->
+    <section class="view" id="view-instincts">
+      <div class="page-head"><div><h1>Instincts</h1>
+        <p>Couche d'apprentissage (motif ECC) : des règles de conduite dérivées de ce qui
+        s'est réellement passé en exécution. Elles sont injectées dans le prompt de l'agent
+        concerné — et restent reprenables à la main.</p></div></div>
+      <div class="split-r">
+        <div class="card">
+          <div class="card-head"><h2>Instincts</h2><span class="badge" id="ins-count">—</span></div>
+          <div class="list" id="ins-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>En apprendre un</h2></div>
+          <div class="form">
+            <label>Règle<textarea id="ins-rule" rows="3"
+              placeholder="Vérifie la migration avant de déployer."></textarea></label>
+            <label>Déclencheurs<input id="ins-triggers" placeholder="deploy, migration, prod"></label>
+            <label>Agent (vide = tous)
+              <select id="ins-agent"><option value="">tous les agents</option></select></label>
+            <div class="row"><button class="primary" id="ins-add">Enregistrer</button>
+              <span class="badge" id="ins-msg">—</span></div>
+          </div>
+          <div class="card-head"><h2>Test d'injection</h2></div>
+          <div class="form">
+            <label>Tâche à tester<input id="ins-task" placeholder="relis cette clause de contrat"></label>
+            <div class="row"><button id="ins-test">Voir ce qui serait injecté</button></div>
+          </div>
+          <pre class="md" id="ins-preview">—</pre>
         </div>
       </div>
     </section>
