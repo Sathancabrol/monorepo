@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr" data-density="comfort">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carré d'As — squelette d'interface (portail des modules)</title>
+<meta name="description" content="Carré d'As : le portail vers les fonctionnalités de tous les modules. Squelette UX/UI open source, local, modulable.">
+<meta name="color-scheme" content="dark">
+
+<!-- ==========================================================================
+     CARRÉ D'AS — SQUELETTE D'INTERFACE (template)
+     --------------------------------------------------------------------------
+     · Aucune dépendance externe : s'ouvre en double-clic (file://) comme servi.
+     · Tout le contenu vient du registre : assets/registry.js (généré depuis
+       data/modules.json → shell/tools/gen-registry.py).
+     · Pour BRANCHER UN MODULE : monter son code dans #slot-<identifiant>
+       (ex. #slot-btp) et déclarer ses fonctions dans le registre.
+     · Feuilles : assets/tokens.css (design system) → assets/shell.css (structure)
+     ========================================================================== -->
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/shell.css">
+</head>
+<body>
+<a class="skip-link" href="#view-body">Aller au contenu</a>
+
+<div class="app">
+
+  <!-- ==================================================== barre haute -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-glyph" aria-hidden="true">🃏</span>
+      <span>Carré d'As<small>portail Cognitorium</small></span>
+    </div>
+
+    <button class="scope" data-go="portail" title="Revenir au portail">
+      <span aria-hidden="true">⌂</span> Portail
+    </button>
+
+    <button class="searchbar" id="btn-search" aria-label="Ouvrir la recherche globale">
+      <span aria-hidden="true">⌕</span>
+      Chercher un module, une fonctionnalité, une action…
+      <kbd>Ctrl+K</kbd>
+    </button>
+
+    <div class="topbar-right">
+      <button class="iconbtn" id="btn-assistant" aria-label="Ouvrir l'assistant" title="Assistant (guidage vocal et visuel)">
+        <span aria-hidden="true">🛡</span>
+      </button>
+      <button class="iconbtn" data-go="systeme" aria-label="Réglages" title="Réglages">
+        <span aria-hidden="true">⚙</span>
+      </button>
+      <button class="iconbtn" id="btn-alerts" aria-label="Alertes" title="Alertes">
+        <span aria-hidden="true">🔔</span><span class="badge">3</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================================================== corps -->
+  <div class="body">
+
+    <!-- rail : les portes -->
+    <nav class="rail" aria-label="Navigation principale">
+      <!-- généré depuis le registre (portes) -->
+      <div id="rail-dynamic"></div>
+      <div class="rail-sep"></div>
+      <button class="rail-item" data-go="systeme"><span class="ic" aria-hidden="true">⚙</span><span class="txt">Système</span><span class="hint">modules</span></button>
+      <div class="rail-foot">
+        <div class="live"><i></i> local · hors ligne</div>
+        <div>v<span id="foot-version">0</span></div>
+      </div>
+    </nav>
+
+    <!-- zone de travail -->
+    <main class="work" id="work">
+      <div class="view-head">
+        <div>
+          <h1 id="view-title" tabindex="-1">Portail</h1>
+          <p id="view-sub"></p>
+        </div>
+        <div class="head-tools">
+          <span class="kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd> rechercher</span>
+          <span class="kbd-hint"><kbd>Alt</kbd><kbd>1-8</kbd> portes</span>
+        </div>
+      </div>
+
+      <nav class="mod-tabs" id="mod-tabs" role="tablist" hidden aria-label="Fonctionnalités du module"></nav>
+
+      <div class="view-body" id="view-body" tabindex="-1">
+        <!-- ============================================================
+             ZONES DE MONTAGE DES MODULES
+             Chaque module viendra se brancher ici. Le squelette est prêt :
+             il suffit que le module expose son point de montage.
+
+             <section id="slot-btp"      data-module="btp"></section>
+             <section id="slot-carte"    data-module="carte"></section>
+             <section id="slot-documents"data-module="documents"></section>
+             <section id="slot-agents"   data-module="agents"></section>
+             …
+             ============================================================ -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================================================== barre d'état -->
+  <footer class="statusbar" role="status" aria-live="polite">
+    <span id="st-modules">—</span><span class="sep">·</span>
+    <span id="st-features">—</span><span class="sep">·</span>
+    <span id="st-assist">assistant —</span>
+    <span class="right">
+      <span class="live"><i></i> dossier local</span>
+      <span id="st-mode">2D par défaut</span>
+      <span id="foot-name">Carré d'As</span>
+    </span>
+  </footer>
+</div>
+
+<!-- ==================================================== assistant -->
+<aside class="assistant" id="assistant" hidden aria-label="Assistant">
+  <div class="assist-head">
+    <span class="orb" data-state="idle" aria-hidden="true"></span>
+    <span class="assist-title">Assistant<small id="assist-state">prêt · mode règles</small></span>
+    <span class="wave" data-on="0" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    <button class="iconbtn" id="assist-voice" aria-pressed="true" aria-label="Activer ou couper la voix" title="Voix"><span aria-hidden="true">🔊</span></button>
+    <button class="iconbtn" id="assist-mic" aria-label="Parler" title="Parler (micro)"><span aria-hidden="true">🎤</span></button>
+    <button class="iconbtn" data-go="assistant" aria-label="Que sait-il faire ?" title="Aide"><span aria-hidden="true">?</span></button>
+    <button class="iconbtn" onclick="document.getElementById('assistant').hidden=true" aria-label="Fermer"><span aria-hidden="true">✕</span></button>
+  </div>
+  <div class="assist-log" id="assist-log" aria-live="polite" aria-label="Conversation"></div>
+  <div class="assist-foot">
+    <input class="input" id="assist-input" placeholder="« ouvre le BTP », « cherche métrés », « aide »…" aria-label="Votre demande">
+    <button class="chip" id="assist-send">Envoyer</button>
+  </div>
+</aside>
+
+<!-- ==================================================== palette ⌘K -->
+<div class="overlay" id="overlay" hidden role="dialog" aria-modal="true" aria-label="Recherche globale">
+  <div class="palette">
+    <input id="palette-input" placeholder="Module, fonctionnalité, action…" aria-controls="palette-list" autocomplete="off">
+    <div class="palette-list" id="palette-list" role="listbox"></div>
+    <div class="palette-foot">
+      <span><kbd>↑↓</kbd> naviguer</span><span><kbd>Entrée</kbd> ouvrir</span><span><kbd>Échap</kbd> fermer</span>
+      <span style="margin-left:auto" id="palette-count"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================================== scripts (ordre imposé) -->
+<script src="assets/registry.js"></script><!-- le registre des modules (données) -->
+<script src="assets/sounds.js"></script> <!-- sons d'interface (synthèse locale) -->
+<script src="assets/assistant.js"></script><!-- assistant : règles, voix, orbe -->
+<script src="assets/shell.js"></script>   <!-- rendu, navigation, palette -->
+
+<script>
+/* ----------------------------------------------------------------------------
+   Câblage du squelette (à garder dans cet ordre : il dépend des quatre scripts)
+   -------------------------------------------------------------------------- */
+(function () {
+  const R = window.CARRE_REGISTRY;
+  const $ = (s) => document.querySelector(s);
+
+  /* 1. Le rail est construit depuis le registre : ajouter une porte = ajouter
+        une entrée dans shell/tools/gen-registry.py, rien d'autre à toucher. */
+  document.getElementById('rail-dynamic').innerHTML = R.doors.map((d, i) =>
+    `<button class="rail-item" data-door="${d.id}"
+             title="${d.hint} (Alt+${i + 1})">
+       <span class="ic" aria-hidden="true">${d.icon}</span>
+       <span class="txt">${d.label}</span>
+       <span class="hint">${i + 1}</span>
+     </button>`).join('');
+
+  /* 2. Informations de version / état */
+  document.getElementById('foot-version').textContent = R.meta.version;
+  document.getElementById('foot-name').textContent = R.meta.name;
+  document.getElementById('palette-count').textContent =
+    R.modules.reduce((n, m) => n + m.features.length, 0) + ' fonctionnalités indexées';
+
+  /* 3. Boutons de la barre haute */
+  document.getElementById('btn-search').onclick = () => window.CarreShell.openPalette();
+  document.getElementById('btn-assistant').onclick = () => {
+    const a = document.getElementById('assistant');
+    a.hidden = !a.hidden;
+    if (!a.hidden) { document.getElementById('assist-input').focus(); window.CarreSounds.play('open'); }
+  };
+  document.getElementById('btn-alerts').onclick = () => {
+    const log = document.getElementById('assist-log');
+    document.getElementById('assistant').hidden = false;
+    window.CarreAssistant.emit('bot', 'Trois points à traiter : 1) 12 pièces déposées sans classement, 2) un écart de −4 200 € à vérifier sur le lot 3, 3) le module « BTP » attend sa validation pour être branché.');
+    window.CarreSounds.play('ping');
+  };
+
+  /* 4. L'état de l'assistant s'affiche dans le panneau */
+  document.addEventListener('carre:mode', (e) => {
+    const label = { idle: 'prêt', listening: 'écoute…', thinking: 'réflexion…', speaking: 'parle…' }[e.detail] || e.detail;
+    const el = document.getElementById('assist-state');
+    if (el) el.textContent = label + (window.CarreAssistant.voiceOn() ? '' : ' · voix coupée');
+  });
+})();
+</script>
+</body>
+</html>

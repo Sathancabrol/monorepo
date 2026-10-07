@@ -16,10 +16,12 @@
 | **`06-ECOSYSTEME-LOCAL-GRATUIT.md`** | L'écosystème libre et hors ligne : **modèles IA locaux** tenant dans 6 Go de VRAM, écosystème « prepper » (Kiwix, Project NOMAD, pimaps, Organic Maps, ODK/Kobo), **cartes et fiches ID**, précautions de licence, **liste des 6 briques à créer** |
 
 | **`07-INVENTAIRE-FONCTIONNALITES.md`** | **Rien ne manque** : contrôle fichier par fichier des 9 dépôts (1 114 fichiers) et de leurs **17 branches non fusionnées**, récupération de tout ce qui manquait, et **matrice « quel dépôt apporte quelle fonctionnalité → quel module de Carré d'As »** |
+| **`08-SQUELETTE-UX-UI.md`** | Le **squelette d'interface** : design system repris du prototype d'origine (Void/Plasticity/Transfer), structure du shell, 8 portes / 14 modules / **104 fonctionnalités**, assistant (voix, orbe, guidage), sons, mode d'emploi pour brancher un module |
+| **`../../shell/`** | **Le squelette, en code** : `index.html` (template) + `assets/` (tokens, structure, registre, shell, assistant, sons) + `data/modules.json` + `tools/` (générateur et contrôle) |
 | **`../../scripts/verif-completude-repos.py`** | Le contrôle rejouable : vérifie par **empreinte Git** que tout le contenu des dépôts et de leurs branches est présent dans le monorepo |
 | **`../../projects/_incoming/`** | Le travail des branches, rangé par dépôt et par branche, **avec un `_PROVENANCE.md`** (dépôt, branche, commit, fichiers) dans chaque dossier |
 
-**Rappel des livrables antérieurs** : `00` à `03` sont commités (`df13086`) ; `04` à `07` et les maquettes sont postérieurs.
+**Rappel des livrables antérieurs** : `00` à `03` sont commités (`df13086`) ; `04` à `08`, les maquettes et le squelette sont postérieurs.
 
 ## À lire avec
 

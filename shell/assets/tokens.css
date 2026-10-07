@@ -1,0 +1,151 @@
+/* ============================================================================
+   CARRÉ D'AS — Design system (tokens)
+   Source : le prototype d'origine `projects/proto-cognitorium/raw/noeud neurono.html`
+            (identité « Void / Plasticity / Transfer »), étendue pour le portail.
+   Rien ici ne dépend d'internet : polices système d'abord, Inter si installée.
+   ========================================================================== */
+
+:root {
+  /* --- Fond : Void ------------------------------------------------------- */
+  --void:        #050508;   /* fond général */
+  --bg-elev:     #0A0A12;   /* surfaces élevées */
+  --bg-panel:    #1A1A2E;   /* panneaux */
+  --bg-glass:    rgba(26, 26, 46, .55);
+
+  /* --- Texte ------------------------------------------------------------- */
+  --text-1:      #E8E8F0;   /* titres, valeurs */
+  --text-2:      #8A8AA8;   /* textes secondaires */
+  --text-3:      #4A4A6A;   /* légendes, désactivé */
+
+  /* --- Accents : Plasticity (ce qui se construit) ------------------------ */
+  --plasticity:        #00E5CC;
+  --plasticity-dim:    rgba(0, 229, 204, .42);
+  --plasticity-faint:  rgba(0, 229, 204, .13);
+
+  /* --- Accent : Transfer (ce qui circule entre les domaines) ------------- */
+  --transfer:        #9B59B6;
+  --transfer-dim:    rgba(155, 89, 182, .40);
+  --transfer-faint:  rgba(155, 89, 182, .13);
+
+  /* --- Sémantique (grille de vérité du projet) --------------------------- */
+  --ok:      #00E5CC;   /* ✅ établi / disponible */
+  --plan:    #E8B84B;   /* 📅 planifié / à porter */
+  --hypo:    #9B59B6;   /* 🔮 hypothèse / inféré */
+  --alert:   #FF3366;   /* ⚠️ alerte / à vérifier */
+  --ok-bg:   rgba(0, 229, 204, .10);
+  --plan-bg: rgba(232, 184, 75, .10);
+  --hypo-bg: rgba(155, 89, 182, .10);
+  --alert-bg:rgba(255, 51, 102, .10);
+
+  /* --- Traits ------------------------------------------------------------ */
+  --border:        rgba(45, 45, 68, .70);
+  --border-strong: rgba(74, 74, 106, .90);
+  --border-glow:   rgba(0, 229, 204, .35);
+
+  /* --- Polices ----------------------------------------------------------- */
+  --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'Cascadia Mono', 'SF Mono', Menlo, monospace;
+
+  /* --- Rythme ------------------------------------------------------------ */
+  --r-sm: 6px;  --r-md: 10px;  --r-lg: 14px;  --r-xl: 20px;  --r-full: 999px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px;
+  --rail: 232px;      /* largeur du rail de navigation */
+  --topbar: 56px;
+  --status: 30px;
+  --panel: 380px;     /* largeur du panneau de droite */
+
+  /* --- Profondeur & lumière --------------------------------------------- */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-2: 0 8px 24px rgba(0,0,0,.45);
+  --shadow-3: 0 24px 64px rgba(0,0,0,.55);
+  --glow-plasticity: 0 0 24px rgba(0,229,204,.18);
+  --glow-transfer:   0 0 24px rgba(155,89,182,.20);
+
+  /* --- Mouvement --------------------------------------------------------- */
+  --t-fast: 120ms; --t-mid: 220ms; --t-slow: 420ms;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+
+  /* --- Densité (bascule confort ⇄ dense) -------------------------------- */
+  --row-h: 40px;
+  --pad-view: var(--s-6);
+}
+
+/* densité dense : pour les tableaux et le travail intensif */
+:root[data-density="dense"] {
+  --row-h: 30px;
+  --pad-view: var(--s-4);
+}
+
+/* Contraste renforcé (accessibilité, RGAA) */
+:root[data-contrast="high"] {
+  --text-2: #B8B8D0;
+  --text-3: #8A8AA8;
+  --border: rgba(120, 120, 165, .85);
+  --border-strong: rgba(170, 170, 210, .95);
+  --bg-panel: #14142A;
+}
+
+/* Mouvement réduit : respect du réglage système */
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 1ms; --t-mid: 1ms; --t-slow: 1ms; }
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+:root[data-motion="reduced"] { --t-fast: 1ms; --t-mid: 1ms; --t-slow: 1ms; }
+:root[data-motion="reduced"] * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+
+/* --- Base ---------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 700px at 72% -12%, rgba(155,89,182,.13) 0%, transparent 60%),
+    radial-gradient(900px 600px at 12% 8%, rgba(0,229,204,.08) 0%, transparent 55%),
+    var(--void);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; letter-spacing: -.015em; margin: 0; }
+code, kbd, .mono { font-family: var(--font-mono); font-size: .86em; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; cursor: pointer; }
+a { color: var(--plasticity); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Focus visible partout (règle d'accessibilité non négociable) */
+:focus-visible {
+  outline: 2px solid var(--plasticity);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Barre de défilement discrète */
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--r-full); border: 3px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* --- Utilitaires --------------------------------------------------------- */
+.mono-dim { font-family: var(--font-mono); color: var(--text-3); font-size: 11.5px; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; left: -999px; top: 0; z-index: 999; padding: 10px 16px;
+  background: var(--plasticity); color: var(--void); font-weight: 600; border-radius: 0 0 var(--r-md) 0;
+}
+.skip-link:focus { left: 0; }
