@@ -6,3 +6,4 @@
 {"ts": "2026-10-07T12:34:11Z", "tag": "P6", "msg": "P6 synthèse terminée (AUDIT-2026-10.md + .csv, 13 sections)"}
 {"ts": "2026-10-07T12:34:11Z", "tag": "P7", "msg": "P7 démarré : vérif chiffres OK, publication en cours"}
 {"ts": "2026-10-07T12:35:30Z", "tag": "P7", "msg": "P7 terminé : commit d077e76 poussé, PR #3 ouverte"}
+{"ts": "2026-10-07T14:31:14Z", "tag": "P8", "msg": "Analyse v1→v5 terminée : 79 éléments classés, 12 domaines, benchmark international (Palantir/Graphiti/World Monitor/Earth AI)"}

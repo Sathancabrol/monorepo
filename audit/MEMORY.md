@@ -1,7 +1,7 @@
 # MEMORY — Audit monorepo (index généré)
 
 > **NE PAS ÉDITER À LA MAIN** — généré par `python3 scripts/audit_memory.py render`
-> depuis `audit/state.json`. Mis à jour : 2026-10-07T12:35:30Z
+> depuis `audit/state.json`. Mis à jour : 2026-10-07T14:31:14Z
 
 ## Où est quoi
 
@@ -23,11 +23,10 @@
 
 ## Prochaines actions
 
-- Hors audit — recommandations P0 du livrable (AUDIT-2026-10.md §9) :
-- 1. Fusionner la PR #3 watchtower (CI verte) puis ouvrir la PR de la branche +43 commits
-- 2. PR Language-decoder (arena/01a05471 : moteur + tests) vers main
-- 3. Revuer/fusionner ETAT-DE-LART arena/01a04f7b (+38 commits, agent complet)
-- 4. Resynchroniser projects/proto-cognitorium sur main (74e301e4)
+- DECISION ATTENDUE : valider la grille v1→v5 et l'Etape 0 (ANALYSE-V1-V5.md §7)
+- Puis : Etape 0 hygiene (PR#3, resync proto, tests rouges, licences, CI, snapshot)
+- Puis : Etape 1 v1 socle (interface skeleton + Core bi-temporel + HCSM contrat + registre de claims)
+- Restructuration : non commencee (analyse uniquement)
 
 ## Projets
 

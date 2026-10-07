@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-07T12:35:30Z",
+ "generated_at": "2026-10-07T14:31:14Z",
  "nodes": [
   {
    "id": "project:COGNITORIUM",
@@ -280,6 +280,18 @@
   },
   {
    "id": "scripts/audit_gh_drift.py",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/ANALYSE-V1-V5.md",
+   "type": "artifact"
+  },
+  {
+   "id": "audit/data/importance.json",
+   "type": "artifact"
+  },
+  {
+   "id": "scripts/audit_importance.py",
    "type": "artifact"
   }
  ],

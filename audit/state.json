@@ -4,7 +4,7 @@
     "id": "audit-2026-10",
     "title": "Audit complet monorepo Sathancabrol",
     "started_at": "2026-10-07T12:22:19Z",
-    "updated_at": "2026-10-07T12:35:30Z",
+    "updated_at": "2026-10-07T14:31:14Z",
     "operator": "agent"
   },
   "phase": {
@@ -232,11 +232,10 @@
     "connecteurs_interroges": 4
   },
   "next_actions": [
-    "Hors audit — recommandations P0 du livrable (AUDIT-2026-10.md §9) :",
-    "1. Fusionner la PR #3 watchtower (CI verte) puis ouvrir la PR de la branche +43 commits",
-    "2. PR Language-decoder (arena/01a05471 : moteur + tests) vers main",
-    "3. Revuer/fusionner ETAT-DE-LART arena/01a04f7b (+38 commits, agent complet)",
-    "4. Resynchroniser projects/proto-cognitorium sur main (74e301e4)"
+    "DECISION ATTENDUE : valider la grille v1→v5 et l'Etape 0 (ANALYSE-V1-V5.md §7)",
+    "Puis : Etape 0 hygiene (PR#3, resync proto, tests rouges, licences, CI, snapshot)",
+    "Puis : Etape 1 v1 socle (interface skeleton + Core bi-temporel + HCSM contrat + registre de claims)",
+    "Restructuration : non commencee (analyse uniquement)"
   ],
   "artifacts": [
     "audit/AUDIT-2026-10.md",
@@ -269,7 +268,10 @@
     "scripts/audit_memory.py",
     "scripts/audit_inventory.py",
     "scripts/audit_s0_map.py",
-    "scripts/audit_gh_drift.py"
+    "scripts/audit_gh_drift.py",
+    "audit/ANALYSE-V1-V5.md",
+    "audit/data/importance.json",
+    "scripts/audit_importance.py"
   ],
   "publication": {
     "plateforme": "GitHub",
@@ -278,5 +280,32 @@
     "commit": "d077e76",
     "pr": "https://github.com/Sathancabrol/monorepo/pull/3",
     "date": "2026-10-07T12:35:30Z"
+  },
+  "analyse_v1v5": {
+    "statut": "en attente de validation",
+    "date": "2026-10-07",
+    "document": "audit/ANALYSE-V1-V5.md",
+    "machine": "audit/data/importance.json",
+    "generateur": "scripts/audit_importance.py",
+    "grille": "v1 socle | v2 coeur d'usage | v3 puissance | v4 conception | v5 horizon | v0 archive",
+    "total_elements": 79,
+    "repartition": {
+      "v1": 20,
+      "v2": 23,
+      "v3": 16,
+      "v4": 10,
+      "v5": 2,
+      "v0": 8
+    },
+    "cible": "12 domaines interface + 8 entites Core (User Project Knowledge Skill Object Place Task Event)",
+    "benchmark": [
+      "Palantir Foundry/Gotham (ontologie 3 couches)",
+      "Graphiti/Zep (bi-temporel T/T')",
+      "World Monitor (baseline+gaps)",
+      "Google Earth AI (agents au-dessus)",
+      "Multi-INT (raisonnement spatial/temporel/hierarchique)",
+      "OSIRIS (canevas multi-flux)"
+    ],
+    "prochaine_decision": "valider la grille v1→v5 et l'Etape 0 (hygiene)"
   }
 }
