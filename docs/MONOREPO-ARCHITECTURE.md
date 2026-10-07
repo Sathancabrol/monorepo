@@ -1,150 +1,30 @@
-# Architecture cible du monorepo
+# Architecture modulaire du monorepo
 
-## Objectif
-
-Le monorepo devient un **shell d'intégration modulaire** : les projets historiques restent autonomes, mais leurs capacités sont exposées par des contrats communs.
-
-Le principe n'est plus :
-
-`projet → copie de code → UI`
-
-mais :
-
-`source → adapter → contrat → capacité → module → UI / agent`
+Le monorepo devient le shell d'integration. Les projets sources restent autonomes et exposent progressivement leurs capacites via des contrats communs.
 
 ## Couches
 
-```
-apps/
-  shell/                 Interface unifiée (FastAPI/Jinja aujourd'hui)
+- `apps/` : interfaces et shells
+- `core/` : contrats, registre, provenance, evenements
+- `modules/` : capacites fonctionnelles
+- `adapters/` : ponts vers les projets existants
+- `data/` : donnees brutes, normalisees et registres
+- `projects/` : projets sources/importes, conserves tels quels pendant la migration
 
-core/
-  contracts/             Schémas canoniques et contrats d'échange
-  registry/              Registre des modules/capacités
-  events/                Événements inter-modules
-  provenance/            Source, licence, confiance, temporalité
+## Flux
 
-modules/
-  gis/                   Cartographie, couches, 3D, géospatial
-  territory/             Territoire, population, acteurs, projets
-  chantier/              BTP/TP, documents, tâches, planning, risques
-  research/              Recherche, sources, preuves, claims
-  cognition/             HCSM, connaissances, compétences
-  learning/              Learning Engine, simulations pédagogiques
-  temporal/              Chronos, chronologie, phasage
-  agents/                Orchestration et agents spécialisés
-  language/              Décodage / extraction linguistique
+`SOURCE -> ADAPTER -> CANONICAL DATA -> CAPABILITY -> MODULE -> UI / AGENT`
 
-adapters/
-  watchtower/
-  cognitorium/
-  research-engine/
-  hcsm/
-  frontignan/
-  chronos/
-  chantier-corpus/
+## Modules cibles
 
-data/
-  raw/                    Sources brutes, idéalement hors Git si sensibles
-  normalized/             Données normalisées
-  indexes/                Index/recherches
-  registries/              Catalogues machine-readable
+GIS, Territoire, Chantier BTP/TP, Recherche/Preuves, Cognition/Connaissance, Learning Engine, Temporal/Chronos, Agents/Orchestration, Language Decoder.
 
-projects/
-  ...                     Projets sources/importés conservés tels quels
-```
+## Regle de migration
 
-## Règle de migration
+1. Referencer l'existant.
+2. Ajouter un adaptateur.
+3. Normaliser les donnees.
+4. Extraire uniquement le code reellement partage.
+5. Remplacer progressivement les anciennes integrations.
 
-On ne déplace pas tout le code d'un coup.
-
-### Phase A — maintenant
-Créer les contrats, manifestes et adaptateurs logiques. Aucun doublon de code.
-
-### Phase B
-Extraire les fonctions réellement partagées dans `modules/` ou `core/`.
-
-### Phase C
-Remplacer progressivement les anciennes UI par les modules communs.
-
-### Phase D
-Les projets sources deviennent des références/versionnées, pas des copies concurrentes.
-
-## Contrat d'un module
-
-Chaque module expose :
-
-- identité et version
-- domaine
-- source de référence
-- capacités
-- entrées
-- sorties
-- événements produits/consommés
-- dépendances
-- statut
-- licence/provenance
-- point d'intégration
-
-Un module peut être :
-- **embedded** : exécuté dans le shell
-- **service** : API/processus séparé
-- **library** : bibliothèque partagée
-- **adapter** : pont vers un projet existant
-- **external** : outil externe référencé
-
-## Flux de données canonique
-
-```
-SOURCE
-  ↓
-ADAPTER
-  ↓
-CANONICAL RECORD
-  ↓
-CAPABILITY
-  ↓
-MODULE
-  ├──→ MAP
-  ├──→ GRAPH
-  ├──→ DOSSIER
-  ├──→ SIMULATION
-  └──→ AGENT
-```
-
-## Exemple transversal
-
-```
-CCTP
- ↓
-chantier adapter
- ↓
-Document / Task / Constraint
- ↓
-GIS ─────────────→ localisation
- ↓
-Research ────────→ preuve/source
- ↓
-Cognition ───────→ compétence
- ↓
-Learning ────────→ scénario d'entraînement
- ↓
-Temporal ────────→ planning / chronologie
- ↓
-Agent ───────────→ orchestration
-```
-
-## Ce que le shell doit savoir
-
-Le shell ne doit pas connaître le code interne de Watchtower, Cognitorium ou Research Engine.
-
-Il doit seulement savoir :
-
-1. quels modules sont disponibles ;
-2. quelles capacités ils exposent ;
-3. quels contrats ils acceptent ;
-4. comment les appeler ;
-5. quelles données ils produisent ;
-6. d'où viennent ces données.
-
-Cela rend l'ensemble remplaçable et extensible.
+Aucun gros deplacement de code n'est effectue dans cette etape : l'objectif est de stabiliser l'architecture avant de migrer les briques.
