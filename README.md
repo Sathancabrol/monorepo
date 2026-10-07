@@ -92,3 +92,13 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 ## 📚 Fusion réelle (option b)
 
 Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+
+
+## 🧰 Catalogue transversal des outils et données
+
+Le monorepo possède maintenant un index de convergence :
+
+- `docs/TOOL-DATA-CATALOG.md` — domaines, sources internes et architecture d'intégration ;
+- `data/tool_registry.json` — registre canonique consommable par l'interface et les agents.
+
+Le registre détaillé des logiciels externes reste dans Watchtower (`audit/reference/REGISTRE-OUTILS.json`). Le monorepo sert de **carte de convergence** entre Watchtower, chantier/BTP, recherche, HCSM, Cognitorium et territoire.
