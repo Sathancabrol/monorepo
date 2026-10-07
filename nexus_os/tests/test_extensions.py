@@ -269,3 +269,27 @@ def test_api_evals(client, sandbox):
     sc = client.post("/api/evals", json={"agent_id": "writer"}).json()
     assert sc["cases"] == 1 and sc["passed"] == 1
     assert client.post("/api/evals", json={"agent_id": "zzz"}).status_code == 404
+
+
+def test_api_tools_reflete_le_registre_du_runtime(client, sandbox):
+    """/api/tools doit annoncer ce que le runtime peut réellement appeler,
+    y compris les outils MCP arrivés après le démarrage."""
+    from nexus_os import app as app_mod
+
+    base = {t["name"] for t in client.get("/api/tools").json()}
+    assert not any(n.startswith("mcp__") for n in base)
+
+    class _Fake:
+        name = "mcp__demo__echo"
+        risky = False
+        tags = ["mcp"]
+
+        def spec(self):
+            return {"name": self.name, "description": "écho", "parameters": {}}
+
+    app_mod.rt.tools.register(_Fake())
+    try:
+        names = {t["name"] for t in client.get("/api/tools").json()}
+        assert "mcp__demo__echo" in names, "le registre du runtime n'est pas la source de /api/tools"
+    finally:
+        app_mod.rt.tools.tools.pop("mcp__demo__echo", None)

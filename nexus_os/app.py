@@ -34,7 +34,6 @@ from nexus_os.llm import router as llm_router, system_mode
 from nexus_os.memory import memory
 from nexus_os.runtime import Runtime
 from nexus_os.skills import library as skill_library
-from nexus_os.tools import ToolRegistry
 
 app = FastAPI(title="NEXUS·OS — Agentic Operating System", version=__version__)
 templates = Jinja2Templates(directory=str(config.TEMPLATES_DIR))
@@ -43,7 +42,9 @@ app.mount("/static", StaticFiles(directory=str(config.STATIC_DIR)), name="static
 rt = Runtime()
 agents = agent_registry()
 skills = skill_library()
-tools = ToolRegistry()
+#: Une seule source de vérité : le registre du runtime. Un second registre
+#: construit ici ne verrait pas les outils MCP ajoutés après le démarrage.
+tools = rt.tools
 
 
 # --------------------------------------------------------------------------- #
