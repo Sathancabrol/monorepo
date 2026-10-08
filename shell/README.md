@@ -8,9 +8,12 @@
 ```bash
 # le plus simple : double-cliquer sur shell/index.html (aucun serveur requis)
 
-# ou servir localement (micrologiciel/déploiement)
+# pour voir aussi les maquettes et les ateliers, servir tout le dépôt :
+python3 shell/tools/serve.py            # → http://localhost:8000 (ouvre la page d'accès)
+python3 shell/tools/serve.py 9000       # autre port
+
+# ou, au minimum, servir juste le squelette :
 python3 -m http.server 8000 --directory shell
-# → http://localhost:8000
 ```
 
 Tout marche **hors ligne**, en `file://` : le registre est inliné (`assets/registry.js`) et les sons sont **synthétisés** (aucun fichier à télécharger).
@@ -28,6 +31,8 @@ Tout marche **hors ligne**, en `file://` : le registre est inliné (`assets/regi
 | `assets/sounds.js` | **Sons d'interface** synthétisés (Web Audio) + chargement optionnel d'un pack de fichiers |
 | `data/modules.json` | Le même registre, en JSON (pour les outils, les tests, le générateur d'installeur) |
 | `tools/gen-registry.py` | **La source de vérité** du registre. Modifier ici, puis regénérer |
+| `tools/check-sources.py` | Le **contrôle de traçabilité** : vérifie que chaque fonctionnalité est adossée à un fichier réel du dépôt (aujourd'hui : **104/104**) |
+| `tools/serve.py` | Servir tout le dépôt en local (`python3 shell/tools/serve.py`) : `/` renvoie vers la page d'accès — squelette, maquettes, ateliers. Bibliothèque standard uniquement |
 
 ## Les huit portes
 

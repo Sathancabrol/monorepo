@@ -1,7 +1,8 @@
 # Le squelette d'interface — Carré d'As, portail des modules
 
 **Statut :** `FAIT` (squelette fonctionnel, à habiller) · **Date :** 7 octobre 2026
-**Ouvrir :** double-cliquer sur `shell/index.html` — ou `python3 -m http.server 8000 --directory shell`
+**Ouvrir :** double-cliquer sur `shell/index.html` — ou, pour aussi voir les maquettes et les ateliers :
+`python3 shell/tools/serve.py` puis <http://localhost:8000> (la racine renvoie vers la page d'accès)
 **Fichiers :** `shell/` (code) · `shell/README.md` (mode d'emploi) · `docs/carre-das/07-INVENTAIRE-FONCTIONNALITES.md` (le contenu)
 
 ---
