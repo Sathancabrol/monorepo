@@ -65,5 +65,19 @@ app/ (FastAPI, déjà là)
 
 ---
 
+## 6. 👁️ Complément du 09/10 — les « yeux » du système (Obscura) et la méthode ICM
+
+Signalé via les reels de **Jake Van Clief** (researcher « applied AI », vancliefmedia/Eduba).
+
+**Jake Van Clief = ICM (Interpretable Context Methodology)**, arXiv 2603.16021 (03/2026) : *« Folder Structure as Agent Architecture »* — tout l'état, tout le contexte, toutes les instructions existent en **fichiers dans une arborescence** ; chaque étage du pipeline ne charge que son dossier ; contrats d'étapes + **portes de revue humaine** ; le même modèle exécute tout, c'est la structure de dossiers qui contrôle le contexte.
+→ **C'est exactement l'architecture du monorepo/Life Hub** (USER/, TELOS/, agent-office/data/, docs/ comme état agentique). Validation externe de notre approche ; à retenir : généraliser les *portes de revue humaine entre étapes* (déjà le principe d'`arena judge`).
+
+**Obscura = les yeux** : [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) — **28 700★**, Rust, créé 13/04/2026. Navigateur headless pour agents IA : JS réel via V8, compatible CDP (drop-in Puppeteer/Playwright), **binaire unique sans Chrome ni Node**, rendu natif depuis v0.2.0 (screenshots/screencast/PDF sans Chromium), **serveur MCP embarqué (14 outils browser)**, mode stealth anti-fingerprint.
+Chiffres vérifiés : 64 Mo mémoire médiane vs 201 pour Chrome ; rend 94/98 pages réelles vs 85/98 ; mais latence médiane 5,2 s vs 2,1 (dominé réseau) ; projet jeune et concentré (1 contributeur ≈ 733 commits). **Cloudflare a construit son navigateur agent (Kitesurf) à partir d'Obscura.**
+Écosystème déjà là : hermes-plugin-obscura, wrapper puppeteer-obscura, plugins DSH/WSL.
+⚠️ Le mode stealth sert l'anti-détection : pour nous, usage normal seulement (docs publiques, veille, data ouverte) — jamais de contournement de CGU.
+
+**Intégration à l'entreprise d'IA** : Obscura = couche « web/veille » manquante du service `research` (ses requêtes `watch` sont prêtes à l'alimenter). À installer sur la machine réelle (le sandbox du monorepo n'a pas d'accès web libre) quand la couche MCP sera branchée au harness. Rien à construire : binaire + MCP.
+
 ## 📚 Sources (vérifiées via API GitHub le 08/10/2026)
-[ElodineOfficial/GobboNet](https://github.com/ElodineOfficial/GobboNet) (README : launcher, moteur, retrieval model, offline) · [SillyTavern](https://github.com/SillyTavern/SillyTavern) · [TavernAI/TavernAI-v1](https://github.com/TavernAI/TavernAI-v1) · [THESIS-AGENT/AIRouter](https://github.com/THESIS-AGENT/AIRouter) · [BerriAI/litellm](https://github.com/BerriAI/litellm) · [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) · [open-webui](https://github.com/open-webui/open-webui) · [LibreChat](https://github.com/LibreChat-AI/LibreChat) · [AnythingLLM](https://github.com/Mintplex-Labs/anything-llm) · [OrcaRouter-Lite](https://github.com/Continuum-AI-Corp/OrcaRouter-Lite)
+[ElodineOfficial/GobboNet](https://github.com/ElodineOfficial/GobboNet) (README : launcher, moteur, retrieval model, offline) · [SillyTavern](https://github.com/SillyTavern/SillyTavern) · [TavernAI/TavernAI-v1](https://github.com/TavernAI/TavernAI-v1) · [THESIS-AGENT/AIRouter](https://github.com/THESIS-AGENT/AIRouter) · [BerriAI/litellm](https://github.com/BerriAI/litellm) · [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) · [open-webui](https://github.com/open-webui/open-webui) · [LibreChat](https://github.com/LibreChat-AI/LibreChat) · [AnythingLLM](https://github.com/Mintplex-Labs/anything-llm) · [OrcaRouter-Lite](https://github.com/Continuum-AI-Corp/OrcaRouter-Lite) · [h4ckf0r0day/obscura](https://github.com/h4ckf0r0day/obscura) (28,7k★, 09/10/2026) · ICM Van Clief, [arXiv 2603.16021](https://arxiv.org/html/2603.16021v2) · [jakevanclief.substack.com](https://jakevanclief.substack.com/p/beyond-the-turing-test) · [jacar.es — test indépendant Obscura](https://jacar.es/en/obscura-rust-headless-browser-ai-agents/)
