@@ -63,6 +63,24 @@ COGNITORIUM
 3. **O3 en réserve** : plancher BTP si O1/O2 ne donnent rien à J+30.
 4. **Ne RIEN reconstruire** : chaque offre part d'un artefact existant ; si un test demande du code neuf, c'est un signal de mauvaise offre.
 
+## 5bis. 🔎 Audit approfondi — ce que le premier passage avait manqué (complété le 08/10, 2ᵉ passe)
+
+| Trouvaille | Détail | Conséquence |
+|---|---|---|
+| **ETAT-DE-LART-PSYCHOLOGIE** (dans projects/, absent de la 1ʳᵉ lecture) | Cartographie critique 2020-2026 **conforme PRISMA 2020** : protocole, équations de recherche reproductibles, pyramide des preuves, validités Cook & Campbell, base 42 champs + Trust Factor, graphe D3, app FastAPI, pptx « Cognition distribuée » | **la caution scientifique d'O1** — Cognitorium n'est pas qu'un proto, il s'appuie sur une revue de littérature méthodique |
+| **projects/outsider** | Chantier game design complet (RPG d'enquête Supernatural, 5 piliers, GDD, moteur de phénomènes, société surnaturelle formalisée), ouvert le 2026-10-08 | la piste D/M3 a **déjà un chantier structuré** — pas besoin de le créer |
+| **projects/mail-organizer** | Paquet Python zéro-dépendance, tests, Gmail+Outlook, « jamais supprimé » | micro-offre immédiate + preuve d'ingénierie livrable |
+| **watchtower plus profond qu'un globe** | audit/ (catalogue outils, coûts/licences/légal, registre JSON, propositions R&D), stack Docker SearXNG, CCTV sources, ROADMAP | couche « observation/veille » déjà outillée et auditée |
+| **Drive / Google AI Studio = l'atelier de design Cognitarium** | 7 prompts datés 28/07→27/08/2026 : Cognitarium City Frontignan, Graphe Cognitif, Personal Cognitive Profile, **Parcours d'Onboarding (82 Mo de contexte)**, Frise Chronologique de l'Histoire (×2), Traitement de documents, Évolution de l'ingénierie IA + images générées | le produit a été **activement designé pendant un mois** ; ces prompts sont le cahier des charges à réactiver |
+| **Drive : coquilles vides** | « Polsia - Cognitorium et Mnéoterr », « Slack Cognitrum », « Vercel », « Drafted » = dossiers créés le 07/10 mais 0 fichier ; « 05 Documents administratifs (**à compléter**) » | un TODO explicite subsiste côté admin ; « Mnéoterr » (mémoire + territoire) apparaît comme un concept frère de Cognitarium |
+| **Notion = données template** | DB Revenus/Dépenses : Salaire 3500, Loyer 2000, « Dîner avec Rachel »… créées le 08/08, jamais touchées depuis | abandon confirmé ; la source de vérité budget reste le tableur (USER/FINANCES) |
+| **Calendar** | 0 événement jusqu'à fin novembre | agenda vierge → les tests O1/O2 peuvent y être planifiés sans conflit |
+| **Git/GitHub** | ni stash ni branche orpheline ni gist ; 1 seul repo étoilé (build-your-own-x) ; Language-decoder toujours README seul ; OpenBCI Collection = feuille partagée par shirley@openbci.com (2019, citations de recherche) | rien de caché côté code ; OpenBCI = veille capteurs, pas un asset produit |
+| **Sandbox** | /home/user/uploads (dont image-1.png) et /tmp/lifeos purgés | le budget est sauvegardé dans USER/FINANCES/BUDGET-MENSUEL.md — aucune perte |
+
+**Lecture finale** : l'écosystème complet, dans l'ordre de maturité —
+`ETAT-DE-LART-PSYCHOLOGIE` (science) → `HCSM` (modèle) → `proto-cognitorium` (moteur ROME/Formacode) → prompts AI Studio (design produit) → `frontignan` (preuve territoriale) → `watchtower` (couche observation) → `app/` (portail) → `outsider` (création) → `mail-organizer` (livrable d'ingénierie). **O1 reste la tête de pont, et il est encore mieux armé qu'écrit au premier passage.**
+
 ## 5. ⚙️ Mises à jour faites dans la foulée
 - `USER/PROJECTS.md` : Cognitorium reconnu comme produit n°1 ; Notion/Drive/Linear cartographiés.
 - `USER/TELOS/MISSION.md` : pistes A reclassées O1/O2/O3 avec les actifs réels.

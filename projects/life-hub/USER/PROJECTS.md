@@ -26,9 +26,11 @@ source: MANIFEST.json, projects/, docs/ (08/10/2026)
 | Pièce | Où | Rôle |
 |---|---|---|
 | HCSM | `projects/HCSM/` | modèle scientifique de l'état cognitif (v0.1.1) |
+| ETAT-DE-LART-PSYCHOLOGIE | `projects/ETAT-DE-LART-PSYCHOLOGIE/` | revue de littérature PRISMA 2020 (2020-2026) : la caution scientifique |
 | proto-cognitorium | `projects/proto-cognitorium/` | moteur : 271 fiches ROME France Travail + Formacode + DDL SQLite + maquettes |
 | Cognitarium City / Frontignan | `projects/frontignan/` + Drive (prompts AI Studio, « Vision Pilot 1.2.mp4 ») | application territoriale : rapport 249 sources + deck 18 slides |
-| OpenBCI Research Collection | Drive | piste capteurs / mesure réelle |
+| Atelier de design | Drive / Google AI Studio (7 prompts, 28/07→27/08/2026) | cahier des charges produit : profil cognitif, graphe, onboarding (82 Mo), frise historique |
+| OpenBCI Research Collection | Drive (partagé openbci.com) | veille capteurs / mesure réelle |
 | animation-chronos | repo dédié | visuel de marque |
 → Voir `docs/AUDIT-ACTIFS-COMPLET.md` : offres O1/O2/O3 assemblées sur cet existant.
 
