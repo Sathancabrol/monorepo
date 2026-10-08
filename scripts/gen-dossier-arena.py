@@ -142,6 +142,8 @@ CANDIDATS = {
     "terrain": ["getodk/central", "kobotoolbox/kpi", "danielbrendel/hortusfox-web",
                 "learningequality/kolibri"],
     "qualite": ["moj-analytical-services/splink"],
+    "materiel": ["GuillaumeGomez/sysinfo", "gfx-rs/wgpu"],
+    "papers": ["ourresearch/openalex-guts", "CrossRef/rest-api-doc", "docling-project/docling", "opendatalab/MinerU"],
 }
 
 # mots-clés → clés de CANDIDATS (l'ordre compte : les premiers trouvés priment)
@@ -169,6 +171,8 @@ DECLENCHEURS = [
     (r"reverse|binaire|décompil|debug|frida", "re"),
     (r"terrain|enquête|enquete|collecte|sondage|kobo|odk", "terrain"),
     (r"déduplication|deduplication|entité|entity resolution|rapprochement", "qualite"),
+    (r"hardware|cpu|gpu|vram|profils eco|budget de ressources|détection matériel", "materiel"),
+    (r"recherche scientifique|publications?|papers?|openalex|crossref|bibliograph", "papers"),
 ]
 
 # ---------------------------------------------------------------------------

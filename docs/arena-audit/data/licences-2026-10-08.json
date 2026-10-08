@@ -18,6 +18,15 @@
   "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
  },
  {
+  "repo": "CrossRef/rest-api-doc",
+  "etoiles": 801,
+  "licence": "MIT (doc propriétaire)",
+  "maj": "2024-09-25",
+  "archive": false,
+  "langage": "-",
+  "risque": "🟡 à qualifier"
+ },
+ {
   "repo": "Crosstalk-Solutions/project-nomad",
   "etoiles": 39287,
   "licence": "Apache-2.0",
@@ -52,6 +61,15 @@
   "archive": false,
   "langage": "C++",
   "risque": "🟡 Copyleft faible : liaison dynamique autorisée, ne pas modifier ni statiquement lier."
+ },
+ {
+  "repo": "GuillaumeGomez/sysinfo",
+  "etoiles": 2748,
+  "licence": "MIT",
+  "maj": "2026-10-04",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive maximale."
  },
  {
   "repo": "IfcOpenShell/IfcOpenShell",
@@ -459,6 +477,15 @@
   "risque": "🟢 Permissive + clause brevets. Idéale."
  },
  {
+  "repo": "gfx-rs/wgpu",
+  "etoiles": 18234,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
   "repo": "ggml-org/llama.cpp",
   "etoiles": 130687,
   "licence": "MIT",
@@ -709,6 +736,15 @@
   "archive": false,
   "langage": "Java",
   "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "ourresearch/openalex-guts",
+  "etoiles": 157,
+  "licence": "MIT",
+  "maj": "2026-03-06",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive maximale."
  },
  {
   "repo": "pola-rs/polars",

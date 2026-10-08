@@ -1,10 +1,12 @@
 repo	etoiles	licence	derniere_publication	archive	langage	risque
 CesiumGS/cesium	15811	Apache-2.0	2026-10-08	False	JavaScript	🟢 Permissive + clause brevets. Idéale.
 CloudCompare/CloudCompare	4788	GPL-2.0	2026-10-08	False	C++	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+CrossRef/rest-api-doc	801	MIT (doc propriétaire)	2024-09-25	False	-	🟡 à qualifier
 Crosstalk-Solutions/project-nomad	39287	Apache-2.0	2026-10-07	False	TypeScript	🟢 Permissive + clause brevets. Idéale.
 EbookFoundation/free-programming-books	398700	CC-BY-4.0	2026-10-05	False	Python	🟡 Attribution obligatoire (données).
 FalkorDB/FalkorDB	7967	SSPL-1.0	2026-10-08	False	Rust	⛔ Interdit d'offrir le logiciel en service sans ouvrir toute la pile. À ÉCARTER.
 FreeCAD/FreeCAD	34025	LGPL-2.1	2026-10-08	False	C++	🟡 Copyleft faible : liaison dynamique autorisée, ne pas modifier ni statiquement lier.
+GuillaumeGomez/sysinfo	2748	MIT	2026-10-04	False	Rust	🟢 Permissive maximale.
 IfcOpenShell/IfcOpenShell	2841	LGPL-3.0	2026-10-08	False	C++	🟡 Copyleft faible : liaison dynamique autorisée.
 JuliaDynamics/Agents.jl	919	MIT	2026-09-15	False	Julia	🟢 Permissive maximale.
 Kc1t/alethe-agents	832	AGPL-3.0	2026-10-07	False	TypeScript	⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur.
@@ -50,6 +52,7 @@ freeciv/freeciv	1602	GPL-2.0	2026-10-08	False	C	⚠️ Copyleft fort : utilisabl
 frida/frida	22146	wxWindows-Library-Licence-3.1	2026-10-08	False	Meson	🟡 Type LGPL : ok en outil externe.
 getodk/central	228	Apache-2.0	2026-10-07	False	JavaScript	🟢 Permissive + clause brevets. Idéale.
 getzep/graphiti	31553	Apache-2.0	2026-10-07	False	Python	🟢 Permissive + clause brevets. Idéale.
+gfx-rs/wgpu	18234	Apache-2.0	2026-10-08	False	Rust	🟢 Permissive + clause brevets. Idéale.
 ggml-org/llama.cpp	130687	MIT	2026-10-08	False	C++	🟢 Permissive maximale.
 godotengine/godot	118272	MIT	2026-10-07	False	C++	🟢 Permissive maximale.
 graphdeco-inria/gaussian-splatting	24137	NON-COMMERCIAL	2025-10-17	False	Python	⛔ Usage commercial interdit. À ÉCARTER du produit (ok démo/recherche).
@@ -78,6 +81,7 @@ openzim/zim-tools	221	GPL-3.0	2026-10-04	False	C++	⚠️ Copyleft fort : idem G
 organicmaps/organicmaps	15613	Apache-2.0	2026-10-08	False	C++	🟢 Permissive + clause brevets. Idéale.
 osm-search/Nominatim	4512	GPL-3.0	2026-09-30	False	Python	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
 osmandapp/OsmAnd	6062	GPL-3.0	2026-10-08	False	Java	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+ourresearch/openalex-guts	157	MIT	2026-03-06	False	Python	🟢 Permissive maximale.
 pola-rs/polars	40008	MIT	2026-10-08	False	Rust	🟢 Permissive maximale.
 potree/potree	5632	BSD (2 ou 3 clauses)	2026-01-08	False	JavaScript	🟢 Permissive.
 protomaps/PMTiles	3074	BSD-3-Clause	2026-09-16	False	TypeScript	🟢 Permissive.

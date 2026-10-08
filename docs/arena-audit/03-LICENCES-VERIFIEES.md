@@ -49,6 +49,7 @@ téléchargé séparément et désactivable**, soit il est **abandonné**.
 | `rizinorg/rizin` | 3 942 | LGPL-3.0 | 2026-10-08 | 🟡 Copyleft faible : liaison dynamique autorisée. |
 | `IfcOpenShell/IfcOpenShell` | 2 841 | LGPL-3.0 | 2026-10-08 | 🟡 Copyleft faible : liaison dynamique autorisée. |
 | `libgeos/geos` | 1 513 | LGPL-2.1 | 2026-10-05 | 🟡 Copyleft faible : liaison dynamique autorisée  ne pas modifier ni statiquement lier. |
+| `CrossRef/rest-api-doc` | 801 | MIT (doc propriétaire) | 2024-09-25 | 🟡 à qualifier |
 | `LadybugDB/bugscope-tauri` | 18 | NONE | 2026-09-24 | 🟡 à qualifier |
 | `openclaw/openclaw` | 391 640 | MIT | 2026-10-08 | 🟢 Permissive maximale. |
 | `ollama/ollama` | 182 569 | MIT | 2026-10-08 | 🟢 Permissive maximale. |
@@ -76,6 +77,7 @@ téléchargé séparément et désactivable**, soit il est **abandonné**.
 | `a2aproject/A2A` | 26 073 | Apache-2.0 | 2026-10-08 | 🟢 Permissive + clause brevets. Idéale. |
 | `yjs/yjs` | 22 910 | MIT | 2026-10-07 | 🟢 Permissive maximale. |
 | `bytecodealliance/wasmtime` | 18 698 | Apache-2.0 | 2026-10-07 | 🟢 Permissive + clause brevets. Idéale. |
+| `gfx-rs/wgpu` | 18 234 | Apache-2.0 | 2026-10-08 | 🟢 Permissive + clause brevets. Idéale. |
 | `apache/arrow` | 17 188 | Apache-2.0 | 2026-10-08 | 🟢 Permissive + clause brevets. Idéale. |
 | `CesiumGS/cesium` | 15 811 | Apache-2.0 | 2026-10-08 | 🟢 Permissive + clause brevets. Idéale. |
 | `organicmaps/organicmaps` | 15 613 | Apache-2.0 | 2026-10-08 | 🟢 Permissive + clause brevets. Idéale. |
@@ -99,6 +101,7 @@ téléchargé séparément et désactivable**, soit il est **abandonné**.
 | `mesa/mesa` | 3 877 | Apache-2.0 | 2026-10-06 | 🟢 Permissive + clause brevets. Idéale. |
 | `protomaps/PMTiles` | 3 074 | BSD-3-Clause | 2026-09-16 | 🟢 Permissive. |
 | `mkkellogg/GaussianSplats3D` | 2 904 | MIT | 2025-10-19 | 🟢 Permissive maximale. |
+| `GuillaumeGomez/sysinfo` | 2 748 | MIT | 2026-10-04 | 🟢 Permissive maximale. |
 | `moj-analytical-services/splink` | 2 462 | MIT | 2026-10-06 | 🟢 Permissive maximale. |
 | `OSGeo/PROJ` | 2 030 | MIT | 2026-10-08 | 🟢 Permissive maximale. |
 | `LadybugDB/ladybug` | 1 825 | MIT | 2026-10-08 | 🟢 Permissive maximale. |
@@ -111,6 +114,7 @@ téléchargé séparément et désactivable**, soit il est **abandonné**.
 | `ThatOpen/engine_components` | 710 | MIT | 2026-10-06 | 🟢 Permissive maximale. |
 | `adewaskar/jarvis` | 412 | MIT | 2026-08-05 | 🟢 Permissive maximale. |
 | `getodk/central` | 228 | Apache-2.0 | 2026-10-07 | 🟢 Permissive + clause brevets. Idéale. |
+| `ourresearch/openalex-guts` | 157 | MIT | 2026-03-06 | 🟢 Permissive maximale. |
 | `x64dbg/x64dbg` | 49 739 | GPL-3.0 | 2026-10-01 | ⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants. |
 | `rizinorg/cutter` | 19 942 | GPL-3.0 | 2026-09-11 | ⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants. |
 | `neo4j/neo4j` | 17 284 | GPL-3.0 | 2026-09-22 | ⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants. |
