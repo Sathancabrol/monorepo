@@ -3,6 +3,7 @@
 > Document de prospective · 8 octobre 2026 · branche `arena/93b54a79-monorepo`
 > **Sources** : GitHub (Octoverse, API trending), presse spécialisée (MIT Tech Review-class, IEA, Epoch AI), science (WMO/ONU climat), réseaux sociaux & Reddit (r/singularity, r/fusion), roadmaps industriels. Inspiration : *Les Revues du Monde — « Ces chercheurs ont prédit la fin de l'Histoire (et elle s'accélère) »* [vidéo](https://www.youtube.com/watch?v=GNxyOhgWZUA).
 > **Méthode** : ni prophétie ni déni. On extrapole les tendances mesurées (Epoch AI), on écoute les signaux faibles (Reddit, GitHub), on cale sur les échéances institutionnelles (WMO, AI Act, roadmaps IBM/Google/Tesla), et on affecte une **confiance** à chaque bloc : 🟢 tendanciel / 🟡 probable / 🔴 spéculatif.
+> **🎯 Suivi** : les prédictions de ce document sont extraites, datées et scorées dans [`PROSPECTIVE-TRACKER.md`](PROSPECTIVE-TRACKER.md) — revue trimestrielle, révisions tracées, jamais de suppression silencieuse.
 
 ---
 
@@ -132,7 +133,7 @@
 4. **Énergie/climat à Paris** : l'adaptation (canicules, prix) sera le poste de dépense croissant — le volet budget du Life Hub devrait tracker énergie/alimentation dès maintenant.
 5. **Santé** : la fenêtre GLP-1/diagnostic IA 2027-2030 = meilleur ratio coût/bénéfice santé de la décennie pour un profil A informé.
 6. **Post-quantique** : rien à faire avant 2030 côté perso, mais tes choix de stockage long terme (git, chiffrement) doivent rester migrables.
-7. **Règle anti-vertige** (la vidéo a raison) : ne pas chercher LA date ; surveiller 4 signaux chaque trimestre — METR/longueur des tâches agents, FrontierMath, coût des humanoïdes, température annuelle WMO.
+7. **Règle anti-vertige** (la vidéo a raison) : ne pas chercher LA date ; surveiller 4 signaux chaque trimestre — METR/longueur des tâches agents, FrontierMath, coût des humanoïdes, température annuelle WMO. Ces 4 signaux + les 24 prédictions scorées sont suivis dans [`PROSPECTIVE-TRACKER.md`](PROSPECTIVE-TRACKER.md).
 
 ---
 
