@@ -138,6 +138,8 @@ mail-organizer  Google Calendar  Drive            research-engine    COGNITORIUM
 
 ## 7. 🔬 Approfondissement LifeOS — faisabilité réelle (08/10/2026)
 
+> **MAJ 08/10 (soir)** : benchmark des harness nés dans les 6 derniers mois (second-brain-os, AgentVerse-OS, Amethyst…) → [`BENCHMARK-HARNESS-2026.md`](BENCHMARK-HARNESS-2026.md). Verdict : LifeOS reste le socle, second-brain-os pour la couche connaissance, Amethyst comme jumeau FastAPI observé.
+
 ### Santé du projet
 - Créé 09/2025, dernier push 04/09/2026, **2 488 forks**, 45 issues ouvertes, v7.40 — actif et déjà adopté.
 - Docs officielles complètes : docs.ourlifeos.ai (55 documents, 33 sections).
