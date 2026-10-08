@@ -20,9 +20,9 @@
 - **Décision attendue** : Definir l'architecture cible : un shell + N modules, contrats d'interface versionnés, aucune dépendance croisée entre modules
 - **Critère de succès** : Un document d'architecture cible + ADR + 3 schémas Mermaid, validé contre les 8 dépôts existants
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · tesseract-ocr/tesseract ★76 861 [Apache-2.0]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e
 - **Concept art** : `art-19`
 
@@ -57,9 +57,8 @@
 - **Décision attendue** : Trancher : (a) PostgreSQL serveur dès v1, (b) PGlite/SQLite embarqué puis promotion vers PostgreSQL, (c) hybride (embarqué + serveur optionnel) — mêmes migrations
 - **Critère de succès** : Une seule vérité par donnée, migrations rejouables, restore testé, 0 perte à la coupure
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · duckdb/duckdb ★41 982 [MIT]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e
 - **Concept art** : `art-19`
 
@@ -70,9 +69,8 @@
 - **Pistes d'origine à vérifier** : ATTENTION VÉRIFIÉ le 2026-10-07 : kuzudb/kuzu est ARCHIVÉ (dernier push 2025-10-10) → successeur LadybugDB (MIT, actif) ; Apache AGE actif (4.9k★) ; Memgraph ; FalkorDB ; Neo4j ; DuckDB DuckPGQ ; Graphiti/Zep (Apache-2.0, 31.5k★) ; cognee (31.5k★)
 - **Décision attendue** : Trancher le moteur principal + la couche mémoire temporelle agent ; verifier AGE vs LadybugDB vs PostgreSQL-only (SQL récursif) selon la charge réelle 1-2 sauts
 - **Critère de succès** : Décision argumentée + benchmark reproductible sur 10 requêtes réelles du projet (prérequis compétences, profil↔métier, place↔objet)
-- **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT]
+- **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · asg017/sqlite-vec ★8 170 [Apache-2.0]
 - **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, b, t, p, c, o, g, n, i, r, a, h, e
 - **Concept art** : `art-06`
@@ -84,9 +82,7 @@
 - **Pistes d'origine à vérifier** : SQLite FTS5 ; Tantivy ; Meilisearch (MIT) ; Typesense ; ParadeDB pg_search ; pgvector ; LanceDB ; Orama ; MiniSearch ; Tantivy-py ; Quickwit
 - **Décision attendue** : BUILD une couche d'index unifiée (lexical+vectoriel) exposée à tous les modules via une API unique
 - **Critère de succès** : 1 barre de recherche qui trouve entités, fichiers, documents, code, événements, avec extraits et provenance
-- **Candidats vérifiés (08/10/2026)** : duckdb/duckdb ★41 982 [MIT] · sqlite/sqlite ★10 620 [Domaine public] · apache/arrow ★17 188 [Apache-2.0] · pola-rs/polars ★40 008 [MIT] · asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0]
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
+- **Candidats vérifiés (08/10/2026)** : duckdb/duckdb ★41 982 [MIT] · sqlite/sqlite ★10 620 [Domaine public] · apache/arrow ★17 188 [Apache-2.0] · pola-rs/polars ★40 008 [MIT] · asg017/sqlite-vec ★8 170 [Apache-2.0]
 - **Modules du shell concernés** : systeme, command, d, o, c, u, m, e, n, t, s
 - **Concept art** : `art-05`
 
@@ -122,8 +118,6 @@
 - **Pistes d'origine à vérifier** : Schema.org ; PROV-O ; CIDOC-CRM (patrimoine) ; ISO 15926 (industrie) ; bSDD (BTP) ; OWL/RDFS limites ; ontologie ESCO
 - **Décision attendue** : Valider le modèle D02 sur 5 cas d'usage réels tirés du corpus (chantier, profil, territoire, document, simulation)
 - **Critère de succès** : 5 cas passés au validateur ; 0 ambiguïté de sens entre deux modules
-- **Candidats vérifiés (08/10/2026)** : tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT] · Unstructured-IO/unstructured ★15 548 [Apache-2.0]
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
 - **Modules du shell concernés** : systeme, command, b, t, p, c, o, g, n, i, d, u, m, e, s
 - **Concept art** : `art-05`
 
@@ -135,8 +129,8 @@
 - **Décision attendue** : Definir le format de projet (dossier + manifeste + données) réutilisable par tous les modules
 - **Critère de succès** : Un projet BTP réel ouvert dans l'app : documents, plan, agents, budget, planning, timeline
 - **Candidats vérifiés (08/10/2026)** : aaif-goose/goose ★55 067 [Apache-2.0] · OpenHands/OpenHands ★90 275 [MIT] · openclaw/openclaw ★391 640 [MIT] · Kc1t/alethe-agents ★832 [AGPL-3.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0] · a2aproject/A2A ★26 073 [Apache-2.0] · agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0]
-- **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, b, p, g, n, s
 - **Concept art** : `art-02`
 
@@ -170,9 +164,9 @@
 - **Décision attendue** : BUILD un SDK officiel (manifeste JSON + permissions + points d'extension) ; tous les modules internes passent par ce SDK (dogfooding)
 - **Critère de succès** : Écrire un module tiers de 50 lignes qui ajoute une couche carte, sans toucher au core
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · extism/extism ★5 789 [BSD-3-Clause]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e
 - **Concept art** : `art-02`
@@ -185,8 +179,8 @@
 - **Décision attendue** : WRAP MCP + A2A comme couche d'interopérabilité ; nos outils exposés en MCP, nos agents découvrables en A2A
 - **Critère de succès** : Un agent externe (Goose/OpenHands) pilote 3 outils du projet via MCP, avec permissions
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · aaif-goose/goose ★55 067 [Apache-2.0]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, g, n, s
 - **Concept art** : `art-19`
@@ -198,12 +192,8 @@
 - **Pistes d'origine à vérifier** : sysinfo (Rust) ; NVML/nvidia-smi ; LibreHardwareMonitor ; Windows WMI/DXGI ; WebGPU adapter info ; WebGL capability ; perf budgets web (web-vitals)
 - **Décision attendue** : BUILD : un profil de capacités exposé au core ; chaque module déclare son budget et est désactivé/purgé au-delà
 - **Critère de succès** : L'app reste fluide (≥30 fps) sur la machine cible avec 20 modules actifs ; le profil est affiché et modifiable
-- **Candidats vérifiés (08/10/2026)** : CesiumGS/cesium ★15 811 [Apache-2.0] · visgl/deck.gl ★14 636 [MIT] · mrdoob/three.js ★116 356 [MIT] · bilawalsidhu/gods-eye-view ★49 027 [MIT] · WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL] · OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
+- **Candidats vérifiés (08/10/2026)** : CesiumGS/cesium ★15 811 [Apache-2.0] · visgl/deck.gl ★14 636 [MIT] · mrdoob/three.js ★116 356 [MIT] · bilawalsidhu/gods-eye-view ★49 027 [MIT] · WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL]
 - **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command
 - **Concept art** : `art-11`
 
@@ -223,10 +213,10 @@
 - **Décision attendue** : WRAP : ajouter la synchronisation SANS rendre le cloud obligatoire ; le local reste la vérité primaire
 - **Critère de succès** : 2 postes hors ligne fusionnent leurs modifications sans perte ni corruption
 - **Candidats vérifiés (08/10/2026)** : organicmaps/organicmaps ★15 613 [Apache-2.0] · osmandapp/OsmAnd ★6 062 [GPL-3.0] · kiwix/kiwix-tools ★961 [GPL-3.0] · openzim/zim-tools ★221 [GPL-3.0] · Crosstalk-Solutions/project-nomad ★39 287 [Apache-2.0] · duckdb/duckdb ★41 982 [MIT] · sqlite/sqlite ★10 620 [Domaine public] · apache/arrow ★17 188 [Apache-2.0] · pola-rs/polars ★40 008 [MIT] · asg017/sqlite-vec ★8 170 [Apache-2.0] · yjs/yjs ★22 910 [MIT] · automerge/automerge ★6 650 [MIT]
+- **⚠️ Licence** : osmandapp/OsmAnd [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : openzim/zim-tools [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : syncthing/syncthing [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : kiwix/kiwix-tools [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : openzim/zim-tools [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : osmandapp/OsmAnd [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command
 - **Concept art** : `art-19`
 
@@ -238,14 +228,10 @@
 - **Décision attendue** : BUILD un Dataset Manager + une License Matrix obligatoire (source, licence, usage autorisé, attribution obligatoire)
 - **Critère de succès** : Aucun dataset livré sans licence identifiée et attribution affichée ; un build commercial peut exclure les datasets non compatibles en 1 commande
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · LadybugDB/ladybug ★1 825 [MIT]
+- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, c, o, m, a, n, d, g, r, p, h, e
 - **Concept art** : `art-06`
 
@@ -257,9 +243,9 @@
 - **Décision attendue** : BUILD un 'Diagnostic Center' intégré ; rien n'est envoyé sans consentement explicite
 - **Critère de succès** : Un utilisateur exporte un rapport de diagnostic complet (logs, état, versions, dernière action) en 1 clic
 - **Candidats vérifiés (08/10/2026)** : organicmaps/organicmaps ★15 613 [Apache-2.0] · osmandapp/OsmAnd ★6 062 [GPL-3.0] · kiwix/kiwix-tools ★961 [GPL-3.0] · openzim/zim-tools ★221 [GPL-3.0] · Crosstalk-Solutions/project-nomad ★39 287 [Apache-2.0]
-- **⚠️ Licence** : kiwix/kiwix-tools [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : openzim/zim-tools [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : osmandapp/OsmAnd [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : openzim/zim-tools [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : kiwix/kiwix-tools [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command
 - **Concept art** : `art-07`
 
@@ -271,10 +257,10 @@
 - **Décision attendue** : BUILD une Quality Gate unique (lint+types+tests+contrats+licences+deps) exécutable en local ET en CI
 - **Critère de succès** : 1 commande = tout vérifier ; une PR ne peut pas casser un contrat de module sans le signaler
 - **Candidats vérifiés (08/10/2026)** : duckdb/duckdb ★41 982 [MIT] · sqlite/sqlite ★10 620 [Domaine public] · apache/arrow ★17 188 [Apache-2.0] · pola-rs/polars ★40 008 [MIT] · asg017/sqlite-vec ★8 170 [Apache-2.0] · OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
+- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, c, o, g, n, i, t
 - **Concept art** : `art-07`
 
@@ -285,10 +271,8 @@
 - **Pistes d'origine à vérifier** : Diátaxis ; MkDocs Material ; Docusaurus ; Starlight ; log4brains/adr-tools ; Mermaid ; Structurizr/C4 ; arc42 ; Backstage (catalogue)
 - **Décision attendue** : CONSERVER la méthode actuelle, l'unifier au niveau monorepo : un site de doc généré depuis docs/ + les dépôts
 - **Critère de succès** : Toute décision structurante apparaît dans un ADR ; la doc se construit en 1 commande
-- **Candidats vérifiés (08/10/2026)** : asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT] · aaif-goose/goose ★55 067 [Apache-2.0] · OpenHands/OpenHands ★90 275 [MIT] · openclaw/openclaw ★391 640 [MIT] · Kc1t/alethe-agents ★832 [AGPL-3.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0] · a2aproject/A2A ★26 073 [Apache-2.0] · agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]
+- **Candidats vérifiés (08/10/2026)** : aaif-goose/goose ★55 067 [Apache-2.0] · OpenHands/OpenHands ★90 275 [MIT] · openclaw/openclaw ★391 640 [MIT] · Kc1t/alethe-agents ★832 [AGPL-3.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0] · a2aproject/A2A ★26 073 [Apache-2.0] · agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0]
 - **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
 - **Modules du shell concernés** : systeme, command, a, g, e, n, t, s, d, o, c, u, m
 - **Concept art** : `art-19`
 
@@ -345,8 +329,7 @@
 - **Pistes d'origine à vérifier** : LiteLLM (budgets, virtual keys, logging) ; Langfuse (coûts par trace) ; OpenLLMetry ; prompt caching (providers) ; GPTCache ; semantic cache
 - **Décision attendue** : WRAP : proxy LLM unique avec budgets et journalisation ; aucune clé payante sans plafond
 - **Critère de succès** : Un plafond mensuel est appliqué et vérifié ; le coût par tâche est affiché à l'utilisateur
-- **Candidats vérifiés (08/10/2026)** : asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT] · ggml-org/llama.cpp ★130 687 [MIT] · ollama/ollama ★182 569 [MIT]
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
+- **Candidats vérifiés (08/10/2026)** : ggml-org/llama.cpp ★130 687 [MIT] · ollama/ollama ★182 569 [MIT]
 - **Modules du shell concernés** : systeme, command
 - **Concept art** : `art-19`
 
@@ -369,15 +352,12 @@
 - **Décision attendue** : BUILD un budget de ressources par module + bascule 2D/3D et purge automatique
 - **Critère de succès** : 20 modules actifs + globe = mémoire <1,5 Go, démarrage <3 s, pas de fuite sur 2 h d'usage
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
+- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
+- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, b, t, p, g, r, a, h, e
 - **Concept art** : `art-06`
 
@@ -389,9 +369,9 @@
 - **Décision attendue** : Etendre le schema existant (coreVersion, permissions, points d'extension, owns/reads) et trancher le modele d'isolation des modules tiers
 - **Critère de succès** : Un module factice s'installe, s'active, se desactive et se desinstalle SANS redemarrer l'app, donnees intactes
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · extism/extism ★5 789 [BSD-3-Clause]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e
 - **Concept art** : `art-19`
 
@@ -402,12 +382,12 @@
 - **Décision attendue** : Construire une interface de synchronisation unique avec 4 fournisseurs + regles de conflit ; le local reste la verite primaire
 - **Critère de succès** : Deux postes se synchronisent sans perte ; un conflit est presente et resolu par l'utilisateur ; restauration possible sans l'app
 - **Candidats vérifiés (08/10/2026)** : organicmaps/organicmaps ★15 613 [Apache-2.0] · osmandapp/OsmAnd ★6 062 [GPL-3.0] · kiwix/kiwix-tools ★961 [GPL-3.0] · openzim/zim-tools ★221 [GPL-3.0] · Crosstalk-Solutions/project-nomad ★39 287 [Apache-2.0] · LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · yjs/yjs ★22 910 [MIT] · automerge/automerge ★6 650 [MIT] · syncthing/syncthing ★89 219 [MPL-2.0]
-- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : syncthing/syncthing [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : kiwix/kiwix-tools [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : openzim/zim-tools [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : osmandapp/OsmAnd [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : openzim/zim-tools [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : syncthing/syncthing [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
+- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : kiwix/kiwix-tools [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, g, r, a, p, h, e
 - **Concept art** : `art-06`
 
@@ -420,8 +400,8 @@
 - **Critère de succès** : Ajouter un outil = un fichier de description, sans toucher au reste
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · aaif-goose/goose ★55 067 [Apache-2.0]
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e
 - **Concept art** : `art-02`
 
@@ -433,10 +413,10 @@
 - **Décision attendue** : Implémenter : canal stable, signature, migration de schéma, retour arrière en un clic
 - **Critère de succès** : Une mise à jour échouée revient à l'état précédent sans perte
 - **Candidats vérifiés (08/10/2026)** : extism/extism ★5 789 [BSD-3-Clause] · bytecodealliance/wasmtime ★18 698 [Apache-2.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0] · OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command
 - **Concept art** : `art-19`
 
@@ -477,12 +457,10 @@
 - **Pistes d'origine à vérifier** : SearXNG (AGPL) ; Vane/Perplexica (MIT) ; Crawl4AI (Apache-2.0) ; OpenAlex ; Crossref ; Semantic Scholar ; GROBID ; Elicit/Consensus (produits) ; Zotero ; PaperQA2 ; STORM
 - **Décision attendue** : BUILD sur l'existant (evidence graph) en le branchant à de vraies sources + un LLM abstrait
 - **Critère de succès** : Une question de recherche produit un dossier sourcé avec 10+ sources datées, contradictions signalées, incertitude explicite
-- **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT] · aaif-goose/goose ★55 067 [Apache-2.0] · OpenHands/OpenHands ★90 275 [MIT] · openclaw/openclaw ★391 640 [MIT] · Kc1t/alethe-agents ★832 [AGPL-3.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0]
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
+- **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · asg017/sqlite-vec ★8 170 [Apache-2.0] · aaif-goose/goose ★55 067 [Apache-2.0] · OpenHands/OpenHands ★90 275 [MIT] · openclaw/openclaw ★391 640 [MIT] · Kc1t/alethe-agents ★832 [AGPL-3.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0] · a2aproject/A2A ★26 073 [Apache-2.0] · agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0]
+- **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
 - **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
 - **Modules du shell concernés** : systeme, command, a, g, e, n, t, s, d, o, c, u, m, r, p, h
 - **Concept art** : `art-03`
 
@@ -544,8 +522,8 @@
 - **Critère de succès** : Une compétence écrite une fois est utilisable par tous les agents
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · aaif-goose/goose ★55 067 [Apache-2.0]
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : c, a, r, t, e, o, g, n, i, s
 - **Concept art** : `art-02`
 
@@ -590,13 +568,13 @@
 - **Décision attendue** : WRAP les collecteurs existants ; CONSTRUIRE la couche d'analyse (graphe + timeline + alertes) ; cadrer le légal (données personnelles)
 - **Critère de succès** : Le module Watchtower produit une note de situation sourcée et géolocalisée en <10 min
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
+- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
+- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, g, n, s, p, h
 - **Concept art** : `art-04`
 
@@ -619,8 +597,8 @@
 - **Décision attendue** : Choisir 1-2 librairies et un composant de tableau standard, avec regle d'affichage de la provenance et de l'incertitude
 - **Critère de succès** : 5 indicateurs de chantier fiables, methode de calcul affichee, export PDF/CSV teste
 - **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT] · Unstructured-IO/unstructured ★15 548 [Apache-2.0]
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, b, t, p, g, r, a, h, e
 - **Concept art** : `art-06`
@@ -634,8 +612,6 @@
 - **Pistes d'origine à vérifier** : HCSM v0.1 ; catalogues psychométriques (IPIP, Big Five, RIASEC, SDT) ; frameworks de mesure en éducation ; psychométrie moderne (IRT, CAT) ; documentation des limites
 - **Décision attendue** : CONSERVER le cadre HCSM ; l'implémenter progressivement (Cognition Hub) et l'exposer comme service
 - **Critère de succès** : Toute estimation d'état cognitif porte valeur + incertitude + fenêtre + preuves + alternatives
-- **Candidats vérifiés (08/10/2026)** : tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT] · Unstructured-IO/unstructured ★15 548 [Apache-2.0]
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
 - **Modules du shell concernés** : systeme, command, c, o, g, n, i, t, d, u, m, e, s
 - **Concept art** : `art-11`
 
@@ -646,8 +622,8 @@
 - **Décision attendue** : WRAP : importer les référentiels officiels + construire la couche de matching explicable (pourquoi / il manque quoi)
 - **Critère de succès** : Un profil réel obtient 5 métiers pertinents avec justification sourcée sur référentiel officiel
 - **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0]
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **Modules du shell concernés** : c, o, g, n, i, t, r, a, p, h, e
 - **Concept art** : `art-06`
 
@@ -659,12 +635,12 @@
 - **Décision attendue** : BUILD la boucle pédagogique sur le CLE existant ; WRAP les standards (xAPI) pour l'interopérabilité
 - **Critère de succès** : Un parcours adaptatif ajuste la difficulté selon les réponses et prouve le transfert
 - **Candidats vérifiés (08/10/2026)** : LadybugDB/ladybug ★1 825 [MIT] · getzep/graphiti ★31 553 [Apache-2.0] · neo4j/neo4j ★17 284 [GPL-3.0] · FalkorDB/FalkorDB ★7 967 [SSPL-1.0] · mesa/mesa ★3 877 [Apache-2.0] · JuliaDynamics/Agents.jl ★919 [MIT] · OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, c, o, g, n, i, t, m, a, d
 - **Concept art** : `art-19`
 
@@ -688,9 +664,6 @@
 - **Pistes d'origine à vérifier** : OpenAlex API ; Crossref ; Semantic Scholar API ; arXiv ; HAL ; theses.fr ; Unpaywall ; GROBID ; PaperQA2 ; STORM ; Scite (citations)
 - **Décision attendue** : WRAP : méta-connecteur scientifique unifié (idempotent, cache, provenance) alimentant le Research Agent
 - **Critère de succès** : Une revue de littérature sur un sujet BTP/territoire produite en 1 h avec 30 sources liées
-- **Candidats vérifiés (08/10/2026)** : asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT] · Unstructured-IO/unstructured ★15 548 [Apache-2.0]
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
 - **Modules du shell concernés** : systeme, command, d, o, c, u, m, e, n, t, s
 - **Concept art** : `art-14`
 
@@ -739,13 +712,13 @@
 - **Décision attendue** : Décider la pile principale (MapLibre 2D + Cesium 3D ponctuel ?) et le rôle de QGIS (bureau, exports) ; budget GPU obligatoire
 - **Critère de succès** : Affichage fluide d'un territoire à 3 échelles avec données IGN, OSM et du projet, hors ligne
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : kobotoolbox/kpi [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
+- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : c, a, r, t, e, b, p, g, h
 - **Concept art** : `art-02`
 
@@ -757,15 +730,15 @@
 - **Décision attendue** : WRAP : un connecteur 'données publiques FR' avec cache et licences ; Documenter chaque flux (endpoint, licence, fréquence)
 - **Critère de succès** : Un profil territorial complet (population, bâti, risques, réseaux) assemblé automatiquement pour une commune
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · LadybugDB/ladybug ★1 825 [MIT]
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
+- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau
 - **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
-- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : c, a, r, t, e, b, p, g, h
 - **Concept art** : `art-06`
 
@@ -798,12 +771,12 @@
 - **Décision attendue** : Décider la portée réaliste du jumeau v1 (chantier ? territoire ? bâtiment ?) et les standards de données
 - **Critère de succès** : Un jumeau de chantier restitue l'état réel (phasage, capteurs, documents) et le simule
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, b, p
 - **Concept art** : `art-19`
 
@@ -814,11 +787,6 @@
 - **Pistes d'origine à vérifier** : Géorisques (API) ; PPRI ; Institut des risques majeurs ; BRGM (BSS, RGA) ; Météo-France (Vigilance) ; Vigicrues ; AIPR/INRS ; OPPBTP ; DT/DICT (réformes travaux) ; Sogelink/Veox pour les réseaux
 - **Décision attendue** : BUILD : un module risque (territoire + chantier) qui croise aléas, enjeux et dates
 - **Critère de succès** : Un projet de voirie affiche automatiquement les aléas, servitudes et DICT à produire, avec sources
-- **Candidats vérifiés (08/10/2026)** : OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, b, p, o, m, n, d
 - **Concept art** : `art-09`
 
@@ -830,8 +798,8 @@
 - **Décision attendue** : WRAP des bases officielles ; BUILD une couche d'indicateurs environnementaux par projet
 - **Critère de succès** : Un projet de voirie/chaussée affiche son empreinte carbone et une comparaison de variantes
 - **Candidats vérifiés (08/10/2026)** : duckdb/duckdb ★41 982 [MIT] · sqlite/sqlite ★10 620 [Domaine public] · apache/arrow ★17 188 [Apache-2.0] · pola-rs/polars ★40 008 [MIT] · asg017/sqlite-vec ★8 170 [Apache-2.0] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT]
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : c, a, r, t, e
@@ -858,12 +826,12 @@
 - **Décision attendue** : Définir le contrat de synchronisation des vues (un identifiant sélectionné → toutes les vues réagissent)
 - **Critère de succès** : Sélectionner un objet sur la carte met à jour 3D, timeline et dossier en moins de 100 ms
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
+- **⚠️ Licence** : syncthing/syncthing [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
+- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
 - **⚠️ Licence** : FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter
 - **⚠️ Licence** : neo4j/neo4j [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
-- **⚠️ Licence** : syncthing/syncthing [MPL-2.0] : fichier par fichier
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, b, p, o, g, n, i, h
 - **Concept art** : `art-02`
 
@@ -876,11 +844,10 @@
 - **Pistes d'origine à vérifier** : Odoo (modules chantier) ; ERPNext ; Tryton ; Procore/Fieldwire (référents marché) ; Batiscript/Kairnial/Finalcad ; GanttProject ; LibrePlan ; Synchro (4D) ; Kizeo Forms
 - **Décision attendue** : BUILD : un module chantier sur le Core (documents + événements + tasks + timeline) alimenté par le corpus réel de l'utilisateur
 - **Critère de succès** : Un chantier réel suivi de bout en bout dans l'app : planning, métrés, essais, non-conformités, DOE
-- **Candidats vérifiés (08/10/2026)** : CesiumGS/cesium ★15 811 [Apache-2.0] · visgl/deck.gl ★14 636 [MIT] · mrdoob/three.js ★116 356 [MIT] · bilawalsidhu/gods-eye-view ★49 027 [MIT] · WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL] · yjs/yjs ★22 910 [MIT] · automerge/automerge ★6 650 [MIT] · syncthing/syncthing ★89 219 [MPL-2.0] · FreeCAD/FreeCAD ★34 025 [LGPL-2.1] · openscad/openscad ★10 392 [GPL-2.0] · LinuxCNC/linuxcnc ★2 484 [GPL-2.0]
-- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
-- **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **Candidats vérifiés (08/10/2026)** : yjs/yjs ★22 910 [MIT] · automerge/automerge ★6 650 [MIT] · syncthing/syncthing ★89 219 [MPL-2.0] · FreeCAD/FreeCAD ★34 025 [LGPL-2.1] · openscad/openscad ★10 392 [GPL-2.0] · LinuxCNC/linuxcnc ★2 484 [GPL-2.0]
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : syncthing/syncthing [MPL-2.0] : fichier par fichier
 - **Modules du shell concernés** : systeme, command, b, t, p
 - **Concept art** : `art-19`
@@ -893,15 +860,15 @@
 - **Décision attendue** : WRAP IfcOpenShell + une visionneuse web IFC ; BUILD la couche métier (extraction de données, vérification, quantités)
 - **Critère de succès** : Un IFC de maquette s'ouvre dans l'app, ses quantités sont extraites et comparées au DQE
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
 - **Modules du shell concernés** : c, a, r, t, e, b, p
 - **Concept art** : `art-02`
 
@@ -913,9 +880,9 @@
 - **Décision attendue** : WRAP Replicad/OCCT pour le paramétrique simple ; WRAP FreeCAD pour l'avancé ; ne pas écrire de noyau géométrique
 - **Critère de succès** : Un novice modélise une pièce utile et l'exporte en STEP/DXF en <15 min
 - **Candidats vérifiés (08/10/2026)** : FreeCAD/FreeCAD ★34 025 [LGPL-2.1] · openscad/openscad ★10 392 [GPL-2.0] · LinuxCNC/linuxcnc ★2 484 [GPL-2.0]
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : b, t, p
 - **Concept art** : `art-19`
 
@@ -927,14 +894,15 @@
 - **Décision attendue** : WRAP : un moteur 3D principal + un pipeline de conversion d'assets versionné
 - **Critère de succès** : Une scène de chantier (maquette + nuage + terrain) s'affiche à 30+ fps
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : graphdeco-inria/gaussian-splatting [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, b, t, p, c, o, m, a, n, d
 - **Concept art** : `art-09`
 
@@ -945,14 +913,15 @@
 - **Pistes d'origine à vérifier** : OpenDroneMap/WebODM (AGPL) ; COLMAP ; OpenMVS ; Meshroom (AliceVision) ; Metashape (payant) ; PDAL ; CloudCompare ; QGIS ; ODM (Docker)
 - **Décision attendue** : WRAP : pipeline local reproductible (dossier photos → livrables géoréférencés) documenté pas à pas
 - **Critère de succès** : Un jeu de photos de chantier produit une orthophoto et un nuage exploitables dans l'app
-- **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · IfcOpenShell/IfcOpenShell ★2 841 [LGPL-3.0]
+- **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · CesiumGS/cesium ★15 811 [Apache-2.0]
+- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
 - **⚠️ Licence** : CloudCompare/CloudCompare [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
 - **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, b, p, g, n, s
 - **Concept art** : `art-02`
@@ -965,8 +934,8 @@
 - **Décision attendue** : WRAP : visualisation web + mesures ; BUILD les cas d'usage (avancement, contrôle qualité)
 - **Critère de succès** : Comparer deux scans d'un même site et visualiser l'écart en 3D
 - **Candidats vérifiés (08/10/2026)** : CesiumGS/cesium ★15 811 [Apache-2.0] · visgl/deck.gl ★14 636 [MIT] · mrdoob/three.js ★116 356 [MIT] · bilawalsidhu/gods-eye-view ★49 027 [MIT] · WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL] · PDAL/PDAL ★1 422 [BSD-3-Clause] · CloudCompare/CloudCompare ★4 788 [GPL-2.0] · potree/potree ★5 632 [BSD (2 ou 3 clauses)] · colmap/colmap ★12 874 [BSD-3-Clause]
-- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
 - **⚠️ Licence** : CloudCompare/CloudCompare [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
 - **Modules du shell concernés** : b, t, p
 - **Concept art** : `art-09`
 
@@ -978,9 +947,9 @@
 - **Décision attendue** : WRAP (slicer déjà excellent) ; BUILD uniquement l'orchestration (modèle → fichier prêt)
 - **Critère de succès** : Du modèle à la pièce prête à imprimer sans quitter l'app
 - **Candidats vérifiés (08/10/2026)** : CesiumGS/cesium ★15 811 [Apache-2.0] · visgl/deck.gl ★14 636 [MIT] · mrdoob/three.js ★116 356 [MIT] · bilawalsidhu/gods-eye-view ★49 027 [MIT] · WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL] · FreeCAD/FreeCAD ★34 025 [LGPL-2.1] · openscad/openscad ★10 392 [GPL-2.0] · LinuxCNC/linuxcnc ★2 484 [GPL-2.0]
-- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
 - **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, b, t, p
 - **Concept art** : `art-11`
@@ -993,9 +962,9 @@
 - **Décision attendue** : BUILD : un moteur DQE/BPU (import → normalisation → quantités → prix → comparaison) sur le corpus réel
 - **Critère de succès** : Un DQE importé est mis en correspondance avec un BPU et un estimatif, écarts calculés et expliqués
 - **Candidats vérifiés (08/10/2026)** : duckdb/duckdb ★41 982 [MIT] · sqlite/sqlite ★10 620 [Domaine public] · apache/arrow ★17 188 [Apache-2.0] · pola-rs/polars ★40 008 [MIT] · asg017/sqlite-vec ★8 170 [Apache-2.0] · tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT]
-- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
 - **Modules du shell concernés** : systeme, command, b, t, p, c, o, g, n, i, d, u, m, e, s
 - **Concept art** : `art-05`
@@ -1008,16 +977,16 @@
 - **Décision attendue** : Trancher les 3 paliers (voir / livrer / assembler / modeliser) et le mode de pilotage des outils externes
 - **Critère de succès** : Un IFC, un nuage de points et une orthophoto s'ouvrent, se mesurent et s'annoter dans l'app sur la machine cible
 - **Candidats vérifiés (08/10/2026)** : CesiumGS/cesium ★15 811 [Apache-2.0] · visgl/deck.gl ★14 636 [MIT] · mrdoob/three.js ★116 356 [MIT] · bilawalsidhu/gods-eye-view ★49 027 [MIT] · WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL] · IfcOpenShell/IfcOpenShell ★2 841 [LGPL-3.0] · ThatOpen/engine_components ★710 [MIT] · ThatOpen/engine_web-ifc ★1 057 [MPL-2.0] · xeokit/xeokit-sdk ★944 [AGPL-3.0] · FreeCAD/FreeCAD ★34 025 [LGPL-2.1] · openscad/openscad ★10 392 [GPL-2.0] · LinuxCNC/linuxcnc ★2 484 [GPL-2.0]
-- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : CloudCompare/CloudCompare [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : WebODM/WebODM [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : CloudCompare/CloudCompare [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter
+- **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau
 - **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
-- **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, b, t, p
 - **Concept art** : `art-06`
 
@@ -1043,17 +1012,17 @@
 - **Décision attendue** : BUILD un moteur léger unifié (scénarios + incertitude + reproductibilité) branché au Core et à la timeline
 - **Critère de succès** : Un scénario (budget, délai, ressources) est simulé 1000 fois avec distribution de résultats et facteurs sensibles
 - **Candidats vérifiés (08/10/2026)** : aaif-goose/goose ★55 067 [Apache-2.0] · OpenHands/OpenHands ★90 275 [MIT] · openclaw/openclaw ★391 640 [MIT] · Kc1t/alethe-agents ★832 [AGPL-3.0] · modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0] · a2aproject/A2A ★26 073 [Apache-2.0] · agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0] · IfcOpenShell/IfcOpenShell ★2 841 [LGPL-3.0] · ThatOpen/engine_components ★710 [MIT] · ThatOpen/engine_web-ifc ★1 057 [MPL-2.0] · xeokit/xeokit-sdk ★944 [AGPL-3.0] · FreeCAD/FreeCAD ★34 025 [LGPL-2.1]
-- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
+- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau
-- **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
-- **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau
+- **⚠️ Licence** : IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible
 - **Modules du shell concernés** : systeme, command, b, t, p, a, g, e, n, s, c, o, m, d
 - **Concept art** : `art-07`
 
@@ -1065,10 +1034,10 @@
 - **Décision attendue** : WRAP des solveurs validés ; BUILD seulement la préparation des données et la lecture des résultats (jamais le calcul de sécurité seul)
 - **Critère de succès** : Un pré-dimensionnement simple est calculé et ses hypothèses affichées, avec avertissement explicite
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · FreeCAD/FreeCAD ★34 025 [LGPL-2.1]
+- **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : openscad/openscad [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
-- **⚠️ Licence** : LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort
 - **⚠️ Licence** : FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : b, t, p, c, o, m, a, n, d
 - **Concept art** : `art-09`
@@ -1094,10 +1063,10 @@
 - **Décision attendue** : BUILD un 'Scenario Engine' commun : situation → options → conséquences → choix → trace
 - **Critère de succès** : Trois scénarios territoriaux comparés avec critères pondérés et incertitudes visibles
 - **Candidats vérifiés (08/10/2026)** : OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : c, o, m, a, n, d
 - **Concept art** : `art-15`
 
@@ -1109,10 +1078,10 @@
 - **Décision attendue** : WRAP (extraire des idées et éventuellement le moteur), jamais copier du contenu sous licence incompatible
 - **Critère de succès** : Une vue stratégique du territoire (ressources, projets, contraintes) jouable comme un jeu de simulation
 - **Candidats vérifiés (08/10/2026)** : OpenTTD/OpenTTD ★8 345 [GPL-2.0] · OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0] · OpenMW/openmw ★6 609 [GPL-3.0] · freeciv/freeciv ★1 602 [GPL-2.0] · godotengine/godot ★118 272 [MIT]
-- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
-- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenMW/openmw [GPL-3.0] : copyleft fort
+- **⚠️ Licence** : OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : OpenTTD/OpenTTD [GPL-2.0] : copyleft fort
+- **⚠️ Licence** : freeciv/freeciv [GPL-2.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, c, o, m, a, n, d
 - **Concept art** : `art-15`
 
@@ -1125,12 +1094,11 @@
 - **Pistes d'origine à vérifier** : Ghidra ; Rizin ; Cutter ; x64dbg ; Frida ; JADX ; angr ; Binwalk ; Detect It Easy ; dnSpy ; Wireshark
 - **Décision attendue** : ISOLER dans un module Lab séparé (sécurité + légal) ; WRAP uniquement
 - **Critère de succès** : Une analyse de format/format-logiciel produite dans un environnement isolé, sans effet sur le reste
-- **Candidats vérifiés (08/10/2026)** : tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT] · Unstructured-IO/unstructured ★15 548 [Apache-2.0] · NationalSecurityAgency/ghidra ★81 650 [Apache-2.0] · rizinorg/rizin ★3 942 [LGPL-3.0] · rizinorg/cutter ★19 942 [GPL-3.0] · x64dbg/x64dbg ★49 739 [GPL-3.0]
-- **⚠️ Licence** : x64dbg/x64dbg [GPL-3.0] : copyleft fort
+- **Candidats vérifiés (08/10/2026)** : NationalSecurityAgency/ghidra ★81 650 [Apache-2.0] · rizinorg/rizin ★3 942 [LGPL-3.0] · rizinorg/cutter ★19 942 [GPL-3.0] · x64dbg/x64dbg ★49 739 [GPL-3.0] · frida/frida ★22 146 [wxWindows-Library-Licence-3.1] · skylot/jadx ★50 780 [Apache-2.0] · angr/angr ★9 131 [BSD-2-Clause]
 - **⚠️ Licence** : rizinorg/rizin [LGPL-3.0] : copyleft faible
 - **⚠️ Licence** : rizinorg/cutter [GPL-3.0] : copyleft fort
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
 - **⚠️ Licence** : frida/frida [wxWindows-Library-Licence-3.1] : type LGPL
+- **⚠️ Licence** : x64dbg/x64dbg [GPL-3.0] : copyleft fort
 - **Modules du shell concernés** : systeme, command, d, o, c, u, m, e, n, t, s
 - **Concept art** : `art-04`
 
@@ -1187,9 +1155,9 @@
 - **Décision attendue** : BUILD plus tard, mais définir dès maintenant le manifeste et les permissions (D13)
 - **Critère de succès** : Un module tiers est installé, mis à jour et révoqué sans casser l'app
 - **Candidats vérifiés (08/10/2026)** : maplibre/maplibre-gl-js ★11 825 [BSD-3-Clause] · maplibre/martin ★3 983 [Apache-2.0] · protomaps/PMTiles ★3 074 [BSD-3-Clause] · opengeos/GeoLibre ★7 871 [MIT] · OSGeo/gdal ★6 087 [MIT] · duckdb/duckdb-spatial ★714 [MIT] · osm-search/Nominatim ★4 512 [GPL-3.0] · Project-OSRM/osrm-backend ★8 126 [BSD-2-Clause] · valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)] · OSGeo/PROJ ★2 030 [MIT] · libgeos/geos ★1 513 [LGPL-2.1] · extism/extism ★5 789 [BSD-3-Clause]
-- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **⚠️ Licence** : osm-search/Nominatim [GPL-3.0] : copyleft fort
 - **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
+- **⚠️ Licence** : libgeos/geos [LGPL-2.1] : copyleft faible
 - **Modules du shell concernés** : systeme, command, c, a, r, t, e, s, y, m
 - **Concept art** : `art-02`
 
@@ -1200,8 +1168,6 @@
 - **Pistes d'origine à vérifier** : Awesome lists ; GitHub trending/OSS Insight ; Hacker News (filtré) ; Papers with Code ; Hugging Face (trending) ; LibreProjects/selfh.st ; Changelog newsletter ; deps.dev ; OpenSSF
 - **Décision attendue** : BUILD un rituel (mensuel) + un registre de veille qui alimente les ADR (déclencheurs de réévaluation déjà prévus)
 - **Critère de succès** : Chaque trimestre, ≤10 outils évalués et ≤3 ADR révisés, sans dispersion
-- **Candidats vérifiés (08/10/2026)** : tesseract-ocr/tesseract ★76 861 [Apache-2.0] · ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0] · PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0] · mindee/doctr ★6 381 [Apache-2.0] · apache/tika ★4 091 [Apache-2.0] · opendatalab/MinerU ★81 295 [Apache-2.0] · docling-project/docling ★68 537 [MIT] · Unstructured-IO/unstructured ★15 548 [Apache-2.0]
-- **⚠️ Licence** : ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier
 - **Modules du shell concernés** : a, g, e, n, t, s
 - **Concept art** : `art-03`
 
@@ -1286,8 +1252,6 @@
 - **Pistes d'origine à vérifier** : ossf/scorecard, deps.dev API, libs.io, OpenHub
 - **Décision attendue** : Automatiser une fiche de santé par dépendance, rejouée à chaque montée de version
 - **Critère de succès** : Toute dépendance a une fiche santé datée et un plan de remplacement
-- **Candidats vérifiés (08/10/2026)** : asg017/sqlite-vec ★8 170 [Apache-2.0] · tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)] · excalidraw/excalidraw ★133 685 [MIT]
-- **⚠️ Licence** : tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter
 - **Modules du shell concernés** : systeme, command, a, g, e, n, t, s
 - **Concept art** : `art-19`
 

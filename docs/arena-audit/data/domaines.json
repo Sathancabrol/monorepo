@@ -40,9 +40,9 @@
    ],
    "existant_verifie": "docs/carre-das/00→03 ; shell/ (portail 14 modules/104 fonctions, non encore branché aux données)",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
+    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "libgeos/geos [LGPL-2.1] : copyleft faible"
    ]
   },
   {
@@ -153,9 +153,8 @@
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter",
-    "osm-search/Nominatim [GPL-3.0] : copyleft fort"
+    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
+    "libgeos/geos [LGPL-2.1] : copyleft faible"
    ]
   },
   {
@@ -191,14 +190,11 @@
     "getzep/graphiti ★31 553 [Apache-2.0]",
     "neo4j/neo4j ★17 284 [GPL-3.0]",
     "FalkorDB/FalkorDB ★7 967 [SSPL-1.0]",
-    "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]"
+    "asg017/sqlite-vec ★8 170 [Apache-2.0]"
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
     "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter",
     "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
@@ -232,20 +228,10 @@
     "sqlite/sqlite ★10 620 [Domaine public]",
     "apache/arrow ★17 188 [Apache-2.0]",
     "pola-rs/polars ★40 008 [MIT]",
-    "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]",
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]",
-    "PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0]",
-    "mindee/doctr ★6 381 [Apache-2.0]",
-    "apache/tika ★4 091 [Apache-2.0]"
+    "asg017/sqlite-vec ★8 170 [Apache-2.0]"
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
-   "risques_licence": [
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D07",
@@ -365,20 +351,9 @@
     "s"
    ],
    "fiche_art": "art-05",
-   "candidats_verifies_2026_10_08": [
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]",
-    "PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0]",
-    "mindee/doctr ★6 381 [Apache-2.0]",
-    "apache/tika ★4 091 [Apache-2.0]",
-    "opendatalab/MinerU ★81 295 [Apache-2.0]",
-    "docling-project/docling ★68 537 [MIT]",
-    "Unstructured-IO/unstructured ★15 548 [Apache-2.0]"
-   ],
+   "candidats_verifies_2026_10_08": [],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
-   "risques_licence": [
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D10",
@@ -422,8 +397,8 @@
    ],
    "existant_verifie": "nexus_os : 22 agents, 30 skills, runtime/harness/evals/context/memory/providers/creator ; Kc1t/alethe-agents (★832) et openclaw/openclaw (★391 640) à comparer",
    "risques_licence": [
-    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
+    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
    ]
   },
   {
@@ -521,9 +496,9 @@
    ],
    "existant_verifie": "nexus_os/plugins.py + mcp.py + mcp_demo.py (branche arena_01a08385) : 8 303 lignes Python, 22 agents, 30 compétences, 8 fichiers de tests",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
    ]
   },
@@ -567,8 +542,8 @@
    ],
    "existant_verifie": "nexus_os/plugins.py + mcp.py + mcp_demo.py (branche arena_01a08385) : 8 303 lignes Python, 22 agents, 30 compétences, 8 fichiers de tests",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
    ]
   },
@@ -593,20 +568,11 @@
     "visgl/deck.gl ★14 636 [MIT]",
     "mrdoob/three.js ★116 356 [MIT]",
     "bilawalsidhu/gods-eye-view ★49 027 [MIT]",
-    "WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL]",
-    "OpenTTD/OpenTTD ★8 345 [GPL-2.0]",
-    "OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0]",
-    "OpenMW/openmw ★6 609 [GPL-3.0]",
-    "freeciv/freeciv ★1 602 [GPL-2.0]",
-    "godotengine/godot ★118 272 [MIT]"
+    "WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL]"
    ],
    "existant_verifie": "COGNITORIUM (131 fichiers, 24 Mo), proto-cognitorium (87 Mo), HCSM (87 fichiers), ETAT-DE-LART-PSYCHOLOGIE (37 fichiers) + 137 Ko de code récupéré du patch 01a0389d, docs/carre-das/07",
    "risques_licence": [
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
-    "OpenMW/openmw [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort"
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter"
    ]
   },
   {
@@ -661,10 +627,10 @@
    ],
    "existant_verifie": "",
    "risques_licence": [
-    "syncthing/syncthing [MPL-2.0] : fichier par fichier",
-    "kiwix/kiwix-tools [GPL-3.0] : copyleft fort",
+    "osmandapp/OsmAnd [GPL-3.0] : copyleft fort",
     "openzim/zim-tools [GPL-3.0] : copyleft fort",
-    "osmandapp/OsmAnd [GPL-3.0] : copyleft fort"
+    "syncthing/syncthing [MPL-2.0] : fichier par fichier",
+    "kiwix/kiwix-tools [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -710,14 +676,10 @@
    ],
    "existant_verifie": "docs/recherche/02 (D64→D68) ; aucune base de code",
    "risques_licence": [
+    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "libgeos/geos [LGPL-2.1] : copyleft faible",
     "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
-    "OpenMW/openmw [GPL-3.0] : copyleft fort",
-    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "freeciv/freeciv [GPL-2.0] : copyleft fort"
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -745,9 +707,9 @@
    ],
    "existant_verifie": "COGNITORIUM (131 fichiers, 24 Mo), proto-cognitorium (87 Mo), HCSM (87 fichiers), ETAT-DE-LART-PSYCHOLOGIE (37 fichiers) + 137 Ko de code récupéré du patch 01a0389d, docs/carre-das/07",
    "risques_licence": [
-    "kiwix/kiwix-tools [GPL-3.0] : copyleft fort",
+    "osmandapp/OsmAnd [GPL-3.0] : copyleft fort",
     "openzim/zim-tools [GPL-3.0] : copyleft fort",
-    "osmandapp/OsmAnd [GPL-3.0] : copyleft fort"
+    "kiwix/kiwix-tools [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -786,10 +748,10 @@
    ],
    "existant_verifie": "COGNITORIUM (131 fichiers, 24 Mo), proto-cognitorium (87 Mo), HCSM (87 fichiers), ETAT-DE-LART-PSYCHOLOGIE (37 fichiers) + 137 Ko de code récupéré du patch 01a0389d, docs/carre-das/07",
    "risques_licence": [
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
+    "OpenMW/openmw [GPL-3.0] : copyleft fort",
     "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
-    "OpenMW/openmw [GPL-3.0] : copyleft fort"
+    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
+    "freeciv/freeciv [GPL-2.0] : copyleft fort"
    ]
   },
   {
@@ -820,24 +782,17 @@
    ],
    "fiche_art": "art-19",
    "candidats_verifies_2026_10_08": [
-    "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]",
     "aaif-goose/goose ★55 067 [Apache-2.0]",
     "OpenHands/OpenHands ★90 275 [MIT]",
     "openclaw/openclaw ★391 640 [MIT]",
     "Kc1t/alethe-agents ★832 [AGPL-3.0]",
     "modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0]",
     "a2aproject/A2A ★26 073 [Apache-2.0]",
-    "agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0]",
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]"
+    "agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0]"
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
-    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter"
+    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
    ]
   },
   {
@@ -988,16 +943,11 @@
    ],
    "fiche_art": "art-19",
    "candidats_verifies_2026_10_08": [
-    "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]",
     "ggml-org/llama.cpp ★130 687 [MIT]",
     "ollama/ollama ★182 569 [MIT]"
    ],
    "existant_verifie": "",
-   "risques_licence": [
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D27",
@@ -1070,15 +1020,12 @@
    ],
    "existant_verifie": "nexus_os/plugins.py + mcp.py + mcp_demo.py (branche arena_01a08385) : 8 303 lignes Python, 22 agents, 30 compétences, 8 fichiers de tests",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
-    "OpenMW/openmw [GPL-3.0] : copyleft fort",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter"
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
+    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter",
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -1208,21 +1155,19 @@
     "neo4j/neo4j ★17 284 [GPL-3.0]",
     "FalkorDB/FalkorDB ★7 967 [SSPL-1.0]",
     "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]",
     "aaif-goose/goose ★55 067 [Apache-2.0]",
     "OpenHands/OpenHands ★90 275 [MIT]",
     "openclaw/openclaw ★391 640 [MIT]",
     "Kc1t/alethe-agents ★832 [AGPL-3.0]",
-    "modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0]"
+    "modelcontextprotocol/modelcontextprotocol ★9 406 [Apache-2.0]",
+    "a2aproject/A2A ★26 073 [Apache-2.0]",
+    "agentclientprotocol/agent-client-protocol ★4 391 [Apache-2.0]"
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter",
+    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau",
     "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
-    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -1504,13 +1449,13 @@
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
+    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
+    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "libgeos/geos [LGPL-2.1] : copyleft faible",
     "OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
     "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
-    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter"
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -1577,20 +1522,9 @@
     "s"
    ],
    "fiche_art": "art-11",
-   "candidats_verifies_2026_10_08": [
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]",
-    "PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0]",
-    "mindee/doctr ★6 381 [Apache-2.0]",
-    "apache/tika ★4 091 [Apache-2.0]",
-    "opendatalab/MinerU ★81 295 [Apache-2.0]",
-    "docling-project/docling ★68 537 [MIT]",
-    "Unstructured-IO/unstructured ★15 548 [Apache-2.0]"
-   ],
+   "candidats_verifies_2026_10_08": [],
    "existant_verifie": "COGNITORIUM (131 fichiers, 24 Mo), proto-cognitorium (87 Mo), HCSM (87 fichiers), ETAT-DE-LART-PSYCHOLOGIE (37 fichiers) + 137 Ko de code récupéré du patch 01a0389d, docs/carre-das/07",
-   "risques_licence": [
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D42",
@@ -1625,8 +1559,8 @@
    ],
    "existant_verifie": "",
    "risques_licence": [
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort"
+    "neo4j/neo4j [GPL-3.0] : copyleft fort",
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter"
    ]
   },
   {
@@ -1669,12 +1603,12 @@
    ],
    "existant_verifie": "docs/carre-das/00→03 ; shell/ (portail 14 modules/104 fonctions, non encore branché aux données)",
    "risques_licence": [
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "OpenMW/openmw [GPL-3.0] : copyleft fort",
+    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort"
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
+    "neo4j/neo4j [GPL-3.0] : copyleft fort",
+    "freeciv/freeciv [GPL-2.0] : copyleft fort"
    ]
   },
   {
@@ -1744,24 +1678,9 @@
     "s"
    ],
    "fiche_art": "art-14",
-   "candidats_verifies_2026_10_08": [
-    "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]",
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]",
-    "PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0]",
-    "mindee/doctr ★6 381 [Apache-2.0]",
-    "apache/tika ★4 091 [Apache-2.0]",
-    "opendatalab/MinerU ★81 295 [Apache-2.0]",
-    "docling-project/docling ★68 537 [MIT]",
-    "Unstructured-IO/unstructured ★15 548 [Apache-2.0]"
-   ],
+   "candidats_verifies_2026_10_08": [],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
-   "risques_licence": [
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D46",
@@ -1885,13 +1804,13 @@
    ],
    "existant_verifie": "watchtower/index.html (55 Ko) + branche arena_01a072e1 (comparatif Cesium 21 357 ms vs MapLibre 3 ms) ; frontignan (28 fichiers, 14 Mo, deck 18 slides)",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
     "kobotoolbox/kpi [AGPL-3.0] : copyleft réseau",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter"
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -1933,15 +1852,15 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
-    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
+    "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
+    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "libgeos/geos [LGPL-2.1] : copyleft faible",
     "OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau",
     "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
-    "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
-    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort"
+    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -2041,12 +1960,12 @@
    ],
    "existant_verifie": "docs/carre-das/00→03 ; shell/ (portail 14 modules/104 fonctions, non encore branché aux données)",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
     "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
-    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible",
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter"
+    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
+    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible"
    ]
   },
   {
@@ -2076,20 +1995,9 @@
     "d"
    ],
    "fiche_art": "art-09",
-   "candidats_verifies_2026_10_08": [
-    "OpenTTD/OpenTTD ★8 345 [GPL-2.0]",
-    "OpenRCT2/OpenRCT2 ★16 397 [GPL-3.0]",
-    "OpenMW/openmw ★6 609 [GPL-3.0]",
-    "freeciv/freeciv ★1 602 [GPL-2.0]",
-    "godotengine/godot ★118 272 [MIT]"
-   ],
+   "candidats_verifies_2026_10_08": [],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
-   "risques_licence": [
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
-    "OpenMW/openmw [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D54",
@@ -2126,8 +2034,8 @@
    ],
    "existant_verifie": "watchtower/index.html (55 Ko) + branche arena_01a072e1 (comparatif Cesium 21 357 ms vs MapLibre 3 ms) ; frontignan (28 fichiers, 14 Mo, deck 18 slides)",
    "risques_licence": [
-    "openscad/openscad [GPL-2.0] : copyleft fort",
     "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
     "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
     "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible"
    ]
@@ -2192,11 +2100,6 @@
    ],
    "fiche_art": "art-19",
    "candidats_verifies_2026_10_08": [
-    "CesiumGS/cesium ★15 811 [Apache-2.0]",
-    "visgl/deck.gl ★14 636 [MIT]",
-    "mrdoob/three.js ★116 356 [MIT]",
-    "bilawalsidhu/gods-eye-view ★49 027 [MIT]",
-    "WorldPixelMap/android-gods-eye-view ★38 [NON-COMMERCIAL]",
     "yjs/yjs ★22 910 [MIT]",
     "automerge/automerge ★6 650 [MIT]",
     "syncthing/syncthing ★89 219 [MPL-2.0]",
@@ -2206,10 +2109,9 @@
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
-    "openscad/openscad [GPL-2.0] : copyleft fort",
     "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
     "syncthing/syncthing [MPL-2.0] : fichier par fichier"
    ]
   },
@@ -2250,15 +2152,15 @@
    ],
    "existant_verifie": "watchtower/index.html (55 Ko) + branche arena_01a072e1 (comparatif Cesium 21 357 ms vs MapLibre 3 ms) ; frontignan (28 fichiers, 14 Mo, deck 18 slides)",
    "risques_licence": [
-    "openscad/openscad [GPL-2.0] : copyleft fort",
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
-    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible",
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort"
+    "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
+    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
+    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible"
    ]
   },
   {
@@ -2285,9 +2187,9 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
+    "openscad/openscad [GPL-2.0] : copyleft fort",
     "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
-    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
-    "openscad/openscad [GPL-2.0] : copyleft fort"
+    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort"
    ]
   },
   {
@@ -2331,14 +2233,15 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
-    "OpenMW/openmw [GPL-3.0] : copyleft fort",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "freeciv/freeciv [GPL-2.0] : copyleft fort",
+    "OpenMW/openmw [GPL-3.0] : copyleft fort",
+    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
+    "graphdeco-inria/gaussian-splatting [NON-COMMERCIAL] : ⛔ à écarter",
     "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "graphdeco-inria/gaussian-splatting [NON-COMMERCIAL] : ⛔ à écarter"
+    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter",
+    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -2379,17 +2282,18 @@
     "valhalla/valhalla ★6 292 [MIT (à confirmer : voir COPYING)]",
     "OSGeo/PROJ ★2 030 [MIT]",
     "libgeos/geos ★1 513 [LGPL-2.1]",
-    "IfcOpenShell/IfcOpenShell ★2 841 [LGPL-3.0]"
+    "CesiumGS/cesium ★15 811 [Apache-2.0]"
    ],
    "existant_verifie": "watchtower/index.html (55 Ko) + branche arena_01a072e1 (comparatif Cesium 21 357 ms vs MapLibre 3 ms) ; frontignan (28 fichiers, 14 Mo, deck 18 slides)",
    "risques_licence": [
+    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
+    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "libgeos/geos [LGPL-2.1] : copyleft faible",
     "OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau",
-    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
-    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
     "CloudCompare/CloudCompare [GPL-2.0] : copyleft fort",
-    "osm-search/Nominatim [GPL-3.0] : copyleft fort",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
     "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
+    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible"
    ]
   },
@@ -2423,8 +2327,8 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "CloudCompare/CloudCompare [GPL-2.0] : copyleft fort"
+    "CloudCompare/CloudCompare [GPL-2.0] : copyleft fort",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter"
    ]
   },
   {
@@ -2458,9 +2362,9 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "openscad/openscad [GPL-2.0] : copyleft fort",
     "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
     "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible"
    ]
   },
@@ -2509,9 +2413,9 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
-    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
     "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible"
    ]
   },
@@ -2559,17 +2463,17 @@
    ],
    "existant_verifie": "nexus_os : 22 agents, 30 skills, runtime/harness/evals/context/memory/providers/creator ; Kc1t/alethe-agents (★832) et openclaw/openclaw (★391 640) à comparer",
    "risques_licence": [
-    "openscad/openscad [GPL-2.0] : copyleft fort",
-    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
+    "freeciv/freeciv [GPL-2.0] : copyleft fort",
     "OpenMW/openmw [GPL-3.0] : copyleft fort",
     "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
     "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
-    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible",
+    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
+    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau",
-    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort"
+    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible"
    ]
   },
   {
@@ -2611,10 +2515,10 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
+    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
     "openscad/openscad [GPL-2.0] : copyleft fort",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
     "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
     "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible"
    ]
   },
@@ -2688,10 +2592,10 @@
    ],
    "existant_verifie": "docs/recherche/02 (D64→D68) ; aucune base de code",
    "risques_licence": [
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "OpenMW/openmw [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort"
+    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
+    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
+    "freeciv/freeciv [GPL-2.0] : copyleft fort"
    ]
   },
   {
@@ -2725,10 +2629,10 @@
    ],
    "existant_verifie": "docs/recherche/02 (D64→D68) ; aucune base de code",
    "risques_licence": [
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "OpenMW/openmw [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort"
+    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
+    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
+    "freeciv/freeciv [GPL-2.0] : copyleft fort"
    ]
   },
   {
@@ -2757,26 +2661,20 @@
    ],
    "fiche_art": "art-04",
    "candidats_verifies_2026_10_08": [
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]",
-    "PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0]",
-    "mindee/doctr ★6 381 [Apache-2.0]",
-    "apache/tika ★4 091 [Apache-2.0]",
-    "opendatalab/MinerU ★81 295 [Apache-2.0]",
-    "docling-project/docling ★68 537 [MIT]",
-    "Unstructured-IO/unstructured ★15 548 [Apache-2.0]",
     "NationalSecurityAgency/ghidra ★81 650 [Apache-2.0]",
     "rizinorg/rizin ★3 942 [LGPL-3.0]",
     "rizinorg/cutter ★19 942 [GPL-3.0]",
-    "x64dbg/x64dbg ★49 739 [GPL-3.0]"
+    "x64dbg/x64dbg ★49 739 [GPL-3.0]",
+    "frida/frida ★22 146 [wxWindows-Library-Licence-3.1]",
+    "skylot/jadx ★50 780 [Apache-2.0]",
+    "angr/angr ★9 131 [BSD-2-Clause]"
    ],
    "existant_verifie": "corpus raw (43 PDF) ; docs/recherche/03 (Marker, MinerU, Docling déjà arbitrés)",
    "risques_licence": [
-    "x64dbg/x64dbg [GPL-3.0] : copyleft fort",
     "rizinorg/rizin [LGPL-3.0] : copyleft faible",
     "rizinorg/cutter [GPL-3.0] : copyleft fort",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
-    "frida/frida [wxWindows-Library-Licence-3.1] : type LGPL"
+    "frida/frida [wxWindows-Library-Licence-3.1] : type LGPL",
+    "x64dbg/x64dbg [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -2944,9 +2842,9 @@
    ],
    "existant_verifie": "nexus_os/plugins.py + mcp.py + mcp_demo.py (branche arena_01a08385) : 8 303 lignes Python, 22 agents, 30 compétences, 8 fichiers de tests",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
+    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "libgeos/geos [LGPL-2.1] : copyleft faible"
    ]
   },
   {
@@ -2969,20 +2867,9 @@
     "s"
    ],
    "fiche_art": "art-03",
-   "candidats_verifies_2026_10_08": [
-    "tesseract-ocr/tesseract ★76 861 [Apache-2.0]",
-    "ocrmypdf/OCRmyPDF ★34 960 [MPL-2.0]",
-    "PaddlePaddle/PaddleOCR ★90 775 [Apache-2.0]",
-    "mindee/doctr ★6 381 [Apache-2.0]",
-    "apache/tika ★4 091 [Apache-2.0]",
-    "opendatalab/MinerU ★81 295 [Apache-2.0]",
-    "docling-project/docling ★68 537 [MIT]",
-    "Unstructured-IO/unstructured ★15 548 [Apache-2.0]"
-   ],
+   "candidats_verifies_2026_10_08": [],
    "existant_verifie": "reaserch-engine (61 fichiers, 301 Ko)",
-   "risques_licence": [
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
-   ]
+   "risques_licence": []
   },
   {
    "id": "D76",
@@ -3140,9 +3027,9 @@
    ],
    "existant_verifie": "docs/carre-das/00→03 ; shell/ (portail 14 modules/104 fonctions, non encore branché aux données)",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier"
+    "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "libgeos/geos [LGPL-2.1] : copyleft faible"
    ]
   },
   {
@@ -3180,16 +3067,16 @@
    ],
    "existant_verifie": "branche arena_01a08449 : 22 rapports, 11 documents_sources, engine/btp_multi_agent.py ; corpus raw : 61 fichiers (43 PDF, 5 xlsm) dont DCE/CCTP/CCAP/BPU, signalisation OPPBTP, AIPR",
    "risques_licence": [
-    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "openscad/openscad [GPL-2.0] : copyleft fort",
-    "CloudCompare/CloudCompare [GPL-2.0] : copyleft fort",
-    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
-    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "xeokit/xeokit-sdk [AGPL-3.0] : copyleft réseau",
+    "WebODM/WebODM [AGPL-3.0] : copyleft réseau",
+    "CloudCompare/CloudCompare [GPL-2.0] : copyleft fort",
+    "ThatOpen/engine_web-ifc [MPL-2.0] : fichier par fichier",
     "LinuxCNC/linuxcnc [GPL-2.0] : copyleft fort",
+    "openscad/openscad [GPL-2.0] : copyleft fort",
+    "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
+    "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible",
     "OpenDroneMap/ODM [AGPL-3.0] : copyleft réseau",
-    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible",
-    "FreeCAD/FreeCAD [LGPL-2.1] : copyleft faible"
+    "IfcOpenShell/IfcOpenShell [LGPL-3.0] : copyleft faible"
    ]
   },
   {
@@ -3230,12 +3117,12 @@
    ],
    "existant_verifie": "",
    "risques_licence": [
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "syncthing/syncthing [MPL-2.0] : fichier par fichier",
-    "kiwix/kiwix-tools [GPL-3.0] : copyleft fort",
+    "osmandapp/OsmAnd [GPL-3.0] : copyleft fort",
     "openzim/zim-tools [GPL-3.0] : copyleft fort",
-    "osmandapp/OsmAnd [GPL-3.0] : copyleft fort"
+    "syncthing/syncthing [MPL-2.0] : fichier par fichier",
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
+    "neo4j/neo4j [GPL-3.0] : copyleft fort",
+    "kiwix/kiwix-tools [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -3318,8 +3205,8 @@
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
     "ocrmypdf/OCRmyPDF [MPL-2.0] : fichier par fichier",
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
     "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
@@ -3367,12 +3254,12 @@
    ],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
    "risques_licence": [
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
-    "neo4j/neo4j [GPL-3.0] : copyleft fort",
+    "syncthing/syncthing [MPL-2.0] : fichier par fichier",
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
+    "libgeos/geos [LGPL-2.1] : copyleft faible",
     "WorldPixelMap/android-gods-eye-view [NON-COMMERCIAL] : ⛔ à écarter",
-    "syncthing/syncthing [MPL-2.0] : fichier par fichier"
+    "FalkorDB/FalkorDB [SSPL-1.0] : ⛔ à écarter",
+    "neo4j/neo4j [GPL-3.0] : copyleft fort"
    ]
   },
   {
@@ -3475,8 +3362,8 @@
    "existant_verifie": "nexus_os/plugins.py + mcp.py + mcp_demo.py (branche arena_01a08385) : 8 303 lignes Python, 22 agents, 30 compétences, 8 fichiers de tests",
    "risques_licence": [
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
+    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau",
+    "libgeos/geos [LGPL-2.1] : copyleft faible"
    ]
   },
   {
@@ -3520,8 +3407,8 @@
    "existant_verifie": "nexus_os : 22 agents, 30 skills, runtime/harness/evals/context/memory/providers/creator ; Kc1t/alethe-agents (★832) et openclaw/openclaw (★391 640) à comparer",
    "risques_licence": [
     "osm-search/Nominatim [GPL-3.0] : copyleft fort",
-    "libgeos/geos [LGPL-2.1] : copyleft faible",
-    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau"
+    "Kc1t/alethe-agents [AGPL-3.0] : copyleft réseau",
+    "libgeos/geos [LGPL-2.1] : copyleft faible"
    ]
   },
   {
@@ -3552,10 +3439,10 @@
    ],
    "existant_verifie": "nexus_os/plugins.py + mcp.py + mcp_demo.py (branche arena_01a08385) : 8 303 lignes Python, 22 agents, 30 compétences, 8 fichiers de tests",
    "risques_licence": [
-    "freeciv/freeciv [GPL-2.0] : copyleft fort",
-    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
     "OpenMW/openmw [GPL-3.0] : copyleft fort",
-    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort"
+    "OpenRCT2/OpenRCT2 [GPL-3.0] : copyleft fort",
+    "OpenTTD/OpenTTD [GPL-2.0] : copyleft fort",
+    "freeciv/freeciv [GPL-2.0] : copyleft fort"
    ]
   },
   {
@@ -3606,15 +3493,9 @@
     "s"
    ],
    "fiche_art": "art-19",
-   "candidats_verifies_2026_10_08": [
-    "asg017/sqlite-vec ★8 170 [Apache-2.0]",
-    "tldraw/tldraw ★50 814 [Licence maison tldraw (filigrane)]",
-    "excalidraw/excalidraw ★133 685 [MIT]"
-   ],
+   "candidats_verifies_2026_10_08": [],
    "existant_verifie": "prototypes dispersés : proto-cognitorium (210 fichiers, 87 Mo, graphe NetworkGraph/TreeView), watchtower (999 fichiers, 52 Mo)",
-   "risques_licence": [
-    "tldraw/tldraw [Licence maison tldraw (filigrane)] : ⛔ à écarter"
-   ]
+   "risques_licence": []
   }
  ]
 }
