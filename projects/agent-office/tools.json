@@ -1,0 +1,82 @@
+{
+  "generated_by": "agent-office",
+  "services": [
+    {
+      "name": "budget",
+      "service": "Finance",
+      "capability": "Suivi budget mensuel : totaux par catégorie/statut, restant, alerte déficit",
+      "commands": [
+        "budget report [--month AAAA-MM]",
+        "budget add --date --libelle --categorie --type --montant [--statut]"
+      ]
+    },
+    {
+      "name": "invoices",
+      "service": "Finance",
+      "capability": "Génère devis/factures conformes (franchise TVA art. 293 B CGI) en HTML+texte",
+      "commands": [
+        "invoices devis|facture --client NOM --lines 'desc|qte|pu;...' [--num N]"
+      ]
+    },
+    {
+      "name": "marketing",
+      "service": "Marketing",
+      "capability": "One-pagers HTML, séquences de prospection 3 touches, posts sociaux — offres O1/O2/O3 réelles",
+      "commands": [
+        "marketing onepager --offer O1",
+        "marketing sequence --offer O1",
+        "marketing post --offer O1"
+      ]
+    },
+    {
+      "name": "prospects",
+      "service": "Prospection",
+      "capability": "Pipeline prospects par offre (O1/O2/O3), prochaines actions, relances dues",
+      "commands": [
+        "prospects list [--etape x]",
+        "prospects next",
+        "prospects add ...",
+        "prospects move --id N --etape x"
+      ]
+    },
+    {
+      "name": "research",
+      "service": "Recherche",
+      "capability": "Briefs de recherche structurés, registre de citations, liste de veille (→ reaserch-engine)",
+      "commands": [
+        "research brief --question '...'",
+        "research cite --url u --titre t",
+        "research watch --query q"
+      ]
+    },
+    {
+      "name": "mail",
+      "service": "Courrier",
+      "capability": "Digest des mails non lus groupés par expéditeur (IMAP lecture seule, zéro suppression)",
+      "commands": [
+        "mail digest [--limit 30]",
+        "mail digest --demo"
+      ]
+    },
+    {
+      "name": "planning",
+      "service": "Organisation",
+      "capability": "Agenda de tâches, ajout, export .ics pour Google Calendar",
+      "commands": [
+        "planning week [--start AAAA-MM-JJ]",
+        "planning add --titre t --date AAAA-MM-JJ [--duree 60]",
+        "planning ics [--days 14]"
+      ]
+    },
+    {
+      "name": "registry",
+      "service": "Direction",
+      "capability": "Registre des capacités de l'entreprise (tools.json) + auto-tests (doctor)",
+      "commands": [
+        "registry list",
+        "registry build",
+        "registry doctor"
+      ]
+    }
+  ]
+}

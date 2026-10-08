@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "nom": "Conseiller France Travail (à identifier)",
+    "org": "France Travail — agence de rattachement",
+    "offre": "O1",
+    "etape": "cible",
+    "contact": "TODO: via prochain rendez-vous d'actualisation",
+    "action": "Prendre RDV conseiller et présenter la maquette Cognitorium Emploi",
+    "echeance": "2026-10-15",
+    "notes": "Test gratuit, 0 €. Contact réel à compléter — jamais inventé."
+  },
+  {
+    "id": 2,
+    "nom": "Équipe de design de services (destinataire rapport Frontignan)",
+    "org": "Frontignan / bassin de Thau",
+    "offre": "O2",
+    "etape": "cible",
+    "contact": "TODO: retrouver le destinataire réel du rapport",
+    "action": "Envoyer le deck 18 slides Frontignan existant",
+    "echeance": "2026-10-20",
+    "notes": "Le deck est déjà livré dans projects/frontignan — rien à produire."
+  },
+  {
+    "id": 3,
+    "nom": "Réseau Sobeca",
+    "org": "Sobeca / connaissances BTP",
+    "offre": "O3",
+    "etape": "cible",
+    "contact": "TODO: lister 3 contacts réels",
+    "action": "Démo « dossier lu par l'IA » sur le dossier Pruniaux",
+    "echeance": "2026-10-31",
+    "notes": "Piste en réserve si O1/O2 sans retour à J+30."
+  }
+]

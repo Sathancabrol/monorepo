@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "titre": "Test O1 : préparer la démo Cognitorium pour le RDV conseiller France Travail",
+    "date": "2026-10-15",
+    "heure": "09:00",
+    "duree": 120
+  },
+  {
+    "id": 2,
+    "titre": "Test O2 : envoyer le deck Frontignan aux destinataires réels",
+    "date": "2026-10-20",
+    "heure": "10:00",
+    "duree": 60
+  },
+  {
+    "id": 3,
+    "titre": "Révision J+30 des hypothèses de mission (M1-M3, pistes O1/O2/O3)",
+    "date": "2026-11-07",
+    "heure": "09:00",
+    "duree": 120
+  }
+]

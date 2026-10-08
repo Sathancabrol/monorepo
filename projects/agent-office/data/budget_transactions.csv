@@ -1,0 +1,7 @@
+date,libelle,categorie,type,montant,statut
+2026-10-01,Aide France Travail,aide,revenu,977.10,LOCK
+2026-10-05,Loyer,logement,depense,832.83,LOCK
+2026-10-05,Électricité,energie,depense,126.44,LOCK
+2026-10-05,Assurance voiture + habitation,assurance,depense,75.36,LOCK
+2026-10-05,Internet,internet,depense,29.99,LOCK
+2026-10-05,Téléphone,telephonie,depense,23.99,LOCK
