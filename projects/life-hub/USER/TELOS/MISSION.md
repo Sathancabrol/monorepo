@@ -28,16 +28,17 @@ last_updated: 2026-10-08
 
 Une mission finale sera probablement une **combinaison** (M1 pour le revenu, M3 pour le sens, M2 pour la méthode). On ne tranche pas avant d'avoir des données.
 
-## 2. Pistes d'activité monétaire — classées par réalisme
+## 2. Pistes d'activité monétaire — **recalées après l'audit des actifs** (`docs/AUDIT-ACTIFS-COMPLET.md`)
 
-| Piste | Quoi | Pourquoi lui | 1ᵉʳ revenu plausible | Premier test |
-|---|---|---|---|---|
-| **A. IA pour le BTP** | Analyse/organisation de dossiers d'appels d'offres & de chantier (lecture CCTP, extraction des obligations, index de dossiers, mémoires) pour petites entreprises TP / conducteurs de travaux | il connaît la douleur ET l'outil ; le dossier Pruniaux EST sa démo | 1 client à ~300-800 € (forfait dossier) | faire tourner le tri sur le dossier Pruniaux comme produit de démo + 3 appels dans le réseau Sobeca |
-| **B. Opérateur IA pour TPE** | tri mail, automatisation, tableaux de bord — le savoir-faire de la session, vendu en forfait | démontré ; marché large | 1-2 forfaits/mois | 1 client pilote gratuit→payant parmi les contacts existants |
-| **C. Emploi « BTP + numérique »** | poste conducteur de travaux / métreur avec casquette outillage IA | revenu stable + ARE éventuellement préservée ; remet du cash tout de suite | salaire | 3 candidatures ciblées « BTP + outils numériques » |
-| **D. Création (OUTSIDER / contenu)** | plus long, plus risqué, mais sens fort | envie réelle | tardif | garder en semaine 2, 2 h/sem max tant que A/B/C ne tournent pas |
+L'audit a montré que les pistes ne partent pas de zéro : elles s'assemblent sur de l'existant.
 
-**Ordre conseillé** : A et C en parallèle (A = pari court, C = plancher de sécurité), B en réserve, D en respiration. Le déficit de 111,51 € est couvert dès le premier forfait de A — c'est la première marche psychologique.
+| Offre | Actifs déjà produits | Premier test 7 j (0 €) |
+|---|---|---|
+| **O1 Cognitorium Emploi** (matching compétences/ROME) | proto-cognitorium (271 ROME + Formacode + DDL + maquettes), HCSM, onboarding designé | RDV conseiller France Travail avec la maquette |
+| **O2 Intelligence territoriale** | frontignan (rapport 249 sources + deck 18 slides), reaserch-engine, watchtower | envoyer le deck à 3 destinataires réels |
+| **O3 IA pour chantiers BTP** | dossier chantier 220 fichiers, synthèse Talbot | démo « dossier lu par l'IA » au réseau Sobeca |
+
+Règle : **ne rien reconstruire** — chaque offre démarre d'un artefact existant ; du code neuf demandé par un test = signal de mauvaise offre.
 
 ## 3. Prochaines révisions
 - **J+30** (07/11/2026) : bilan des premiers tests M1-M3 + A-C → on garde, on corrige ou on rejette, comme les prédictions.

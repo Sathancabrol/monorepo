@@ -22,6 +22,21 @@ source: MANIFEST.json, projects/, docs/ (08/10/2026)
 | **reaserch-engine** | `projects/reaserch-engine/` | Présent dans le monorepo |
 | **watchtower** | `projects/watchtower/` | Présent dans le monorepo |
 
+## 🧠 Le produit nº1 (révélé par l'audit du 08/10) : COGNITORIUM
+| Pièce | Où | Rôle |
+|---|---|---|
+| HCSM | `projects/HCSM/` | modèle scientifique de l'état cognitif (v0.1.1) |
+| proto-cognitorium | `projects/proto-cognitorium/` | moteur : 271 fiches ROME France Travail + Formacode + DDL SQLite + maquettes |
+| Cognitarium City / Frontignan | `projects/frontignan/` + Drive (prompts AI Studio, « Vision Pilot 1.2.mp4 ») | application territoriale : rapport 249 sources + deck 18 slides |
+| OpenBCI Research Collection | Drive | piste capteurs / mesure réelle |
+| animation-chronos | repo dédié | visuel de marque |
+→ Voir `docs/AUDIT-ACTIFS-COMPLET.md` : offres O1/O2/O3 assemblées sur cet existant.
+
+## 🗂 Sites & orga perso
+- **Notion** : « Budget mensuel » + tâches hebdo (templates d'août 2026) — pont vers USER/ ; budget réel = tableur (FINANCES/BUDGET-MENSUEL.md).
+- **Drive** : archive Cognitorium (« Polsia - Cognitorium et Mnéoterr », « Slack Cognitrum »), dossier Gmail classé.
+- **Linear** : vide — disponible comme kanban offres/Outsider.
+
 ## 🧠 Recherche & cognition (dormants / à ré-évaluer)
 - **COGNITORIUM** (+ `projects/proto-cognitorium/`) — modules cognitifs, cité dans l'architecture cible du Life Hub
 - **HCSM** — état personnel, idem
