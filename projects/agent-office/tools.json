@@ -69,6 +69,18 @@
       ]
     },
     {
+      "name": "arena",
+      "service": "Arbitrage",
+      "capability": "Confrontation de modèles : duels en aveugle, votes, classement ELO local, grille de jugement ChatEval",
+      "commands": [
+        "arena battle --prompt P --a-file f --b-file g [--model-a X --model-b Y --categorie C]",
+        "arena page --battle N",
+        "arena vote --battle N --winner a|b|tie",
+        "arena elo",
+        "arena judge --battle N"
+      ]
+    },
+    {
       "name": "registry",
       "service": "Direction",
       "capability": "Registre des capacités de l'entreprise (tools.json) + auto-tests (doctor)",

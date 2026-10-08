@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from agent_office import budget, invoices, marketing, planning, registry  # noqa: E402
+from agent_office import arena, budget, invoices, marketing, planning, registry  # noqa: E402
 
 
 class TestBudget(unittest.TestCase):
@@ -48,6 +48,30 @@ class TestPlanning(unittest.TestCase):
         self.assertIn("BEGIN:VCALENDAR", ics)
         self.assertIn("BEGIN:VEVENT", ics)
         self.assertIn("J+30", ics)  # la révision de mission est planifiée
+
+
+class TestArena(unittest.TestCase):
+    def test_elo(self):
+        r = arena.elo_update({}, "a", "b", 1.0)
+        self.assertGreater(r["a"], arena.INITIAL)
+        self.assertLess(r["b"], arena.INITIAL)
+        r2 = arena.elo_update({"a": 1200, "b": 1200}, "a", "b", 0.5)
+        self.assertEqual(r2["a"], 1200)  # égalité entre égaux = neutre
+
+    def test_page_aveugle(self):
+        e = {
+            "id": 99, "prompt": "test", "categorie": "code", "melange": False, "vote": None,
+            "gauche": {"modele": "gpt-x", "texte": "réponse A"},
+            "droite": {"modele": "claude-y", "texte": "réponse B"},
+        }
+        page = arena.page_html(e)
+        self.assertIn("Réponse A", page)
+        self.assertIn("réponse B", page)
+        self.assertNotIn("gpt-x", page.split("<details>")[0])  # identités cachées avant révélation
+
+    def test_grille_chateval(self):
+        self.assertIn("3 rôles", arena.GRILLE_CHATEVAL)
+        self.assertIn("biais", arena.GRILLE_CHATEVAL)
 
 
 class TestRegistry(unittest.TestCase):

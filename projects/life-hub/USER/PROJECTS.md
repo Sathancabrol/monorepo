@@ -34,6 +34,15 @@ source: MANIFEST.json, projects/, docs/ (08/10/2026)
 | animation-chronos | repo dédié | visuel de marque |
 → Voir `docs/AUDIT-ACTIFS-COMPLET.md` : offres O1/O2/O3 assemblées sur cet existant.
 
+## 🤖 L'entreprise IA
+| Pièce | Où | Rôle |
+|---|---|---|
+| **agent-office** | `projects/agent-office/` | 9 services bureautiques zéro-dépendance (budget, invoices, marketing, prospects, research, mail, planning, arena, registry) — `python3 -m agent_office registry doctor` |
+| Architecture | `docs/AGENT-ENTREPRISE.md` | organigramme, règles d'or, couche IA (litellm/Portkey retenus par l'audit), circuit hebdo |
+| Benchmark modèles | `docs/SYSTEMES-CONFRONTATION-MODELES.md` | LMArena, godmode, ChatEval, Promptfoo, patrons n8n → service `arena` (duels aveugles + ELO) |
+| mail-organizer | `projects/mail-organizer/` | tri IMAP réel, déjà livré (jamais de suppression) |
+| reaserch-engine | `projects/reaserch-engine/` | moteur recherche branché sur les briefs `research` |
+
 ## 🗂 Sites & orga perso
 - **Notion** : « Budget mensuel » + tâches hebdo (templates d'août 2026) — pont vers USER/ ; budget réel = tableur (FINANCES/BUDGET-MENSUEL.md).
 - **Drive** : archive Cognitorium (« Polsia - Cognitorium et Mnéoterr », « Slack Cognitrum »), dossier Gmail classé.

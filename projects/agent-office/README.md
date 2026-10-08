@@ -23,6 +23,7 @@ python3 -m agent_office budget report     # budget réel (seedé depuis USER/FIN
 | 🔎 **research** | `research brief/cite/watch` | briefs de recherche, registre de citations, veille — s'articule avec `reaserch-engine` |
 | 📬 **mail** | `mail digest [--demo]` | digest IMAP lecture seule des non-lus groupés par expéditeur (jamais de suppression) |
 | 📅 **planning** | `planning week/add/ics` | agenda hebdo + export `.ics` importable dans Google Calendar |
+| ⚔️ **arena** | `arena battle/page/vote/elo/judge` | confrontation de modèles : duels en aveugle + ELO + grille ChatEval (voir `docs/SYSTEMES-CONFRONTATION-MODELES.md`) |
 | 🗂 **registry** | `registry list/build/doctor` | registre des capacités (`tools.json`) + auto-tests |
 
 Tous : `python3 -m agent_office <service> --help`.

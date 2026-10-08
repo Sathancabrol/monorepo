@@ -1,7 +1,7 @@
 """Dispatcher CLI : python3 -m agent_office <service> [args...]"""
 import sys
 
-from . import budget, invoices, maildigest, marketing, planning, prospects, registry, research
+from . import arena, budget, invoices, maildigest, marketing, planning, prospects, registry, research
 
 SERVICES = {
     "budget": budget,
@@ -11,6 +11,7 @@ SERVICES = {
     "research": research,
     "mail": maildigest,
     "planning": planning,
+    "arena": arena,
     "registry": registry,
 }
 
@@ -26,6 +27,7 @@ Services:
   research   briefs, citations, veille (avec reaserch-engine)
   mail       digest IMAP lecture seule des non-lus
   planning   agenda hebdo + export .ics
+  arena      confrontation de modèles : duels en aveugle + ELO + grille ChatEval
   registry   registre des capacités (tools.json) + doctor
 
 Chaque service : python3 -m agent_office <service> --help

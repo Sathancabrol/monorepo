@@ -7,11 +7,11 @@ import argparse
 import json
 from pathlib import Path
 
-from . import budget, invoices, maildigest, marketing, planning, prospects, research
+from . import arena, budget, invoices, maildigest, marketing, planning, prospects, research
 
 BASE = Path(__file__).resolve().parent.parent
 TOOLS_JSON = BASE / "tools.json"
-MODULES = [budget, invoices, marketing, prospects, research, maildigest, planning]
+MODULES = [budget, invoices, marketing, prospects, research, maildigest, planning, arena]
 
 CAPABILITY = {
     "name": "registry",
