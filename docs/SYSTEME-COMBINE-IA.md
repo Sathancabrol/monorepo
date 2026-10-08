@@ -46,7 +46,7 @@ app/ (FastAPI, déjà là)
 | **L1 Router** | **Déployer** LiteLLM (Docker) OU proxy FastAPI ~200 lignes si 2-3 fournisseurs suffisent | LiteLLM/Portkey : un endpoint, fallback, budget | 0,5 j (proxy) – 1 j (LiteLLM) |
 | **L2 Mémoire** | **Construire** : index markdown + petit embedding local (le « retrieval model » de GobboNet) | GobboNet : ne pas relire tout le lore, récupérer le pertinent | 2-3 j |
 | **L3 Personas** | **Construire** : format carte = markdown dans USER/ (compatible Arena/Claude Code) | SillyTavern : structure des cartes (personnalité, exemples, interdits) | 1 j |
-| **L4 UI** | **Construire mince** dans app/ (une route, streaming, sélecteur de persona) ; SillyTavern en *service à côté* pour l'usage power-user riche | GobboNet : simplicité 1-page ; SillyTavern : presets | 2-3 j |
+| **L4 UI** | **Construire mince** dans app/ (une route, streaming, sélecteur de persona) ; SillyTavern en *service à côté* pour l'usage power-user riche | GobboNet : simplicité 1-page ; SillyTavern : presets. **Cahier des charges complet : [`UI-MOBIGLAS.md`](UI-MOBIGLAS.md)** (design SF : mobiGlas, HUD, options LCARS) | 2-3 j |
 | Modèles locaux | **Déployer** Ollama sur le futur serveur (cf. `HARDWARE-LIFE-HUB.md` : N150 → RTX/Jetson selon l'ambition) | GobboNet : « ça tourne offline pour toujours » | 0,5 j |
 
 **Total ≈ 1 semaine de construction** pour un système qui n'existe nulle part ailleurs, et qui sera le seul à parler à tes données de vie.
