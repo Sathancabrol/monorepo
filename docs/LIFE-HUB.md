@@ -3,6 +3,7 @@
 > Recherche & architecture · 7-8 octobre 2026 · branche `arena/93b54a79-monorepo`
 > Objectif : relier les modules existants du monorepo + des outils open source pour que `app/` devienne l'interface unique de la vie administrative personnelle — planning, budget, mails, tâches, documents — utilisable par l'humain **et** par les IA.
 > **Stratégie mise à jour le 08/10 : partir d'un système déjà complet et l'adapter** plutôt que d'assembler brique par brique (voir §1).
+> **✅ DÉCISION ACTÉE LE 08/10/2026 : LifeOS est adopté** (renforcée par `BENCHMARK-HARNESS-2026.md`). Phase 1 réalisée dans **`projects/life-hub/`** : adoption sélective au commit upstream `5e2f2e8c` (USER template + ALGORITHM + ATLAS + RULES + WORKFLOW, NOTICE MIT, 142 fichiers). Prochaine étape : instancier `USER/` via le workflow Interview.
 
 ---
 

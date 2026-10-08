@@ -44,8 +44,8 @@
 | | |
 |---|---|
 | **Fait** | `docs/FEATURES-INVENTORY.md` (`dde1e2a`) ; `docs/LIFE-HUB.md` (`593ac38`) : audit de 10 suites tout-en-un → **danielmiessler/LifeOS** (19,3k★ MIT) choisi comme socle ; faisabilité vérifiée (bun, gh, parties privées) ; alternatives Notion gardées en plan B |
-| **Décidé** | Stratégie « copier-adpter » plutôt que brique par brique ; USER/ markdown git-first |
-| **En attente** | **Ta décision d'adoption** — renforcée depuis par le benchmark (§5) : aucun challenger ne couvre budget+planning+mails+mémoire |
+| **Décidé** | Stratégie « copier-adapter » plutôt que brique par brique ; USER/ markdown git-first ; **adoption actée le 08/10** → Phase 1 livrée dans `projects/life-hub/` (142 fichiers, NOTICE MIT, upstream figé `5e2f2e8c`) |
+| **En attente** | Phase 2 : instancier `USER/` réel via le workflow Interview + ponts monorepo |
 
 ## 3. 🔭 Prospective tech 2026-2035
 | | |
@@ -90,7 +90,7 @@
 ---
 
 ## 9. ⏳ Décisions ouvertes (dans l'ordre logique)
-1. **Adoption LifeOS** (le benchmark a renforcé le oui) → débloque les phases 1-2.
+1. ~~**Adoption LifeOS**~~ → **✅ ACTÉE le 08/10/2026** : Phase 1 réalisée dans `projects/life-hub/` (adoption sélective, NOTICE MIT, upstream `5e2f2e8c`). Prochaine étape : instancier `USER/` via le workflow Interview.
 2. **Nom du projet « enterprise »** (Portkey ou autre ?) → ajuste la couche L1.
 3. **Lancement construction** : routeur L1 + UI mobiGlas PWA.
 4. **Outsider** : enchaîner sur PHENOMENON_ENGINE + WORLD_STATE.

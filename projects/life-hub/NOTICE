@@ -1,0 +1,23 @@
+Life Hub — attribution
+======================
+
+This project incorporates material from:
+
+  LifeOS — The AI-Powered Life Operating System
+  Copyright (c) Daniel Miessler and LifeOS contributors
+  https://github.com/danielmiessler/LifeOS
+  License: MIT (see LICENSE text below / upstream LICENSE file)
+  Upstream revision vendored: 5e2f2e8c0abde612da0e99c16c0d07d4ec21b88c (2026-09-03, v7.40.4)
+
+Vendored paths and their upstream origins:
+  projects/life-hub/template/USER          <- install/USER
+  projects/life-hub/core/ALGORITHM         <- install/LIFEOS/ALGORITHM
+  projects/life-hub/core/ATLAS             <- install/LIFEOS/ATLAS
+  projects/life-hub/core/RULES             <- install/LIFEOS/RULES
+  projects/life-hub/core/LIFEOS_SYSTEM_PROMPT.md  <- install/LIFEOS/LIFEOS_SYSTEM_PROMPT.md
+  projects/life-hub/core/VERSION           <- install/LIFEOS/VERSION
+  projects/life-hub/core/CORTEX_INDEX_POLICY.json <- install/LIFEOS/CORTEX_INDEX_POLICY.json
+  projects/life-hub/WORKFLOW               <- Workflows
+
+The MIT License applies to the vendored material. The full upstream license
+text is available at https://github.com/danielmiessler/LifeOS/blob/main/LICENSE
