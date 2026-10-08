@@ -148,6 +148,7 @@ CANDIDATS = {
 
 # mots-clés → clés de CANDIDATS (l'ordre compte : les premiers trouvés priment)
 DECLENCHEURS = [
+    (r"hardware|cpu|gpu|vram|profils eco|budget de ressources|détection matériel", "materiel"),
     (r"assistant|voix|vocal|jarvis", "assistant_voix"),
     (r"cartograph|gis|géograph|geograph|sig |tuile|tile|satellit", "gis"),
     (r"\b3d\b|globe|webgl|rendu 3d|vue 3d|gaussian|splat|photogramm|nuage de points", "globe"),
@@ -171,7 +172,6 @@ DECLENCHEURS = [
     (r"reverse|binaire|décompil|debug|frida", "re"),
     (r"terrain|enquête|enquete|collecte|sondage|kobo|odk", "terrain"),
     (r"déduplication|deduplication|entité|entity resolution|rapprochement", "qualite"),
-    (r"hardware|cpu|gpu|vram|profils eco|budget de ressources|détection matériel", "materiel"),
     (r"recherche scientifique|publications?|papers?|openalex|crossref|bibliograph", "papers"),
 ]
 
