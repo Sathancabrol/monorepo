@@ -1,0 +1,33 @@
+# LIFEOS_CONFIG.toml — instance réelle de Nathan
+# Instancié 2026-10-08 (Interview, étape 2 pour [principal] ; étape 1 [da] en attente).
+# Les secrets ne vivent JAMAIS ici.
+
+[principal]
+name = "Nathan Cabrol"
+pronunciation = "Nathan Cabrol"
+timezone = "Europe/Paris"
+hometown = "Sète, France"
+currency = "EUR"
+
+[da]
+# TODO (interview, étape 1) : nommer l'assistant. Défaut du template conservé.
+name = "Aria"
+full_name = ""
+display_name = ""
+color = "#3B82F6"
+
+[da.voices.main]
+# TODO (interview) : voix réelle quand les notifications vocales seront branchées.
+voice_id = "21m00Tcm4TlvDq8ikWAM"
+voice_name = "Rachel"
+stability = 0.85
+similarity_boost = 0.7
+style = 0.3
+speed = 1.0
+use_speaker_boost = true
+volume = 1.0
+
+[paths]
+# Racines de l'instance monorepo (adaptaion Linux/FastAPI, pas ~/.claude).
+user_root = "projects/life-hub/USER"
+template_root = "projects/life-hub/template/USER"
