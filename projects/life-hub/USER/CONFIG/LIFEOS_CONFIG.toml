@@ -10,10 +10,10 @@ hometown = "Sète, France"
 currency = "EUR"
 
 [da]
-# TODO (interview, étape 1) : nommer l'assistant. Défaut du template conservé.
-name = "Aria"
-full_name = ""
-display_name = ""
+# Nommé par Nathan le 2026-10-08 (Interview, étape 1).
+name = "Laplace"
+full_name = "Laplace"
+display_name = "Laplace"
 color = "#3B82F6"
 
 [da.voices.main]

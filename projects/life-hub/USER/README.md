@@ -19,10 +19,15 @@ status: PARTIEL — les champs minés sont sourcés, le reste est marqué TODO
 - `TELOS/CURRENT_STATE/` — INFRASTRUCTURE, CREATIVE, SNAPSHOT
 - `CONFIG/LIFEOS_CONFIG.toml` — bloc `[principal]` rempli
 
-## Ce qui attend l'interview (rien n'est inventé)
-- `CONFIG/LIFEOS_CONFIG.toml` → `[da]` : **nom de l'assistant** + voix (étape 1 du workflow)
-- `TELOS/MISSION.md` + `TELOS/IDEAL_STATE/` — cap de vie et état idéal (étape 4)
-- `FINANCES/` — comptes, revenus, enveloppes (aucune donnée dans le repo)
+## Ajouté à l'interview du 08/10 (soir)
+- **DA nommé : Laplace** (`CONFIG/LIFEOS_CONFIG.toml`)
+- **Budget réel importé** depuis le tableur de Nathan : `FINANCES/BUDGET-MENSUEL.md` (charges 1 088,61 € · revenus 977,10 € France travail · déficit structurel −111,51 €)
+- **MONEY** : état monétaire honnête + actifs monétisables : `TELOS/CURRENT_STATE/MONEY.md`
+- **MISSION v2** : exploration par hypothèses testées (M1-M3) + pistes de revenu classées (A-D), révisions à J+30 : `TELOS/MISSION.md`
+
+## Ce qui attend encore l'interview (rien n'est inventé)
+- `TELOS/IDEAL_STATE/` — à construire une fois que les tests M1-M3 auront donné des données
+- `FINANCES/` — comptes bancaires, échéance des droits France Travail, statut micro-entreprise
 - `HEALTH/` — non abordé
 - `CONTACTS.md` — personnes qui comptent
 - `TELOS/CURRENT_STATE/RELATIONSHIPS.md`, `RHYTHMS.md`, `FREEDOM.md`
