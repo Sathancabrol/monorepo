@@ -114,3 +114,17 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 ## 📚 Fusion réelle (option b)
 
 Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+
+## 🔎 Dossier d'audit pour ArenaAI — `docs/arena-audit/`
+
+Un dossier **autoportant** à remettre à un agent de recherche (accès web/GitHub) pour auditer, comparer et réorganiser l'application.
+
+| Fichier | Contenu |
+|---|---|
+| `00-MISSION-ARENAAI.md` | Le brief : contexte, état **vérifié** du dépôt, protocole de recherche, grille d'évaluation, contraintes, format de sortie attendu |
+| `01-TABLEAU-DOMAINES.md` | **93 domaines** (85 cadrés + 8 ajoutés) : existant, à auditer, à construire, priorité, candidats vérifiés le 08/10/2026, risques de licence, fiche art |
+| `02-CONCEPT-ART-ET-PROMPTS.md` | Direction artistique + **20 fiches de concept art** avec prompts d'image directement exploitables |
+| `03-LICENCES-VERIFIEES.md` | **97 dépôts** contrôlés par l'API GitHub (licence réelle, étoiles, activité, risque) + les 5 pièges détectés |
+| `data/` | Versions machine : `domaines.json`, `licences-2026-10-08.tsv`/`.json` |
+
+Régénérer : `python3 scripts/gen-dossier-arena.py`

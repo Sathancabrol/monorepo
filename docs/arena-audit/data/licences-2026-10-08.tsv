@@ -1,0 +1,98 @@
+repo	etoiles	licence	derniere_publication	archive	langage	risque
+CesiumGS/cesium	15811	Apache-2.0	2026-10-08	False	JavaScript	🟢 Permissive + clause brevets. Idéale.
+CloudCompare/CloudCompare	4788	GPL-2.0	2026-10-08	False	C++	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+Crosstalk-Solutions/project-nomad	39287	Apache-2.0	2026-10-07	False	TypeScript	🟢 Permissive + clause brevets. Idéale.
+EbookFoundation/free-programming-books	398700	CC-BY-4.0	2026-10-05	False	Python	🟡 Attribution obligatoire (données).
+FalkorDB/FalkorDB	7967	SSPL-1.0	2026-10-08	False	Rust	⛔ Interdit d'offrir le logiciel en service sans ouvrir toute la pile. À ÉCARTER.
+FreeCAD/FreeCAD	34025	LGPL-2.1	2026-10-08	False	C++	🟡 Copyleft faible : liaison dynamique autorisée, ne pas modifier ni statiquement lier.
+IfcOpenShell/IfcOpenShell	2841	LGPL-3.0	2026-10-08	False	C++	🟡 Copyleft faible : liaison dynamique autorisée.
+JuliaDynamics/Agents.jl	919	MIT	2026-09-15	False	Julia	🟢 Permissive maximale.
+Kc1t/alethe-agents	832	AGPL-3.0	2026-10-07	False	TypeScript	⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur.
+LadybugDB/bugscope-tauri	18	NONE	2026-09-24	False	TypeScript	🟡 à qualifier
+LadybugDB/ladybug	1825	MIT	2026-10-08	False	C++	🟢 Permissive maximale.
+LinuxCNC/linuxcnc	2484	GPL-2.0	2026-10-07	False	Python	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+NationalSecurityAgency/ghidra	81650	Apache-2.0	2026-10-08	False	Java	🟢 Permissive + clause brevets. Idéale.
+OSGeo/PROJ	2030	MIT	2026-10-08	False	C++	🟢 Permissive maximale.
+OSGeo/gdal	6087	MIT	2026-10-08	False	C++	🟢 Permissive maximale.
+OpenDroneMap/ODM	6509	AGPL-3.0	2026-09-16	False	Python	⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur.
+OpenHands/OpenHands	90275	MIT	2026-10-08	False	TypeScript	🟢 Permissive maximale.
+OpenMW/openmw	6609	GPL-3.0	2026-10-07	False	C++	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+OpenRCT2/OpenRCT2	16397	GPL-3.0	2026-10-07	False	C++	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+OpenTTD/OpenTTD	8345	GPL-2.0	2026-10-08	False	C++	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+PDAL/PDAL	1422	BSD-3-Clause	2026-10-07	False	C++	🟢 Permissive.
+PaddlePaddle/PaddleOCR	90775	Apache-2.0	2026-09-16	False	Python	🟢 Permissive + clause brevets. Idéale.
+Project-OSRM/osrm-backend	8126	BSD-2-Clause	2026-10-07	False	C++	🟡 à qualifier
+ThatOpen/engine_components	710	MIT	2026-10-06	False	TypeScript	🟢 Permissive maximale.
+ThatOpen/engine_web-ifc	1057	MPL-2.0	2026-10-08	False	TypeScript	🟢 Fichier par fichier : modifications des fichiers MPL à republier seulement.
+Unstructured-IO/unstructured	15548	Apache-2.0	2026-10-08	False	HTML	🟢 Permissive + clause brevets. Idéale.
+WebODM/WebODM	4205	AGPL-3.0	2026-10-06	False	Python	⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur.
+WorldPixelMap/android-gods-eye-view	38	NON-COMMERCIAL	2026-09-10	False	JavaScript	⛔ Usage commercial interdit. À ÉCARTER du produit (ok démo/recherche).
+a2aproject/A2A	26073	Apache-2.0	2026-10-08	False	Shell	🟢 Permissive + clause brevets. Idéale.
+aaif-goose/goose	55067	Apache-2.0	2026-10-08	False	Rust	🟢 Permissive + clause brevets. Idéale.
+adewaskar/jarvis	412	MIT	2026-08-05	False	TypeScript	🟢 Permissive maximale.
+agentclientprotocol/agent-client-protocol	4391	Apache-2.0	2026-10-08	False	Rust	🟢 Permissive + clause brevets. Idéale.
+angr/angr	9131	BSD-2-Clause	2026-10-08	False	Python	🟡 à qualifier
+apache/arrow	17188	Apache-2.0	2026-10-08	False	C++	🟢 Permissive + clause brevets. Idéale.
+apache/tika	4091	Apache-2.0	2026-10-07	False	Java	🟢 Permissive + clause brevets. Idéale.
+asg017/sqlite-vec	8170	Apache-2.0	2026-05-18	False	C	🟢 Permissive + clause brevets. Idéale.
+automerge/automerge	6650	MIT	2026-10-08	False	JavaScript	🟢 Permissive maximale.
+bilawalsidhu/gods-eye-view	49027	MIT	2026-10-07	False	JavaScript	🟢 Permissive maximale.
+bytecodealliance/wasmtime	18698	Apache-2.0	2026-10-07	False	Rust	🟢 Permissive + clause brevets. Idéale.
+colmap/colmap	12874	BSD-3-Clause	2026-10-08	False	C++	🟢 Permissive.
+danielbrendel/hortusfox-web	1680	MIT	2026-10-05	False	PHP	🟢 Permissive maximale.
+datalab-to/marker	40265	Apache-2.0	2026-10-02	False	Python	🟢 Permissive + clause brevets. Idéale.
+docling-project/docling	68537	MIT	2026-10-08	False	Python	🟢 Permissive maximale.
+duckdb/duckdb	41982	MIT	2026-10-08	False	C++	🟢 Permissive maximale.
+duckdb/duckdb-spatial	714	MIT	2026-10-01	False	C	🟢 Permissive maximale.
+excalidraw/excalidraw	133685	MIT	2026-10-08	False	TypeScript	🟢 Permissive maximale.
+extism/extism	5789	BSD-3-Clause	2026-09-02	False	Rust	🟢 Permissive.
+freeciv/freeciv	1602	GPL-2.0	2026-10-08	False	C	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+frida/frida	22146	wxWindows-Library-Licence-3.1	2026-10-08	False	Meson	🟡 Type LGPL : ok en outil externe.
+getodk/central	228	Apache-2.0	2026-10-07	False	JavaScript	🟢 Permissive + clause brevets. Idéale.
+getzep/graphiti	31553	Apache-2.0	2026-10-07	False	Python	🟢 Permissive + clause brevets. Idéale.
+ggml-org/llama.cpp	130687	MIT	2026-10-08	False	C++	🟢 Permissive maximale.
+godotengine/godot	118272	MIT	2026-10-07	False	C++	🟢 Permissive maximale.
+graphdeco-inria/gaussian-splatting	24137	NON-COMMERCIAL	2025-10-17	False	Python	⛔ Usage commercial interdit. À ÉCARTER du produit (ok démo/recherche).
+kiwix/kiwix-tools	961	GPL-3.0	2026-10-01	False	C++	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+kobotoolbox/kpi	185	AGPL-3.0	2026-10-08	False	Python	⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur.
+learningequality/kolibri	1136	MIT	2026-10-07	False	Python	🟢 Permissive maximale.
+libgeos/geos	1513	LGPL-2.1	2026-10-05	False	C++	🟡 Copyleft faible : liaison dynamique autorisée, ne pas modifier ni statiquement lier.
+mapbox/mapbox-gl-js	12437	PROPRIETAIRE (Mapbox TOS)	2026-10-08	False	TypeScript	⛔ Verrouillage fournisseur + facturation. À ÉCARTER.
+maplibre/maplibre-gl-js	11825	BSD-3-Clause	2026-10-08	False	TypeScript	🟢 Permissive.
+maplibre/martin	3983	Apache-2.0	2026-10-08	False	Rust	🟢 Permissive + clause brevets. Idéale.
+mesa/mesa	3877	Apache-2.0	2026-10-06	False	Python	🟢 Permissive + clause brevets. Idéale.
+mindee/doctr	6381	Apache-2.0	2026-10-07	False	Python	🟢 Permissive + clause brevets. Idéale.
+mkkellogg/GaussianSplats3D	2904	MIT	2025-10-19	False	JavaScript	🟢 Permissive maximale.
+modelcontextprotocol/modelcontextprotocol	9406	Apache-2.0	2026-10-08	False	TypeScript	🟢 Permissive + clause brevets. Idéale.
+moj-analytical-services/splink	2462	MIT	2026-10-06	False	Python	🟢 Permissive maximale.
+mrdoob/three.js	116356	MIT	2026-10-08	False	JavaScript	🟢 Permissive maximale.
+neo4j/neo4j	17284	GPL-3.0	2026-09-22	False	Java	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+nerfstudio-project/nerfstudio	12053	Apache-2.0	2025-07-29	False	Python	🟢 Permissive + clause brevets. Idéale.
+ocrmypdf/OCRmyPDF	34960	MPL-2.0	2026-10-07	False	Python	🟢 Fichier par fichier : modifications des fichiers MPL à republier seulement.
+ollama/ollama	182569	MIT	2026-10-08	False	Go	🟢 Permissive maximale.
+openclaw/openclaw	391640	MIT	2026-10-08	False	TypeScript	🟢 Permissive maximale.
+opendatalab/MinerU	81295	Apache-2.0	2026-10-06	False	Python	🟢 Permissive + clause brevets. Idéale.
+opengeos/GeoLibre	7871	MIT	2026-10-08	False	TypeScript	🟢 Permissive maximale.
+openscad/openscad	10392	GPL-2.0	2026-10-08	False	C++	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+openzim/zim-tools	221	GPL-3.0	2026-10-04	False	C++	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+organicmaps/organicmaps	15613	Apache-2.0	2026-10-08	False	C++	🟢 Permissive + clause brevets. Idéale.
+osm-search/Nominatim	4512	GPL-3.0	2026-09-30	False	Python	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+osmandapp/OsmAnd	6062	GPL-3.0	2026-10-08	False	Java	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+pola-rs/polars	40008	MIT	2026-10-08	False	Rust	🟢 Permissive maximale.
+potree/potree	5632	BSD (2 ou 3 clauses)	2026-01-08	False	JavaScript	🟢 Permissive.
+protomaps/PMTiles	3074	BSD-3-Clause	2026-09-16	False	TypeScript	🟢 Permissive.
+qgis/QGIS	14483	GPL-2.0	2026-10-08	False	C++	⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé.
+rizinorg/cutter	19942	GPL-3.0	2026-09-11	False	C++	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+rizinorg/rizin	3942	LGPL-3.0	2026-10-08	False	C	🟡 Copyleft faible : liaison dynamique autorisée.
+skylot/jadx	50780	Apache-2.0	2026-10-07	False	Java	🟢 Permissive + clause brevets. Idéale.
+sqlite/sqlite	10620	Domaine public	2026-10-08	False	C	🟢 Aucune contrainte.
+syncthing/syncthing	89219	MPL-2.0	2026-10-08	False	Go	🟢 Fichier par fichier : modifications des fichiers MPL à republier seulement.
+tauri-apps/tauri	111674	Apache-2.0	2026-10-08	False	Rust	🟢 Permissive + clause brevets. Idéale.
+tesseract-ocr/tesseract	76861	Apache-2.0	2026-10-08	False	C++	🟢 Permissive + clause brevets. Idéale.
+tldraw/tldraw	50814	Licence maison tldraw (filigrane)	2026-10-07	False	TypeScript	⛔ Restriction + filigrane. À ÉCARTER.
+valhalla/valhalla	6292	MIT (à confirmer : voir COPYING)	2026-10-08	False	C++	🟡 à qualifier
+visgl/deck.gl	14636	MIT	2026-10-07	False	TypeScript	🟢 Permissive maximale.
+x64dbg/x64dbg	49739	GPL-3.0	2026-10-01	False	C++	⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants.
+xeokit/xeokit-sdk	944	AGPL-3.0	2026-10-05	False	HTML	⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur.
+yjs/yjs	22910	MIT	2026-10-07	False	JavaScript	🟢 Permissive maximale.
+zed-industries/zed	91449	Apache-2.0 (crates) / GPL-3.0 (éditeur)	2026-10-08	False	Rust	🟡 à qualifier

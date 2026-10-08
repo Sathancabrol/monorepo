@@ -1,0 +1,875 @@
+[
+ {
+  "repo": "CesiumGS/cesium",
+  "etoiles": 15811,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "CloudCompare/CloudCompare",
+  "etoiles": 4788,
+  "licence": "GPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
+ },
+ {
+  "repo": "Crosstalk-Solutions/project-nomad",
+  "etoiles": 39287,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "EbookFoundation/free-programming-books",
+  "etoiles": 398700,
+  "licence": "CC-BY-4.0",
+  "maj": "2026-10-05",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟡 Attribution obligatoire (données)."
+ },
+ {
+  "repo": "FalkorDB/FalkorDB",
+  "etoiles": 7967,
+  "licence": "SSPL-1.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "⛔ Interdit d'offrir le logiciel en service sans ouvrir toute la pile. À ÉCARTER."
+ },
+ {
+  "repo": "FreeCAD/FreeCAD",
+  "etoiles": 34025,
+  "licence": "LGPL-2.1",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟡 Copyleft faible : liaison dynamique autorisée, ne pas modifier ni statiquement lier."
+ },
+ {
+  "repo": "IfcOpenShell/IfcOpenShell",
+  "etoiles": 2841,
+  "licence": "LGPL-3.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟡 Copyleft faible : liaison dynamique autorisée."
+ },
+ {
+  "repo": "JuliaDynamics/Agents.jl",
+  "etoiles": 919,
+  "licence": "MIT",
+  "maj": "2026-09-15",
+  "archive": false,
+  "langage": "Julia",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "Kc1t/alethe-agents",
+  "etoiles": 832,
+  "licence": "AGPL-3.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur."
+ },
+ {
+  "repo": "LadybugDB/bugscope-tauri",
+  "etoiles": 18,
+  "licence": "NONE",
+  "maj": "2026-09-24",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟡 à qualifier"
+ },
+ {
+  "repo": "LadybugDB/ladybug",
+  "etoiles": 1825,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "LinuxCNC/linuxcnc",
+  "etoiles": 2484,
+  "licence": "GPL-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Python",
+  "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
+ },
+ {
+  "repo": "NationalSecurityAgency/ghidra",
+  "etoiles": 81650,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Java",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "OSGeo/PROJ",
+  "etoiles": 2030,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "OSGeo/gdal",
+  "etoiles": 6087,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "OpenDroneMap/ODM",
+  "etoiles": 6509,
+  "licence": "AGPL-3.0",
+  "maj": "2026-09-16",
+  "archive": false,
+  "langage": "Python",
+  "risque": "⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur."
+ },
+ {
+  "repo": "OpenHands/OpenHands",
+  "etoiles": 90275,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "OpenMW/openmw",
+  "etoiles": 6609,
+  "licence": "GPL-3.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "OpenRCT2/OpenRCT2",
+  "etoiles": 16397,
+  "licence": "GPL-3.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "OpenTTD/OpenTTD",
+  "etoiles": 8345,
+  "licence": "GPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
+ },
+ {
+  "repo": "PDAL/PDAL",
+  "etoiles": 1422,
+  "licence": "BSD-3-Clause",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive."
+ },
+ {
+  "repo": "PaddlePaddle/PaddleOCR",
+  "etoiles": 90775,
+  "licence": "Apache-2.0",
+  "maj": "2026-09-16",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "Project-OSRM/osrm-backend",
+  "etoiles": 8126,
+  "licence": "BSD-2-Clause",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟡 à qualifier"
+ },
+ {
+  "repo": "ThatOpen/engine_components",
+  "etoiles": 710,
+  "licence": "MIT",
+  "maj": "2026-10-06",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "ThatOpen/engine_web-ifc",
+  "etoiles": 1057,
+  "licence": "MPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Fichier par fichier : modifications des fichiers MPL à republier seulement."
+ },
+ {
+  "repo": "Unstructured-IO/unstructured",
+  "etoiles": 15548,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "HTML",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "WebODM/WebODM",
+  "etoiles": 4205,
+  "licence": "AGPL-3.0",
+  "maj": "2026-10-06",
+  "archive": false,
+  "langage": "Python",
+  "risque": "⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur."
+ },
+ {
+  "repo": "WorldPixelMap/android-gods-eye-view",
+  "etoiles": 38,
+  "licence": "NON-COMMERCIAL",
+  "maj": "2026-09-10",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "⛔ Usage commercial interdit. À ÉCARTER du produit (ok démo/recherche)."
+ },
+ {
+  "repo": "a2aproject/A2A",
+  "etoiles": 26073,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Shell",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "aaif-goose/goose",
+  "etoiles": 55067,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "adewaskar/jarvis",
+  "etoiles": 412,
+  "licence": "MIT",
+  "maj": "2026-08-05",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "agentclientprotocol/agent-client-protocol",
+  "etoiles": 4391,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "angr/angr",
+  "etoiles": 9131,
+  "licence": "BSD-2-Clause",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟡 à qualifier"
+ },
+ {
+  "repo": "apache/arrow",
+  "etoiles": 17188,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "apache/tika",
+  "etoiles": 4091,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Java",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "asg017/sqlite-vec",
+  "etoiles": 8170,
+  "licence": "Apache-2.0",
+  "maj": "2026-05-18",
+  "archive": false,
+  "langage": "C",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "automerge/automerge",
+  "etoiles": 6650,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "bilawalsidhu/gods-eye-view",
+  "etoiles": 49027,
+  "licence": "MIT",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "bytecodealliance/wasmtime",
+  "etoiles": 18698,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "colmap/colmap",
+  "etoiles": 12874,
+  "licence": "BSD-3-Clause",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive."
+ },
+ {
+  "repo": "danielbrendel/hortusfox-web",
+  "etoiles": 1680,
+  "licence": "MIT",
+  "maj": "2026-10-05",
+  "archive": false,
+  "langage": "PHP",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "datalab-to/marker",
+  "etoiles": 40265,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-02",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "docling-project/docling",
+  "etoiles": 68537,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "duckdb/duckdb",
+  "etoiles": 41982,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "duckdb/duckdb-spatial",
+  "etoiles": 714,
+  "licence": "MIT",
+  "maj": "2026-10-01",
+  "archive": false,
+  "langage": "C",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "excalidraw/excalidraw",
+  "etoiles": 133685,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "extism/extism",
+  "etoiles": 5789,
+  "licence": "BSD-3-Clause",
+  "maj": "2026-09-02",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive."
+ },
+ {
+  "repo": "freeciv/freeciv",
+  "etoiles": 1602,
+  "licence": "GPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C",
+  "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
+ },
+ {
+  "repo": "frida/frida",
+  "etoiles": 22146,
+  "licence": "wxWindows-Library-Licence-3.1",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Meson",
+  "risque": "🟡 Type LGPL : ok en outil externe."
+ },
+ {
+  "repo": "getodk/central",
+  "etoiles": 228,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "getzep/graphiti",
+  "etoiles": 31553,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "ggml-org/llama.cpp",
+  "etoiles": 130687,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "godotengine/godot",
+  "etoiles": 118272,
+  "licence": "MIT",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "graphdeco-inria/gaussian-splatting",
+  "etoiles": 24137,
+  "licence": "NON-COMMERCIAL",
+  "maj": "2025-10-17",
+  "archive": false,
+  "langage": "Python",
+  "risque": "⛔ Usage commercial interdit. À ÉCARTER du produit (ok démo/recherche)."
+ },
+ {
+  "repo": "kiwix/kiwix-tools",
+  "etoiles": 961,
+  "licence": "GPL-3.0",
+  "maj": "2026-10-01",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "kobotoolbox/kpi",
+  "etoiles": 185,
+  "licence": "AGPL-3.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Python",
+  "risque": "⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur."
+ },
+ {
+  "repo": "learningequality/kolibri",
+  "etoiles": 1136,
+  "licence": "MIT",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "libgeos/geos",
+  "etoiles": 1513,
+  "licence": "LGPL-2.1",
+  "maj": "2026-10-05",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟡 Copyleft faible : liaison dynamique autorisée, ne pas modifier ni statiquement lier."
+ },
+ {
+  "repo": "mapbox/mapbox-gl-js",
+  "etoiles": 12437,
+  "licence": "PROPRIETAIRE (Mapbox TOS)",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "⛔ Verrouillage fournisseur + facturation. À ÉCARTER."
+ },
+ {
+  "repo": "maplibre/maplibre-gl-js",
+  "etoiles": 11825,
+  "licence": "BSD-3-Clause",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive."
+ },
+ {
+  "repo": "maplibre/martin",
+  "etoiles": 3983,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "mesa/mesa",
+  "etoiles": 3877,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-06",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "mindee/doctr",
+  "etoiles": 6381,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "mkkellogg/GaussianSplats3D",
+  "etoiles": 2904,
+  "licence": "MIT",
+  "maj": "2025-10-19",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "modelcontextprotocol/modelcontextprotocol",
+  "etoiles": 9406,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "moj-analytical-services/splink",
+  "etoiles": 2462,
+  "licence": "MIT",
+  "maj": "2026-10-06",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "mrdoob/three.js",
+  "etoiles": 116356,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "neo4j/neo4j",
+  "etoiles": 17284,
+  "licence": "GPL-3.0",
+  "maj": "2026-09-22",
+  "archive": false,
+  "langage": "Java",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "nerfstudio-project/nerfstudio",
+  "etoiles": 12053,
+  "licence": "Apache-2.0",
+  "maj": "2025-07-29",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "ocrmypdf/OCRmyPDF",
+  "etoiles": 34960,
+  "licence": "MPL-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Fichier par fichier : modifications des fichiers MPL à republier seulement."
+ },
+ {
+  "repo": "ollama/ollama",
+  "etoiles": 182569,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Go",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "openclaw/openclaw",
+  "etoiles": 391640,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "opendatalab/MinerU",
+  "etoiles": 81295,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-06",
+  "archive": false,
+  "langage": "Python",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "opengeos/GeoLibre",
+  "etoiles": 7871,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "openscad/openscad",
+  "etoiles": 10392,
+  "licence": "GPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
+ },
+ {
+  "repo": "openzim/zim-tools",
+  "etoiles": 221,
+  "licence": "GPL-3.0",
+  "maj": "2026-10-04",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "organicmaps/organicmaps",
+  "etoiles": 15613,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "osm-search/Nominatim",
+  "etoiles": 4512,
+  "licence": "GPL-3.0",
+  "maj": "2026-09-30",
+  "archive": false,
+  "langage": "Python",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "osmandapp/OsmAnd",
+  "etoiles": 6062,
+  "licence": "GPL-3.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Java",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "pola-rs/polars",
+  "etoiles": 40008,
+  "licence": "MIT",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "potree/potree",
+  "etoiles": 5632,
+  "licence": "BSD (2 ou 3 clauses)",
+  "maj": "2026-01-08",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive."
+ },
+ {
+  "repo": "protomaps/PMTiles",
+  "etoiles": 3074,
+  "licence": "BSD-3-Clause",
+  "maj": "2026-09-16",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive."
+ },
+ {
+  "repo": "qgis/QGIS",
+  "etoiles": 14483,
+  "licence": "GPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : utilisable comme outil externe lancé par l'app (sidecar), pas lié au cœur propriétaire/monétisé."
+ },
+ {
+  "repo": "rizinorg/cutter",
+  "etoiles": 19942,
+  "licence": "GPL-3.0",
+  "maj": "2026-09-11",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "rizinorg/rizin",
+  "etoiles": 3942,
+  "licence": "LGPL-3.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C",
+  "risque": "🟡 Copyleft faible : liaison dynamique autorisée."
+ },
+ {
+  "repo": "skylot/jadx",
+  "etoiles": 50780,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "Java",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "sqlite/sqlite",
+  "etoiles": 10620,
+  "licence": "Domaine public",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C",
+  "risque": "🟢 Aucune contrainte."
+ },
+ {
+  "repo": "syncthing/syncthing",
+  "etoiles": 89219,
+  "licence": "MPL-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Go",
+  "risque": "🟢 Fichier par fichier : modifications des fichiers MPL à republier seulement."
+ },
+ {
+  "repo": "tauri-apps/tauri",
+  "etoiles": 111674,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "tesseract-ocr/tesseract",
+  "etoiles": 76861,
+  "licence": "Apache-2.0",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟢 Permissive + clause brevets. Idéale."
+ },
+ {
+  "repo": "tldraw/tldraw",
+  "etoiles": 50814,
+  "licence": "Licence maison tldraw (filigrane)",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "⛔ Restriction + filigrane. À ÉCARTER."
+ },
+ {
+  "repo": "valhalla/valhalla",
+  "etoiles": 6292,
+  "licence": "MIT (à confirmer : voir COPYING)",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "C++",
+  "risque": "🟡 à qualifier"
+ },
+ {
+  "repo": "visgl/deck.gl",
+  "etoiles": 14636,
+  "licence": "MIT",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "TypeScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "x64dbg/x64dbg",
+  "etoiles": 49739,
+  "licence": "GPL-3.0",
+  "maj": "2026-10-01",
+  "archive": false,
+  "langage": "C++",
+  "risque": "⚠️ Copyleft fort : idem GPL-2.0 + incompatibilité avec certains composants."
+ },
+ {
+  "repo": "xeokit/xeokit-sdk",
+  "etoiles": 944,
+  "licence": "AGPL-3.0",
+  "maj": "2026-10-05",
+  "archive": false,
+  "langage": "HTML",
+  "risque": "⚠️ Contamination réseau : si le code tourne dans un service exposé, tout le service doit être ouvert. Utilisable en outil interne séparé, PAS embarqué dans le cœur."
+ },
+ {
+  "repo": "yjs/yjs",
+  "etoiles": 22910,
+  "licence": "MIT",
+  "maj": "2026-10-07",
+  "archive": false,
+  "langage": "JavaScript",
+  "risque": "🟢 Permissive maximale."
+ },
+ {
+  "repo": "zed-industries/zed",
+  "etoiles": 91449,
+  "licence": "Apache-2.0 (crates) / GPL-3.0 (éditeur)",
+  "maj": "2026-10-08",
+  "archive": false,
+  "langage": "Rust",
+  "risque": "🟡 à qualifier"
+ }
+]
