@@ -136,8 +136,40 @@ mail-organizer  Google Calendar  Drive            research-engine    COGNITORIUM
 | Tâches | Work System LifeOS, Vikunja seulement si CalDAV requis | éviter les briques superflues |
 | Automatisation | hooks LifeOS + n8n au besoin | moins de dépendances au départ |
 
-## 7. 📚 Sources (vérifiées via API GitHub le 08/10/2026)
-- **danielmiessler/LifeOS** 19,3k★ MIT — README, ARCHITECTURE_SUMMARY.md, arbre complet (2 658 fichiers : PULSE/finances, TOOLS/gmail.ts, DASchedule.ts, USER/FINANCES/ACCOUNTS.md)
+## 7. 🔬 Approfondissement LifeOS — faisabilité réelle (08/10/2026)
+
+### Santé du projet
+- Créé 09/2025, dernier push 04/09/2026, **2 488 forks**, 45 issues ouvertes, v7.40 — actif et déjà adopté.
+- Docs officielles complètes : docs.ourlifeos.ai (55 documents, 33 sections).
+- Écosystème : **Fabric** (44,2k★ MIT, même auteur) = bibliothèque de patterns IA déjà intégrée ; Arbol = exécution cloud (Cloudflare, optionnel).
+
+### Ce qu'il faut pour le faire tourner
+| Dépendance | Statut | Notes |
+|---|---|---|
+| **bun** | requis | runtime TypeScript ; s'installe en une ligne sous Linux |
+| **gh** CLI | requis (Work System) | les tâches vivent dans un **repo GitHub privé** — cohérent avec notre vision git-first, `gh` est déjà configuré ici |
+| ripgrep, ImageMagick… | optionnels | philosophie officielle : tout **dégrade proprement** ; `Doctor.ts decline <x>` désactive proprement chaque capability |
+| ElevenLabs | optionnel | notifications voix (une clé API) |
+| Cloudflare | optionnel | jobs planifiés « pendant que tu dors » (Arbol) |
+| macOS (iMessage/Siri/Apple Health) | optionnel | à décliner sur Linux — prévu par design |
+
+### Points d'attention (honnêtes)
+1. **Parties privées** : l'implémentation du sous-système Assistant (DA) et le CLI Bunker ne sont **pas** dans la release publique (concept documenté seulement). Le reste (Cortex/mémoire, Pulse 31 modules, TOOLS, USER/) est public.
+2. **Pulse = démon Bun** (port 31337, un process, modules isolés des crashes) + dashboard Next.js 15 classique → faisable sous Linux, mais il faut assumer le runtime bun à côté de notre FastAPI (ou porter le dashboard Next.js seul).
+3. **Module Telegram retiré** (15/07/2026) → notre bot budget (pattern Blipko) resterait à écrire si on veut le chat.
+4. Installateur pensé pour Claude Code (`~/.claude`) → on adapte les chemins vers le monorepo (travail d'adaptation, documenté par leurs `Tools/InstallEngine.ts`).
+
+### Les autres pistes « tout assemblé », écartées en connaissance de cause
+| Piste | Pourquoi écartée (ou gardée en réserve) |
+|---|---|
+| **Templates Notion « Life OS / Ultimate Brain »** (Thomas Frank, Easlo…) | Tout-en-un réel et **zéro code**, utilisable immédiatement (ton connecteur Notion est déjà actif dans Arena). Mais : données chez Notion (pas de git local), budget basique, IA = Notion AI payant, templates souvent payants. **Gardé comme plan B « ultra-simple ».** |
+| Repos « personal OS » GitHub (Dex 493★, claude-chief-of-staff 438★, openclaw-n8n-stack 137★…) | 10-40× plus petits que LifeOS, moins complets, communautés naissantes |
+| AppFlowy / AFFiNE / Anytype / SiYuan / Nextcloud / SilverBullet | Excellents dans UN domaine (docs, agenda+mails…) mais aucun ne combine budget + planning + mails + mémoire IA ; servis comme renforts éventuels (§2) |
+
+## 8. 📚 Sources (vérifiées via API GitHub le 08/10/2026)
+- **danielmiessler/LifeOS** 19,3k★ MIT — README, ARCHITECTURE_SUMMARY.md, arbre complet (2 658 fichiers : PULSE/finances, TOOLS/gmail.ts, DASchedule.ts, USER/FINANCES/ACCOUNTS.md), GETTING-STARTED.md, PULSE/package.json, docs.ourlifeos.ai (PulseSystem) — métadonnées : créé 2025-09, push 2026-09-04, 2 488 forks
+- **danielmiessler/Fabric** 44,2k★ MIT (patterns IA, écosystème LifeOS) · recherche « personal operating system ai » (Dex 493★, claude-chief-of-staff 438★…)
+- Templates Notion Life OS / Second Brain 2026 : notioneverything.com, notion4management.com
 - Suites : AppFlowy 77,2k★ AGPL ; AFFiNE 73,3k★ ; memos 63,6k★ MIT ; SiYuan 46,7k★ AGPL ; Logseq 45,2k★ AGPL ; Trilium 38,2k★ AGPL ; Nextcloud 37,0k★ AGPL ; Anytype 8,9k★ source-available ; SilverBullet 6,3k★ MIT
 - Briques : glance 37,4k★ AGPL ; vikunja 5,6k★ AGPL ; actual 29,3k★ MIT ; firefly-iii 24,8k★ AGPL ; n8n 207k★ ; khoj 37,6k★ AGPL ; dashy 26,6k★ MIT ; second-brain MIT ; blipko MIT ; awesome-selfhosted 325k★
 - Comparatifs budget 2026 : expensesorted.com, selfhosting.sh, pare.money · Vikunja CalDAV : rdp.sh, selfprivacy.org · Khoj : docs.khoj.dev
