@@ -412,6 +412,50 @@ api("PUT", "/api/config", {"patron": {"seuil_routage": 1.0},
 verifier(api("GET", "/api/config")["config"]["acces"]["token"] == "",
          "la config est remise à zéro après le test")
 
+# --------------------------------------------- 7.6e personnalisation par le chat
+# les thèmes prédéfinis sont servis
+th = api("GET", "/api/themes")
+verifier(len(th["themes"]) >= 5, f"{len(th['themes'])} thèmes prédéfinis")
+verifier(th["actif"] in th["themes"] or th["actif"] in th["personnalises"],
+         "un thème actif est connu")
+
+# le patron applique un thème prédéfini via le chat
+m_ocean = api("POST", "/api/laplace/parler",
+              {"texte": "change le thème en océan", "canal": "web"})
+verifier(m_ocean.get("config_modifiee") is True or m_ocean.get("de"),
+         "le patron applique le thème demandé dans le chat")
+th2 = api("GET", "/api/themes")
+verifier(th2["actif"] == "ocean", "le thème océan est bien actif")
+
+# le patron peut créer un thème personnalisé (fond + accent)
+m_perso = api("POST", "/api/laplace/parler",
+              {"texte": "crée un thème test avec fond #101418 et accent #00FFCC",
+               "canal": "web"})
+th3 = api("GET", "/api/themes")
+verifier(th3["actif"] == "test", "le thème personnalisé est créé et actif")
+verifier(th3["personnalises"].get("test", {}).get("fond") == "#101418",
+         "le fond du thème personnalisé est conservé")
+verifier(th3["variables"].get("--ac") == "#00ffcc", "l'accent est appliqué")
+# remise au thème nuit
+api("PUT", "/api/config", {"ui": {"theme": "nuit", "fond": ""}})
+
+# --------------------------------------------- 7.6f mémoire des agents (dossiers + fiches)
+import pathlib as _pl
+mem_dir = _pl.Path(__file__).parent.parent / "carredas" / "modules" / "agents" / "memory"
+verifier(mem_dir.is_dir(), "le dossier mémoire des agents existe")
+dossiers = [d for d in mem_dir.iterdir() if d.is_dir() and d.name != "sousagents"]
+verifier(len(dossiers) >= 22, f"{len(dossiers)} agents ont leur dossier mémoire")
+fiche = (mem_dir / "writer" / "fiche.md")
+verifier(fiche.exists() and "Rédacteur" in fiche.read_text(encoding="utf-8"),
+         "chaque agent a sa fiche perso (fiche.md)")
+role = (mem_dir / "writer" / "role.md")
+verifier(role.exists() and "Tu es" in role.read_text(encoding="utf-8"),
+         "chaque agent a son role.md (ce qu'il doit faire)")
+# la mémoire d'un sous-agent est générée aussi
+sous_mem = mem_dir / "sousagents"
+verifier(sous_mem.is_dir() and len(list(sous_mem.iterdir())) >= 1,
+         "la mémoire d'un sous-agent créé par le patron est générée")
+
 # ------------------------------------------------- 7.7 constellation (3 systèmes)
 sys3 = api("GET", "/api/constellation")
 verifier(sys3["total"] == 3, "la constellation expose 3 systèmes")
