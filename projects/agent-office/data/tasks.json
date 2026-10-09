@@ -33,5 +33,12 @@
     "date": "2026-10-13",
     "heure": "09:00",
     "duree": 60
+  },
+  {
+    "id": 6,
+    "titre": "Écosystème Thau : contacter Blue Thau Lab + La Palanquée (projet IA utile au territoire : module ZAN géospatial + services collectivités)",
+    "date": "2026-10-21",
+    "heure": "09:30",
+    "duree": 90
   }
 ]
