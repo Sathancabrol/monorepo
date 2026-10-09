@@ -232,12 +232,12 @@
     "connecteurs_interroges": 4
   },
   "next_actions": [
-    "0. (rappel) RELECTURE avant fusion : le projet produit un lot toutes les 20 min — relancer les compares",
-    "1. Fusionner arena/0034230e (Carre d'As + shell 14 modules + _incoming + resync proto)",
-    "2. Fusionner arena/93b54a79 (mail-organizer + FEATURES-INVENTORY) puis arena/01a08449 (BTP 21 modules)",
-    "3. PR #3 watchtower INTEL ; feat/final-interface-skeleton + feat/tool-data-catalog ; branches ETAT/Language-decoder",
-    "4. Trancher la taxonomie canonique (shell 14 modules = produit ; 12 domaines = couverture)",
-    "5. Brancher le premier module reel dans #slot-btp (corpus racine, sans copie)"
+    "PR #3 : faire merger la PR d'audit (ouverte, head b15a1a8)",
+    "Ordre de fusion du travail produit (RELANCER LES COMPARES AVANT CHAQUE FUSION — le repo bouge vite) : 0034230e (Carre d'As + shell 14 modules + _incoming 859 f.) -> 93b54a79 (mail-organizer + FEATURES-INVENTORY) -> 01a08449 (BTP 21 onglets) -> PR #3 (watchtower INTEL) -> feat/final-interface-skeleton + feat/tool-data-catalog -> branches ETAT / Language-decoder",
+    "Canoniser la taxonomie : 14 modules shell = produit ; 12 domaines = couverture ; v1->v5 = ordonnancement",
+    "Brancher le 1er module reel dans #slot-btp (corpus en racine, sans copie)",
+    "reaserch-engine : 2 tests rouges (test_researcher_uses_injected_retriever, test_contradictions_are_prioritized)",
+    "Drift proto 161 vs 184 fichiers (-25 auth) a reconcilier ; licences watchtower/HCSM NOASSERTION ; LD (m0) et formation frontignan a integrer"
   ],
   "artifacts": [
     "audit/AUDIT-2026-10.md",
@@ -400,5 +400,6 @@
       "mortes": 19,
       "commits_non_fusionnes": 167
     }
-  }
+  },
+  "status": "session cloturee le 2026-10-07 (~15:30 UTC) — travail integralement push (b15a1a8), PR #3 ouverte"
 }
