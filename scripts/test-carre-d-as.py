@@ -324,6 +324,53 @@ if sessions:
     verifier(r2["tache"]["phases"][0]["detail"] != "",
              "le compte rendu d'une réunion existante est produit")
 
+# ------------------------------------------------------- 7.6 chat avec les agents
+c = api("POST", "/api/chat/conversations", {"titre": "test scénario"})
+cid = c["conversation"]["id"]
+m = api("POST", f"/api/chat/conversations/{cid}/messages",
+        {"texte": "Rédige le compte rendu de la réunion"})
+verifier(m["message"]["role"] == "agent" and m["message"]["agent"] == "writer",
+         "un message est routé vers le bon agent")
+verifier(bool(m["message"].get("document")), "le chat produit un document téléchargeable")
+verifier(len(m["message"].get("phases", [])) == 6, "le chat expose les 6 phases")
+conv = api("GET", f"/api/chat/conversations/{cid}")
+verifier(len(conv["messages"]) == 2, "l'historique conserve les 2 messages")
+verifier(len(api("GET", "/api/chat/conversations")["conversations"]) >= 1,
+         "les conversations sont listées")
+
+# ------------------------------------------------- 7.7 constellation (3 systèmes)
+sys3 = api("GET", "/api/constellation")
+verifier(sys3["total"] == 3, "la constellation expose 3 systèmes")
+ids = {s["id"] for s in sys3["systemes"]}
+verifier(ids == {"constellation", "planetaire", "agentique"},
+         "constellation / planétaire / agentique sont présents")
+
+g_obj = api("GET", "/api/constellation/graphe?systeme=constellation")
+verifier(g_obj["meta"]["nb_noeuds"] >= 79,
+         f"la constellation embarque l'atlas ({g_obj['meta']['nb_noeuds']} nœuds)")
+verifier(any(n["id"] == "frontignan" for n in g_obj["noeuds"]),
+         "le nœud Frontignan est dans la constellation")
+
+g_pl = api("GET", "/api/constellation/graphe?systeme=planetaire")
+verifier(any(n["type"] == "soleil" for n in g_pl["noeuds"]),
+         "le système planétaire a un soleil (Carré d'As)")
+verifier(any(n["type"] == "module" for n in g_pl["noeuds"]),
+         "le système planétaire a des planètes (les modules)")
+verifier(any(n["type"] == "satellite" for n in g_pl["noeuds"]),
+         "le système planétaire a des satellites (les objets)")
+
+g_ag = api("GET", "/api/constellation/graphe?systeme=agentique")
+verifier(sum(1 for n in g_ag["noeuds"] if n["type"] == "agent") == 22,
+         "le système agentique montre les 22 agents")
+
+g_filtre = api("GET", "/api/constellation/graphe?systeme=constellation&type=projet")
+verifier(all(n["type"] == "projet" for n in g_filtre["noeuds"]),
+         "le filtre par type ne renvoie que ce type")
+
+ds = api("GET", "/api/constellation/dataset/communes")
+verifier("communes" in ds.get("key", "") and ds.get("label"),
+         "les jeux de données chiffrés de l'atlas sont servis")
+
 # ------------------------------------------------------------------ 8. bilan
 print(f"\n=== {len(produits)} documents produits · "
       f"{len(echecs)} échec(s) ===")

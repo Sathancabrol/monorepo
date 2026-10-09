@@ -75,24 +75,43 @@ const S = {
   ongletAside: 'journal',
 };
 
+/* Le rail en cinq sections — naviguer dans app / features / modules /
+   chat / heuristique, comme demandé le 9 octobre. */
 const RAIL = [
-  { id: 'accueil', icone: '◈', texte: 'Accueil' },
-  { id: 'agents', icone: '⬢', texte: 'Agents' },
-  { id: 'reunion', icone: '◎', texte: 'Réunion' },
-  { id: 'carto', icone: '▦', texte: 'Cartographie' },
-  { id: 'cognitorium', icone: '◍', texte: 'Cognitorium' },
-  { id: 'prevision', icone: '◷', texte: 'Prévision' },
-  { id: 'osint', icone: '⌘', texte: 'OSINT' },
+  { section: 'App', items: [
+    { id: 'accueil', icone: '◈', texte: 'Accueil' },
+  ]},
+  { section: 'Features', items: [
+    { id: 'reunion', icone: '◎', texte: 'Réunion' },
+    { id: 'carto', icone: '▦', texte: 'Cartographie' },
+    { id: 'cognitorium', icone: '◍', texte: 'Cognitorium' },
+    { id: 'prevision', icone: '◷', texte: 'Prévision' },
+    { id: 'osint', icone: '⌘', texte: 'OSINT' },
+    { id: 'agents', icone: '⬢', texte: 'Agents' },
+  ]},
+  { section: 'Modules', items: [
+    { id: 'modules', icone: '▤', texte: 'Registre' },
+  ]},
+  { section: 'Chat', items: [
+    { id: 'chat', icone: '💬', texte: 'Chat' },
+  ]},
+  { section: 'Heuristique', items: [
+    { id: 'constellation', icone: '✺', texte: 'Constellation' },
+  ]},
 ];
 
 /* ----------------------------------------------------------------- rendu */
 function rendreRail() {
-  $('#rail-items').innerHTML = RAIL.map(r =>
-    `<button class="rail-item ${S.vue === r.id ? 'actif' : ''}" data-action="vue" data-vue="${r.id}">
-       <span class="ico">${r.icone}</span><span class="texte">${r.texte}</span></button>`).join('');
+  $('#rail-items').innerHTML = RAIL.map(g =>
+    `<div class="rail-groupe">
+       <div class="rail-section">${esc(g.section)}</div>
+       ${g.items.map(r =>
+         `<button class="rail-item ${S.vue === r.id ? 'actif' : ''}" data-action="vue" data-vue="${r.id}">
+            <span class="ico">${r.icone}</span><span class="texte">${esc(r.texte)}</span></button>`).join('')}
+     </div>`).join('');
 }
 
-const VUES = { accueil, agents, reunion, carto, cognitorium, prevision, osint, systeme };
+const VUES = { accueil, agents, reunion, carto, cognitorium, prevision, osint, systeme, chat, constellation, modules };
 
 async function render() {
   rendreRail();
@@ -109,6 +128,10 @@ async function render() {
   } finally {
     main.classList.remove('charge');
   }
+  // hooks post-rendu : la constellation démarre sa simulation,
+  // le chat se cale en bas du fil
+  if (S.vue === 'constellation') constInit();
+  if (S.vue === 'chat') chatScrollBas();
 }
 
 async function aller(vue) {
@@ -321,6 +344,476 @@ async function agents() {
     </div>
   </section>` : ''}
   `;
+}
+
+/* ─────────────────────────────────────────────────────── Chat ── */
+async function chat() {
+  const convs = await get('/api/chat/conversations');
+  S.chat = { conversations: convs.conversations, active: S.chat?.active || null,
+             messages: [] };
+  if (S.chat.active) {
+    try {
+      const d = await get(`/api/chat/conversations/${S.chat.active}`);
+      S.chat.messages = d.messages;
+    } catch (e) { S.chat.active = null; }
+  }
+  const actifs = S.chat.conversations;
+
+  return `
+  <div class="titre-page">
+    <h1>Chat</h1>
+    <div class="actions">
+      <button class="petit" data-action="chat-nouvelle">＋ Nouvelle conversation</button>
+    </div>
+  </div>
+
+  <div class="chat-layout">
+    <aside class="chat-convs">
+      ${actifs.length === 0
+        ? '<div class="note-info">Aucune conversation. <b>＋ Nouvelle conversation</b> pour parler aux agents.</div>'
+        : `<div class="liste">${actifs.map(c => `
+          <div class="ligne ${S.chat.active === c.id ? 'actif' : ''}" data-action="chat-ouvrir" data-id="${esc(c.id)}" style="cursor:pointer">
+            <div class="principal">
+              <div class="nom">${esc(c.titre)}</div>
+              <div class="meta mono">${c.nb_messages} message(s) · ${esc((c.maj_le || '').slice(0, 10))}</div>
+            </div>
+            <button class="lien" data-action="chat-supprimer" data-id="${esc(c.id)}" title="Supprimer">✕</button>
+          </div>`).join('')}</div>`}
+    </aside>
+
+    <section class="chat-fil">
+      ${!S.chat.active
+        ? `<div class="chat-vide">
+             <div class="gros-icone">💬</div>
+             <h2>Parlez aux agents</h2>
+             <p>Chaque message est <b>routé</b> vers le bon spécialiste, qui exécute
+             la demande et produit un document. Le routage est déterministe :
+             la même demande donne toujours le même agent.</p>
+             <div class="chat-exemples">
+               <button class="tag gris" data-action="chat-exemple">Rédige le compte rendu de la réunion</button>
+               <button class="tag gris" data-action="chat-exemple">Établir le planning de la Frange Sud</button>
+               <button class="tag gris" data-action="chat-exemple">Établir le budget du projet</button>
+               <button class="tag gris" data-action="chat-exemple">Quelles sources pour la cartographie du territoire ?</button>
+             </div>
+           </div>`
+        : `
+      <div class="chat-messages" id="chat-messages">
+        ${S.chat.messages.map(m => m.role === 'user'
+          ? `<div class="msg user"><div class="qui">vous</div><div class="bulle">${esc(m.texte)}</div>
+               <div class="meta mono">routé vers ${esc(m.agent_choisi)}${(m.routes || []).length > 1 ? ' · ' + m.routes.slice(1).map(r => r.nom).join(', ') + ' aussi pertinents' : ''}</div></div>`
+          : `<div class="msg agent">
+               <div class="qui">${m.emoji || '⬢'} ${esc(m.nom || m.agent)}</div>
+               <div class="bulle">${miniMd(m.texte_reponse || '')}</div>
+               ${(m.phases || []).length ? `<div class="chat-phases">${m.phases.map(p => {
+                 const mk = { ok: '✓', vide: '·', bloque: '✗', echec: '✗' }[p.statut] || '?';
+                 const coul = p.statut === 'ok' ? 'var(--ok)' : p.statut === 'vide' ? 'var(--dim)' : 'var(--alerte)';
+                 return `<span class="tag gris" style="border-color:${coul};color:${coul}" title="${esc(p.detail)}">${mk} ${esc(p.phase)}</span>`;
+               }).join('')}</div>` : ''}
+               ${(m.recherche && (m.recherche.sources || []).length) ? `<div class="chat-sources">
+                 ${(m.recherche.sources || []).slice(0, 5).map(s =>
+                   `<span class="tag ${s.usage === 'oui' ? 'deci' : 'act'}" title="${esc(s.licence || '')}">${esc(s.nom)}</span>`).join('')}
+               </div>` : ''}
+               <div class="chat-meta">
+                 ${m.document ? `<a class="lien" href="/api/fichiers/${encodeURIComponent(m.document.nom)}?dl=1">⬇ ${esc(m.document.nom)}</a>` : ''}
+                 ${(m.problemes || []).length ? `<span class="tag ris">${m.problemes.length} bloquant(s)</span>` : ''}
+                 ${m.erreur ? `<span class="tag ris">erreur</span>` : ''}
+               </div>
+             </div>`).join('')}
+      </div>
+      <form class="chat-saisie" id="chat-form">
+        <input type="text" id="chat-texte" placeholder="Écrivez votre demande… (le bon agent sera choisi automatiquement)" autocomplete="off" />
+        <button class="primaire" type="submit">Envoyer</button>
+      </form>`}
+    </section>
+  </div>`;
+}
+
+/* mini markdown : gras + sauts de ligne, sans jamais interpréter de HTML */
+function miniMd(t) {
+  return esc(t || '')
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br/>');
+}
+
+/* ──────────────────────────────────────────── Constellation ── */
+/* Trois lectures d'un même monde (style Obsidian / CosmoGraph) :
+   constellation (objets d'intérêt), planétaire (orbites), agentique (réseau).
+   Moteur force-directed vanilla + SVG — zéro dépendance, offline. */
+const CONST = {
+  sim: null,          // {nodes, links, alpha, mode, t}
+  view: { x: 0, y: 0, k: 1 },
+  dragNoeud: null, pan: null, selection: null,
+};
+const COLLECTION_VUE = { reunions: 'reunion', profils: 'cognitorium',
+  osintcas: 'osint', prevscen: 'prevision', agenttaches: 'agents',
+  cartopoints: 'carto', references: 'cognitorium' };
+
+async function constellation() {
+  S.const = S.const || { systeme: 'constellation', filtres: new Set(), recherche: '' };
+  const [sys, g] = await Promise.all([
+    get('/api/constellation'), get(`/api/constellation/graphe?systeme=${S.const.systeme}`)]);
+  S.const.graphe = g;
+  S.const.systemes = sys.systemes;
+  const types = [...new Set(g.noeuds.map(n => n.type))].sort();
+  const actif = sys.systemes.find(s => s.id === S.const.systeme) || sys.systemes[0];
+
+  return `
+  <div class="titre-page">
+    <h1>${actif.icone} ${esc(actif.titre)}</h1>
+    <div class="actions">
+      ${sys.systemes.map(s =>
+        `<button class="petit ${s.id === S.const.systeme ? 'actif' : ''}" data-action="const-changer-systeme" data-systeme="${s.id}">
+           ${s.icone} ${esc(s.titre)} <span class="dim">${s.nb_noeuds}</span></button>`).join('')}
+    </div>
+  </div>
+  <div class="note-info">${esc(actif.metaphore)} — ${esc(actif.resume)}
+    <b>${g.meta.nb_noeuds} nœuds · ${g.meta.nb_liens} liens</b>. Glissez pour déplacer,
+    molette pour zoomer, cliquez un nœud pour le détail.</div>
+
+  <div class="const-layout">
+    <div class="const-gauche">
+      <div class="const-barre">
+        <input type="search" id="const-recherche" placeholder="Filtrer les nœuds…"
+               value="${esc(S.const.recherche)}" />
+        <button class="petit" data-action="const-reinitialiser" title="Tout réafficher">⟳</button>
+      </div>
+      <div class="const-filtres">
+        ${types.map(t => {
+          const nb = g.noeuds.filter(n => n.type === t).length;
+          const on = S.const.filtres.size === 0 || S.const.filtres.has(t);
+          const coul = (g.meta.couleurs || {})[t] || '#8FA3AC';
+          return `<button class="tag ${on ? '' : 'gris'}" data-action="const-filtrer-type" data-type="${esc(t)}"
+                    style="${on ? `border-color:${coul};color:${coul}` : ''}">${esc(t)} · ${nb}</button>`;
+        }).join('')}
+      </div>
+      <div class="const-panneau" id="const-panneau">
+        ${CONST.selection ? constPanneauHtml(S.const.graphe, CONST.selection) : ''}
+      </div>
+    </div>
+    <div class="const-canvas">
+      <svg id="const-svg" preserveAspectRatio="xMidYMid meet">
+        <g id="const-g"><g id="const-liens"></g><g id="const-noeuds"></g></g>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function constPanneauHtml(g, id) {
+  const n = g.noeuds.find(x => x.id === id);
+  if (!n) return '';
+  const voisins = g.liens.filter(l => l.source === id || l.target === id)
+    .map(l => ({ n: g.noeuds.find(x => x.id === (l.source === id ? l.target : l.source)), l }))
+    .filter(v => v.n);
+  const vue = n.collection ? COLLECTION_VUE[n.collection] : null;
+  return `
+    <div class="const-detail">
+      <div class="const-detail-titre">${n.icon || '•'} ${esc(n.label)}</div>
+      <div class="meta mono">${esc(n.type)} ${n.tier !== undefined ? '· palier ' + n.tier : ''}</div>
+      ${n.sub ? `<div class="const-detail-sub">${esc(n.sub)}</div>` : ''}
+      <div class="meta mono">${voisins.length} lien(s)</div>
+      <div class="const-voisins">
+        ${voisins.slice(0, 12).map(v =>
+          `<button class="tag gris" data-action="const-selectionner" data-id="${esc(v.n.id)}">
+             ${v.n.icon || '•'} ${esc(v.n.label)}</button>`).join('')}
+      </div>
+      <div class="const-actions">
+        ${vue ? `<button class="petit" data-action="const-ouvrir" data-vue="${vue}" data-ref="${esc(n.ref || '')}">Ouvrir dans le module</button>` : ''}
+        ${n.dataset ? `<button class="petit" data-action="const-dataset" data-key="${esc(n.dataset)}">Voir les données chiffrées</button>` : ''}
+        <button class="petit" data-action="const-centrer-noeud" data-id="${esc(id)}">Centrer</button>
+      </div>
+      <div id="const-dataset"></div>
+    </div>`;
+}
+
+/* ── moteur force-directed vanilla (inspiré de la physique d'atlas.js) ── */
+function constInit() {
+  const g = S.const?.graphe;
+  const svg = $('#const-svg');
+  if (!g || !svg) return;
+  if (CONST.sim?.raf) cancelAnimationFrame(CONST.sim.raf);
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a) => { const n = document.createElementNS(NS, t);
+    for (const k in a) n.setAttribute(k, a[k]); return n; };
+  $('#const-liens').innerHTML = ''; $('#const-noeuds').innerHTML = '';
+
+  // degré de chaque nœud → rayon
+  const deg = {};
+  g.liens.forEach(l => { deg[l.source] = (deg[l.source] || 0) + 1;
+                         deg[l.target] = (deg[l.target] || 0) + 1; });
+
+  const nodes = g.noeuds.map((n, i) => {
+    const angle = (i / g.noeuds.length) * Math.PI * 2;
+    const R = 60 + (i % 7) * 30;
+    return { ...n, x: Math.cos(angle) * R, y: Math.sin(angle) * R,
+             vx: 0, vy: 0,
+             r: n.rayon || (n.type === 'soleil' ? 26
+                  : 7 + (n.tier || 0) * 2.5 + Math.min(deg[n.id] || 0, 12) * 0.7),
+             deg: deg[n.id] || 0 };
+  });
+  const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const links = g.liens.map(l => ({ s: byId[l.source], t: byId[l.target],
+                                    id: `${l.source}→${l.target}`,
+                                    w: l.weight || 1, type: l.type }))
+    .filter(l => l.s && l.t);
+
+  // éléments SVG : liens d'abord (sous les nœuds)
+  const lienEls = links.map(l => {
+    const line = el('line', { class: 'const-lien', 'stroke-width': 1 });
+    $('#const-liens').appendChild(line);
+    return { l, line };
+  });
+  const noeudEls = nodes.map(n => {
+    const gr = el('g', { class: 'const-noeud', 'data-id': n.id, style: 'cursor:grab' });
+    const coul = n.couleur || (g.meta.couleurs || {})[n.type] || '#8FA3AC';
+    const c = el('circle', { r: n.r, fill: coul, stroke: '#0A0A12', 'stroke-width': 1.5 });
+    const t = el('text', { 'text-anchor': 'middle', dy: '0.35em', 'pointer-events': 'none',
+                           fill: n.type === 'soleil' ? '#0A0A12' : '#EAEAF2',
+                           'font-size': Math.max(10, n.r * 0.9) });
+    t.textContent = n.icon || n.label.slice(0, 1).toUpperCase();
+    const titre = el('title', {}); titre.textContent = `${n.label} — ${n.type}`;
+    gr.append(c, t, titre);
+    $('#const-noeuds').appendChild(gr);
+    return { n, gr };
+  });
+
+  // mode planétaire : orbites précalculées, pas de force
+  const planetaire = S.const.systeme === 'planetaire';
+  if (planetaire) {
+    nodes.forEach(n => {
+      if (n.type === 'soleil') { n.fx = 0; n.fy = 0; return; }
+      if (n.type === 'module') {
+        const i = n.orbite || 0;
+        n.orb = { cx: 'carredas', r: 160 + i * 100,
+                  a0: Math.random() * Math.PI * 2, va: 0.05 / (1 + i * 0.3) };
+      } else if (n.type === 'satellite') {
+        n.orb = { cx: n.planete, r: 48 + (n.deg % 4) * 14,
+                  a0: Math.random() * Math.PI * 2, va: 0.25 };
+      }
+    });
+  }
+
+  CONST.sim = { nodes, links, lienEls, noeudEls, alpha: 1,
+                mode: planetaire ? 'orbites' : 'force', t: 0 };
+  CONST.view = { x: svg.clientWidth / 2, y: svg.clientHeight / 2, k: 1 };
+  CONST.selection = null;
+  constAppliquerVue();
+  constAppliquerFiltres();
+  CONST.sim.raf = requestAnimationFrame(constTick);
+  constBrancherInteractions(svg);
+}
+
+function constTick() {
+  const sim = CONST.sim;
+  if (!sim) return;
+  const { view } = CONST;
+
+  if (sim.mode === 'orbites') {
+    // planètes d'abord, puis leurs satellites
+    sim.t += 1;
+    const byId = Object.fromEntries(sim.nodes.map(n => [n.id, n]));
+    sim.nodes.filter(n => n.type === 'module' && n.orb).forEach(n => {
+      const a = n.orb.a0 + sim.t * n.orb.va;
+      n.x = Math.cos(a) * n.orb.r; n.y = Math.sin(a) * n.orb.r;
+    });
+    sim.nodes.filter(n => n.type === 'satellite' && n.orb).forEach(n => {
+      const c = byId[n.orb.cx]; if (!c) return;
+      const a = n.orb.a0 + sim.t * n.orb.va;
+      n.x = c.x + Math.cos(a) * n.orb.r; n.y = c.y + Math.sin(a) * n.orb.r;
+    });
+  } else {
+    const { nodes, links, alpha } = sim;
+    // répulsion O(n²) — n reste < ~150, acceptable
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let d2 = dx * dx + dy * dy;
+        if (d2 < 1) { d2 = 1; dx = Math.random() - .5; dy = Math.random() - .5; }
+        const d = Math.sqrt(d2);
+        const minD = a.r + b.r + 12;
+        let f = 1400 / d2;
+        if (d < minD) f += (minD - d) * 0.05;
+        a.vx -= (dx / d) * f * alpha; a.vy -= (dy / d) * f * alpha;
+        b.vx += (dx / d) * f * alpha; b.vy += (dy / d) * f * alpha;
+      }
+    }
+    // ressorts
+    links.forEach(l => {
+      const dx = l.t.x - l.s.x, dy = l.t.y - l.s.y;
+      const d = Math.sqrt(dx * dx + dy * dy) || 1;
+      const target = 130 + (l.s.r + l.t.r) * 0.8 - l.w * 5;
+      const f = (d - target) * 0.012 * (0.5 + l.w * 0.14) * alpha;
+      l.s.vx += (dx / d) * f; l.s.vy += (dy / d) * f;
+      l.t.vx -= (dx / d) * f; l.t.vy -= (dy / d) * f;
+    });
+    // centrage doux + intégration
+    nodes.forEach(n => {
+      if (n.fx !== undefined) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; return; }
+      n.vx += (0 - n.x) * 0.0016; n.vy += (0 - n.y) * 0.0016;
+      n.vx *= 0.82; n.vy *= 0.82;
+      n.x += n.vx; n.y += n.vy;
+    });
+    sim.alpha = Math.max(0.05, alpha * 0.996);
+  }
+
+  // rendu
+  $('#const-g').setAttribute('transform',
+    `translate(${view.x},${view.y}) scale(${view.k})`);
+  sim.lienEls.forEach(({ l, line }) => {
+    line.setAttribute('x1', l.s.x); line.setAttribute('y1', l.s.y);
+    line.setAttribute('x2', l.t.x); line.setAttribute('y2', l.t.y);
+  });
+  sim.noeudEls.forEach(({ n, gr }) => {
+    gr.setAttribute('transform', `translate(${n.x},${n.y})`);
+  });
+  sim.raf = requestAnimationFrame(constTick);
+}
+
+function constAppliquerVue() {
+  const { view } = CONST;
+  const g = $('#const-g');
+  if (g) g.setAttribute('transform', `translate(${view.x},${view.y}) scale(${view.k})`);
+}
+
+function constAppliquerFiltres() {
+  const sim = CONST.sim;
+  if (!sim) return;
+  const filtres = S.const.filtres;
+  const q = (S.const.recherche || '').toLowerCase();
+  const idsVisibles = new Set();
+  sim.nodes.forEach(n => {
+    const okType = filtres.size === 0 || filtres.has(n.type);
+    const okQ = !q || (n.label || '').toLowerCase().includes(q);
+    n._visible = okType && okQ;
+    if (n._visible) idsVisibles.add(n.id);
+  });
+  sim.lienEls.forEach(({ l, line }) => {
+    line.style.display =
+      (idsVisibles.has(l.s.id) && idsVisibles.has(l.t.id)) ? '' : 'none';
+  });
+  sim.noeudEls.forEach(({ n, gr }) => {
+    gr.style.display = n._visible ? '' : 'none';
+    gr.style.opacity = n._visible ? 1 : 0.15;
+  });
+}
+
+/* coordonnées écran → monde (le <g> porte translate+scale, le SVG est neutre) */
+function constScreenToMonde(svg, evt) {
+  const rect = svg.getBoundingClientRect();
+  return { x: (evt.clientX - rect.left - CONST.view.x) / CONST.view.k,
+           y: (evt.clientY - rect.top - CONST.view.y) / CONST.view.k };
+}
+
+function constBrancherInteractions(svg) {
+  // molette : zoom centré sur le curseur
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = svg.getBoundingClientRect();
+    const ex = e.clientX - rect.left, ey = e.clientY - rect.top;
+    const avant = { x: (ex - CONST.view.x) / CONST.view.k,
+                    y: (ey - CONST.view.y) / CONST.view.k };
+    const f = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    CONST.view.k = Math.min(6, Math.max(0.2, CONST.view.k * f));
+    CONST.view.x = ex - avant.x * CONST.view.k;
+    CONST.view.y = ey - avant.y * CONST.view.k;
+    constAppliquerVue();
+  }, { passive: false });
+
+  // pan au clic sur le fond
+  svg.addEventListener('mousedown', e => {
+    if (e.target.closest('.const-noeud')) return;
+    CONST.pan = { x: e.clientX, y: e.clientY,
+                  vx: CONST.view.x, vy: CONST.view.y };
+  });
+
+  // drag d'un nœud
+  CONST.sim.noeudEls.forEach(({ n, gr }) => {
+    gr.addEventListener('mousedown', e => {
+      e.stopPropagation();
+      CONST.dragNoeud = n;
+      n._dragMoved = false;
+      n._dragX = n.x; n._dragY = n.y;
+      const m = constScreenToMonde(svg, e);
+      n._dragDX = m.x - n.x; n._dragDY = m.y - n.y;
+    });
+  });
+
+  // un seul gestionnaire global pour pan + drag
+  window.addEventListener('mousemove', e => {
+    if (CONST.pan) {
+      CONST.view.x = CONST.pan.vx + (e.clientX - CONST.pan.x);
+      CONST.view.y = CONST.pan.vy + (e.clientY - CONST.pan.y);
+      constAppliquerVue();
+    }
+    const n = CONST.dragNoeud;
+    if (n) {
+      const m = constScreenToMonde(svg, e);
+      n.fx = m.x - n._dragDX; n.fy = m.y - n._dragDY;
+      if (Math.abs(n.fx - n._dragX) > 3 || Math.abs(n.fy - n._dragY) > 3)
+        n._dragMoved = true;
+    }
+  });
+  window.addEventListener('mouseup', () => {
+    if (CONST.dragNoeud) {
+      const n = CONST.dragNoeud;
+      if (!n._dragMoved) constSelectionner(n.id); // clic simple = sélection
+      else { n.fx = undefined; n.fy = undefined; }  // drag = on libère
+      CONST.dragNoeud = null;
+    }
+    CONST.pan = null;
+  });
+
+  // clic sur le fond : désélection
+  svg.addEventListener('click', e => {
+    if (e.target.closest('.const-noeud')) return;
+    if (CONST.selection) {
+      CONST.selection = null;
+      const p = $('#const-panneau'); if (p) p.innerHTML = '';
+      CONST.sim.noeudEls.forEach(({ gr }) => gr.classList.remove('selectionne'));
+    }
+  });
+}
+
+async function constSelectionner(id) {
+  CONST.selection = id;
+  const g = S.const.graphe;
+  const panneau = $('#const-panneau');
+  if (panneau) panneau.innerHTML = constPanneauHtml(g, id);
+  CONST.sim?.noeudEls?.forEach(({ n, gr }) =>
+    gr.classList.toggle('selectionne', n.id === id));
+}
+
+/* ─────────────────────────────────────────── Registre des modules ── */
+async function modules() {
+  const r = await get('/api/modules');
+  const mods = r.modules;
+  const actifs = mods.filter(m => m.actif);
+  return `
+  <div class="titre-page">
+    <h1>Registre des modules</h1>
+    <div class="actions"><span class="pastille ok"><i class="pt"></i>${actifs.length} actif(s) sur ${mods.length}</span></div>
+  </div>
+  <div class="note-info">Un module = un dossier avec un <code>module.json</code> et un
+  <code>router.py</code>. Le cœur ne connaît aucun module par son nom : ajouter un
+  dossier l'enregistre, le supprimer le désactive. C'est le <b>plug in / plug out</b>.</div>
+  <div class="liste">
+    ${mods.map(m => `
+      <div class="ligne">
+        <div class="principal">
+          <div class="nom">${m.icone} ${esc(m.titre)}
+            <span class="tag ${m.actif ? 'deci' : 'gris'}">${m.actif ? 'actif' : 'inactif'}</span>
+            ${m.obligatoire ? '<span class="tag ris">obligatoire</span>' : ''}
+            <span class="tag gris">${esc(m.palier || '—')}</span>
+          </div>
+          <div class="meta" style="margin-top:4px">${esc(m.resume || '')}</div>
+          <div class="meta mono" style="margin-top:5px;color:var(--dim-2)">
+            ${esc(m.id)} · v${esc(m.version)} · priorité ${m.priorite} · ${(m.routes || []).length} route(s)</div>
+        </div>
+      </div>`).join('')}
+  </div>`;
 }
 
 async function reunion() {
@@ -1225,6 +1718,30 @@ document.addEventListener('change', async e => {
   } catch (err) { toast(err.message, 'erreur'); }
 });
 
+document.addEventListener('submit', async e => {
+  if (e.target.id !== 'chat-form') return;
+  e.preventDefault();
+  const act = ACTIONS['chat-envoyer'];
+  if (act) await act();
+});
+
+/* recherche live dans la constellation (avec debounce) */
+let _constRechercheTimer = null;
+document.addEventListener('input', e => {
+  const el = e.target.closest('#const-recherche');
+  if (!el) return;
+  clearTimeout(_constRechercheTimer);
+  _constRechercheTimer = setTimeout(() => {
+    S.const.recherche = el.value;
+    constAppliquerFiltres();
+  }, 120);
+});
+
+function chatScrollBas() {
+  const z = $('#chat-messages');
+  if (z) z.scrollTop = z.scrollHeight;
+}
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.ctrlKey && $('#zone-capture')) {
     ACTIONS['pousser']?.($('[data-action="pousser"]'), e);
@@ -1243,6 +1760,96 @@ const ACTIONS = {
     S.ongletAside = t.dataset.onglet;
     $$('.onglet').forEach(o => o.classList.toggle('actif', o === t));
     rendreAside();
+  },
+
+  /* ------------------------------------------------------------------ chat */
+  'chat-nouvelle': async () => {
+    const r = await post('/api/chat/conversations', {});
+    S.chat.active = r.conversation.id;
+    await render();
+    const inp = $('#chat-texte'); if (inp) inp.focus();
+  },
+  'chat-ouvrir': async (t) => {
+    S.chat.active = t.dataset.id;
+    await render();
+    chatScrollBas();
+  },
+  'chat-supprimer': async (t) => {
+    if (!confirm('Supprimer cette conversation ?')) return;
+    await api(`/api/chat/conversations/${t.dataset.id}`, { method: 'DELETE' });
+    if (S.chat.active === t.dataset.id) S.chat.active = null;
+    await render();
+  },
+  'chat-exemple': async (t) => {
+    await post('/api/chat/conversations', {}).then(r => { S.chat.active = r.conversation.id; });
+    await render();
+    const inp = $('#chat-texte');
+    if (inp) { inp.value = t.textContent.trim(); inp.focus(); }
+  },
+  'chat-envoyer': async () => {
+    const inp = $('#chat-texte');
+    const texte = (inp?.value || '').trim();
+    if (!texte || !S.chat.active) return;
+    if (inp) inp.value = '';
+    const zone = $('#chat-messages');
+    if (zone) zone.insertAdjacentHTML('beforeend',
+      `<div class="msg user"><div class="qui">vous</div><div class="bulle">${esc(texte)}</div></div>`);
+    chatScrollBas();
+    const r = await post(`/api/chat/conversations/${S.chat.active}/messages`, { texte });
+    await render();
+    chatScrollBas();
+  },
+
+  /* --------------------------------------------------------- constellation */
+  'const-changer-systeme': async (t) => {
+    S.const.systeme = t.dataset.systeme;
+    S.const.filtres = new Set(); S.const.recherche = '';
+    await render();
+  },
+  'const-filtrer-type': async (t) => {
+    const type = t.dataset.type;
+    if (S.const.filtres.has(type)) S.const.filtres.delete(type);
+    else S.const.filtres.add(type);
+    // un seul filtre actif = mode exclusif ; aucun = tout afficher
+    constAppliquerFiltres();
+    $$('.const-filtres .tag').forEach(b => {
+      const on = S.const.filtres.size === 0 || S.const.filtres.has(b.dataset.type);
+      b.classList.toggle('gris', !on);
+    });
+  },
+  'const-reinitialiser': async () => {
+    S.const.filtres = new Set(); S.const.recherche = '';
+    const inp = $('#const-recherche'); if (inp) inp.value = '';
+    constAppliquerFiltres();
+    await render();
+  },
+  'const-selectionner': async (t) => { await constSelectionner(t.dataset.id); },
+  'const-ouvrir': async (t) => {
+    const ref = t.dataset.ref;
+    if (ref && t.dataset.vue === 'reunion') S.reu.session = ref;
+    await aller(t.dataset.vue);
+  },
+  'const-dataset': async (t) => {
+    const zone = $('#const-dataset');
+    if (!zone) return;
+    zone.innerHTML = '<div class="meta">chargement…</div>';
+    try {
+      const d = await get(`/api/constellation/dataset/${t.dataset.key}`);
+      zone.innerHTML = `<div class="const-dataset"><div class="cle">${esc(d.label || d.key)}</div>
+        ${d.note ? `<div class="meta">${esc(d.note)}</div>` : ''}
+        <pre class="mono">${esc(JSON.stringify(
+          Object.fromEntries(Object.entries(d).filter(([k]) => !['key', 'label', 'note'].includes(k))),
+          null, 1).slice(0, 3000))}</pre></div>`;
+    } catch (e) { zone.innerHTML = `<div class="avertissement">${esc(e.message)}</div>`; }
+  },
+  'const-centrer-noeud': async (t) => {
+    const n = CONST.sim?.nodes.find(x => x.id === t.dataset.id);
+    const svg = $('#const-svg');
+    if (!n || !svg) return;
+    CONST.view.k = Math.max(CONST.view.k, 1.2);
+    CONST.view.x = svg.clientWidth / 2 - n.x * CONST.view.k;
+    CONST.view.y = svg.clientHeight / 2 - n.y * CONST.view.k;
+    constAppliquerVue();
   },
 
   /* ---------------------------------------------------------------- agents */

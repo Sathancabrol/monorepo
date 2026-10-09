@@ -1,0 +1,18 @@
+{
+  "id": "constellation",
+  "titre": "Constellation",
+  "icone": "✺",
+  "resume": "Trois lectures d'un même monde, style Obsidian : la constellation des objets d'intérêt (entités, concepts, compétences métier du bassin de Thau), le système planétaire (modules en orbite) et le système agentique (les 22 agents en réseau). Graphe force-directed vanilla, zéro dépendance.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": false,
+  "priorite": 30,
+  "palier": "P1",
+  "routes": [
+    "GET  /api/constellation",
+    "GET  /api/constellation/systemes",
+    "GET  /api/constellation/graphe?systeme=",
+    "GET  /api/constellation/noeud/:id",
+    "GET  /api/constellation/dataset/:key"
+  ]
+}

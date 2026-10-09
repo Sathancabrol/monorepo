@@ -1,0 +1,18 @@
+{
+  "id": "chat",
+  "titre": "Chat",
+  "icone": "💬",
+  "resume": "Parler aux agents. Chaque message est routé vers le bon spécialiste (routage déterministe), qui exécute la demande et rend un document. L'historique est conservé.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": false,
+  "priorite": 10,
+  "palier": "P0",
+  "routes": [
+    "GET    /api/chat/conversations",
+    "POST   /api/chat/conversations",
+    "GET    /api/chat/conversations/:id",
+    "POST   /api/chat/conversations/:id/messages",
+    "DELETE /api/chat/conversations/:id"
+  ]
+}
