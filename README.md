@@ -1,6 +1,6 @@
 # Sathancabrol — Monorepo unifié
 
-> **Un seul dépôt, 8 projets, navigation + previews intégrées.** Agrégation visuelle et cartographie logique sans casser les projets individuels. Token GitHub côté serveur uniquement (jamais exposé au client).
+> **Un seul dépôt, 10 projets, navigation + previews intégrées.** Agrégation visuelle et cartographie logique sans casser les projets individuels. Token GitHub côté serveur uniquement (jamais exposé au client).
 
 ## 🗂 Structure
 
@@ -15,7 +15,8 @@ monorepo/
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
-│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  ├─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  └─ laplace/                  Agent Discord officiel (Python, Ollama/API, mémoire SQLite)
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
@@ -39,7 +40,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
 ## 🔍 Panorama GitHub
 
 - **Page `/repos`** : cartes des 8 dépôts, graphe de fusion (D3), hiérarchie `repo > branches > modules`, drawer détails (commits, fichiers, dépendances).
-- **API** : `GET /api/github/snapshot` · `/api/github/repos` · `/api/github/fusion` · `POST /api/github/refresh` (régénère le snapshot côté serveur, token jamais exposé).
+- **API** : `GET /api/github/snapshot` · `/api/github/repos` · `/api/github/fusion` · `POST /api/github/refresh` (régénère le snapshot côté serveur, token jamais exposé au client).
 - **Inventaire** : `scripts/github_inventory.py` (stdlib uniquement, paginate, rate-limit). Stocke `data/github_inventory.json` → sert de cache, pas d'appel direct API depuis le navigateur.
 - **Module** = dossier à manifeste (`package.json`, `pyproject.toml`, `go.mod`, …) + détection langage/stack auto.
 - **Fusion** = agrégation visuelle + cartographie logique (dépendances communes, liens explicites `COGNITORIUM → watchtower` via `watchtower-mods`). Option (b) monorepo réel = déjà fait via `projects/` ; aucun conflit de dépendances car chaque projet garde son lockfile.
@@ -57,7 +58,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
     - `proto-cognitorium` → `dist/index.html` (frontend statique ; `server.ts` Express non exécuté dans l'iframe)
     - `COGNITORIUM` → `learning/index.html` + `watchtower-mods/`
     - `ETAT-…` → `output/visual/index.html` + `d3_interactive.html` + `taxonomy_graph.html`
-    - `HCSM` / `reaserch-engine` / `Language-decoder` → code seul + README
+    - `HCSM` / `reaserch-engine` / `Language-decoder` / `laplace` → code + README
   - Servie via `GET /preview/{project}/{path}` (FileResponse, pas de `X-Frame-Options` côté monorepo ; `watchtower` buildée sans en-têtes DENY).
 
 ## 🛠 Rebuild des previews Vite
@@ -72,9 +73,19 @@ done
 
 Si une preview reste blanche, ouvre-la en nouvel onglet (bouton ↗) pour voir l'erreur console.
 
+## 🤖 LAPLACE — agent Discord
+
+Le module autonome `projects/laplace/` contient le bot Discord officiel, son installation détaillée, les commandes slash, l'archive/mémoire SQLite, les contrôles de confidentialité, les tests et les sources. Il utilise Ollama localement par défaut et n'écoute pas les messages ordinaires du serveur.
+
+- Guide de démarrage : [`projects/laplace/README.md`](projects/laplace/README.md)
+- Recherche des modèles webcam, vision et IRMf : [`projects/laplace/docs/RECHERCHE-MODELES-VISION-IRMf.md`](projects/laplace/docs/RECHERCHE-MODELES-VISION-IRMf.md) (veille uniquement, aucun modèle intégré)
+- L'invitation au serveur Olympus et le token du bot doivent être configurés localement par le propriétaire ; aucun secret n'est commité.
+- L'objectif Carré d'As est clarifié : un studio d'administration pour configurer, tester et publier des agents IA, en plus des parcours utilisateurs. Voir la [veille GitHub sur les outils et architectures](docs/AGENT-HUB-RESEARCH.md) ; l'intégration de code attend le dépôt/API Carré d'As et la revue de l'autre travail en cours.
+
 ## 🔐 Sécurité
 
 - Token GitHub lu depuis `GITHUB_TOKEN` / `GH_TOKEN` env côté serveur uniquement, jamais envoyé au client.
+- LAPLACE utilise une allowlist de guilds, pas de Message Content Intent, des réponses privées, des archives/souvenirs privés séparés par ID utilisateur et une mémoire partagée isolée par serveur.
 - Gestion erreurs : rate-limit (headers `X-RateLimit-Remaining`), repo privé sans accès → 404 propre, repo vide → module fallback, traversal bloqué 400.
 
 ## 📦 Publier vers GitHub
@@ -83,7 +94,7 @@ Ce dépôt **est** `Sathancabrol/monorepo` (branche `main`). Pour pousser :
 
 ```bash
 git remote add origin https://github.com/Sathancabrol/monorepo.git  # déjà configuré
-git push -u origin arena/01a07e3c-monorepo   # cette branche
+git push -u origin arena/00f44a26-monorepo   # branche de travail Arena
 # ou merger vers main après review
 ```
 
@@ -91,4 +102,4 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 
 ## 📚 Fusion réelle (option b)
 
-Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé via `projects/`.
