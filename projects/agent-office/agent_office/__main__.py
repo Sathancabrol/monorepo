@@ -1,7 +1,7 @@
 """Dispatcher CLI : python3 -m agent_office <service> [args...]"""
 import sys
 
-from . import arena, budget, invoices, maildigest, marketing, planning, prospects, registry, research, social, update
+from . import arena, budget, invoices, knowledge, maildigest, marketing, planning, prospects, registry, research, social, update
 
 SERVICES = {
     "budget": budget,
@@ -13,6 +13,7 @@ SERVICES = {
     "planning": planning,
     "arena": arena,
     "social": social,
+    "knowledge": knowledge,
     "update": update,
     "registry": registry,
 }
@@ -31,6 +32,7 @@ Services:
   planning   agenda hebdo + export .ics
   arena      confrontation de modèles : duels en aveugle + ELO + grille ChatEval
   social     équipe réseaux : calendrier, drafts par plateforme, checklist, écoute
+  knowledge  mémoire SQLite + graphe de connaissances (ingest/graph/query)
   update     auto-mise à jour : journal, leçons, changelog, check
   registry   registre des capacités (tools.json) + doctor
 

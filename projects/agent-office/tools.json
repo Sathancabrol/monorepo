@@ -93,6 +93,17 @@
       ]
     },
     {
+      "name": "knowledge",
+      "service": "Mémoire",
+      "capability": "Base SQLite + graphe de connaissances : ingestion des données agent-office, requêtes, visualisation du graphe",
+      "commands": [
+        "knowledge init",
+        "knowledge ingest",
+        "knowledge graph [--type t]",
+        "knowledge query --texte t"
+      ]
+    },
+    {
       "name": "update",
       "service": "Évolution",
       "capability": "Auto-mise à jour : journal des évolutions, leçons (Reflexion), changelog auto, vérification du registre",

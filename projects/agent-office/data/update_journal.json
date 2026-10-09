@@ -18,5 +18,10 @@
     "date": "2026-10-09T01:18:22",
     "type": "recherche",
     "note": "veille clones open source (ArtCraft, WareTrack) + RE IA (Ghidra/GhidraMCP) + tendances réseaux (Manus/Meta, GEO, Bluesky)"
+  },
+  {
+    "date": "2026-10-09T02:01:11",
+    "type": "outil",
+    "note": "knowledge : mémoire SQLite + graphe de connaissances (pattern vidéo VPS/SQLite/KG)"
   }
 ]

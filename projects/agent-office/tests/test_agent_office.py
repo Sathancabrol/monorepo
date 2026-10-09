@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from agent_office import arena, budget, invoices, marketing, planning, registry, social, update  # noqa: E402
+from agent_office import arena, budget, invoices, knowledge, marketing, planning, registry, social, update  # noqa: E402
 
 
 class TestBudget(unittest.TestCase):
@@ -106,6 +106,27 @@ class TestSocial(unittest.TestCase):
     def test_avec_offres_reelles(self):
         for k in ("O1", "O2", "O3"):
             self.assertIn("LINKEDIN", social.draft(k, "linkedin").split("\n")[0])
+
+
+class TestKnowledge(unittest.TestCase):
+    def test_sqlite_ingestion(self):
+        con = knowledge.connect()
+        n = knowledge.ingest(con)
+        total = con.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
+        self.assertGreater(n, 5)
+        self.assertGreaterEqual(total, n)
+        liaisons = con.execute("SELECT COUNT(*) FROM edges WHERE type='vise'").fetchone()[0]
+        self.assertGreaterEqual(liaisons, 3)
+        con.close()
+
+    def test_query(self):
+        con = knowledge.connect()
+        knowledge.ingest(con)
+        like = "%Frontignan%"
+        rows = con.execute(
+            "SELECT label FROM nodes WHERE label LIKE ? OR attrs LIKE ?", (like, like)).fetchall()
+        self.assertGreater(len(rows), 0)
+        con.close()
 
 
 class TestRegistry(unittest.TestCase):
