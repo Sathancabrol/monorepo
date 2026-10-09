@@ -1,0 +1,22 @@
+{
+  "id": "meeting",
+  "titre": "Réunion",
+  "icone": "◎",
+  "resume": "Système agentique de réunion : capture en direct, décisions et actions extraites au fil de l'eau, puis génération du compte rendu, de la note, de la présentation, du planning et du budget.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": true,
+  "priorite": 10,
+  "palier": "P0",
+  "routes": [
+    "POST /api/meeting",
+    "GET  /api/meeting",
+    "GET  /api/meeting/:id",
+    "POST /api/meeting/:id/segment",
+    "POST /api/meeting/:id/note",
+    "POST /api/meeting/:id/suggestion/:sid",
+    "POST /api/meeting/:id/item",
+    "POST /api/meeting/:id/generate",
+    "GET  /api/meeting/:id/stream"
+  ]
+}

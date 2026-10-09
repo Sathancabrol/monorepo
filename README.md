@@ -111,6 +111,40 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 - **`02-UI-PRINCIPES-ET-INSPIRATIONS.md`** — interface simple et affordante : 5 règles, structure du shell, 10 règles d'affordance, inspirations (branches + extérieur), indicateurs.
 - **`03-MODULE-BTP.md`** — la brique BTP : 7 piliers, décision 3D en trois paliers, synchronisation Google/OneDrive/WebDAV, feuille de route.
 
+## ◆ Carré d'As — l'application
+
+Carré d'As est **la première version de l'application finale** : un point d'accès
+unique aux fonctionnalités des modules, installable sur le bureau, conçu comme
+un **socle destiné à recevoir les mises à jour** plutôt que comme un produit fini.
+Modules = dossiers plug in/out. Mises à jour par **Git** (puis par site dédié).
+
+```bash
+python main.py                 # fenêtre de bureau
+python main.py --serve         # interface web locale (127.0.0.1:8733)
+python main.py --maj           # vérifier et appliquer une mise à jour
+.\install.ps1                  # installation Windows (raccourci bureau inclus)
+python3 scripts/test-carre-d-as.py   # scénario complet : 29 documents, 0 échec
+```
+
+**Aucune dépendance obligatoire** — le cœur tourne avec la seule bibliothèque
+standard. Conséquence : installation immédiate, fonctionnement hors ligne, et
+une réunion produit ses documents même sans réseau et sans modèle.
+
+| Module | Rôle |
+|---|---|
+| **Réunion** *(prioritaire)* | Capture en direct, extraction décisions/actions/risques, bac à suggestions, budget, planning, puis 7 gabarits de documents (compte rendu, note, délibération, courrier, présentation .pptx, planning, budget) |
+| **Cartographie** | 32 couches territoriales du Bassin de Thau, **licences vérifiées**, points d'observation, vues mémorisées |
+| **Cognitorium** | Profils individus / structures / partenaires + indexation de l'état de l'art du dépôt |
+| **Prévision** | 26 indicateurs (météo, social, géopolitique, économie, psychologie), scénarios, note de prévision |
+| **OSINT** | 41 outils et sources ouvertes — **France d'abord** — conduite de cas et chaîne de preuves cotées A→X |
+| **Système** | Canal de mise à jour Git, sauvegarde, retour arrière, configuration du modèle |
+
+Code dans `carredas/` (`server.py`, `store.py`, `docsgen.py`, `llm.py`,
+`updater.py`, `desktop.py`) et `carredas/modules/*`. Interface dans `carredas/ui/`.
+
+**Échéance :** utilisation en situation réelle le **16 octobre 2026** —
+planning jour par jour dans **`docs/carre-das/09-PLAN-16-OCTOBRE.md`**.
+
 ## 📚 Fusion réelle (option b)
 
 Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.

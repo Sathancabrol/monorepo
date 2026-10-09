@@ -1,0 +1,18 @@
+{
+  "id": "forecast",
+  "titre": "Prévision",
+  "icone": "◷",
+  "resume": "Système de prévision multi-facteurs : météo, social, géopolitique, économie, psychologie/sociétale. Tableaux de bord d'indicateurs, scénarios, et note de prévision générée.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": true,
+  "priorite": 40,
+  "palier": "P0",
+  "routes": [
+    "GET  /api/prevision/indicateurs",
+    "GET  /api/prevision/familles",
+    "POST /api/prevision/indicateurs",
+    "POST /api/prevision/scenario",
+    "POST /api/prevision/generer"
+  ]
+}

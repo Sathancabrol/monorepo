@@ -13,3 +13,7 @@ monorepo.bundle
 !projects/
 !projects/*/dist/
 !projects/*/dist/**
+
+# Carré d'As — données locales de l'application (jamais versionnées)
+.carre-d-as-data/
+.carredas-data/

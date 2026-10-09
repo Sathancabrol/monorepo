@@ -1,0 +1,87 @@
+name: Construction Windows
+
+# Deux usages :
+#   • à chaque poussée : on vérifie que tout tourne (test de scénario) ;
+#   • sur étiquette v* : on fabrique l'installeur et on le publie en release,
+#     ce qui alimente le canal de mise à jour « release » de l'application.
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  scenario:
+    name: Scénario de bout en bout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Démarrer le serveur
+        run: |
+          python3 main.py --serve --port 8733 --no-open &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8733/api/health && break || sleep 1
+          done
+      - name: Jouer le scénario complet
+        run: python3 scripts/test-carre-d-as.py http://127.0.0.1:8733
+
+  installer:
+    name: Installeur Windows
+    needs: scenario
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Dépendances de construction
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pywebview
+
+      - name: Construire l'exécutable
+        run: python -m PyInstaller packaging/carre-d-as.spec --noconfirm
+
+      - name: Vérifier que l'exécutable démarre
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "dist\CarreDAs\CarreDAs.exe" -PassThru
+          Start-Sleep -Seconds 6
+          if ($p.HasExited) { Write-Error "l'exe s'est arrêté immédiatement"; exit 1 }
+          try { Invoke-WebRequest -Uri "http://127.0.0.1:8733/api/health" -UseBasicParsing | Out-Null }
+          catch { Write-Warning "aucune réponse HTTP (normal en mode fenêtre)" }
+          Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+
+      - name: Fabriquer l'installeur (Inno Setup)
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (Test-Path $iscc) { & $iscc "installer\setup.iss" }
+          else { Write-Warning "Inno Setup absent — l'archive portable suffira." }
+
+      - name: Empreintes d'intégrité
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path Installer | Out-Null
+          Get-ChildItem -Path dist\CarreDAs -Recurse -File |
+            Get-FileHash -Algorithm SHA256 |
+            ForEach-Object { "$($_.Hash.ToLower())  $($_.Path.Substring((Resolve-Path dist\CarreDAs).Path.Length+1))" } |
+            Set-Content -Encoding ascii Installer\SHA256SUMS.txt
+
+      - name: Publier la release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Installer/*.exe
+            Installer/SHA256SUMS.txt
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

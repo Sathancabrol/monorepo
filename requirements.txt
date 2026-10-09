@@ -1,4 +1,24 @@
-fastapi==0.110.0
-uvicorn[standard]==0.29.0
-jinja2==3.1.4
-python-multipart==0.0.9
+# Carré d'As — dépendances
+#
+# Le cœur de l'application n'en a AUCUNE : tout tourne avec la bibliothèque
+# standard de Python. Ce fichier ne liste que des compléments facultatifs,
+# chacun dégradable — si l'un manque, l'application continue de fonctionner.
+
+# --- Fenêtre native (recommandé sous Windows) -------------------------------
+# Sans lui, l'application s'ouvre en mode « application » dans Edge ou Chrome :
+# même rendu, aucune barre d'outils, zéro dépendance.
+pywebview>=5.0
+
+# --- Reconnaissance vocale (optionnelle, lourde) ----------------------------
+# Pour dicter une réunion en direct. À installer dans un environnement dédié.
+# faster-whisper>=1.0
+#   (nécessite ~1 à 3 Go selon le modèle ; modèle « small » suffisant en français)
+
+# --- Transcription depuis une ligne de commande -----------------------------
+# whisper.cpp, ou tout binaire acceptant : <commande> <fichier.wav>
+# À déclarer ensuite dans config.stt.command
+
+# --- Modèle local (optionnel) ----------------------------------------------
+# Aucune dépendance Python : Ollama est un service externe.
+#   https://ollama.com  —  puis : ollama pull qwen2.5:7b-instruct
+# L'application le détecte automatiquement sur http://127.0.0.1:11434

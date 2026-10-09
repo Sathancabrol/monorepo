@@ -1,0 +1,228 @@
+"""Assemblage de l'application : routes du cœur + branches de modules.
+
+Le cœur ne sait rien des modules. Il fournit : la santé, la configuration, la
+liste des modules, le téléchargement des fichiers générés, le flux d'événements
+(SSE) et le journal. Tout le reste arrive par `modules.load_all`.
+"""
+
+from __future__ import annotations
+
+import datetime as _dt
+import json
+import mimetypes
+import queue
+import threading
+import time
+from pathlib import Path
+
+from . import __version__, httpsrv, log, paths
+from .httpsrv import Response, Router
+from .modules import load_all
+from .store import Store
+
+ICI = Path(__file__).resolve().parent
+
+
+def build(config: dict | None = None, store: Store | None = None,
+          verbose: bool = False) -> Router:
+    cfg = config or paths.read_config()
+    store = store or Store(paths.data_dir())
+    log.configure(paths.data_dir() / "journal.jsonl",
+                  "debug" if verbose else (cfg.get("journal", {}) or {}).get("niveau", "info"))
+
+    from .llm import LLM
+    llm = LLM(cfg)
+
+    router = Router()
+
+    # ----------------------------------------------------------- diffusion SSE
+    abonnes: list = []
+
+    def broadcast(canal: str, payload):
+        rec = {"canal": canal, "t": _dt.datetime.now().strftime("%H:%M:%S"),
+               "ts": time.time()}
+        if isinstance(payload, dict):
+            rec.update(payload)
+        else:
+            rec["donnees"] = payload
+        for q in list(abonnes):
+            try:
+                q.put_nowait(rec)
+            except Exception:
+                pass
+
+    log.on(lambda r: broadcast("journal", r))
+
+    # ------------------------------------------------------------------- santé
+    @router.get("/api/health")
+    def sante(req):
+        return {"ok": True, "version": __version__,
+                "horloge": _dt.datetime.now().isoformat(timespec="seconds"),
+                "donnees": str(store.root), "modele": llm.status()}
+
+    @router.get("/api/infos")
+    def infos(req):
+        r = paths.runtime_info()
+        r["version"] = __version__
+        r["modules"] = [m["id"] for m in ctx["modules"]]
+        r["url"] = ctx.get("url") or ""
+        return r
+
+    # ----------------------------------------------------------- configuration
+    @router.get("/api/config")
+    def lire_config(req):
+        return {"config": cfg, "defaut": paths.DEFAULT_CONFIG}
+
+    @router.put("/api/config")
+    def ecrire_config(req):
+        from .llm import reset as llm_reset
+        frag = req.json() or {}
+        paths.patch_config(frag)
+        cfg = paths.read_config()
+        llm_reset()
+        log.info("serveur", "configuration mise à jour")
+        return {"config": cfg}
+
+    # ---------------------------------------------------------------- modules
+    ctx = {"store": store, "config": cfg, "llm": llm, "broadcast": broadcast,
+           "engines": {}, "url": "", "modules": []}
+
+    @router.get("/api/modules")
+    def modules(req):
+        return {"modules": ctx["modules"], "total": len(ctx["modules"])}
+
+    # ------------------------------------------------------- tableau de bord
+    @router.get("/api/tableau")
+    def tableau(req):
+        """Synthèse inter-modules pour l'écran d'accueil."""
+        out = {"reunions": {}, "carto": {}, "prevision": {}, "osint": {}, "profils": {}}
+        try:
+            eng = ctx["engines"].get("meeting")
+            sessions = store.all("reunions")
+            en_cours = [s for s in sessions if s.get("statut") == "en_cours"]
+            out["reunions"] = {
+                "total": len(sessions),
+                "en_cours": len(en_cours),
+                "en_cours_titre": (en_cours[0].get("titre") if en_cours else ""),
+                "actions_ouvertes": sum(
+                    len([a for a in (s.get("actions") or []) if a.get("statut") != "fait"])
+                    for s in sessions),
+                "decisions": sum(len(s.get("decisions") or []) for s in sessions),
+                "documents": sum(len(s.get("documents") or []) for s in sessions),
+            }
+        except Exception:
+            pass
+        try:
+            out["carto"] = {"points": len(store.all("cartopoints")),
+                            "vues": len(store.all("cartovues")),
+                            "annotations": len(store.all("cartoannot"))}
+        except Exception:
+            pass
+        out["profils"] = {"total": len(store.all("profils")),
+                          "references": len(store.all("references"))}
+        out["osint"] = {"cas": len(store.all("osintcas")),
+                        "preuves": sum(len(c.get("preuves") or [])
+                                       for c in store.all("osintcas"))}
+        out["prevision"] = {"scenarios": len(store.all("prevscen")),
+                            "valeurs": len(store.all("prevvaleurs"))}
+        out["documents"] = len(list((store.root / "_" / "documents").glob("*"))
+                               ) if (store.root / "_" / "documents").exists() else 0
+        return out
+
+    # ------------------------------------------------------------- fichiers
+    @router.get("/api/fichiers")
+    def liste_fichiers(req):
+        d = store.blob_dir("documents")
+        out = []
+        for p in sorted(d.glob("*"), key=lambda x: -x.stat().st_mtime):
+            st = p.stat()
+            out.append({"nom": p.name, "taille": st.st_mtime and p.stat().st_size,
+                        "maj_le": _dt.datetime.fromtimestamp(st.st_mtime).strftime(
+                            "%d/%m/%Y %H:%M"),
+                        "url": f"/api/fichiers/{p.name}"})
+        return {"fichiers": out[:200]}
+
+    @router.get("/api/fichiers/:nom")
+    def telecharger(req, nom):
+        p = store.blob_dir("documents") / Path(nom).name
+        if not p.exists():
+            return Response.not_found("fichier absent")
+        telecharger_ = (req.q("dl") or "") in ("1", "oui", "true")
+        return Response.file(p, download_name=p.name, inline=not telecharger_)
+
+    @router.delete("/api/fichiers/:nom")
+    def supprimer_fichier(req, nom):
+        p = store.blob_dir("documents") / Path(nom).name
+        if p.exists():
+            p.unlink()
+            return {"ok": True}
+        return Response.not_found("fichier absent")
+
+    # ---------------------------------------------------------- journal & flux
+    @router.get("/api/journal")
+    def journal(req):
+        return {"journal": log.recent(int(req.q("limite", 120)))}
+
+    @router.get("/api/events")
+    def events(req, emit):
+        q: "queue.Queue" = queue.Queue(maxsize=200)
+        abonnes.append(q)
+        emit("ouvert", {"abonnes": len(abonnes)})
+        try:
+            while True:
+                try:
+                    rec = q.get(timeout=15)
+                except queue.Empty:
+                    emit("vivant", {"abonnes": len(abonnes)})
+                    continue
+                emit(rec.get("canal", "message"), rec)
+        except Exception:
+            pass
+        finally:
+            if q in abonnes:
+                abonnes.remove(q)
+
+    # ------------------------------------------------------------ mise à jour
+    @router.get("/api/mise-a-jour")
+    def maj(req):
+        from . import updater
+        return updater.verifier(cfg)
+
+    @router.post("/api/mise-a-jour/appliquer")
+    def appliquer(req):
+        from . import updater
+        p = req.json() or {}
+        return updater.appliquer(cfg, version=p.get("version"),
+                                 canal=p.get("canal") or cfg.get("mises_a_jour", {}).get("canal", "git"))
+
+    @router.post("/api/mise-a-jour/annuler")
+    def annuler(req):
+        from . import updater
+        return updater.annuler(cfg)
+
+    # ------------------------------------------------------- sauvegarde locale
+    @router.post("/api/sauvegarde")
+    def sauvegarde(req):
+        import shutil
+        cible = paths.backups_dir() / f"donnees-{_dt.datetime.now():%Y%m%d-%H%M%S}"
+        shutil.copytree(store.root, cible,
+                        ignore=shutil.ignore_patterns("_*", "update", "backups"))
+        return {"sauvegarde": str(cible)}
+
+    @router.get("/api/sauvegardes")
+    def sauvegardes(req):
+        d = paths.backups_dir()
+        return {"sauvegardes": [{"nom": p.name,
+                                 "taille": sum(f.stat().st_size for f in p.rglob("*") if f.is_file())}
+                                for p in sorted(d.iterdir()) if p.is_dir()]}
+
+    # ----------------------------------------------------- câblage des modules
+    ctx["modules"] = load_all(router, ctx)
+
+    # -------------------------------------------------------------- interface
+    # déclarée EN DERNIER : le fourre-tout statique ne doit jamais masquer
+    # une route d'API, surtout celles ajoutées par les modules
+    router.static("/", ICI / "ui", index="index.html", spa=False)
+    log.info("serveur", f"prêt — {len(ctx['modules'])} module(s)")
+
+    return router

@@ -1,0 +1,19 @@
+{
+  "id": "osint",
+  "titre": "OSINT",
+  "icone": "◎",
+  "resume": "Accès à un maximum d'outils, d'appareils et de données : registre d'outils (sources ouvertes françaises d'abord), cas d'investigation, chaîne de preuves et note de renseignement générée.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": true,
+  "priorite": 50,
+  "palier": "P0",
+  "routes": [
+    "GET  /api/osint/outils",
+    "GET  /api/osint/categories",
+    "GET  /api/osint/cas",
+    "POST /api/osint/cas",
+    "POST /api/osint/cas/:cid/preuve",
+    "POST /api/osint/cas/:cid/generer"
+  ]
+}

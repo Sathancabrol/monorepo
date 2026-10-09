@@ -1,0 +1,19 @@
+{
+  "id": "cognitorium",
+  "titre": "Cognitorium",
+  "icone": "◍",
+  "resume": "Module personnel : profils d'individus, de structures et de partenaires, reliés aux réunions et aux documents. Indexe aussi l'état de l'art déjà présent dans le dépôt (COGNITORIUM, psychologie, mémoires).",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": true,
+  "priorite": 30,
+  "palier": "P0",
+  "routes": [
+    "GET  /api/cognitorium/profils",
+    "POST /api/cognitorium/profils",
+    "GET  /api/cognitorium/profils/:pid",
+    "POST /api/cognitorium/references",
+    "POST /api/cognitorium/indexer",
+    "GET  /api/cognitorium/recherche"
+  ]
+}

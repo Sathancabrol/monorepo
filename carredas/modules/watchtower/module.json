@@ -1,0 +1,19 @@
+{
+  "id": "watchtower",
+  "titre": "Cartographie",
+  "icone": "◈",
+  "resume": "Système de cartographie avancé : catalogue de couches territoriales, points d'observation, annotations, vues mémorisées. S'appuie sur des sources ouvertes (MapLibre, IGN, Etalab, INSEE, Géorisques).",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": true,
+  "priorite": 20,
+  "palier": "P0",
+  "routes": [
+    "GET  /api/carto/couches",
+    "GET  /api/carto/groupes",
+    "POST /api/carto/vue",
+    "GET  /api/carto/points",
+    "POST /api/carto/points",
+    "GET  /api/carto/annotations"
+  ]
+}

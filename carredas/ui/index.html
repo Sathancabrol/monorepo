@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carré d'As</title>
+<link rel="stylesheet" href="/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23050508'/><rect x='11' y='11' width='10' height='10' transform='rotate(45 16 16)' fill='%2300E5CC'/></svg>">
+</head>
+<body>
+<div id="app">
+
+  <header id="head">
+    <div class="marque"><i class="losange"></i>Carré d'As <small id="version"></small></div>
+    <div class="tete-vide"></div>
+    <span class="pastille" id="pil-modele" title="Moteur de rédaction"><i class="pt"></i><span>modèle…</span></span>
+    <span class="pastille" id="pil-modules" title="Modules chargés"><i class="pt"></i><span>modules…</span></span>
+    <button class="petit" data-action="verifier-maj" title="Vérifier les mises à jour">⟳ Mise à jour</button>
+    <button class="petit" data-action="vue" data-vue="systeme" title="Système">⚙</button>
+  </header>
+
+  <nav id="rail">
+    <div class="rail-titre">Modules</div>
+    <div id="rail-items"></div>
+    <div class="rail-titre">Système</div>
+    <button class="rail-item" data-action="vue" data-vue="systeme"><span class="ico">⚙</span><span class="texte">Système</span></button>
+  </nav>
+
+  <main id="main"></main>
+
+  <aside id="aside">
+    <div class="onglets">
+      <button class="onglet actif" data-action="onglet" data-onglet="journal">Activité</button>
+      <button class="onglet" data-action="onglet" data-onglet="aide">Aide</button>
+    </div>
+    <div id="journal"></div>
+    <div id="pied-aside"><span id="pied-infos"></span></div>
+  </aside>
+
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
