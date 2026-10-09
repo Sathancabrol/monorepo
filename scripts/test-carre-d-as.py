@@ -99,18 +99,24 @@ verifier(all(m.get("charge") for m in mods),
          ", ".join(m["id"] for m in mods if not m.get("charge")))
 
 # ------------------------------------------------------------- 1. la réunion
+# Le test crée UNE réunion de test (titre unique « test-carre-d-as »),
+# la marque pour pouvoir la supprimer en fin de run — ainsi AUCUNE
+# réunion de travail (ex. celle créée à la main) n'est polluée, et le
+# test reste reproductible. C'était le rôle inversé avant : on réutilisait
+# la plus grosse, dont l'état dérivait d'un run à l'autre.
+TITRE_TEST = "Comité de pilotage — Frange Sud (test-carre-d-as)"
 reu = api("POST", "/api/meeting", {
-    "titre": "Comité de pilotage — Frange Sud de Frontignan",
+    "titre": TITRE_TEST,
     "lieu": "Sète", "date": "2026-10-16", "type": "comité de pilotage",
     "organisme": "Sète Agglopôle Méditerranée",
-    "contexte": "Cadrage de l'opération de la Frange Sud, en articulation avec "
-                "le SCoT révisé arrêté le 24/02/2026.",
+    "contexte": "Cadrage de l'opération de la Frange Sud (référence de test).",
     "ordre_du_jour": ["Avancement de l'étude de faisabilité",
                       "Phasage et enveloppe",
                       "Articulation avec l'enquête publique du SCoT"],
     "participants": ["M. Martin", "Mme Roux", "M. Belkacem"],
 })["session"]
 rid = reu["id"]
+print(f"\n  réunion de test créée : {rid} (sera supprimée à la fin)")
 print(f"\n  réunion : {rid}\n")
 api("POST", f"/api/meeting/{rid}/statut", {"statut": "en_cours"})
 
@@ -316,6 +322,10 @@ verifier(apres == avant + 1, "l'exécution est consignée dans l'historique")
 
 # le contexte d'une réunion alimente le document produit
 sessions = api("GET", "/api/meeting")["sessions"]
+# la réunion avec le plus de contenu, pas la plus récente —
+# celle avec des décisions+actions est la réunion de référence
+sessions.sort(key=lambda x: len((x.get("decisions") or [])) +
+                len((x.get("actions") or [])), reverse=True)
 if sessions:
     sid = sessions[0]["id"]
     r2 = api("POST", "/api/agents/executer",
@@ -489,7 +499,15 @@ ds = api("GET", "/api/constellation/dataset/communes")
 verifier("communes" in ds.get("key", "") and ds.get("label"),
          "les jeux de données chiffrés de l'atlas sont servis")
 
-# ------------------------------------------------------------------ 8. bilan
+# ------------------------------------------------------------------ 8. nettoyage
+# Supprimer la réunion de test pour ne pas polluer (la réunion de travail
+# créée à la main est hors du titre de test, donc conservée).
+try:
+    api("DELETE", f"/api/meeting/{rid}")
+    print(f"\n  réunion de test supprimée : {rid}")
+except Exception:
+    pass
+
 print(f"\n=== {len(produits)} documents produits · "
       f"{len(echecs)} échec(s) ===")
 if echecs:
