@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Monorepo — Vue d'ensemble{% endblock %}
 {% block content %}
-<h1>Monorepo unifié — 8 dépôts en un seul projet navigable</h1>
-<p class="muted">Tout ton code est désormais dans <code>projects/</code>. Navigue dans les fichiers et ouvre chaque preview directement dans l'interface — sans quitter la page.</p>
+<h1>Monorepo unifié — tous les projets en un seul endroit navigable</h1>
+<p class="muted">Tout ton code est dans <code>projects/</code>. Navigue dans les fichiers, ouvre chaque preview, et pilote l'entreprise d'IA depuis <a href="/office">Agent Office</a>.</p>
 
 <div class="topbar" style="margin:12px 0">
-  <a class="btn primary" href="/monorepo">↗ Ouvrir l'explorateur + previews</a>
-  <a class="btn" href="/repos">Voir le panorama GitHub</a>
+  <a class="btn primary" href="/office">🏢 Ouvrir Agent Office (poste de pilotage)</a>
+  <a class="btn" href="/monorepo">↗ Explorateur + previews</a>
+  <a class="btn" href="/repos">Panorama GitHub</a>
   <button class="btn" onclick="refreshSnap()">⟳ Refresh snapshot GitHub</button>
   <span id="refresh-msg" class="muted"></span>
 </div>

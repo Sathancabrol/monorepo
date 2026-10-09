@@ -261,3 +261,100 @@ def api_manifest():
         return JSONResponse(json.loads(MANIFEST.read_text()))
     raise HTTPException(404, "MANIFEST manquant")
 
+
+# =========================================================================
+# AGENT OFFICE — dashboard lecture seule (mission M-001)
+# Règle : « montre sans stocker » — chaque requête lit les fichiers, rien n'est écrit.
+# =========================================================================
+import csv
+import datetime as _dt
+
+AGENT_OFFICE = BASE / "projects" / "agent-office"
+AO_DATA = AGENT_OFFICE / "data"
+
+
+def _read_json(path: Path, default=None):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+
+def office_state():
+    today = _dt.date.today().isoformat()
+    # Budget (mois courant)
+    budget = {"revenus": 0.0, "depenses": 0.0, "restant": None, "mois": today[:7]}
+    csvp = AO_DATA / "budget_transactions.csv"
+    if csvp.exists():
+        try:
+            with open(csvp, newline="", encoding="utf-8") as f:
+                for row in csv.DictReader(f):
+                    if not row.get("date", "").startswith(today[:7]):
+                        continue
+                    try:
+                        m = float(row.get("montant", 0))
+                    except ValueError:
+                        continue
+                    if row.get("type") == "revenu":
+                        budget["revenus"] += m
+                    else:
+                        budget["depenses"] += m
+            budget["restant"] = round(budget["revenus"] - budget["depenses"], 2)
+        except Exception:
+            pass
+    # Tâches
+    tasks = _read_json(AO_DATA / "tasks.json", []) or []
+    tasks = sorted(tasks, key=lambda t: (t.get("date", ""), t.get("heure", "")))
+    upcoming = [t for t in tasks if t.get("date", "") >= today]
+    # Journal (5 dernières)
+    journal = _read_json(AO_DATA / "update_journal.json", []) or []
+    journal_last = journal[-5:][::-1]
+    # Prospects
+    prospects = _read_json(AO_DATA / "prospects.json", []) or []
+    # Social
+    social = _read_json(AO_DATA / "social_calendar.json", []) or []
+    # Services (registre)
+    tools = _read_json(AGENT_OFFICE / "tools.json", {}) or {}
+    services = tools.get("services", [])
+    # Missions
+    missions = []
+    mdir = AGENT_OFFICE / "agents" / "missions"
+    if mdir.exists():
+        for m in sorted(mdir.glob("M-*.md")):
+            titre, statut = m.stem, "?"
+            try:
+                for line in m.read_text(encoding="utf-8").splitlines():
+                    if line.startswith("# Mission"):
+                        titre = line.lstrip("# ").strip()
+                    if line.strip().startswith("- statut"):
+                        statut = line.split(":", 1)[-1].strip()
+            except Exception:
+                pass
+            missions.append({"fichier": m.name, "titre": titre, "statut": statut})
+    # Signaux Watchtower
+    signaux = _read_json(BASE / "projects" / "watchtower" / "data" / "thau-signaux.json", []) or []
+    return {
+        "genere_le": _dt.datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "budget": budget,
+        "taches": tasks,
+        "taches_a_venir": upcoming,
+        "journal": journal_last,
+        "journal_total": len(journal),
+        "prospects": prospects,
+        "social": social,
+        "services": services,
+        "missions": missions,
+        "signaux": signaux,
+        "nb_docs": len([f for f in (BASE / "docs").glob("*.md")]) if (BASE / "docs").exists() else 0,
+    }
+
+
+@app.get("/api/office/state")
+def api_office_state():
+    """Lecture seule : état du système agent-office, régénéré à chaque appel."""
+    return JSONResponse(office_state())
+
+
+@app.get("/office", response_class=HTMLResponse)
+def office_page(request: Request):
+    return templates.TemplateResponse(request, "office.html", office_state())

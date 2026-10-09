@@ -32,9 +32,10 @@ table{width:100%;border-collapse:collapse}th,td{padding:8px 6px;border-bottom:1p
 <body>
 <header>
   <div class="brand">⬢ Sathancabrol</div>
-  <span class="badge">monorepo • 8 projets</span>
+  <span class="badge">monorepo • {{ projects|length if projects else 13 }} projets</span>
   <nav>
     <a href="/" class="{% if request.url.path=='/' %}active{% endif %}">Vue d'ensemble</a>
+    <a href="/office" class="{% if request.url.path=='/office' %}active{% endif %}">🏢 Agent Office</a>
     <a href="/repos" class="{% if request.url.path=='/repos' %}active{% endif %}">Panorama GitHub</a>
     <a href="/monorepo" class="{% if request.url.path=='/monorepo' %}active{% endif %}">Monorepo + Preview</a>
   </nav>

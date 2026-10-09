@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Agent Office — Poste de pilotage{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/office.css">{% endblock %}
+{% block content %}
+<div class="of-head">
+  <div>
+    <h1 style="margin:0">🏢 Agent Office — poste de pilotage</h1>
+    <div class="muted" style="font-size:12px">Lecture seule · régénéré à {{ genere_le }} · « montre sans stocker » : cette page lit les fichiers, elle n'écrit rien.</div>
+  </div>
+  <span class="badge">{{ services|length }} services · {{ nb_docs }} docs · {{ missions|length }} missions · {{ signaux|length }} signaux</span>
+</div>
+
+{# ---------- KPIs ---------- #}
+<div class="grid of-kpis">
+  <div class="card kpi">
+    <div class="kpi-label">Budget {{ budget.mois }} — restant</div>
+    <div class="kpi-value {% if budget.restant is not none and budget.restant < 0 %}neg{% endif %}">
+      {% if budget.restant is not none %}{{ "%.2f"|format(budget.restant) }} €{% else %}—{% endif %}
+    </div>
+    <div class="muted" style="font-size:12px">revenus {{ "%.2f"|format(budget.revenus) }} € · dépenses {{ "%.2f"|format(budget.depenses) }} €</div>
+  </div>
+  <div class="card kpi">
+    <div class="kpi-label">Tâches à venir</div>
+    <div class="kpi-value">{{ taches_a_venir|length }}</div>
+    <div class="muted" style="font-size:12px">{{ taches|length }} au total</div>
+  </div>
+  <div class="card kpi">
+    <div class="kpi-label">Prospects actifs</div>
+    <div class="kpi-value">{{ prospects|length }}</div>
+    <div class="muted" style="font-size:12px">offres O1 · O2 · O3</div>
+  </div>
+  <div class="card kpi">
+    <div class="kpi-label">Journal des évolutions</div>
+    <div class="kpi-value">{{ journal_total }}</div>
+    <div class="muted" style="font-size:12px">entrées tracées</div>
+  </div>
+</div>
+
+<div class="grid of-cols">
+  {# ---------- Agenda ---------- #}
+  <div class="card">
+    <h2 style="margin-top:0">📅 Prochaines échéances</h2>
+    {% for t in taches_a_venir %}
+    <div class="of-item">
+      <span class="of-date">{{ t.date }}{% if t.heure %} · {{ t.heure }}{% endif %}</span>
+      <span>{{ t.titre }}</span>
+    </div>
+    {% else %}<div class="muted">Rien au planning.</div>{% endfor %}
+  </div>
+
+  {# ---------- Missions ---------- #}
+  <div class="card">
+    <h2 style="margin-top:0">📮 Missions agents</h2>
+    {% for m in missions %}
+    <div class="of-item">
+      <span class="badge st-{{ m.statut }}">{{ m.statut }}</span>
+      <span>{{ m.titre }}</span>
+    </div>
+    {% else %}<div class="muted">Aucune mission.</div>{% endfor %}
+    <div class="muted" style="font-size:12px;margin-top:8px">Format : OUTCOME · HOW · TOUCH · HUMAN-CHECK (<code>agents/missions/</code>)</div>
+  </div>
+</div>
+
+<div class="grid of-cols">
+  {# ---------- Prospects ---------- #}
+  <div class="card">
+    <h2 style="margin-top:0">🎯 Prospects (pipeline)</h2>
+    {% for p in prospects %}
+    <div class="of-item">
+      <span class="badge">{{ p.get("offre", "?") if p.get else "" }}</span>
+      <span>{{ p.nom if p.nom else p.get("nom", "?") }} — <span class="muted">{{ p.etape if p.etape else "" }}</span></span>
+    </div>
+    {% else %}<div class="muted">Aucun prospect.</div>{% endfor %}
+  </div>
+
+  {# ---------- Journal ---------- #}
+  <div class="card">
+    <h2 style="margin-top:0">📓 Journal (5 dernières entrées)</h2>
+    {% for j in journal %}
+    <div class="of-item">
+      <span class="badge">{{ j.get("type", "?") if j.get else "?" }}</span>
+      <span class="muted" style="font-size:12px">{{ (j.get("note", "") if j.get else "")[:160] }}…</span>
+    </div>
+    {% else %}<div class="muted">Journal vide.</div>{% endfor %}
+  </div>
+</div>
+
+{# ---------- Services ---------- #}
+<div class="card" style="margin-top:14px">
+  <h2 style="margin-top:0">🧰 Les {{ services|length }} services</h2>
+  <div class="grid of-services">
+    {% for s in services %}
+    <div class="of-service">
+      <strong>{{ s.name }}</strong> <span class="badge">{{ s.service }}</span>
+      <div class="muted" style="font-size:12px">{{ s.capability }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{# ---------- Signaux Watchtower ---------- #}
+<div class="card" style="margin-top:14px">
+  <h2 style="margin-top:0">🗼 Signaux Watchtower — bassin de Thau</h2>
+  <table>
+    <tr><th>ID</th><th>Date</th><th>Thème</th><th>Commune</th><th>Fait</th><th>Niveau</th></tr>
+    {% for s in signaux %}
+    <tr>
+      <td>{{ s.id }}</td><td>{{ s.date }}</td><td>{{ s.theme }}</td><td>{{ s.commune }}</td>
+      <td style="font-size:12px">{{ s.fait[:140] }}…</td>
+      <td><span class="badge">{{ s.niveau }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="muted" style="font-size:12px;margin-top:14px">
+  Source : <code>projects/agent-office/data/*</code>, <code>tools.json</code>, <code>agents/missions/</code>, <code>projects/watchtower/data/thau-signaux.json</code> — relire via <code>/api/office/state</code> (JSON).
+</div>
+{% endblock %}
