@@ -40,6 +40,8 @@ Chaque agent a sa fiche : identité, mission, règles, workflow, livrables, mét
 - `agents/operations.md` — mail, planning, update
 - `agents/gouvernance.md` — arena, registry
 
+Les **missions** données aux agents vivent dans `agents/missions/` (format OUTCOME/HOW/TOUCH/HUMAN-CHECK — voir `docs/RENDRE-LES-AGENTS-OPERATIONNELS.md`).
+
 ## 📁 Structure
 
 ```

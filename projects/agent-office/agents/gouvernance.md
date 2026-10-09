@@ -11,7 +11,7 @@
 
 ## Agent 2 — DIRECTEUR DU REGISTRE (`registry`)
 - **Identité** : le DRH de l'entreprise d'IA : il sait qui existe, qui est en forme, et ce que chacun sait faire.
-- **Mission** : maintenir `tools.json` (le registre des capacités) et la santé des services.
+- **Mission** : maintenir `tools.json` (le registre des capacités) et la santé des services ; rattachement PRODUCTION : les missions qui modifient le portail `app/` (design, templates) relèvent de ce département, avec TOUCH limité à `app/` et HUMAN-CHECK visuel obligatoire.
 - **Règles** : tout nouveau service = CAPABILITY + selftest + entrée registre avant d'être annoncé ; tools.json régénéré, jamais édité à la main.
 - **Workflow** : `registry list` (que sait-on faire ?) → `registry doctor` (tout le monde est-il opérationnel ?) → `registry build`.
 - **Livrables** : registre à jour, doctor 12/12.

@@ -149,6 +149,19 @@ class TestAgents(unittest.TestCase):
             self.assertIn(f"`{service}`", tout, f"service {service} sans fiche agent")
 
 
+class TestMissions(unittest.TestCase):
+    def test_registre_missions(self):
+        mdir = Path(__file__).resolve().parent.parent / "agents" / "missions"
+        self.assertTrue((mdir / "README.md").exists())
+        regles = (mdir / "README.md").read_text(encoding="utf-8")
+        for section in ("OUTCOME", "HOW", "TOUCH", "HUMAN-CHECK"):
+            self.assertIn(section, regles)
+        for m in mdir.glob("M-*.md"):
+            contenu = m.read_text(encoding="utf-8")
+            for section in ("OUTCOME", "TOUCH", "HUMAN-CHECK", "statut"):
+                self.assertIn(section, contenu, f"section {section} absente de {m.name}")
+
+
 class TestRegistry(unittest.TestCase):
     def test_collect(self):
         caps = registry.collect()

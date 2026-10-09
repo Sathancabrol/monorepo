@@ -73,5 +73,10 @@
     "date": "2026-10-09T06:05:38",
     "type": "decision",
     "note": "Audit complet de session (docs/AUDIT-COMPLET-SESSION-09-10.md) : inventaire vérifié sur disque, zéro perte malgré 5+ rewinds, 4 oublis corrigés (O3 Sobeca 31/10, publication posts 16+23/10, clôture ZIFMAR 07/01/27 — tâches 10-13), plateforme sociale à confirmer ; comparaison concurrence (The Agency/OmniRoute/MAPS/Herald/Odysseus) ; carré d'as : mémoire+outils en main, manquent modèles (clés API) et présence (portail branché + VPS 24/7 + distribution)"
+  },
+  {
+    "date": "2026-10-09T06:15:54",
+    "type": "outil",
+    "note": "Couche agentique rendue opérationnelle sans clé ni installation (docs/RENDRE-LES-AGENTS-OPERATIONNELS.md) : registre de missions agents/missions/ (format OUTCOME/HOW/TOUCH/HUMAN-CHECK, tests), capacités design-app (gouvernance) + collecte-internet (recherche) déclarées, missions M-001/M-002 en brouillon ; niveaux suivants proposés : Gemini CLI gratuit puis runner stdlib + clés gratuites, VPS après 1er revenu"
   }
 ]
