@@ -63,28 +63,39 @@ def _tendance(valeurs: list) -> dict:
     return {"sens": sens, "variation": var, "moyenne_recente": round(b, 2)}
 
 
+def indicateurs_enrichis(store, config=None) -> list[dict]:
+    """Catalogue + valeurs saisies (les saisies écrasent le catalogue)."""
+    catalogue = _lire("indicateurs.json", {"indicateurs": []})
+    saisies = {r["id"]: r for r in store.all("prevvaleurs")}
+    out = []
+    for ind in catalogue.get("indicateurs", []):
+        d = dict(ind)
+        s = saisies.get(ind["id"])
+        if s:
+            d["valeur"] = s.get("valeur")
+            d["serie"] = s.get("serie") or []
+            d["maj_le"] = s.get("maj_le") or ""
+            d["note"] = s.get("note") or d.get("note", "")
+        d.setdefault("valeur", None)
+        d["etat"] = "renseigné" if d.get("valeur") is not None else "à collecter"
+        d["tendance"] = _tendance(d.get("serie") or [])
+        out.append(d)
+    return out
+
+
+def canonique(store, config=None):
+    """Indicateurs, avec la distinction faits / à collecter."""
+    from ...core import canonical
+    return [canonical.depuis_indicateur(i) for i in indicateurs_enrichis(store)]
+
+
 def register(router, ctx):
     store = ctx["store"]
     catalogue = _lire("indicateurs.json", {"indicateurs": []})
     broadcast = ctx.get("broadcast") or (lambda *a, **k: None)
 
     def _indicateurs():
-        """Catalogue + valeurs saisies (les saisies écrasent le catalogue)."""
-        saisies = {r["id"]: r for r in store.all("prevvaleurs")}
-        out = []
-        for ind in catalogue.get("indicateurs", []):
-            d = dict(ind)
-            s = saisies.get(ind["id"])
-            if s:
-                d["valeur"] = s.get("valeur")
-                d["serie"] = s.get("serie") or []
-                d["maj_le"] = s.get("maj_le") or ""
-                d["note"] = s.get("note") or d.get("note", "")
-            d.setdefault("valeur", None)
-            d["etat"] = "renseigné" if d.get("valeur") is not None else "à collecter"
-            d["tendance"] = _tendance(d.get("serie") or [])
-            out.append(d)
-        return out
+        return indicateurs_enrichis(store)
 
     @router.get(PREFIX + "/familles")
     def familles(req):

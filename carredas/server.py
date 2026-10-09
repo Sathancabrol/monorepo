@@ -91,6 +91,51 @@ def build(config: dict | None = None, store: Store | None = None,
     def modules(req):
         return {"modules": ctx["modules"], "total": len(ctx["modules"])}
 
+    # ------------------------------------------------- contrat de données partagé
+    @router.get("/api/canonique/schema")
+    def canon_schema(req):
+        from .core import canonical
+        return {"schema": canonical.schema(),
+                "module_schema": canonical.schema("module.schema.json"),
+                "statuts": list(canonical.STATUTS)}
+
+    @router.post("/api/canonique/valider")
+    def canon_valider(req):
+        from .core import canonical
+        rec = req.json() or {}
+        ok, erreurs = canonical.valider(rec)
+        return {"valide": ok, "erreurs": erreurs}
+
+    @router.get("/api/canonique")
+    def canonique(req):
+        """Toutes les données des modules, ramenées à une seule forme.
+
+        C'est la démonstration du contrat : une décision de réunion, une preuve
+        d'investigation, un point sur la carte et un profil deviennent le même
+        type d'objet — avec leur origine intacte.
+        """
+        from .core import canonical
+        recs = []
+        for mid, fournir in (ctx.get("canonique") or {}).items():
+            try:
+                for r in (fournir(store, cfg) or []):
+                    r.setdefault("source", mid)
+                    recs.append(r)
+            except Exception as exc:
+                log.warn("canonique", f"{mid} : {exc}")
+        valides, erreurs, par_type, par_statut = 0, [], {}, {}
+        for r in recs:
+            ok, err = canonical.valider(r)
+            valides += ok
+            if err and len(erreurs) < 20:
+                erreurs.append({"id": r.get("id"), "erreurs": err})
+            par_type[r.get("type", "?")] = par_type.get(r.get("type", "?"), 0) + 1
+            par_statut[r.get("status", "?")] = par_statut.get(r.get("status", "?"), 0) + 1
+        complet = req.q("complet") in ("1", "oui", "true")
+        return {"total": len(recs), "valides": valides, "erreurs": erreurs,
+                "par_type": par_type, "par_statut": par_statut,
+                "enregistrements": recs if complet else recs[:60]}
+
     # ------------------------------------------------------- tableau de bord
     @router.get("/api/tableau")
     def tableau(req):

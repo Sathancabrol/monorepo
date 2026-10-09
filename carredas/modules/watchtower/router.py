@@ -30,6 +30,12 @@ def _lire(nom: str, defaut=None):
         return defaut if defaut is not None else []
 
 
+def canonique(store, config=None):
+    """Points d'observation, avec leur géométrie."""
+    from ...core import canonical
+    return [canonical.depuis_point(p) for p in store.all("cartopoints")]
+
+
 def register(router, ctx):
     store = ctx["store"]
     couches = _lire("couches.json", {"groupes": [], "couches": []})

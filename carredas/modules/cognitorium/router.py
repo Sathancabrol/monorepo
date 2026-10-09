@@ -27,6 +27,12 @@ def _norm(t: str) -> str:
     return re.sub(r"\s+", " ", str(t or "")).strip().lower()
 
 
+def canonique(store, config=None):
+    """Profils d'individus, structures et partenaires."""
+    from ...core import canonical
+    return [canonical.depuis_profil(p) for p in store.all("profils")]
+
+
 def register(router, ctx):
     store = ctx["store"]
     broadcast = ctx.get("broadcast") or (lambda *a, **k: None)

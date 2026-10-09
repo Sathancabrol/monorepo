@@ -15,6 +15,18 @@ from .templates import GABARITS, construire
 PREFIX = "/api/meeting"
 
 
+def canonique(store, config=None):
+    """Décisions et actions de toutes les réunions, en forme canonique."""
+    from ...core import canonical
+    out = []
+    for s in store.all("reunions"):
+        for d in (s.get("decisions") or []):
+            out.append(canonical.depuis_decision(d, s.get("id", "")))
+        for a in (s.get("actions") or []):
+            out.append(canonical.depuis_action(a, s.get("id", "")))
+    return out
+
+
 def register(router, ctx):
     store = ctx["store"]
     eng = E.MeetingEngine(store, ctx.get("llm"), ctx.get("config"))

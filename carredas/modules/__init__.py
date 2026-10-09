@@ -121,6 +121,11 @@ def load_all(router, ctx, root: Path = MODULES_DIR) -> list[dict]:
             etat.append(m.to_dict())
             continue
         ok = m.register(router, ctx)
+        # Si le module sait traduire ses objets vers l'enregistrement canonique,
+        # on le branche : le contrat de données se remplit tout seul.
+        code = m._code
+        if ok and code is not None and callable(getattr(code, "canonique", None)):
+            ctx.setdefault("canonique", {})[m.id] = code.canonique
         info = m.to_dict()
         info["charge"] = ok
         etat.append(info)

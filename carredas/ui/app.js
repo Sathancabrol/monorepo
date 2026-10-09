@@ -768,23 +768,54 @@ window.saisirIndicateur = saisirIndicateur;
 
 /* ================================================================== OSINT */
 async function osint() {
-  const [outils, categories, cas, cadre] = await Promise.all([
+  const [outils, categories, cas, cadre, registres, besoins] = await Promise.all([
     get('/api/osint/outils'), get('/api/osint/categories'),
-    get('/api/osint/cas'), get('/api/osint/cadre')]);
+    get('/api/osint/cas'), get('/api/osint/cadre'),
+    get('/api/osint/registres'), get('/api/osint/besoins')]);
   S.osint = { outils: outils.outils, categories: categories.categories,
-              cas: cas.cas, cadre };
+              cas: cas.cas, cadre, registres: registres.registres || [],
+              besoins: besoins.besoins || [] };
 
   if (S.osint.casId) return casDetail(S.osint.casId);
 
+  const regs = S.osint.registres;
   return `
   <div class="titre-page">
     <h1>OSINT</h1>
-    <div class="actions"><button class="primaire" data-action="nouveau-cas">＋ Nouveau cas</button></div>
+    <div class="actions">
+      ${regs.map(r => `<span class="pastille ${r.id === 'watchtower' ? 'ac' : 'ok'}">
+        <i class="pt"></i>${esc(r.nom)} · ${r.outils}</span>`).join('')}
+      <button class="primaire" data-action="nouveau-cas">＋ Nouveau cas</button>
+    </div>
+  </div>
+
+  <div class="note-info">
+    Deux registres branchés, <b>sans duplication</b> : les sources ouvertes
+    françaises (registre local) et le registre Watchtower déjà présent dans le
+    dépôt, lu là où il est. ${regs.filter(r => r.id === 'watchtower').map(r =>
+      `<span class="mono">${esc(r.chemin || '')}</span> — ${esc(r.genere_le || '')}`).join('')}
   </div>
 
   <div class="avertissement">
     <b>Cadre.</b> ${(cadre.cadre_legal || []).map(esc).join('<br>')}
   </div>
+
+  <section class="bloc">
+    <h2>Par besoin <span class="dim">(${S.osint.besoins.length}) — « j'ai besoin de… »</span></h2>
+    <div class="liste">
+      ${S.osint.besoins.map(b => `
+        <div class="ligne">
+          <div class="principal">
+            <div class="nom">${b.besoin.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
+              ${(b.outils_resolus || []).map(o =>
+                `<span class="tag gris" title="${esc(o.licence || '')}">${esc(o.nom)}</span>`).join('')}
+            </div>
+            ${b.note ? `<div class="meta" style="margin-top:5px">${esc(b.note)}</div>` : ''}
+          </div>
+        </div>`).join('') || '<div class="vide">Registre Watchtower non trouvé.</div>'}
+    </div>
+  </section>
 
   <section class="bloc">
     <h2>Cas en cours <span class="dim">(${S.osint.cas.length})</span></h2>
@@ -810,10 +841,14 @@ async function osint() {
             <div class="nom">${esc(o.nom)}
               <span class="tag ${o.risque === 'intrusif' ? 'ris' : o.risque === 'actif' ? 'act' : 'deci'}">${esc(o.risque)}</span>
               <span class="tag gris">${esc(o.licence)}</span>
+              <span class="tag ${o.registre === 'watchtower' ? 'qst' : 'vide'}">${o.registre === 'watchtower' ? 'watchtower' : 'local'}</span>
               ${o.etoiles ? `<span class="confiance">★ ${o.etoiles.toLocaleString('fr-FR')}</span>` : ''}
             </div>
             <div class="meta" style="margin-top:4px">${esc(o.description || '')}</div>
-            <div class="meta" style="margin-top:2px;color:var(--ac)">${esc(o.usage || '')}</div>
+            ${o.usage ? `<div class="meta" style="margin-top:2px;color:var(--ac)">${esc(o.usage)}</div>` : ''}
+            ${o.install ? `<div class="meta mono" style="margin-top:3px;color:var(--tx-2)"> installer : ${esc(String(o.install).slice(0, 150))}</div>` : ''}
+            ${o.verifier ? `<div class="meta mono" style="margin-top:2px"> vérifier : ${esc(o.verifier)}</div>` : ''}
+            ${o.gpu ? `<div class="meta" style="margin-top:2px"> matériel : ${esc(o.gpu)}</div>` : ''}
             ${o.requete_type ? `<div class="meta mono" style="margin-top:3px">${esc(o.requete_type)}</div>` : ''}
           </div>
           ${o.url ? `<a class="bouton petit" href="${esc(o.url)}" target="_blank" rel="noopener">Source</a>` : ''}

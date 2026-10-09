@@ -19,6 +19,7 @@ from pathlib import Path
 from ... import docsgen
 from ...httpsrv import Response
 from ...store import new_id
+from .registries import charger_watchtower, fusionner
 
 PREFIX = "/api/osint"
 ICI = Path(__file__).parent
@@ -42,9 +43,21 @@ def _lire(nom, defaut=None):
         return defaut if defaut is not None else {}
 
 
+def canonique(store, cfg=None):
+    """Preuves versées aux dossiers, avec leur cotation de fiabilité."""
+    from ...core import canonical
+    out = []
+    for c in store.all("osintcas"):
+        for p in (c.get("preuves") or []):
+            out.append(canonical.depuis_preuve(p, c.get("id", "")))
+    return out
+
+
 def register(router, ctx):
     store = ctx["store"]
-    data = _lire("outils.json", {"categories": [], "outils": [], "meta": {}})
+    local = _lire("outils.json", {"categories": [], "outils": [], "meta": {}})
+    # On référence le registre Watchtower là où il est, on ne le recopie pas.
+    data = fusionner(local, charger_watchtower(ctx.get("config")))
     broadcast = ctx.get("broadcast") or (lambda *a, **k: None)
 
     # -------------------------------------------------------------- registre
@@ -57,19 +70,44 @@ def register(router, ctx):
             out.append(d)
         return {"categories": out}
 
+    @router.get(PREFIX + "/registres")
+    def registres(req):
+        """Quels registres sont branchés, et combien chacun apporte."""
+        return {"registres": data.get("registres", []),
+                "legende": data.get("legende", {}),
+                "total_outils": len(data.get("outils", []))}
+
+    @router.get(PREFIX + "/besoins")
+    def besoins(req):
+        """« J'ai besoin de X » → les outils qui répondent."""
+        q = (req.q("q") or "").strip().lower()
+        par_id = {o["id"]: o for o in data.get("outils", [])}
+        out = []
+        for b in (data.get("besoins") or []):
+            if q and q not in b["besoin"].lower() and q not in (b.get("note") or "").lower():
+                continue
+            out.append({**b, "outils_resolus": [
+                {"id": i, "nom": (par_id.get(i) or {}).get("nom", i),
+                 "licence": (par_id.get(i) or {}).get("licence")}
+                for i in b["outils"]]})
+        return {"besoins": out, "total": len(out)}
+
     @router.get(PREFIX + "/outils")
     def outils(req):
         cat = req.q("categorie") or ""
         q = (req.q("q") or "").strip().lower()
         risque = req.q("risque") or ""
+        reg = req.q("registre") or ""
         out = []
         for o in data.get("outils", []):
             if cat and o.get("categorie") != cat:
                 continue
             if risque and o.get("risque") != risque:
                 continue
+            if reg and o.get("registre") != reg:
+                continue
             if q and q not in (o.get("nom", "") + o.get("description", "") +
-                               o.get("usage", "")).lower():
+                               o.get("usage", "") + o.get("install", "")).lower():
                 continue
             out.append(o)
         return {"outils": out, "total": len(out), "meta": data.get("meta", {}),

@@ -28,7 +28,18 @@ STATUTS = ("brouillon", "en_cours", "suspendu", "close")
 
 
 def _maintenant() -> str:
+    """Heure seule : pour l'affichage dans le fil de la réunion."""
     return _dt.datetime.now().strftime("%H:%M:%S")
+
+
+def _instant() -> str:
+    """Horodatage complet ISO : c'est celui qu'on doit stocker.
+
+    Une décision ou une action doit pouvoir être datée dans l'absolu — sinon
+    l'enregistrement canonique n'est pas valide et on perd la possibilité de
+    reconstituer une chronologie.
+    """
+    return _dt.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 
 def _session_vide(payload: dict) -> dict:
@@ -223,7 +234,7 @@ class MeetingEngine:
                 "echeance": patch.get("echeance", sug.get("echeance", "")),
                 "source": sug.get("origine", ""),
                 "confiance": sug.get("confiance", 0),
-                "cree_le": _maintenant(),
+                "cree_le": _instant(),
             }
             if sug["kind"] == "action":
                 item["statut"] = "à faire"
@@ -266,7 +277,7 @@ class MeetingEngine:
                 "echeance": payload.get("echeance", ""),
                 "source": payload.get("source") or "saisie",
                 "confiance": 1.0,
-                "cree_le": _maintenant(),
+                "cree_le": _instant(),
             }
             if kind == "action":
                 item["statut"] = payload.get("statut") or "à faire"

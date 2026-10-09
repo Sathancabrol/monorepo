@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Record",
+  "description": "Contrat de données partagé de Carré d'As. Toute information qui traverse les modules — un outil, une preuve, une décision, un point cartographique, un indicateur — doit pouvoir se ramener à cette forme. C'est ce qui permet de relier un élément de chantier, une entité géographique et une preuve documentaire sans perdre leur origine.",
+  "type": "object",
+  "required": ["id", "type", "source", "status"],
+  "properties": {
+    "id": {"type": "string", "description": "Identifiant stable et unique dans le système."},
+    "type": {"type": "string", "description": "Nature de l'enregistrement : outil, preuve, decision, action, profil, lieu, indicateur, document, reunion, risque."},
+    "label": {"type": ["string", "null"], "description": "Libellé lisible par un humain."},
+    "source": {"type": "string", "description": "Origine : nom du module, du dépôt ou du fichier."},
+    "source_url": {"type": ["string", "null"]},
+    "retrieved_at": {"type": ["string", "null"], "format": "date-time", "description": "Quand on a obtenu l'information."},
+    "observed_at": {"type": ["string", "null"], "format": "date-time", "description": "Quand le fait s'est produit — distinct de la collecte."},
+    "valid_from": {"type": ["string", "null"], "format": "date-time"},
+    "valid_to": {"type": ["string", "null"], "format": "date-time"},
+    "geometry": {"description": "Géométrie GeoJSON si l'enregistrement est spatial."},
+    "provenance": {"type": ["object", "null"], "description": "Chaîne de provenance : qui, comment, à partir de quoi."},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "license": {"type": ["string", "null"]},
+    "status": {"enum": ["fact", "inference", "hypothesis", "unknown"], "description": "fact = constaté ; inference = déduit ; hypothesis = supposé ; unknown = non évalué."},
+    "relations": {"type": "array", "items": {"type": "object"}, "description": "Liens vers d'autres enregistrements canoniques."}
+  }
+}
