@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "titre": "Annonce démo O2 — le deck Frontignan (intelligence territoriale, 249 sources)",
+    "plateformes": ["linkedin", "x"],
+    "date": "2026-10-16",
+    "statut": "brouillon"
+  },
+  {
+    "id": 2,
+    "titre": "Post preuve O1 — 271 fiches ROME structurées + revue PRISMA",
+    "plateformes": ["linkedin"],
+    "date": "2026-10-23",
+    "statut": "brouillon"
+  }
+]

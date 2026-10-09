@@ -14,10 +14,13 @@ DIRECTION — registry (tools.json) : qui sait faire quoi, doctor = contrôle qu
 ├── ORGANISATION — planning week/add/ics → Google Calendar
 ├── ARBITRAGE    — arena : duels en aveugle, ELO, grille ChatEval (jamais un seul juge)
 ├── ÉVOLUTION    — update : journal des mises à jour, leçons, changelog auto, garde-fou
+├── INTERNET     — à brancher : Tavily/Crawl4AI/Firecrawl (lecture), Playwright MCP/Obscura/browser-use (navigation), Local Deep Research+SearXNG (veille) — routeur de méthodes dans docs/INTERNET-ET-MARKETING-AGENTIQUE.md
+├── RÉSEAUX      — social : calendrier éditorial, drafts, porte humaine, écoute → publication via Postiz (MCP) quand hébergé
 └── PRODUCTION   — app/ (portail), frontignan (livrable), proto-cognitorium (moteur)
 ```
 
-Implémentation : **`projects/agent-office/`** — 10 services, zéro dépendance (stdlib), 100 % testé (`tests/`), invocations CLI `python3 -m agent_office <service>`.
+Implémentation : **`projects/agent-office/`** — 11 services, zéro dépendance (stdlib), 100 % testé (`tests/`), invocations CLI `python3 -m agent_office <service>`.
+Méthode de référence : Jake Van Clief — agent = instructions + modèle loué + portée, 4 questions par dossier (outcome/how/touch/human-check) ; transcript et analyse dans `docs/INTERNET-ET-MARKETING-AGENTIQUE.md`.
 Auto-mise à jour : **`docs/AUTO-MAJ-SYSTEME-AGENTIQUE.md`** (Smithery/MCP, Voyager/skills, GPT-Researcher/Local Deep Research, Letta, Darwin Gödel Machine).
 Conception benchmark modèles : **`docs/SYSTEMES-CONFRONTATION-MODELES.md`** (LMArena, godmode, ChatEval, Promptfoo, patrons n8n).
 

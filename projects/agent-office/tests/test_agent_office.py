@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from agent_office import arena, budget, invoices, marketing, planning, registry, update  # noqa: E402
+from agent_office import arena, budget, invoices, marketing, planning, registry, social, update  # noqa: E402
 
 
 class TestBudget(unittest.TestCase):
@@ -90,6 +90,22 @@ class TestUpdate(unittest.TestCase):
         from agent_office import registry
         for mod in registry.MODULES:
             self.assertIn("OK", mod.selftest())
+
+
+class TestSocial(unittest.TestCase):
+    def test_draft_x_respecte_limite(self):
+        d = social.draft("O1", "x")
+        texte = d.split("\n", 1)[1]
+        self.assertLessEqual(len(texte), social.PLATFORMES["x"])
+
+    def test_calendrier_seede(self):
+        db = social.load()
+        self.assertGreaterEqual(len(db), 2)
+        self.assertTrue(all(e["statut"] == "brouillon" for e in db))  # jamais auto-publié
+
+    def test_avec_offres_reelles(self):
+        for k in ("O1", "O2", "O3"):
+            self.assertIn("LINKEDIN", social.draft(k, "linkedin").split("\n")[0])
 
 
 class TestRegistry(unittest.TestCase):

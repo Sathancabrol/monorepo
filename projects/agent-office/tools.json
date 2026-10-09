@@ -81,6 +81,18 @@
       ]
     },
     {
+      "name": "social",
+      "service": "Marketing",
+      "capability": "Équipe réseaux : calendrier éditorial, drafts par plateforme, checklist humaine, écoute sociale",
+      "commands": [
+        "social calendar",
+        "social add --titre t --plateformes x,linkedin --date AAAA-MM-JJ",
+        "social draft --offer O1 --plateforme x",
+        "social check",
+        "social listen --theme t"
+      ]
+    },
+    {
       "name": "update",
       "service": "Évolution",
       "capability": "Auto-mise à jour : journal des évolutions, leçons (Reflexion), changelog auto, vérification du registre",

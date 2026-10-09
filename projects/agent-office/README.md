@@ -25,6 +25,7 @@ python3 -m agent_office budget report     # budget réel (seedé depuis USER/FIN
 | 📅 **planning** | `planning week/add/ics` | agenda hebdo + export `.ics` importable dans Google Calendar |
 | ⚔️ **arena** | `arena battle/page/vote/elo/judge` | confrontation de modèles : duels en aveugle + ELO + grille ChatEval (voir `docs/SYSTEMES-CONFRONTATION-MODELES.md`) |
 | 🔄 **update** | `update journal/lessons/changelog/check` | auto-mise à jour du système : journal des évolutions, leçons (Reflexion), changelog auto, garde-fou (voir `docs/AUTO-MAJ-SYSTEME-AGENTIQUE.md`) |
+| 📣 **social** | `social calendar/add/draft/check/listen` | équipe réseaux : calendrier éditorial, drafts aux limites réelles, porte humaine, écoute sociale (voir `docs/INTERNET-ET-MARKETING-AGENTIQUE.md`) |
 | 🗂 **registry** | `registry list/build/doctor` | registre des capacités (`tools.json`) + auto-tests |
 
 Tous : `python3 -m agent_office <service> --help`.
