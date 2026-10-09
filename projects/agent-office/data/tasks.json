@@ -61,5 +61,33 @@
     "date": "2026-11-26",
     "heure": "18:15",
     "duree": 150
+  },
+  {
+    "id": 10,
+    "titre": "O3 (réserve) : préparer le contact Sobeca (offre IA chantiers BTP) — échéance 31/10",
+    "date": "2026-10-28",
+    "heure": "09:00",
+    "duree": 120
+  },
+  {
+    "id": 11,
+    "titre": "Social : finaliser + publier le post du 16/10 (checklist 6/6, porte humaine, plateforme à confirmer)",
+    "date": "2026-10-16",
+    "heure": "10:00",
+    "duree": 60
+  },
+  {
+    "id": 12,
+    "titre": "Social : finaliser + publier le post du 23/10 (checklist 6/6, porte humaine)",
+    "date": "2026-10-23",
+    "heure": "10:00",
+    "duree": 60
+  },
+  {
+    "id": 13,
+    "titre": "ZIFMAR 2 : réunion de clôture de la consultation (Maison Régionale de la Mer, Sète) — dernière occasion observations",
+    "date": "2027-01-07",
+    "heure": "17:45",
+    "duree": 150
   }
 ]
