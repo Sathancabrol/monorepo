@@ -1,0 +1,260 @@
+{
+ "arena/01a07e3c-monorepo": {
+  "sha": "cd6e33e6",
+  "files": 1551,
+  "size": 175488855,
+  "date": "2026-09-07",
+  "msg": "feat: monorepo unifié — 8 projets + previews navigables + panorama GitHub",
+  "ahead": 0,
+  "behind": 28,
+  "changed": 0,
+  "tops": [],
+  "added": []
+ },
+ "arena/01a08168-monorepo": {
+  "sha": "1ef0aa40",
+  "files": 1579,
+  "size": 189760834,
+  "date": "2026-09-08",
+  "msg": "fix(app): migration TemplateResponse vers l'API Starlette >= 0.29 (request ",
+  "ahead": 0,
+  "behind": 26,
+  "changed": 0,
+  "tops": [],
+  "added": []
+ },
+ "arena/01a08203-monorepo": {
+  "sha": "73fb7bb6",
+  "files": 1598,
+  "size": 193067115,
+  "date": "2026-09-08",
+  "msg": "frontignan : atlas interactif (graphe Obsidian, carte heuristique, slides, ",
+  "ahead": 1,
+  "behind": 25,
+  "changed": 22,
+  "tops": [
+   [
+    "projects",
+    22
+   ]
+  ],
+  "added": [
+   "projects/frontignan/atlas/css/atlas.css",
+   "projects/frontignan/atlas/data/atlas.json",
+   "projects/frontignan/atlas/data/communes-thau.csv",
+   "projects/frontignan/atlas/img/node-coeur-ville.jpg",
+   "projects/frontignan/atlas/img/node-friche-mobil.jpg",
+   "projects/frontignan/atlas/img/node-gare-pem.jpg",
+   "projects/frontignan/atlas/img/node-gouvernance.jpg",
+   "projects/frontignan/atlas/img/node-littoral.jpg",
+   "projects/frontignan/atlas/img/node-montpellier.jpg",
+   "projects/frontignan/atlas/img/node-muscat.jpg",
+   "projects/frontignan/atlas/img/node-port.jpg",
+   "projects/frontignan/atlas/img/node-sete.jpg",
+   "projects/frontignan/atlas/img/node-thau.jpg",
+   "projects/frontignan/atlas/index.html",
+   "projects/frontignan/atlas/js/atlas.js",
+   "projects/frontignan/atlas/js/charts.js",
+   "projects/frontignan/scripts/atlas_data.py",
+   "projects/frontignan/scripts/atlas_graph.py",
+   "projects/frontignan/scripts/build_atlas.py"
+  ]
+ },
+ "arena/01a08277-monorepo": {
+  "sha": "505cee1a",
+  "files": 1805,
+  "size": 429985567,
+  "date": "2026-10-07",
+  "msg": "docs: index classé du dossier de chantier (220 fichiers, 12 catégories)",
+  "ahead": 0,
+  "behind": 1,
+  "changed": 0,
+  "tops": [],
+  "added": []
+ },
+ "arena/01a08385-monorepo": {
+  "sha": "058cdd67",
+  "files": 1666,
+  "size": 190297356,
+  "date": "2026-10-07",
+  "msg": "app : /api/tools annonçait moins d'outils que le runtime n'en a",
+  "ahead": 6,
+  "behind": 25,
+  "changed": 93,
+  "tops": [
+   [
+    "nexus_os",
+    85
+   ],
+   [
+    "app",
+    2
+   ],
+   [
+    ".gitignore",
+    1
+   ],
+   [
+    "MANIFEST.json",
+    1
+   ],
+   [
+    "README.md",
+    1
+   ],
+   [
+    "data",
+    1
+   ],
+   [
+    "docs",
+    1
+   ],
+   [
+    "requirements-dev.txt",
+    1
+   ]
+  ],
+  "added": [
+   "docs/CAPACITES-2026-10-07.md",
+   "nexus_os/README.md",
+   "nexus_os/__init__.py",
+   "nexus_os/__main__.py",
+   "nexus_os/agents.py",
+   "nexus_os/agents/analyst.json",
+   "nexus_os/agents/architect.json",
+   "nexus_os/agents/archivist.json",
+   "nexus_os/agents/builder.json",
+   "nexus_os/agents/coach.json",
+   "nexus_os/agents/coder.json",
+   "nexus_os/agents/designer.json",
+   "nexus_os/agents/devops.json",
+   "nexus_os/agents/geo.json",
+   "nexus_os/agents/jurist.json",
+   "nexus_os/agents/orchestrator.json",
+   "nexus_os/agents/osint.json",
+   "nexus_os/agents/pilot.json",
+   "nexus_os/agents/pm.json",
+   "nexus_os/agents/promptsmith.json"
+  ]
+ },
+ "arena/01a08449-monorepo": {
+  "sha": "1cde7b39",
+  "files": 1987,
+  "size": 471101720,
+  "date": "2026-10-07",
+  "msg": "fix(ui/ux): ultra high-contrast typography, compact 4X HUD single line layo",
+  "ahead": 2,
+  "behind": 13,
+  "changed": 254,
+  "tops": [
+   [
+    "projects",
+    174
+   ],
+   [
+    "scripts",
+    80
+   ]
+  ],
+  "added": [
+   "projects/btp-conduite-travaux/INDEX_SOURCES_ET_REFERENCES_REGLEMENTAIRES.md",
+   "projects/btp-conduite-travaux/MATRICE_TRACABILITE_CORPUS_BTP.md",
+   "projects/btp-conduite-travaux/README.md",
+   "projects/btp-conduite-travaux/data/btp_audit_ledger.json",
+   "projects/btp-conduite-travaux/data/confrontation_theorie_etatdelart_insitu.json",
+   "projects/btp-conduite-travaux/data/corpus_btp_inventory.csv",
+   "projects/btp-conduite-travaux/data/corpus_btp_inventory.json",
+   "projects/btp-conduite-travaux/data/synthese_chantiers_et_prix.json",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/formulaires_marches/dc4mod2007.rtf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/formulaires_marches/dc5mod2007.rtf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/AE.doc",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/BP.doc",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/CCAP.pdf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/CCTP.pdf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/Etude de dossier Giratoire de BARBAZAN   Conduite M4 - L.pdf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/REGLEMENT-CONSULTATION.pdf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/SOMMAIRE-DCE.pdf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/memoire justificatif Giratoire.doc",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/giratoire_barbazan/mémoire technique v1.pdf",
+   "projects/btp-conduite-travaux/documents_sources/01_dce_marches_publics/lotissement_la_croix_pruniaux_aurouer/Acte d-engagement.pdf"
+  ]
+ },
+ "feat/final-interface-skeleton-2026-10-07": {
+  "sha": "bf0c264c",
+  "files": 1810,
+  "size": 430009735,
+  "date": "2026-10-07",
+  "msg": "docs: add final interface integration audit",
+  "ahead": 7,
+  "behind": 0,
+  "changed": 7,
+  "tops": [
+   [
+    "app",
+    5
+   ],
+   [
+    "data",
+    1
+   ],
+   [
+    "docs",
+    1
+   ]
+  ],
+  "added": [
+   "app/static/interface.css",
+   "app/static/interface.js",
+   "app/templates/interface.html",
+   "data/interface_registry.json",
+   "docs/AUDIT-INTEGRATION-INTERFACE-FINALE-2026-10-07.md"
+  ]
+ },
+ "feat/tool-data-catalog-2026-10": {
+  "sha": "7e5eec0a",
+  "files": 1813,
+  "size": 430002680,
+  "date": "2026-10-07",
+  "msg": "docs: document modular monorepo architecture",
+  "ahead": 13,
+  "behind": 0,
+  "changed": 11,
+  "tops": [
+   [
+    "data",
+    3
+   ],
+   [
+    "app",
+    2
+   ],
+   [
+    "core",
+    2
+   ],
+   [
+    "docs",
+    2
+   ],
+   [
+    "README.md",
+    1
+   ],
+   [
+    "modules",
+    1
+   ]
+  ],
+  "added": [
+   "core/contracts/canonical-record.schema.json",
+   "core/contracts/module.schema.json",
+   "data/integration_graph.json",
+   "data/module_registry.json",
+   "data/tool_registry.json",
+   "docs/MONOREPO-ARCHITECTURE.md",
+   "docs/TOOL-DATA-CATALOG.md",
+   "modules/README.md"
+  ]
+ }
+}

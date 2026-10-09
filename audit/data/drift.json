@@ -1,0 +1,185 @@
+{
+ "_generated_at": "2026-10-07T12:24:42Z",
+ "COGNITORIUM": {
+  "project": "COGNITORIUM",
+  "repo": "Sathancabrol/COGNITORIUM",
+  "ref": "main",
+  "sha": "5348d4cbc15311647cf59f36f854b96f0988d9c1",
+  "truncated": false,
+  "local_files": 131,
+  "remote_files": 131,
+  "only_local": [],
+  "only_remote": [],
+  "size_changed": [],
+  "counts": {
+   "only_local": 0,
+   "only_remote": 0,
+   "size_changed": 0
+  }
+ },
+ "proto-cognitorium": {
+  "project": "proto-cognitorium",
+  "repo": "Sathancabrol/proto-cognitorium",
+  "ref": "main",
+  "sha": "74e301e455a23342b2389ac07a9a42cc7ec0ca6d",
+  "truncated": false,
+  "local_files": 161,
+  "remote_files": 184,
+  "only_local": [
+   "package-lock.json",
+   "raw/slide carte représentation.pptx"
+  ],
+  "only_remote": [
+   "src/components/AccountLoginGate.tsx",
+   "src/components/CognitiveBiasesView.tsx",
+   "src/components/CognitoriumErrorBoundary.tsx",
+   "src/components/MultiProjectsView.tsx",
+   "src/components/ProfileManagementModal.tsx",
+   "src/components/SkyrimIntroTransition.tsx",
+   "src/components/TargetedCvView.tsx",
+   "src/components/TopHeaderBar.tsx",
+   "src/components/VolantSidebar.tsx",
+   "src/components/auth/CognitoriumAuthPortal.tsx",
+   "src/components/auth/CognitoriumBrandSplash.tsx",
+   "src/components/auth/CognitoriumGuidedSequence.tsx",
+   "src/components/auth/CognitoriumLiveTreeVisualizer.tsx",
+   "src/components/auth/CognitoriumNodeVolant.tsx",
+   "src/components/auth/CognitoriumObsidianGraph.tsx",
+   "src/components/auth/CognitoriumOrganicStudio.tsx",
+   "src/components/auth/CognitoriumSignUpFlow.tsx",
+   "src/components/auth/CognitoriumTutorialOnboarding.tsx",
+   "src/components/auth/CognitoriumVolantSkeleton.tsx",
+   "src/components/cv/CvEditModal.tsx",
+   "src/components/cv/cvAlignment.ts",
+   "src/components/cv/cvTypes.ts",
+   "src/data/cognitiveBiasesData.ts",
+   "src/data/cognitoriumCatalog.ts",
+   "src/types/authTypes.ts"
+  ],
+  "size_changed": [
+   "server.ts",
+   "src/App.tsx",
+   "src/components/DashboardView.tsx",
+   "src/components/ExperienceDistillerModal.tsx",
+   "src/components/ExperimentStudio.tsx",
+   "src/components/Header.tsx",
+   "src/components/HorizonsBridge.tsx",
+   "src/components/MetiersGraph.tsx",
+   "src/components/OnboardingModal.tsx",
+   "src/components/QuickAddNodeModal.tsx",
+   "src/components/TemporalNetworkGraph.tsx",
+   "src/types.ts"
+  ],
+  "counts": {
+   "only_local": 2,
+   "only_remote": 25,
+   "size_changed": 12
+  }
+ },
+ "HCSM": {
+  "project": "HCSM",
+  "repo": "Sathancabrol/HCSM",
+  "ref": "main",
+  "sha": "c8fe0e3f7b8717fc5e3aeae3c5f84defbb4d7a57",
+  "truncated": false,
+  "local_files": 87,
+  "remote_files": 87,
+  "only_local": [],
+  "only_remote": [],
+  "size_changed": [],
+  "counts": {
+   "only_local": 0,
+   "only_remote": 0,
+   "size_changed": 0
+  }
+ },
+ "reaserch-engine": {
+  "project": "reaserch-engine",
+  "repo": "Sathancabrol/reaserch-engine",
+  "ref": "main",
+  "sha": "ed4640d177f138ad4c752e02bcd98ce75e520166",
+  "truncated": false,
+  "local_files": 61,
+  "remote_files": 61,
+  "only_local": [],
+  "only_remote": [],
+  "size_changed": [],
+  "counts": {
+   "only_local": 0,
+   "only_remote": 0,
+   "size_changed": 0
+  }
+ },
+ "ETAT-DE-LART-PSYCHOLOGIE": {
+  "project": "ETAT-DE-LART-PSYCHOLOGIE",
+  "repo": "Sathancabrol/ETAT-DE-LART-PSYCHOLOGIE",
+  "ref": "main",
+  "sha": "258ddadf1eb01d5bc433e5895b53010fe87c06b2",
+  "truncated": false,
+  "local_files": 37,
+  "remote_files": 37,
+  "only_local": [],
+  "only_remote": [],
+  "size_changed": [],
+  "counts": {
+   "only_local": 0,
+   "only_remote": 0,
+   "size_changed": 0
+  }
+ },
+ "watchtower": {
+  "project": "watchtower",
+  "repo": "Sathancabrol/watchtower",
+  "ref": "main",
+  "sha": "d44ef7c4c3a768613c190e8d220a55243869398e",
+  "truncated": false,
+  "local_files": 583,
+  "remote_files": 583,
+  "only_local": [],
+  "only_remote": [],
+  "size_changed": [],
+  "counts": {
+   "only_local": 0,
+   "only_remote": 0,
+   "size_changed": 0
+  }
+ },
+ "animation-chronos": {
+  "project": "animation-chronos",
+  "repo": "Sathancabrol/animation-chronos",
+  "ref": "main",
+  "sha": "38c57a364c36c58514838e1d05eff4f0c7f385ab",
+  "truncated": false,
+  "local_files": 30,
+  "remote_files": 30,
+  "only_local": [
+   "package-lock.json"
+  ],
+  "only_remote": [
+   "public/assets/aistudio/.gitignore"
+  ],
+  "size_changed": [],
+  "counts": {
+   "only_local": 1,
+   "only_remote": 1,
+   "size_changed": 0
+  }
+ },
+ "Language-decoder": {
+  "project": "Language-decoder",
+  "repo": "Sathancabrol/Language-decoder",
+  "ref": "main",
+  "sha": "583f37ab4d75ec759fc279f7918e6b3ce7ebd4b4",
+  "truncated": false,
+  "local_files": 1,
+  "remote_files": 1,
+  "only_local": [],
+  "only_remote": [],
+  "size_changed": [],
+  "counts": {
+   "only_local": 0,
+   "only_remote": 0,
+   "size_changed": 0
+  }
+ }
+}

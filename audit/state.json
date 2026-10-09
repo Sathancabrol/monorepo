@@ -1,0 +1,405 @@
+{
+  "schema": 1,
+  "audit": {
+    "id": "audit-2026-10",
+    "title": "Audit complet monorepo Sathancabrol",
+    "started_at": "2026-10-07T12:22:19Z",
+    "updated_at": "2026-10-07T15:22:46Z",
+    "operator": "agent"
+  },
+  "phase": {
+    "current": "P7 (audit terminé)",
+    "done": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P7"
+    ],
+    "phases": {
+      "P0": "Cadrage & plan",
+      "P1": "Mémoire & instrumentation",
+      "P2": "Inventaire factuel",
+      "P3": "Audit par projet",
+      "P4": "Audit transversal",
+      "P5": "Audit externe (GitHub + connecteurs)",
+      "P6": "Synthèse & tableaux",
+      "P7": "Contrôle qualité & publication"
+    }
+  },
+  "scope": {
+    "root_dossier_documents": 220,
+    "projects": [
+      "COGNITORIUM",
+      "proto-cognitorium",
+      "HCSM",
+      "reaserch-engine",
+      "ETAT-DE-LART-PSYCHOLOGIE",
+      "watchtower",
+      "animation-chronos",
+      "Language-decoder",
+      "frontignan"
+    ],
+    "other_docs": 7,
+    "root_files": 224,
+    "projects_files": 1119,
+    "external": {
+      "drive": "13 fichiers pertinents dont 2 prompts AI Studio (85 Mo) matrices de proto-cognitorium et frontignan",
+      "notion": "0 document projet",
+      "linear": "espace cognitorium créé 2026-10-07, 0 tache reelle",
+      "gmail": "vitrine Polsia 'Cognitorium' 20 $/mois non declaree",
+      "note": "audit/notes/S4-externe.md"
+    }
+  },
+  "projects": {
+    "COGNITORIUM": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-COGNITORIUM.md",
+      "facts": {
+        "files": 131,
+        "size_mo": 22.9,
+        "loc": 27691,
+        "tests": 0,
+        "docs": 53,
+        "maturite": "M2",
+        "risk": "moyen",
+        "branches_actives": 1,
+        "repo": "Sathancabrol/COGNITORIUM"
+      },
+      "repo": null
+    },
+    "proto-cognitorium": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "élevé",
+      "notes": "audit/notes/P-proto-cognitorium.md",
+      "facts": {
+        "files": 161,
+        "size_mo": 73.8,
+        "loc": 53334,
+        "tests": 0,
+        "docs": 57,
+        "maturite": "M3",
+        "risk": "élevé",
+        "branches_actives": 1,
+        "repo": "Sathancabrol/proto-cognitorium",
+        "drift_local_vs_main": 25
+      },
+      "repo": null
+    },
+    "HCSM": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "faible",
+      "notes": "audit/notes/P-HCSM.md",
+      "facts": {
+        "files": 87,
+        "size_mo": 0.27,
+        "loc": 1917,
+        "tests": 30,
+        "docs": 52,
+        "maturite": "M2",
+        "risk": "faible",
+        "branches_actives": 0,
+        "repo": "Sathancabrol/HCSM"
+      },
+      "repo": null
+    },
+    "reaserch-engine": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-reaserch-engine.md",
+      "facts": {
+        "files": 61,
+        "size_mo": 0.13,
+        "loc": 1167,
+        "tests": 12,
+        "docs": 16,
+        "maturite": "M2",
+        "risk": "moyen",
+        "branches_actives": 0,
+        "repo": "Sathancabrol/reaserch-engine",
+        "tests_rouges": 2
+      },
+      "repo": null
+    },
+    "ETAT-DE-LART-PSYCHOLOGIE": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "élevé",
+      "notes": "audit/notes/P-ETAT-DE-LART-PSYCHOLOGIE.md",
+      "facts": {
+        "files": 37,
+        "size_mo": 3.6,
+        "loc": 2569,
+        "tests": 0,
+        "docs": 20,
+        "maturite": "M2",
+        "risk": "élevé",
+        "branches_actives": 4,
+        "repo": "Sathancabrol/ETAT-DE-LART-PSYCHOLOGIE"
+      },
+      "repo": null
+    },
+    "watchtower": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-watchtower.md",
+      "facts": {
+        "files": 583,
+        "size_mo": 22.8,
+        "loc": 190453,
+        "tests": 208,
+        "docs": 35,
+        "maturite": "M3",
+        "risk": "moyen",
+        "branches_actives": 2,
+        "repo": "Sathancabrol/watchtower",
+        "ci": true
+      },
+      "repo": null
+    },
+    "animation-chronos": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "faible",
+      "notes": "audit/notes/P-animation-chronos.md",
+      "facts": {
+        "files": 30,
+        "size_mo": 3.8,
+        "loc": 2583,
+        "tests": 0,
+        "docs": 0,
+        "maturite": "M2",
+        "risk": "faible",
+        "branches_actives": 0,
+        "repo": "Sathancabrol/animation-chronos"
+      },
+      "repo": null
+    },
+    "Language-decoder": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "élevé",
+      "notes": "audit/notes/P-Language-decoder.md",
+      "facts": {
+        "files": 1,
+        "size_mo": 2e-05,
+        "loc": 0,
+        "tests": 1,
+        "docs": 1,
+        "maturite": "M0",
+        "risk": "élevé",
+        "branches_actives": 2,
+        "repo": "Sathancabrol/Language-decoder",
+        "main_bytes": 19
+      },
+      "repo": null
+    },
+    "frontignan": {
+      "status": "fait",
+      "phase": "P3",
+      "risk": "moyen",
+      "notes": "audit/notes/P-frontignan.md",
+      "facts": {
+        "files": 28,
+        "size_mo": 13.6,
+        "loc": 3764,
+        "tests": 0,
+        "docs": 3,
+        "maturite": "M2",
+        "risk": "moyen",
+        "branches_actives": 1,
+        "repo": null
+      },
+      "repo": null
+    }
+  },
+  "counters": {
+    "findings": 52,
+    "fichiers_locaux_mesures": 1362,
+    "fichiers_lus_en_profondeur": "470+",
+    "tables_produites": 13,
+    "branches_analysees": 34,
+    "depots_github_verifies": 9,
+    "connecteurs_interroges": 4
+  },
+  "next_actions": [
+    "PR #3 : faire merger la PR d'audit (ouverte, head b15a1a8)",
+    "Ordre de fusion du travail produit (RELANCER LES COMPARES AVANT CHAQUE FUSION — le repo bouge vite) : 0034230e (Carre d'As + shell 14 modules + _incoming 859 f.) -> 93b54a79 (mail-organizer + FEATURES-INVENTORY) -> 01a08449 (BTP 21 onglets) -> PR #3 (watchtower INTEL) -> feat/final-interface-skeleton + feat/tool-data-catalog -> branches ETAT / Language-decoder",
+    "Canoniser la taxonomie : 14 modules shell = produit ; 12 domaines = couverture ; v1->v5 = ordonnancement",
+    "Brancher le 1er module reel dans #slot-btp (corpus en racine, sans copie)",
+    "reaserch-engine : 2 tests rouges (test_researcher_uses_injected_retriever, test_contradictions_are_prioritized)",
+    "Drift proto 161 vs 184 fichiers (-25 auth) a reconcilier ; licences watchtower/HCSM NOASSERTION ; LD (m0) et formation frontignan a integrer"
+  ],
+  "artifacts": [
+    "audit/AUDIT-2026-10.md",
+    "audit/AUDIT-2026-10.csv",
+    "audit/PLAN.md",
+    "audit/CATEGORIES.md",
+    "audit/state.json",
+    "audit/MEMORY.md",
+    "audit/JOURNAL.jsonl",
+    "audit/graph.json",
+    "audit/notes/S0-racine.md",
+    "audit/notes/S1-infra.md",
+    "audit/notes/S2-inventaire.md",
+    "audit/notes/S3-github.md",
+    "audit/notes/S4-transverse.md",
+    "audit/notes/S4-externe.md",
+    "audit/notes/P-COGNITORIUM.md",
+    "audit/notes/P-proto-cognitorium.md",
+    "audit/notes/P-HCSM.md",
+    "audit/notes/P-reaserch-engine.md",
+    "audit/notes/P-ETAT-DE-LART-PSYCHOLOGIE.md",
+    "audit/notes/P-watchtower.md",
+    "audit/notes/P-animation-chronos.md",
+    "audit/notes/P-Language-decoder.md",
+    "audit/notes/P-frontignan.md",
+    "audit/data/inventory.json",
+    "audit/data/S0-mapping.json",
+    "audit/data/drift.json",
+    "audit/data/branches-all.json",
+    "scripts/audit_memory.py",
+    "scripts/audit_inventory.py",
+    "scripts/audit_s0_map.py",
+    "scripts/audit_gh_drift.py",
+    "audit/ANALYSE-V1-V5.md",
+    "audit/data/importance.json",
+    "scripts/audit_importance.py",
+    "audit/SYNTHESE-TIMELINE-2026-10.md",
+    "audit/ROADMAP-2050-2026.md",
+    "audit/notes/S5-controle-completude.md",
+    "audit/MODULES.md"
+  ],
+  "publication": {
+    "plateforme": "GitHub",
+    "depot": "Sathancabrol/monorepo",
+    "branche": "arena/171a1f38-monorepo",
+    "commit": "d077e76",
+    "pr": "https://github.com/Sathancabrol/monorepo/pull/3",
+    "date": "2026-10-07T12:35:30Z"
+  },
+  "analyse_v1v5": {
+    "statut": "en attente de validation",
+    "date": "2026-10-07",
+    "document": "audit/ANALYSE-V1-V5.md",
+    "machine": "audit/data/importance.json",
+    "generateur": "scripts/audit_importance.py",
+    "grille": "v1 socle | v2 coeur d'usage | v3 puissance | v4 conception | v5 horizon | v0 archive",
+    "total_elements": 91,
+    "repartition": {
+      "v1": 29,
+      "v2": 24,
+      "v3": 18,
+      "v4": 10,
+      "v5": 2,
+      "v0": 8
+    },
+    "cible": "12 domaines interface + 8 entites Core (User Project Knowledge Skill Object Place Task Event)",
+    "benchmark": [
+      "Palantir Foundry/Gotham (ontologie 3 couches)",
+      "Graphiti/Zep (bi-temporel T/T')",
+      "World Monitor (baseline+gaps)",
+      "Google Earth AI (agents au-dessus)",
+      "Multi-INT (raisonnement spatial/temporel/hierarchique)",
+      "OSIRIS (canevas multi-flux)"
+    ],
+    "prochaine_decision": "valider la grille v1→v5 et l'Etape 0 (hygiene)",
+    "revision": "2026-10-07 soir +12 (Carre d'As, recherche, _incoming, mail-organizer)"
+  },
+  "timeline": {
+    "document": "audit/SYNTHESE-TIMELINE-2026-10.md",
+    "date": "2026-10-07",
+    "contenu": "chronologie 2018→2026, fiches role des 9 depots, 15 branches actives (fonctionnalite/possibilite/besoin), 19 branches mortes deja contenues dans main, matrice domaines, besoins couverts/manquants",
+    "roadmap": "audit/ROADMAP-2050-2026.md",
+    "roadmap_horizons": [
+      "2050 Semantic OS",
+      "2045 monde simulable",
+      "2040 concevoir/fabriquer",
+      "2035 intelligence multimodale",
+      "2030 v3 puissance",
+      "2028 v2-v3 public",
+      "2027 Core v1",
+      "2026 maintenant"
+    ]
+  },
+  "chantier_carre_das": {
+    "revele_le": "2026-10-07 12:38-14:45 UTC (apres le releve matinal)",
+    "branche": "arena/0034230e-monorepo (+5 commits) + arena/93b54a79-monorepo (+1)",
+    "apport": [
+      "cadrage V1 (nom Carre d'As, cible association loi 1901, definition du fini)",
+      "contrat de module plug in/out",
+      "licence recommandee coeur Apache-2.0/MIT + services AGPL-3.0",
+      "3 interfaces comparees + 4 maquettes cliquables",
+      "matrice de 80 domaines de recherche (P0->P3)",
+      "projects/_incoming : 786 fichiers uniques de toutes les branches avec _PROVENANCE.md",
+      "scripts/verif-completude-repos.py",
+      "resync proto (12 fichiers)",
+      "25 composants proto restaures (onboarding, graphe Obsidian, CV)",
+      "specification module BTP : 7 piliers, 3D en 3 paliers",
+      "ecosysteme local gratuit (modeles <=6 Go VRAM)",
+      "module mail-organizer (19 tests)"
+    ],
+    "completude": {
+      "branches_avec_travail": 17,
+      "commits_non_fusionnes": 159,
+      "couverture_depots": "100% selon 07-INVENTAIRE (786 uniques, 240 doublons retires)",
+      "mon_controle": "audit/notes/S5-controle-completude.md"
+    },
+    "nommage": {
+      "Cognitorium": "systeme/ecosysteme (horizon)",
+      "Carre d'As": "l'application V1 installable"
+    }
+  },
+  "modules": {
+    "registre": "audit/MODULES.md",
+    "date_releve": "2026-10-07T15:20Z",
+    "cible_shell": {
+      "modules": 14,
+      "fonctionnalites": 104,
+      "statuts": {
+        "dispo": 62,
+        "a_porter": 24,
+        "a_construire": 18
+      },
+      "paliers": {
+        "V1": 48,
+        "V1.5": 34,
+        "V2": 22
+      },
+      "portes": 8,
+      "fichiers": 11
+    },
+    "taxonomies": [
+      "phases 0-7 (constitution)",
+      "12 domaines (interface_registry)",
+      "14 modules / 8 portes (shell)",
+      "v1-v5+v0 (analyse)"
+    ],
+    "bpt_live": {
+      "onglets": 21,
+      "scripts": 83,
+      "html": 2,
+      "note": "branche reecrite; 154 documents dedupliques, preserves dans _incoming"
+    },
+    "incoming": {
+      "fichiers": 859,
+      "lots": 16
+    },
+    "compteurs_live": {
+      "branches": 46,
+      "actives": 18,
+      "mortes": 19,
+      "commits_non_fusionnes": 167
+    }
+  },
+  "status": "session cloturee le 2026-10-07 (~15:30 UTC) — travail integralement push (b15a1a8), PR #3 ouverte"
+}

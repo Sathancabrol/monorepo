@@ -1,0 +1,10 @@
+projet;depot_github;maturite;risque;fichiers;taille_octets;loc_code;loc_doc_donnees;fichiers_code;fichiers_test;fichiers_doc;branches_actives;ci
+COGNITORIUM;Sathancabrol/COGNITORIUM;M2;moyen;131;23997537;27691;2291;118;0;53;1;non
+proto-cognitorium;Sathancabrol/proto-cognitorium;M3;élevé;161;77337435;53334;5624;78;0;57;1;non
+HCSM;Sathancabrol/HCSM;M2;faible;87;279572;1917;3256;83;1;52;0;non
+reaserch-engine;Sathancabrol/reaserch-engine;M2;moyen;61;134348;1167;1801;60;12;16;0;non
+ETAT-DE-LART-PSYCHOLOGIE;Sathancabrol/ETAT-DE-LART-PSYCHOLOGIE;M2;élevé;37;3801845;2569;2683;31;0;20;4;non
+watchtower;Sathancabrol/watchtower;M3;moyen;583;23918304;190453;13661;558;208;35;2;oui
+animation-chronos;Sathancabrol/animation-chronos;M2;faible;30;3964684;2583;4362;22;0;0;0;non
+Language-decoder;Sathancabrol/Language-decoder;M0;élevé;1;19;0;0;1;0;1;2;non
+frontignan;;M2;moyen;28;14271914;3764;635;10;0;3;1;non
