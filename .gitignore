@@ -17,3 +17,4 @@ monorepo.bundle
 # Carré d'As — données locales de l'application (jamais versionnées)
 .carre-d-as-data/
 .carredas-data/
+carredas/modules/agents/memory/
