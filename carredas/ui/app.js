@@ -546,11 +546,13 @@ async function listeReunions() {
 
 /* =========================================================== CARTOGRAPHIE */
 async function carto() {
-  const [couches, groupes, points, territoire] = await Promise.all([
+  const [couches, groupes, points, territoire, sources] = await Promise.all([
     get('/api/carto/couches'), get('/api/carto/groupes'),
-    get('/api/carto/points'), get('/api/carto/territoire')]);
+    get('/api/carto/points'), get('/api/carto/territoire'),
+    get('/api/carto/sources')]);
   S.carto = { couches: couches.couches, groupes: groupes.groupes,
-              points: points.points, territoire };
+              points: points.points, territoire,
+              sources: sources.sources, resume: sources.resume };
 
   return `
   <div class="titre-page">
@@ -573,6 +575,42 @@ async function carto() {
     <div class="carte"><div class="cle">Communes couvertes</div><div class="valeur">${(territoire.territoire.communes || []).length}</div></div>
     <div class="carte"><div class="cle">Moteur 3D</div><div class="valeur" style="font-size:13px">${esc(territoire.moteur_3d)}</div></div>
   </div>
+
+  ${(S.carto.resume?.exclus_collectivite || []).length ? `
+  <div class="avertissement">
+    <b>⚠ ${S.carto.resume.exclus_collectivite.length} source(s) à écarter pour une collectivité.</b><br>
+    ${S.carto.resume.exclus_collectivite.map(s =>
+      `· <b>${esc(s.nom)}</b> — ${esc(s.licence)}<br><span class="dim">${esc(s.pourquoi)}</span>`
+    ).join('<br>')}
+    <br><span class="dim">Référencées pour mémoire : on les connaît, on ne les active pas.</span>
+  </div>` : ''}
+
+  <section class="bloc">
+    <h2>Sources de données <span class="dim">(${S.carto.sources.length}) — référencées, pas recopiées</span></h2>
+    <div class="note-info" style="margin-bottom:14px">
+      ${esc((S.carto.resume?.attention) || '')}
+      Chaque fiche dit comment atteindre la donnée et ce que sa licence autorise.
+      Rien n'est stocké ici : on appelle la source, ou on n'affiche rien.
+    </div>
+    <div class="liste">
+      ${S.carto.sources.map(s => `
+        <div class="ligne">
+          <div class="principal">
+            <div class="nom">${esc(s.nom)}
+              <span class="tag ${s.usage === 'oui' ? 'ok' : s.usage === 'condition' ? 'act' : 'ris'}">
+                ${s.usage === 'oui' ? 'usage institutionnel OK' : s.usage === 'condition' ? 'sous condition' : 'non commercial'}</span>
+              <span class="tag gris">${esc(s.acces)}</span>
+              <span class="tag vide">${esc(s.domaine)}</span>
+            </div>
+            <div class="meta" style="margin-top:4px">${esc(s.contenu)}</div>
+            <div class="meta mono" style="margin-top:3px;color:var(--ac)">${esc(s.licence)}</div>
+            ${s.attribution ? `<div class="meta" style="margin-top:2px;color:var(--tx-2)">attribution : ${esc(s.attribution)}</div>` : ''}
+            ${s.note ? `<div class="meta" style="margin-top:2px;color:var(--tx-2)">${esc(s.note)}</div>` : ''}
+          </div>
+          <a class="bouton petit" href="${esc(s.url)}" target="_blank" rel="noopener">Accéder</a>
+        </div>`).join('')}
+    </div>
+  </section>
 
   ${(S.carto.groupes || []).map(g => {
     const sel = (S.carto.couches || []).filter(c => c.groupe === g.id);

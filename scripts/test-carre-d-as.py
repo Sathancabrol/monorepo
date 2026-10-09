@@ -236,7 +236,35 @@ except Exception:
     refuse = True
 verifier(refuse, "un élément sans source est refusé")
 
-# ------------------------------------------------------------------ 7. bilan
+# ------------------------------------- 7. sources de données et admissibilité
+print()
+src = api("GET", "/api/carto/sources")
+verifier(src["total"] > 25, f"{src['total']} sources de données référencées")
+excl = src["resume"]["exclus_collectivite"]
+verifier(len(excl) >= 4, f"{len(excl)} sources écartées pour un usage collectivité")
+libres = api("GET", "/api/carto/sources?usage=oui")["sources"]
+verifier(all(s["usage"] == "oui" for s in libres),
+         f"le filtre usage=oui ne renvoie que du présentable ({len(libres)})")
+
+def adm(rec):
+    return api("POST", "/api/canonique/valider", rec)
+
+verifier(not adm({"id": "t:1", "type": "mesure", "source": "", "status": "fact",
+                  "label": "Débit"})["presentable"],
+         "un fait sans source est écarté")
+verifier(not adm({"id": "t:2", "type": "mesure", "source": "carto",
+                  "status": "fact", "label": "Superficie", "valeur": 42})["presentable"],
+         "un chiffre sans unité est écarté")
+verifier(not adm({"id": "t:3", "type": "profil", "source": "cognitorium",
+                  "status": "fact", "label": "Contact",
+                  "note": "06 12 34 56 78 — m.dupont@agglo.fr"})["presentable"],
+         "une donnée personnelle est écartée")
+ok = adm({"id": "t:4", "type": "mesure", "source": "INPN", "status": "fact",
+          "label": "Zones humides", "valeur": 1200, "unite": "ha",
+          "observed_at": "2026-09-01T00:00:00"})
+verifier(ok["presentable"] and ok["valide"], "un fait sourcé, daté et unité est accepté")
+
+# ------------------------------------------------------------------ 8. bilan
 print(f"\n=== {len(produits)} documents produits · "
       f"{len(echecs)} échec(s) ===")
 if echecs:

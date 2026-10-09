@@ -92,6 +92,18 @@ def build(config: dict | None = None, store: Store | None = None,
         return {"modules": ctx["modules"], "total": len(ctx["modules"])}
 
     # ------------------------------------------------- contrat de données partagé
+    def _recs_canoniques() -> list:
+        """Demande à chaque module ses objets dans la forme commune."""
+        recs = []
+        for mid, fournir in (ctx.get("canonique") or {}).items():
+            try:
+                for r in (fournir(store, cfg) or []):
+                    r.setdefault("source", mid)
+                    recs.append(r)
+            except Exception as exc:
+                log.warn("canonique", f"{mid} : {exc}")
+        return recs
+
     @router.get("/api/canonique/schema")
     def canon_schema(req):
         from .core import canonical
@@ -101,10 +113,36 @@ def build(config: dict | None = None, store: Store | None = None,
 
     @router.post("/api/canonique/valider")
     def canon_valider(req):
+        """Forme d'abord, droit ensuite."""
         from .core import canonical
+        from .core import admissibilite
         rec = req.json() or {}
         ok, erreurs = canonical.valider(rec)
-        return {"valide": ok, "erreurs": erreurs}
+        presentable, problemes = admissibilite.admissible(rec)
+        return {"valide": ok, "erreurs": erreurs,
+                "presentable": presentable, "problemes": problemes}
+
+    @router.get("/api/canonique/admissibilite")
+    def canon_admissibilite(req):
+        """Lesquelles de nos données sont montrables à une collectivité.
+
+        La question n'est pas « ai-je raison », c'est « ai-je le droit de
+        présenter ça comme un fait ». Un seul motif bloquant suffit.
+        """
+        from .core import admissibilite
+        recs = _recs_canoniques()
+        r = admissibilite.filtrer_enregistrements(recs)
+        return {
+            "total": r["total"],
+            "conformes": len(r["conformes"]),
+            "bloques": len(r["bloques"]),
+            "signalements": len(r["signalements"]),
+            "par_regle": r["par_regle"],
+            "presentable": r["presentable"],
+            "detail": [{"id": x.get("id"), "label": x.get("label"),
+                        "problemes": admissibilite.admissible(x)[1]}
+                       for x in (r["bloques"] + r["signalements"])],
+        }
 
     @router.get("/api/canonique")
     def canonique(req):
@@ -115,14 +153,7 @@ def build(config: dict | None = None, store: Store | None = None,
         type d'objet — avec leur origine intacte.
         """
         from .core import canonical
-        recs = []
-        for mid, fournir in (ctx.get("canonique") or {}).items():
-            try:
-                for r in (fournir(store, cfg) or []):
-                    r.setdefault("source", mid)
-                    recs.append(r)
-            except Exception as exc:
-                log.warn("canonique", f"{mid} : {exc}")
+        recs = _recs_canoniques()
         valides, erreurs, par_type, par_statut = 0, [], {}, {}
         for r in recs:
             ok, err = canonical.valider(r)

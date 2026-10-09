@@ -36,6 +36,35 @@ def canonique(store, config=None):
     return [canonical.depuis_point(p) for p in store.all("cartopoints")]
 
 
+def _lire_sources() -> dict:
+    return _lire("sources.json", {"sources": []})
+
+
+def _resume_sources(srcs: list[dict]) -> dict:
+    """Le tri qui évite les mauvaises surprises en réunion publique."""
+    par_usage, par_acces, par_domaine = {}, {}, {}
+    exclus = []
+    for s in srcs:
+        par_usage[s.get("usage", "?")] = par_usage.get(s.get("usage", "?"), 0) + 1
+        par_acces[s.get("acces", "?")] = par_acces.get(s.get("acces", "?"), 0) + 1
+        par_domaine[s.get("domaine", "?")] = par_domaine.get(s.get("domaine", "?"), 0) + 1
+        if s.get("usage") == "non":
+            exclus.append({"id": s["id"], "nom": s["nom"],
+                           "licence": s.get("licence", ""),
+                           "pourquoi": s.get("note", "")})
+    return {
+        "total": len(srcs),
+        "par_usage": par_usage,
+        "par_acces": par_acces,
+        "par_domaine": par_domaine,
+        "exclus_collectivite": exclus,
+        "attention": (
+            f"{len(exclus)} source(s) sont interdites ou restreintes en usage "
+            "institutionnel. Ne pas les activer pour une présentation publique."
+        ) if exclus else "Aucune source exclue.",
+    }
+
+
 def register(router, ctx):
     store = ctx["store"]
     couches = _lire("couches.json", {"groupes": [], "couches": []})
@@ -60,6 +89,47 @@ def register(router, ctx):
     @router.get(PREFIX + "/groupes")
     def groupes(req):
         return {"groupes": couches.get("groupes", [])}
+
+    # ------------------------------------------------- sources de données réelles
+    @router.get(PREFIX + "/sources")
+    def sources(req):
+        """Sources de données référencées, avec le risque de licence.
+
+        Le filtre `?usage=oui` est celui qui compte pour une collectivité :
+        il écarte tout ce qui est « non commercial ».
+        """
+        reg = _lire_sources()
+        srcs = reg.get("sources", [])
+        usage = (req.q("usage") or "").strip()
+        acces = (req.q("acces") or "").strip()
+        domaine = (req.q("domaine") or "").strip()
+        q = (req.q("q") or "").strip().lower()
+        if usage:
+            srcs = [s for s in srcs if s.get("usage") == usage]
+        if acces:
+            srcs = [s for s in srcs if s.get("acces") == acces]
+        if domaine:
+            srcs = [s for s in srcs if s.get("domaine") == domaine]
+        if q:
+            srcs = [s for s in srcs
+                    if q in (s.get("nom", "") + s.get("contenu", "") +
+                             s.get("licence", "")).lower()]
+        return {
+            "sources": srcs,
+            "total": len(srcs),
+            "resume": _resume_sources(reg.get("sources", [])),
+            "regles": reg.get("meta", {}),
+        }
+
+    @router.get(PREFIX + "/sources/:sid")
+    def source(req, sid):
+        for s in _lire_sources().get("sources", []):
+            if s.get("id") == sid:
+                liees = [c for c in couches.get("couches", [])
+                         if sid in (c.get("sources") or [])
+                         or s["id"] in (c.get("sources") or [])]
+                return {"source": s, "couches_liees": [c["id"] for c in liees]}
+        return Response.not_found("source inconnue")
 
     @router.get(PREFIX + "/couches/:cid")
     def couche(req, cid):
