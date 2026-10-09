@@ -30,6 +30,7 @@ PLATFORMES = {
     "facebook": 5000,
     "tiktok": 2200,
     "threads": 500,
+    "bluesky": 300,
 }
 
 
@@ -90,6 +91,8 @@ def cmd_check(args):
 3. [ ] Ton : concret, sans jargon « IA magique » ; une seule demande claire
 4. [ ] Relu par un humain (Nathan) — l'agent propose, l'humain publie
 5. [ ] Si plusieurs versions : arena battle entre elles, la gagnante part
+6. [ ] GEO : le post est citable par les assistants IA (noms vérifiables,
+      faits précis, source nommée — être cité = le nouveau SEO)
 
 Publication : Postiz (MCP) quand hébergé ; sinon copier-coller manuel.""")
     return 0

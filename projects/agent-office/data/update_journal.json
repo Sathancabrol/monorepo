@@ -13,5 +13,10 @@
     "date": "2026-10-09T01:09:46",
     "type": "outil",
     "note": "service social (équipe réseaux) + doc internet/marketing + transcript Jake analysé"
+  },
+  {
+    "date": "2026-10-09T01:18:22",
+    "type": "recherche",
+    "note": "veille clones open source (ArtCraft, WareTrack) + RE IA (Ghidra/GhidraMCP) + tendances réseaux (Manus/Meta, GEO, Bluesky)"
   }
 ]
