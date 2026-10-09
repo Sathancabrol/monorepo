@@ -83,5 +83,10 @@
     "date": "2026-10-09T07:15:12",
     "type": "outil",
     "note": "Mission M-001 exécutée (gate) : portail app/ modernisé + page /office branchée sur données réelles en lecture seule (budget -111.51, 13 tâches, 2 missions, 12 services, 7 signaux Watchtower) + API /api/office/state ; preuve dans le fichier de mission"
+  },
+  {
+    "date": "2026-10-09T07:34:15",
+    "type": "decision",
+    "note": "Atlas Thau intégré (docs/ATLAS-THAU-OBSERVATOIRE-BESOINS.md) : observatoire des besoins humains — grille 9 domaines, chiffres Insee (129 539 hab, pauvreté 18,7%, chômage 13,9%, voiture 76,1%), 6 hypothèses de solutions, méthode terrain, 4 interlocuteurs cibles, architecture 5 modules ; 9 fiches problèmes sourcées dans watchtower/data/problemes-thau.json ; pont deck O2 : projects/frontignan/ATLAS-DONNEES-BESOINS.md"
   }
 ]

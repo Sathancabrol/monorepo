@@ -1,0 +1,159 @@
+[
+  {
+    "id": "P-001",
+    "domaine": "E-eau-climat",
+    "localisation": "Sète, Frontignan-La Peyrade (riverains zone industrielle)",
+    "population": "Riverains des sites GDH, ancienne raffinerie Mobil, Saipol, Timac-Agro, Hexis, Scori",
+    "description": "Nuisances olfactives récurrentes (égout/soufre, excréments, cuisson de graines, hydrocarbures) ; le désengagement des Nez référents sur Signal'Air (126 signalements 2021 → 20 en 2026) rend la mesure peu fiable.",
+    "preuves": [
+      {"source": "ATMO Occitanie — Observatoire des odeurs du bassin de Thau, bilan 2023", "date": "2023", "extrait": "90 signalements sur 52 jours"},
+      {"source": "midilibre.fr — bilan ATMO 2026 T2", "date": "2026-09-08"}
+    ],
+    "ampleur": "90 signalements/52 jours (2023) ; 4 familles d'odeurs persistantes en 2026 ; famille 'excréments' en forte hausse",
+    "causes": {"confirmees": ["activités industrielles riveraines"], "hypotheses": ["corrélations météo/vent à documenter finement"]},
+    "acteurs": {"usagers": ["riverains"], "responsables": ["industriels cités", "ATMO Occitanie"], "financeurs": ["agglo"]},
+    "solutions_existantes": ["Observatoire des odeurs ATMO depuis 2016", "plateforme Signal'Air"],
+    "solutions_envisagees": ["Projet 1 (Atlas) : carte signalements × date × quartier × vent", "outil de signalement plus simple pour relancer la participation"],
+    "mesure_resultat": "nombre de signaleurs actifs ; délai de réponse par épisode",
+    "confiance": "confirmé"
+  },
+  {
+    "id": "P-002",
+    "domaine": "C-sante",
+    "localisation": "Bassin de Thau, critique à Sète",
+    "population": "116 696 hab. (CPTS) ; 19 % des Sétois >17 ans sans médecin traitant",
+    "description": "Accès aux soins dégradé : vague de départs de généralistes (32 % ont >60 ans), pénuries dermatologie/psychiatrie/pédopsychiatrie, population vieillissante (41 % de 60+ à Sète, 25,3 % dans le bassin).",
+    "preuves": [
+      {"source": "ARS Occitanie — dossier CPTS bassin de Thau", "date": "2020-12-10"},
+      {"source": "midilibre.fr — accès aux soins bassin de Thau", "date": "2022-11-27"}
+    ],
+    "ampleur": "9 % sans médecin traitant (bassin), 19 % à Sète ; patients >70 ans = 18,9 % (+4,3 pts vs national)",
+    "causes": {"confirmees": ["démographie médicale vieillissante", "attractivité partielle malgré maisons de santé"], "hypotheses": []},
+    "acteurs": {"usagers": ["habitants", "personnes âgées", "aidants"], "responsables": ["CPTS Thau", "Hôpitaux du bassin de Thau"], "financeurs": ["ARS", "Assurance Maladie"]},
+    "solutions_existantes": ["CPTS depuis 2020", "maisons de santé", "hôpital Saint-Clair + polyclinique"],
+    "solutions_envisagees": ["Projet 4 : orientation/coordination santé + information délais", "aide au maintien à domicile (volet autonomie)"],
+    "mesure_resultat": "part de la population avec médecin traitant ; délais de RDV constatés",
+    "confiance": "confirmé"
+  },
+  {
+    "id": "P-003",
+    "domaine": "A-logement-precarite",
+    "localisation": "Ensemble de l'agglo (14 communes)",
+    "population": "129 539 habitants des ménages ; 18,7 % sous le seuil de pauvreté",
+    "description": "Précarité structurelle : taux de pauvreté élevé, chômage 13,9 %, tension logement (programmation 438 logements sociaux vs besoins non mesurés), saisonnalité de l'emploi, difficulté des travailleurs saisonniers à se loger.",
+    "preuves": [
+      {"source": "Insee — recensement 2023, dossier territorial 2026 (via recherche Atlas)", "date": "2026"},
+      {"source": "agglopole.fr — rapport d'activité 2025 (Maison de l'Habitat, 438 LLS)", "date": "2025"}
+    ],
+    "ampleur": "pauvreté 18,7 % ; chômage 15-64 ans 13,9 %",
+    "causes": {"confirmees": ["saisonnalité économique", "parc social insuffisant (volume annoncé, pas besoin mesuré)"], "hypotheses": ["effet résidences secondaires sur les loyers"]},
+    "acteurs": {"usagers": ["ménages précaires", "saisonniers", "jeunes"], "responsables": ["agglo", "communes", "CCAS"], "financeurs": ["État", "Région", "agglo"]},
+    "solutions_existantes": ["Maison de l'Habitat intercommunale", "OPAH-RU (300 logements à Frontignan)", "Contrat de ville Quartiers 2030"],
+    "solutions_envisagees": ["Projet 4 : accès aux aides (non-recours)", "mesurer l'écart besoins/attributions avant tout nouvel outil"],
+    "mesure_resultat": "délai moyen d'attribution ; taux de non-recours estimé",
+    "confiance": "confirmé"
+  },
+  {
+    "id": "P-004",
+    "domaine": "B-mobilite",
+    "localisation": "Agglo entière, pendulaires vers Montpellier/Sète",
+    "population": "76,1 % des actifs rejoignent leur travail en voiture",
+    "description": "Dépendance automobile massive ; questions ouvertes sur les trajets impossibles en TC (horaires décalés, zones d'emploi), l'accessibilité PMR (ancienne gare de Frontignan non accessible), la saturation estivale.",
+    "preuves": [
+      {"source": "Insee 2023 (via recherche Atlas)", "date": "2026"},
+      {"source": "laregion.fr — PEM Frontignan annoncé (accessibilité, horizon 2028)", "date": "2023"}
+    ],
+    "ampleur": "76,1 % des trajets domicile-travail en voiture ; gare actuelle difficile d'accès PMR ; 1 000-2 000 voyageurs/jour à Frontignan",
+    "causes": {"confirmees": ["offre TC historiquement limitée", "étalement de l'habitat"], "hypotheses": ["trajets empêchés vers zones d'emploi à cartographier"]},
+    "acteurs": {"usagers": ["actifs", "PMR", "jeunes sans véhicule"], "responsables": ["agglo (TC)", "Région (liO/train)", "Département (vélo)"], "financeurs": ["Région", "État", "agglo"]},
+    "solutions_existantes": ["PEM Frontignan 2028 en projet", "+14 trains depuis 2020", "EuroVélo 8 sécurisée (07/2026)", "navettes maritimes >200 k voyages/an"],
+    "solutions_envisagees": ["Projet 2 : mobilité réelle porte-à-porte (comparateur horaires/coût/accessibilité)", "carte temps modes doux = action déjà budgétée au PCAET"],
+    "mesure_resultat": "part modale voiture ; trajets sans alternative viable recensés",
+    "confiance": "confirmé"
+  },
+  {
+    "id": "P-005",
+    "domaine": "E-eau-climat",
+    "localisation": "Étang de Thau + lido Sète-Marseillan",
+    "population": "conchyliculteurs, pêcheurs, économie littorale ; habitants zones basses",
+    "description": "La lagune se réchauffe et se salinise ; crises d'eutrophisation (2003, 2006, 2018) ; les moules meurent à 27 °C ; submersion marine aggravée (niveau marin +3 à 3,5 mm/an + subsidence ~1 mm/an entre Frontignan et Marseillan).",
+    "preuves": [
+      {"source": "SMBT — adaptation au changement climatique", "date": "2024"},
+      {"source": "SMBT — décision expérimentation apports d'eau douce (comité syndical 09/12/2025)", "date": "2025-12-16"},
+      {"source": "L'Humanité — la menace plane sur l'étang de Thau", "date": "2023-08-31"}
+    ],
+    "ampleur": "filière conchylicole en repli ; modélisations SMBT 2050/2100 ; programme Thau Alabri",
+    "causes": {"confirmees": ["réchauffement climatique", "apports nutritifs"], "hypotheses": ["trajectoire de salinité à surveiller"]},
+    "acteurs": {"usagers": ["conchyliculteurs", "pêcheurs", "riverains"], "responsables": ["SMBT", "agglo", "État"], "financeurs": ["Europe (lido)", "Région", "agglo"]},
+    "solutions_existantes": ["Thau Alabri", "lido Sète-Marseillan (grand projet européen)", "expérimentation apports d'eau douce en préparation"],
+    "solutions_envisagees": ["module géospatial ZAN/littoral (offre O2)", "Projet 5 : capteurs locaux (complément, pas substitut réglementaire)", "tableau de bord lagune"],
+    "mesure_resultat": "température/salinité suivies ; surfaces submersibles cartographiées",
+    "confiance": "confirmé"
+  },
+  {
+    "id": "P-006",
+    "domaine": "G-infrastructures",
+    "localisation": "Étang d'Ingril",
+    "population": "pêcheurs professionnels vs usagers de sports nautiques tractés",
+    "description": "Conflit d'usage documenté : fréquentation des engins tractés gêne l'activité de pêche et pose des questions de sécurité maritime.",
+    "preuves": [{"source": "Préfecture maritime de la Méditerranée (relais recherche Atlas)", "date": "2026"}],
+    "ampleur": "conflit localisé, récurrent en saison",
+    "causes": {"confirmees": ["cohabitation d'usages incompatibles au même endroit"], "hypotheses": []},
+    "acteurs": {"usagers": ["pêcheurs", "pratiquants nautiques"], "responsables": ["préfecture maritime", "communes"], "financeurs": []},
+    "solutions_existantes": ["réglementation préfectorale"],
+    "solutions_envisagees": ["Projet 1 : carte des usages/horaires/zones de conflit"],
+    "mesure_resultat": "nombre de signalements de conflit par saison",
+    "confiance": "corroboré"
+  },
+  {
+    "id": "P-007",
+    "domaine": "G-infrastructures",
+    "localisation": "Frontignan (centre-ville, quartiers)",
+    "population": "habitants, commerçants",
+    "description": "Propreté urbaine (déchets au sol, sacs hors conteneurs) et travaux perturbants (ex. rue du Bassin depuis le 12/10/2026 : fermeture de voie, accès SNCF modifiés) ; mécontentement non quantifié publiquement.",
+    "preuves": [
+      {"source": "frontignan.fr — pages propreté/déchets", "date": "2026"},
+      {"source": "annonce municipale travaux rue du Bassin (relais recherche Atlas)", "date": "2026-10"}
+    ],
+    "ampleur": "préoccupation attestée par la Ville ; quartiers les plus touchés non identifiés",
+    "causes": {"confirmees": [], "hypotheses": ["incivilités", "dimensionnement collecte", "coordination des chantiers"]},
+    "acteurs": {"usagers": ["habitants", "commerçants"], "responsables": ["Ville", "agglo (collecte)"], "financeurs": []},
+    "solutions_existantes": ["collecte agglo", "communication municipale"],
+    "solutions_envisagees": ["signalement géolocalisé avec statut de résolution (Projet 1)", "calendrier travaux + déviations + commerces impactés (feature chatbot communal)"],
+    "mesure_resultat": "délai moyen de traitement d'un signalement",
+    "confiance": "corroboré"
+  },
+  {
+    "id": "P-008",
+    "domaine": "D-emploi",
+    "localisation": "Agglo entière",
+    "population": "demandeurs d'emploi, saisonniers, jeunes",
+    "description": "Chômage élevé (13,9 %) combiné à une économie saisonnière (population ×3-4 l'été) ; inadéquation offres/compétences et mobilité vers les zones d'emploi à documenter.",
+    "preuves": [{"source": "Insee 2023 (via recherche Atlas)", "date": "2026"}],
+    "ampleur": "13,9 % des 15-64 ans",
+    "causes": {"confirmees": ["saisonnalité"], "hypotheses": ["freins mobilité et formation"]},
+    "acteurs": {"usagers": ["demandeurs d'emploi", "jeunes"], "responsables": ["France Travail", "Mission Locale", "Région formation"], "financeurs": ["État", "Région"]},
+    "solutions_existantes": ["Mission Locale bassin de Thau", "France Travail (objet du test O1)"],
+    "solutions_envisagees": ["O1 Cognitorium Emploi (assistant recherche d'emploi francophone + local + humain)", "Projet 2 volet trajets vers zones d'emploi"],
+    "mesure_resultat": "taux de retour à l'emploi des utilisateurs accompagnés",
+    "confiance": "corroboré"
+  },
+  {
+    "id": "P-009",
+    "domaine": "E-eau-climat",
+    "localisation": "Port de Sète-Frontignan (ZIFMAR 2)",
+    "population": "riverains Sète/Frontignan, conchyliculteurs (mas + prise d'eau à l'est du projet)",
+    "description": "Extension portuaire 33 ha (base éolien offshore, remblais par 1,7 M m³ de sédiments de dragage) : besoin de transparence environnementale et de suivi des observations citoyennes (consultation 12/10/2026-12/01/2027).",
+    "preuves": [
+      {"source": "VNF/laregion.fr — consultation autorisation environnementale ZIFMAR 2", "date": "2026-09-22"},
+      {"source": "democratie-active.fr/dae-zifmar2-port-sete (registre)", "date": "2026-10"}
+    ],
+    "ampleur": "33 ha, co-maîtrise Région + Port + VNF",
+    "causes": {"confirmees": ["besoin foncier portuaire pour l'éolien offshore"], "hypotheses": []},
+    "acteurs": {"usagers": ["riverains", "conchyliculteurs"], "responsables": ["Région Occitanie", "Port de Sète Sud de France", "VNF"], "financeurs": ["Région"]},
+    "solutions_existantes": ["consultation publique en cours", "réunions 16/10 (Frontignan) et 07/01/2027 (Sète)"],
+    "solutions_envisagees": ["veille Watchtower des observations + engagements", "restitution compréhensible pour les habitants (Projet 1)"],
+    "mesure_resultat": "observations déposées suivies ; engagements publiés et tenus",
+    "confiance": "confirmé"
+  }
+]

@@ -1,6 +1,6 @@
 # 🗼 WATCHTOWER — Registre des signaux du bassin de Thau (09/10/2026)
 
-> Watchtower (fork God's Eye View, `projects/watchtower/`) devient notre **couche « screen »** pour le bassin de Thau : une carte des signalements reliée à un registre. Ce doc = le registre de départ, vérifié et enrichi. Données seed : `projects/watchtower/data/thau-signaux.json`.
+> Watchtower (fork God's Eye View, `projects/watchtower/`) devient notre **couche « screen »** pour le bassin de Thau : une carte des signalements reliée à un registre. Ce doc = le registre de départ, vérifié et enrichi. Données seed : `projects/watchtower/data/thau-signaux.json` (signaux bruts) + **`projects/watchtower/data/problemes-thau.json`** (fiches problèmes complètes — schéma Atlas : population, preuves, causes, acteurs, solutions, confiance ; cadre complet dans `docs/ATLAS-THAU-OBSERVATOIRE-BESOINS.md`).
 
 ## 1. ✅ Vérifications & enrichissements des pistes remontées
 
