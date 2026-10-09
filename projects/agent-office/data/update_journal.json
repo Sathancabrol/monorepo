@@ -78,5 +78,10 @@
     "date": "2026-10-09T06:15:54",
     "type": "outil",
     "note": "Couche agentique rendue opérationnelle sans clé ni installation (docs/RENDRE-LES-AGENTS-OPERATIONNELS.md) : registre de missions agents/missions/ (format OUTCOME/HOW/TOUCH/HUMAN-CHECK, tests), capacités design-app (gouvernance) + collecte-internet (recherche) déclarées, missions M-001/M-002 en brouillon ; niveaux suivants proposés : Gemini CLI gratuit puis runner stdlib + clés gratuites, VPS après 1er revenu"
+  },
+  {
+    "date": "2026-10-09T07:15:12",
+    "type": "outil",
+    "note": "Mission M-001 exécutée (gate) : portail app/ modernisé + page /office branchée sur données réelles en lecture seule (budget -111.51, 13 tâches, 2 missions, 12 services, 7 signaux Watchtower) + API /api/office/state ; preuve dans le fichier de mission"
   }
 ]
