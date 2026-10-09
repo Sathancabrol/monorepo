@@ -143,6 +143,21 @@ class MeetingEngine:
     def supprimer(self, sid: str) -> bool:
         return self.store.delete(COLLECTION, sid)
 
+    def ajouter_document(self, sid: str, rec: dict) -> dict | None:
+        """Attache un document produit à la session.
+
+        Passer par `maj()` ne fonctionnerait pas : elle ignore délibérément le
+        champ « documents » pour éviter qu'un simple correctif ne l'écrase.
+        """
+        with self._lock:
+            s = self.get(sid)
+            if not s:
+                return None
+            s.setdefault("documents", []).append(rec)
+            self.store.put(COLLECTION, sid, s)
+        self._emit("document", sid, titre=rec.get("titre"), format=rec.get("format"))
+        return s
+
     # --------------------------------------------------------------- capture
     def pousser(self, sid: str, texte: str, locuteur: str = "", source: str = "voix",
                 enrichir: bool = True) -> dict:

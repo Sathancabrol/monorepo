@@ -186,7 +186,15 @@ for g in GABARITS:
                 ok, detail = opc_valide(fh.read())
         verifier(ok, f"{g['id']:<13} .{fmt:<5} {doc['taille']:>7} o", detail)
 
-# -------------------------------------------------- 5. relecture du contenu
+# ------------------------------- 5. les documents sont bien rattachés
+apres_docs = api("GET", f"/api/meeting/{rid}")["session"]
+verifier(len(apres_docs["documents"]) == len(produits),
+         f"{len(apres_docs['documents'])} documents rattachés à la session",
+         f"{len(produits)} générés mais {len(apres_docs['documents'])} enregistrés")
+verifier(all(d.get("nom") for d in apres_docs["documents"]),
+         "chaque document porte un nom de fichier")
+
+# -------------------------------------------------- 6. relecture du contenu
 print()
 with urllib.request.urlopen(BASE + "/api/fichiers/"
                             + next(n for n in produits if n.endswith(".md")),

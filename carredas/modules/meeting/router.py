@@ -187,9 +187,7 @@ def register(router, ctx):
                "titre": doc.get("titre") or s.get("titre", ""),
                "cree_le": _dt.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                "taille": len(data)}
-        docs = (s.get("documents") or [])
-        docs.append(rec)
-        eng.maj(id, {"documents": docs})
+        eng.ajouter_document(id, rec)
         log.info("meeting", f"{kind}.{fmt} généré ({len(data)} o) pour {id}")
         broadcast("meeting", {"kind": "document", "session": id,
                               "titre": rec["titre"], "format": fmt})
