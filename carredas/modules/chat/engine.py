@@ -80,12 +80,14 @@ def _reponse_texte(demande: str, res: dict) -> str:
 
 
 def envoyer(store, cid: str, texte: str, agent_id: str | None = None,
-            contexte: dict | None = None, produire: bool = True) -> dict:
-    """Envoie un message : routage → exécution → réponse structurée."""
+            contexte: dict | None = None, produire: bool = True,
+            broadcast=None) -> dict:
+    """Envoie un message au PATRON. Lui seul répond — il délègue en interne.
+
+    L'utilisateur ne choisit jamais un agent : le patron (SOL ☉) analyse,
+    délègue à l'agent compétent (ou crée un sous-agent), et rend compte.
+    """
     from ...store import new_id
-    from ... import docsgen
-    from ...store import slug
-    import datetime as _dt2
 
     conv = conversation(store, cid)
     if not conv:
@@ -94,46 +96,44 @@ def envoyer(store, cid: str, texte: str, agent_id: str | None = None,
     if not texte:
         return {}
 
-    # routage (pour savoir qui répond, même sans exécution)
+    # le message de l'utilisateur, avec l'analyse du patron (pour transparence)
+    from ..agents import engine as E
+    from ..agents import orchestrateur as O
     routes = E.router(texte, 3)
-    choisi = E.choisir(texte, agent_id)
 
     msg = {"id": new_id("msg"), "conversation": cid, "role": "user",
-           "texte": texte, "agent_choisi": choisi["id"],
-           "routes": [{"id": r["agent"]["id"], "nom": r["agent"]["nom"],
-                       "score": r["score"]} for r in routes],
+           "texte": texte,
+           "routes_analysees": [{"id": r["agent"]["id"], "nom": r["agent"]["nom"],
+                                  "score": r["score"]} for r in routes],
            "cree_le": _maintenant()}
     store.put("chatmsgs", msg["id"], msg)
 
-    reponse: dict = {"role": "agent", "agent": choisi["id"],
-                     "nom": choisi["nom"], "emoji": choisi.get("emoji", "⬢")}
+    reponse: dict = {"role": "patron", "patron": O.NOM_PATRON,
+                     "emoji": O.EMOJI_PATRON}
     if produire:
         try:
-            res = E.executer(texte, agent_id, contexte or {}, store)
-            reponse["texte_reponse"] = _reponse_texte(texte, res)
-            reponse["phases"] = res["tache"]["phases"]
-            reponse["recherche"] = res["recherche"]
-            reponse["problemes"] = res["problemes"]
-            reponse["signalements"] = res.get("signalements", [])
-            reponse["duree_s"] = res["duree_s"]
-            # le document produit par l'agent, s'il y en a un
-            doc = res["document"]
-            data, mime = docsgen.render("md", doc, taches=res.get("taches_gantt"),
-                                        titre_gantt=doc.get("titre", "Document"))
-            horodatage = _dt2.datetime.now().strftime("%Y%m%d-%H%M%S")
-            nom = (f"{horodatage}-chat-{slug(choisi['id'], 'agent')}-"
-                   f"{slug(texte[:36], 'msg')}.md")
-            chemin = store.write_blob(nom, data, "documents")
-            reponse["document"] = {"nom": nom, "taille": len(data), "mime": mime,
-                                   "titre": doc.get("titre", "")}
+            r = O.parler(texte, contexte or {}, store, broadcast)
+            reponse["texte_reponse"] = r["texte_reponse"]
+            reponse["agent"] = r["agent"]["id"]
+            reponse["agent_nom"] = r["agent"]["nom"]
+            reponse["agent_emoji"] = r["agent"].get("emoji", "⬢")
+            reponse["sous_agent"] = r.get("sous_agent")
+            reponse["domaine"] = r.get("domaine")
+            reponse["routes"] = r.get("routes_analysees", [])
+            reponse["phases"] = r["phases"]
+            reponse["recherche"] = r["recherche"]
+            reponse["problemes"] = r["problemes"]
+            reponse["signalements"] = r.get("signalements", [])
+            reponse["duree_s"] = r["duree_s"]
+            reponse["journal"] = r.get("journal", [])
+            reponse["document"] = r["document"]
         except Exception as exc:
-            reponse["texte_reponse"] = (f"L'exécution a échoué : {exc}. "
-                                        "Je ne produis pas de résultat dans ce cas.")
+            reponse["texte_reponse"] = (f"☉ Le patron n'a pas pu mener la tâche "
+                                        f"à bien : {exc}. Je ne produis pas de "
+                                        "résultat dans ce cas.")
             reponse["erreur"] = str(exc)
     else:
-        reponse["texte_reponse"] = _reponse_texte(texte, {
-            "agent": choisi, "tache": {"phases": []}, "recherche": {"outils": [], "sources": []},
-            "problemes": [], "signalements": [], "duree_s": 0, "document": None})
+        reponse["texte_reponse"] = f"☉ **{O.NOM_PATRON}** a bien reçu votre message."
 
     reponse.update({"id": new_id("msg"), "conversation": cid,
                     "cree_le": _maintenant()})

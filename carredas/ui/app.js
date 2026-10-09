@@ -88,6 +88,7 @@ const RAIL = [
     { id: 'prevision', icone: '◷', texte: 'Prévision' },
     { id: 'osint', icone: '⌘', texte: 'OSINT' },
     { id: 'agents', icone: '⬢', texte: 'Agents' },
+    { id: 'sol', icone: '☉', texte: 'Solaire' },
   ]},
   { section: 'Modules', items: [
     { id: 'modules', icone: '▤', texte: 'Registre' },
@@ -111,7 +112,7 @@ function rendreRail() {
      </div>`).join('');
 }
 
-const VUES = { accueil, agents, reunion, carto, cognitorium, prevision, osint, systeme, chat, constellation, modules };
+const VUES = { accueil, agents, reunion, carto, cognitorium, prevision, osint, systeme, chat, constellation, modules, sol };
 
 async function render() {
   rendreRail();
@@ -132,6 +133,7 @@ async function render() {
   // le chat se cale en bas du fil
   if (S.vue === 'constellation') constInit();
   if (S.vue === 'chat') chatScrollBas();
+  if (S.vue === 'sol') solInit();
 }
 
 async function aller(vue) {
@@ -361,9 +363,10 @@ async function chat() {
 
   return `
   <div class="titre-page">
-    <h1>Chat</h1>
+    <h1>☉ Chat — SOL, le patron</h1>
     <div class="actions">
       <button class="petit" data-action="chat-nouvelle">＋ Nouvelle conversation</button>
+      <a class="petit" href="#" data-action="sol-aller-chat" style="text-decoration:none">☉ Voir le système solaire</a>
     </div>
   </div>
 
@@ -386,9 +389,11 @@ async function chat() {
         ? `<div class="chat-vide">
              <div class="gros-icone">💬</div>
              <h2>Parlez aux agents</h2>
-             <p>Chaque message est <b>routé</b> vers le bon spécialiste, qui exécute
-             la demande et produit un document. Le routage est déterministe :
-             la même demande donne toujours le même agent.</p>
+             <p>Vous parlez à <b>☉ SOL, le patron</b> — et à personne d'autre.
+             C'est lui qui analyse votre demande, choisit le spécialiste,
+             délègue, surveille, et vous rend compte. S'il ne trouve personne,
+             il crée un sous-agent spécialisé. <a href="#" data-action="sol-aller-chat"
+             style="color:var(--ac)">Voir les agents travailler →</a></p>
              <div class="chat-exemples">
                <button class="tag gris" data-action="chat-exemple">Rédige le compte rendu de la réunion</button>
                <button class="tag gris" data-action="chat-exemple">Établir le planning de la Frange Sud</button>
@@ -402,7 +407,7 @@ async function chat() {
           ? `<div class="msg user"><div class="qui">vous</div><div class="bulle">${esc(m.texte)}</div>
                <div class="meta mono">routé vers ${esc(m.agent_choisi)}${(m.routes || []).length > 1 ? ' · ' + m.routes.slice(1).map(r => r.nom).join(', ') + ' aussi pertinents' : ''}</div></div>`
           : `<div class="msg agent">
-               <div class="qui">${m.emoji || '⬢'} ${esc(m.nom || m.agent)}</div>
+               <div class="qui">${m.emoji || '☉'} ${esc(m.patron || m.nom || m.agent)}${m.agent_nom ? ` · a délégué à ${m.agent_emoji || ''} ${esc(m.agent_nom)}${m.sous_agent ? ' · a créé un sous-agent ☾' : ''}` : ''}</div>
                <div class="bulle">${miniMd(m.texte_reponse || '')}</div>
                ${(m.phases || []).length ? `<div class="chat-phases">${m.phases.map(p => {
                  const mk = { ok: '✓', vide: '·', bloque: '✗', echec: '✗' }[p.statut] || '?';
@@ -814,6 +819,249 @@ async function modules() {
         </div>
       </div>`).join('')}
   </div>`;
+}
+
+/* ─────────────────────────────────── Système solaire — SOL ☉ le patron ── */
+/* Tu parles au patron. Lui délègue. Ici on VOIT les agents travailler :
+   une planète qui tourne vite = un agent au travail. Les points autour
+   sont les tâches en cours, les lunes sont les sous-agents créés à la volée. */
+const SOLV = { angle: 0, planetes: {}, poll: null, selection: null,
+               vitesseBase: 0.35, etoiles: [] };
+
+async function sol() {
+  const etat = await get('/api/agents/systeme');
+  S.sol = { etat, selection: null };
+  const enCours = etat.travaux_en_cours.length;
+  return `
+  <div class="titre-page">
+    <h1>☉ Système solaire</h1>
+    <div class="actions">
+      <button class="primaire" data-action="sol-aller-chat">💬 Parler au patron</button>
+      <span class="pastille ${enCours ? 'ok' : ''}"><i class="pt"></i>${enCours} agent(s) au travail</span>
+      <span class="pastille"><i class="pt"></i>${etat.sous_agents.length} sous-agent(s) créés</span>
+    </div>
+  </div>
+  <div class="note-info">☉ <b>SOL</b>, le patron, est au centre — cliquez-le pour ouvrir le chat.
+  Les <b>planètes</b> sont les 22 agents : <b>plus elle tourne vite, plus l'agent travaille</b>.
+  Les <b>points</b> autour d'une planète sont ses tâches en cours. Les <b>lunes</b> sont les
+  sous-agents créés à la volée pour une tâche spécifique. Cliquez une planète pour sa fiche.</div>
+  <div class="sol-layout">
+    <div class="sol-canvas">
+      <svg id="sol-svg" viewBox="-520 -520 1040 1040">
+        <g id="sol-etoiles"></g>
+        <g id="sol-orbites"></g>
+        <g id="sol-lunes"></g>
+        <g id="sol-satellites"></g>
+        <g id="sol-planetes"></g>
+        <g id="sol-soleil"></g>
+      </svg>
+    </div>
+    <aside class="sol-panneau" id="sol-panneau"></aside>
+  </div>`;
+}
+
+function solInit() {
+  const svg = $('#sol-svg');
+  if (!svg) return;
+  if (SOLV.poll) clearInterval(SOLV.poll);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a) => { const n = document.createElementNS(NS, t);
+    for (const k in a) n.setAttribute(k, a[k]); return n; };
+  ['sol-etoiles', 'sol-orbites', 'sol-lunes', 'sol-satellites', 'sol-planetes', 'sol-soleil']
+    .forEach(id => { const g = document.getElementById(id); if (g) g.innerHTML = ''; });
+  SOLV.planetes = {}; SOLV.selection = null;
+
+  // champ d'étoiles (fond fixe)
+  for (let i = 0; i < 90; i++) {
+    const a = Math.random() * Math.PI * 2, r = 180 + Math.random() * 320;
+    document.getElementById('sol-etoiles').appendChild(
+      el('circle', { cx: Math.cos(a) * r, cy: Math.sin(a) * r, r: Math.random() * 1.4 + 0.4,
+                     fill: '#8FA3AC', opacity: 0.15 + Math.random() * 0.3 }));
+  }
+
+  // orbites + planètes
+  const agents = S.sol.etat.agents;
+  agents.forEach((a, i) => {
+    const rayon = 110 + i * 24;
+    document.getElementById('sol-orbites').appendChild(
+      el('circle', { cx: 0, cy: 0, r: rayon, fill: 'none',
+                     stroke: '#1A1A2E', 'stroke-width': 1 }));
+    const gr = el('g', { class: 'sol-planete', 'data-id': a.id, style: 'cursor:pointer' });
+    const halo = el('circle', { r: 13, fill: 'none', stroke: '#7FB3E8',
+                                 'stroke-width': 1.5, opacity: 0, class: 'sol-halo' });
+    const c = el('circle', { r: 10, fill: '#7FB3E8', stroke: '#0A0A12', 'stroke-width': 1.5 });
+    const t = el('text', { 'text-anchor': 'middle', dy: '0.35em', 'font-size': 11,
+                           fill: '#EAEAF2', 'pointer-events': 'none' });
+    t.textContent = a.emoji || '⬢';
+    const titre = el('title', {});
+    titre.textContent = `${a.emoji} ${a.nom} — ${a.role}`;
+    gr.append(halo, c, t, titre);
+    document.getElementById('sol-planetes').appendChild(gr);
+    SOLV.planetes[a.id] = { gr, halo, a, rayon, angle: (i / agents.length) * Math.PI * 2,
+                            travaux: 0, sousAgents: 0 };
+    gr.addEventListener('click', () => solSelectionner(a.id));
+  });
+
+  // le soleil — le patron
+  const soleil = document.getElementById('sol-soleil');
+  soleil.innerHTML = '';
+  const haloS = el('circle', { r: 52, fill: 'none', stroke: '#F0D264',
+                                'stroke-width': 1, opacity: 0.25, class: 'sol-halo-soleil' });
+  const cS = el('circle', { r: 34, fill: '#F0D264', stroke: '#0A0A12', 'stroke-width': 2 });
+  const tS = el('text', { 'text-anchor': 'middle', dy: '0.4em', 'font-size': 30,
+                          fill: '#0A0A12' });
+  tS.textContent = '☉';
+  const titreS = el('title', {});
+  titreS.textContent = 'SOL ☉ — le patron. Cliquez pour ouvrir le chat.';
+  soleil.append(haloS, cS, tS, titreS);
+  soleil.addEventListener('click', () => { const act = ACTIONS['sol-aller-chat']; if (act) act(); });
+  SOLV.soleil = { gr: soleil, halo: haloS };
+
+  // zoom molette
+  let vb = 520;
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    vb = Math.min(900, Math.max(260, vb * (e.deltaY < 0 ? 0.92 : 1.08)));
+    svg.setAttribute('viewBox', `${-vb} ${-vb} ${vb * 2} ${vb * 2}`);
+  }, { passive: false });
+
+  solRafraichir();
+  SOLV.angle = 0;
+  (function tick() {
+    if (S.vue !== 'sol') return; // la vue est quittée, on arrête
+    solTick();
+    requestAnimationFrame(tick);
+  })();
+
+  // polling live : l'état du système toutes les 2 s
+  SOLV.poll = setInterval(async () => {
+    if (S.vue !== 'sol') return;
+    try {
+      S.sol.etat = await get('/api/agents/systeme');
+      solRafraichir();
+    } catch (e) { /* le serveur est peut-être occupé, on réessaie */ }
+  }, 2000);
+}
+
+function solTick() {
+  const enCours = new Set(S.sol.etat.travaux_en_cours.map(t => t.agent));
+  const maintenant = Date.now() / 1000;
+  for (const id in SOLV.planetes) {
+    const p = SOLV.planetes[id];
+    const travaille = enCours.has(id);
+    // vitesse : lente au repos, rapide au travail
+    SOLV.angle += (travaille ? 0.06 : 0.012);
+    p.angle += (travaille ? 0.06 : 0.012);
+    p.gr.setAttribute('transform',
+      `translate(${Math.cos(p.angle) * p.rayon},${Math.sin(p.angle) * p.rayon})`);
+    // halo si au travail
+    p.halo.setAttribute('opacity', travaille ? 0.9 : 0);
+    p.halo.setAttribute('r', 13 + (travaille ? 4 + Math.sin(maintenant * 6) * 3 : 0));
+    p.gr.style.filter = travaille ? 'drop-shadow(0 0 8px #7FB3E8)' : '';
+  }
+  // satellites de tâche (tournent autour de leur planète)
+  const gSat = document.getElementById('sol-satellites');
+  if (gSat) {
+    gSat.innerHTML = '';
+    S.sol.etat.travaux_en_cours.forEach((t, j) => {
+      const p = SOLV.planetes[t.agent];
+      if (!p) return;
+      const a = p.angle + j * 1.2 + maintenant * 2;
+      const r = p.rayon;
+      gSat.appendChild((function () {
+        const NS = 'http://www.w3.org/2000/svg';
+        const c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', Math.cos(a) * (r + 20));
+        c.setAttribute('cy', Math.sin(a) * (r + 20));
+        c.setAttribute('r', 3.5); c.setAttribute('fill', '#F0D264');
+        const ti = document.createElementNS(NS, 'title');
+        ti.textContent = `tâche en cours : ${t.demande}`;
+        c.appendChild(ti);
+        return c;
+      })());
+    });
+  }
+  // lunes = sous-agents autour de leur planète mère
+  const gLunes = document.getElementById('sol-lunes');
+  if (gLunes) {
+    gLunes.innerHTML = '';
+    S.sol.etat.sous_agents.forEach((s, j) => {
+      const p = SOLV.planetes[s.parent];
+      if (!p) return;
+      const NS = 'http://www.w3.org/2000/svg';
+      const a = p.angle + j * 2 + maintenant * 0.8;
+      const gr = document.createElementNS(NS, 'g');
+      gr.setAttribute('transform',
+        `translate(${Math.cos(a) * (p.rayon + 34)},${Math.sin(a) * (p.rayon + 34)})`);
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('r', 5); c.setAttribute('fill', '#9B87D4');
+      c.setAttribute('stroke', '#0A0A12'); c.setAttribute('stroke-width', 1);
+      const ti = document.createElementNS(NS, 'title');
+      ti.textContent = `☾ ${s.nom} — créé pour : ${s.cree_pour}`;
+      gr.append(c, ti);
+      gLunes.appendChild(gr);
+    });
+  }
+  // le soleil pulse quand le patron a du travail en cours
+  if (SOLV.soleil) {
+    const actif = S.sol.etat.travaux_en_cours.length > 0;
+    SOLV.soleil.halo.setAttribute('opacity', actif ? 0.5 : 0.25);
+    SOLV.soleil.halo.setAttribute('r',
+      52 + (actif ? 6 + Math.sin(maintenant * 5) * 4 : 0));
+  }
+}
+
+function solRafraichir() {
+  // met à jour les pastilles du header sans re-render complet
+  const enCours = S.sol.etat.travaux_en_cours.length;
+  $$('.titre-page .pastille').forEach(p => {
+    if (p.textContent.includes('au travail')) {
+      p.classList.toggle('ok', enCours > 0);
+      p.innerHTML = `<i class="pt"></i>${enCours} agent(s) au travail`;
+    }
+    if (p.textContent.includes('sous-agent')) {
+      p.innerHTML = `<i class="pt"></i>${S.sol.etat.sous_agents.length} sous-agent(s) créés`;
+    }
+  });
+  // fiche de la planète sélectionnée
+  if (SOLV.selection) solPanneau(SOLV.selection);
+}
+
+async function solSelectionner(id) {
+  SOLV.selection = id;
+  solPanneau(id);
+  $$('.sol-planete').forEach(g => g.classList.toggle('selectionne', g.dataset.id === id));
+}
+
+function solPanneau(id) {
+  const panneau = $('#sol-panneau');
+  if (!panneau) return;
+  const a = S.sol.etat.agents.find(x => x.id === id);
+  if (!a) { panneau.innerHTML = ''; return; }
+  const travaux = S.sol.etat.travaux.filter(t => t.agent === id).slice(0, 5);
+  const lunes = S.sol.etat.sous_agents.filter(s => s.parent === id);
+  panneau.innerHTML = `
+    <div class="sol-fiche">
+      <div class="sol-fiche-titre">${a.emoji} ${esc(a.nom)}</div>
+      <div class="meta mono" style="margin-bottom:6px">${esc(a.role)}</div>
+      <span class="tag ${a.etat === 'travaille' ? 'deci' : 'gris'}">${a.etat === 'travaille' ? '● travaille' : '○ au repos'}</span>
+      <div class="cle" style="margin-top:14px">Travaux récents (${a.nb_total})</div>
+      ${travaux.length ? `<div class="liste" style="margin-top:6px">${travaux.map(t => `
+        <div class="ligne" style="padding:5px 0">
+          <div class="principal"><div class="nom" style="font-size:12px">${esc(t.demande)}</div>
+          <div class="meta mono">${t.en_cours ? '● en cours' : '○ fini'} · ${t.duree_s}s · ${esc((t.cree_le || '').slice(11, 19))}</div>
+        </div></div>`).join('')}</div>`
+        : '<div class="meta">aucun travail récent</div>'}
+      <div class="cle" style="margin-top:14px">Sous-agents (${lunes.length})</div>
+      ${lunes.length ? `<div style="display:flex;flex-direction:column;gap:5px;margin-top:6px">${lunes.map(s => `
+        <div class="carte" style="padding:8px">
+          <div style="font-size:12px">☾ ${esc(s.nom)}</div>
+          <div class="meta mono">domaine : ${esc(s.domaine)}</div>
+          <div class="meta mono">${s.nb_taches} tâche(s) · ${s.nb_reussites} réussite(s)</div>
+        </div>`).join('')}</div>`
+        : '<div class="meta">aucune lune — ce spécialiste n\'a pas encore créé de sous-agent</div>'}
+      <button class="primaire" style="margin-top:14px;width:100%" data-action="sol-aller-chat">💬 Parler au patron</button>
+    </div>`;
 }
 
 async function reunion() {
@@ -1799,6 +2047,9 @@ const ACTIONS = {
     await render();
     chatScrollBas();
   },
+
+  /* --------------------------------------------------- système solaire */
+  'sol-aller-chat': async () => { await aller('chat'); },
 
   /* --------------------------------------------------------- constellation */
   'const-changer-systeme': async (t) => {

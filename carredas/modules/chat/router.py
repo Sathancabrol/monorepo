@@ -10,6 +10,7 @@ PREFIX = "/api/chat"
 
 def register(router, ctx):
     store = ctx["store"]
+    broadcast = ctx.get("broadcast") or (lambda *a, **k: None)
 
     @router.get(PREFIX + "/conversations")
     def liste(req):
@@ -42,7 +43,7 @@ def register(router, ctx):
             if s:
                 contexte["session"] = s
         r = E.envoyer(store, id, texte, p.get("agent"), contexte,
-                      produire=p.get("produire", True))
+                      produire=p.get("produire", True), broadcast=broadcast)
         if not r:
             return Response.error("message vide", 400)
         return {"message": r, "conversation": E.conversation(store, id)}

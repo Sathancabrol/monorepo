@@ -107,6 +107,31 @@ def register(router, ctx):
     def historique(req):
         return {"taches": E.historique(store), "total": len(store.all("agenttaches"))}
 
+    # ------------------------------------------------- ☉ le patron (SOL)
+    @router.get(PREFIX + "/systeme")
+    def systeme(req):
+        """L'état live du système solaire : qui travaille, quoi, quels sous-agents."""
+        from . import orchestrateur as O
+        return O.etat_systeme(store)
+
+    @router.get(PREFIX + "/sousagents")
+    def sousagents(req):
+        from . import orchestrateur as O
+        return {"sous_agents": O.lister_sous_agents(store),
+                "total": len(store.all("sousagents"))}
+
+    @router.post(PREFIX + "/parler")
+    def parler(req):
+        """Parler au patron. Lui seul répond — il délègue en interne."""
+        from . import orchestrateur as O
+        p = req.json() or {}
+        texte = (p.get("texte") or p.get("demande") or "").strip()
+        if not texte:
+            return Response.error("il manque le texte", 400)
+        contexte = _contexte(p)
+        r = O.parler(texte, contexte, store, broadcast)
+        return r
+
     @router.get(PREFIX + "/:aid")
     def detail(req, aid):
         a = E.agent(aid)

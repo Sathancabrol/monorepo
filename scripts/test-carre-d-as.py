@@ -324,19 +324,47 @@ if sessions:
     verifier(r2["tache"]["phases"][0]["detail"] != "",
              "le compte rendu d'une réunion existante est produit")
 
-# ------------------------------------------------------- 7.6 chat avec les agents
+# ------------------------------------------------------- 7.6 chat avec le patron
 c = api("POST", "/api/chat/conversations", {"titre": "test scénario"})
 cid = c["conversation"]["id"]
 m = api("POST", f"/api/chat/conversations/{cid}/messages",
         {"texte": "Rédige le compte rendu de la réunion"})
-verifier(m["message"]["role"] == "agent" and m["message"]["agent"] == "writer",
-         "un message est routé vers le bon agent")
+verifier(m["message"]["role"] == "patron"
+         and m["message"].get("patron") == "SOL ☉",
+         "le chat ne répond que par le patron (SOL ☉)")
+verifier(m["message"].get("agent") == "writer",
+         "le patron a délégué au bon agent (writer)")
 verifier(bool(m["message"].get("document")), "le chat produit un document téléchargeable")
 verifier(len(m["message"].get("phases", [])) == 6, "le chat expose les 6 phases")
 conv = api("GET", f"/api/chat/conversations/{cid}")
 verifier(len(conv["messages"]) == 2, "l'historique conserve les 2 messages")
 verifier(len(api("GET", "/api/chat/conversations")["conversations"]) >= 1,
          "les conversations sont listées")
+
+# ------------------------------------------- 7.6b système solaire (le patron délègue)
+etat = api("GET", "/api/agents/systeme")
+verifier(etat["patron"]["nom"] == "SOL ☉", "le patron est SOL ☉")
+verifier(len(etat["agents"]) == 22, "les 22 agents sont des planètes")
+verifier(all(a["etat"] in ("travaille", "repos") for a in etat["agents"]),
+         "chaque planète a un état (travaille / repos)")
+
+# tâche hors périmètre → le patron crée un sous-agent
+m2 = api("POST", f"/api/chat/conversations/{cid}/messages",
+         {"texte": "Analyse la salinité des eaux du bassin de Thau "
+                   "et la réglementation conchylicole applicable"})
+verifier(bool(m2["message"].get("sous_agent")),
+         "le patron crée un sous-agent quand la tâche dépasse le périmètre")
+sa = m2["message"]["sous_agent"]
+verifier(sa["parent"] and sa["domaine"], "le sous-agent a un parent et un domaine")
+sous = api("GET", "/api/agents/sousagents")
+verifier(sous["total"] >= 1, "le sous-agent est enregistré (une lune de plus)")
+
+# réutilisation : même domaine → pas de doublon
+m3 = api("POST", f"/api/chat/conversations/{cid}/messages",
+         {"texte": "La salinité du bassin de Thau et les conchyliculteurs"})
+sous2 = api("GET", "/api/agents/sousagents")
+verifier(sous2["total"] == sous["total"],
+         "le patron réutilise le sous-agent existant (pas de doublon)")
 
 # ------------------------------------------------- 7.7 constellation (3 systèmes)
 sys3 = api("GET", "/api/constellation")
