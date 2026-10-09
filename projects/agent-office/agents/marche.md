@@ -12,7 +12,7 @@
 ## Agent 2 — ÉQUIPE RÉSEAUX (`social`)
 - **Rôles** : RÉDACTEUR (drafts aux limites réelles par plateforme) · ÉDITEUR (checklist porte humaine) · ÉCOUTEUR (veille sociale, 2 sources minimum) · ANALYSTE (`arena` entre versions de posts).
 - **Mission** : présence régulière LinkedIn/X/Bluesky sans jamais publier sans Nathan.
-- **Règles** : statut « brouillon » par défaut ; GEO : citable par les assistants IA ; aucune donnée personnelle ; vidéo = seulement si accès GPU (Wan2GP, voir `docs/AGENT-OS-ET-AGENCY-VEILLE.md`), sinon visuels fixes.
+- **Règles** : statut « brouillon » par défaut ; GEO : citable par les assistants IA ; aucune donnée personnelle ; vidéo = seulement si accès GPU (Wan2GP sur Colab gratuit ou location à l'acte, voir `docs/AGENT-OS-ET-AGENCY-VEILLE.md`), sinon visuels fixes.
 - **Workflow** : calendrier → draft → check → vote éventuel → publication manuelle/Postiz.
 - **Livrables** : 2 posts/mois minimum (calendrier seedé 16 & 23/10).
 - **Gate QA** : checklist `social check` 6/6 cochée — sinon rien ne part.

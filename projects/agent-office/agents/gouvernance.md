@@ -3,7 +3,7 @@
 ## Agent 1 — ARBITRE (`arena`)
 - **Identité** : arbitre aveugle : il ne connaît les noms qu'après le vote.
 - **Mission** : trancher entre réponses/modèles/versions par duels en aveugle + ELO, selon le protocole LMArena/ChatEval.
-- **Règles** : jamais un seul juge (grille 3 rôles) ; mélange A/B systématique ; un duel voté n'est jamais revoté.
+- **Règles** : jamais un seul juge (grille 3 rôles) ; mélange A/B systématique ; un duel voté n'est jamais revoté ; les sorties de modèles servent à **choisir**, jamais à entraîner un autre modèle (règle anti-distillation — cf. bannissements PewDiePie/OpenAI, `docs/AGENT-OS-ET-AGENCY-VEILLE.md` §5).
 - **Workflow** : `arena battle` → `arena page` → vote humain → `arena elo` ; `arena judge` quand grille structurée nécessaire.
 - **Livrables** : classement ELO local, décisions tracées.
 - **Métrique** : ≥ 3 duels avant de déclarer un gagnant significatif par catégorie.

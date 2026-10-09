@@ -39,7 +39,10 @@
 
 ## 4. 🔎 MàJ — Wan2GP & OmniRoute (09/10/2026)
 
-**Wan2GP → WanGP** (`deepbeepmeep/Wan2GP`, Python, ~10 200★, push 07/10/2026) : générateur **vidéo IA pour « GPU pauvres »** (dès 6 Go VRAM) — Gradio UI, file d'attente, LoRAs, mode headless + API. Modèles : Wan 2.1/2.2, Minimax H3, LTX-2, Hunyuan Video, Qwen Image, Flux [7](https://github.com/deepbeepmeep/Wan2GP)[8](https://wanvideogenerator.com/blog/wan2gp-free-guide). Attention : licence non standard (NOASSERTION), et le projet alerte sur les sites payants frauduleux qui usurpent son nom. **Verdict : pas adoptable maintenant** (pas de GPU ici, ni de budget pour en louer — le VPS est déjà reporté au 1ᵉʳ revenu). **Candidat « atelier vidéo » du département RÉSEAUX** le jour où une machine GPU existe (locale ou Colab gratuit) : clips pour LinkedIn/Bluesky sans payer d'outil. Alternative immédiate sans GPU : générer les visuels des posts autrement et réserver la vidéo aux offres type O3.
+**Wan2GP → WanGP** (`deepbeepmeep/Wan2GP`, Python, ~10 200★, push 07/10/2026) : générateur **vidéo IA pour « GPU pauvres »** (dès 6 Go VRAM) — Gradio UI, file d'attente, LoRAs, mode headless + API. Modèles : Wan 2.1/2.2, Minimax H3, LTX-2, Hunyuan Video, Qwen Image, Flux [7](https://github.com/deepbeepmeep/Wan2GP)[8](https://wanvideogenerator.com/blog/wan2gp-free-guide).
+- **Verdict : pas pour maintenant** (règle zéro dépense) — mais la condition « accès GPU » est levable à **0 € via Google Colab gratuit** (T4) : un notebook communautaire y fait tourner Wan 2.2 5B FastWan en 480p.
+- **Candidat « atelier vidéo » du département RÉSEAUX** : clips LinkedIn/Bluesky sans payer d'outil ; sinon visuels fixes, vidéo réservée aux offres type O3.
+- ⚠️ Licence non standard (NOASSERTION) + sites frauduleux vendant de fausses « installations Wan2GP » : tout est gratuit sur le GitHub officiel.
 
 **OmniRoute** (`diegosouzapw/OmniRoute`, TypeScript, MIT, ~74 300★, push hier) : **passerelle IA locale** — UN point d'entrée OpenAI-compatible (`localhost:20128/v1`) derrière lequel il route **359 fournisseurs / 1200+ modèles**, avec **fallback 4 niveaux** (abonnement → clé API → pas cher → gratuit), suivi de quotas en temps réel, compression de tokens RTK+Caveman (−15 à −95 %), serveur MCP (110 outils) + protocole A2A. Tourne sur laptop/VPS/Termux (~15 Mo), `npm install -g omniroute` ou Docker [9](https://github.com/diegosouzapw/OmniRoute)[10](https://devtoollab.com/blog/omniroute-free-ai-gateway)[11](https://hoangyell.com/omniroute-explained/).
 - **Pour nous c'est LA pièce manquante du jour** : le jour où on a des clés/abonnements modèles, OmniRoute devient la couche sous `arena` (accès multi-modèles bon marché pour les duels) et sous le futur portail `app/`.
@@ -50,6 +53,30 @@
 |---|---|---|
 | Wan2GP (WanGP) | actif, ~10 k★ | 📌 atelier vidéo — condition : accès GPU |
 | OmniRoute | très actif, ~74 k★, MIT | 📌 couche routage modèles — condition : 1ᵉʳ fournisseur/clé ; patterns notés |
+
+---
+
+## 5. 🔎 MàJ 2 — PewDiePie (Ajax / Odysseus) & location de GPU (09/10/2026)
+
+**PewDiePie → Ajax & Odysseus** (annoncé le 02/10/2026) : Felix Kjellberg a sorti **Ajax**, un modèle **9B fine-tuné de Qwen3.5-9B** conçu comme agent local résident : recherche/browsing web, **e-mails, calendrier, to-do** — exactement le périmètre de nos départements COURRIER/ORGANISATION. Il tourne dans **Odysseus**, son espace de travail auto-hébergé (gratuit, **AGPL-3.0**, lancé en mai 2026), tout reste sur la machine de l'utilisateur. Il s'est fait **bannir 2× par OpenAI pour « distillation »** (avoir utilisé les sorties de GPT « Sol » comme données d'entraînement) ; les poids d'Ajax ne sont pas encore publics (licence et config matérielle non confirmées). Développé sur 8× RTX 4090 moddées 48 Go, mais ciblé « PC de la maison » [12](https://www.thedailystar.net/news/technology/news/pewdiepie-unveils-his-custom-ai-model-ajax-4290231)[13](https://tech-insider.org/pewdiepie-ajax-ai-model-openai-bans-2026/).
+- ✅ À retenir n°1 : nouvelle confirmation que le **« harnais d'agent auto-hébergé »** est LA tendance (Odysseus rejoint Hermes et OpenClaw sur notre liste de surveillance).
+- ⚠️ À retenir n°2 — **règle distillation** : utiliser les sorties d'un modèle commercial pour en entraîner un autre viole ses CGU (bannissement à la clé). Chez nous : les sorties d'`arena` et des free tiers servent à **choisir**, jamais à entraîner.
+- ❌ Pas pour nous : le « décensurement » par abliteration (Heretic) — notre fiabilité client passe avant. **Verdict : 📌 surveillé** jusqu'à publication des poids/licence.
+
+**Louer de la puissance GPU/CPU en ligne** — le marché existe bien, et il est bon marché [14](https://www.promptquorum.com/es/power-local-llm/cloud-gpu-rental-guide-2026)[15](https://aiofm.info/en/guides/runpod-vs-vast-ai) :
+
+| Plateforme | RTX 4090 | Particularité |
+|---|---|---|
+| **Vast.ai** | ~0,09–0,59 $/h (spot) | le moins cher, marché pair-à-pair, **zéro SLA**, ~5 $ de crédit offerts |
+| **RunPod** | ~0,34–0,69 $/h | l'option équilibrée, datacenters **UE (NL, RO)**, **10 $ de crédit offerts** |
+| **Lambda Labs** | A100 2,06 $/h | 15 $ de crédit offerts, États-Unis seulement |
+| **Clore.ai** | 0,07–0,12 $/h | prix cassés mais matériel minage P2P → prudence (sécurité des données) |
+| **Google Colab (gratuit)** | T4 offert | **0 €** : suffisant pour Wan2GP en 480p |
+
+**Notre échelle de décision (règle budget)** :
+1. **Maintenant, 0 €** : Colab gratuit = la condition GPU de Wan2GP est levable sans rien dépenser.
+2. **Après le 1ᵉʳ revenu** : les crédits de bienvenue RunPod/Lambda/Vast (~30 $ cumulés) = de quoi tester rendu vidéo/fine-tune sans payer.
+3. Le **VPS agent reste CPU** (Hetzner/OVH ≤ 6 €/mois, voir `docs/VPS-AGENT-SQLITE-GRAPH.md`) ; le GPU se loue **à l'acte** : un clip vidéo ≈ 1–2 h de 4090 ≈ 0,30–0,70 €.
 
 ---
 *09/10/2026 · sources vérifiées web + API GitHub.*

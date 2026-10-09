@@ -38,5 +38,10 @@
     "date": "2026-10-09T02:22:38",
     "type": "recherche",
     "note": "Dossier clés API gratuites (docs/CLES-API-GRATUITES.md) : GitHub Models via PAT, Mistral Experiment (UE, non-entraînement API), Google AI Studio, Groq/Cerebras, HF 0,10$/mois, OpenRouter free — stack empilable 0 € ; sécurité .env gitignoré ; actualité IA : Mistral Large 4 preview, Cloudflare Clef (décision Apache 2.0 = juges QA gates low-cost), LTX-2.5"
+  },
+  {
+    "date": "2026-10-09T02:35:49",
+    "type": "recherche",
+    "note": "Veille §5 : PewDiePie Ajax/Odysseus (harnais agent local AGPL, weights attendus ; règle anti-distillation ajoutée aux règles de l'Arbitre) + marché location GPU (Vast.ai 0,09-0,59$/h spot, RunPod 0,34-0,69$/h UE + 10$ crédit, Lambda 15$, Colab T4 gratuit = Wan2GP possible à 0 €)"
   }
 ]
