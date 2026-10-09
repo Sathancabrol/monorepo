@@ -1,7 +1,7 @@
 # 🖥 VEILLE — Herald OS, The Agency & les « Agent OS » (09/10/2026)
 
 > **Demande** : vérifier Herald OS, les autres OS agents, « the agency » sur GitHub (~140 agents) ; trouver un système agent plus performant que le nôtre pour s'enrichir, ou tweaker.
-> **Verdict** : rien à remplacer — notre base tient. **Deux adoptions immédiates** (fiches agents + QA gates) et **deux mises sous surveillance** (Herald OS, Hermes Agent) pour l'étape VPS.
+> **Verdict** : rien à remplacer — notre base tient. **Deux adoptions immédiates** (fiches agents + QA gates), **surveillance renforcée** (Herald OS, Hermes Agent, **OmniRoute**) pour l'étape modèles/VPS ; **Wan2GP** = futur atelier vidéo si GPU (màj 09/10 : section 4).
 
 ---
 
@@ -34,6 +34,22 @@
 - 📌 **Herald OS** : alpha à suivre ; concepts « Spaces/Missions/permissions » à copier pour le portail app/.
 - 📌 **Hermes Agent** : candidat n°1 au rôle d'agent résident le jour du VPS (MIT, mémoire-first, MCP) — nécessite une clé modèle.
 - ❌ Pas d'adoption d'AIOS (noyau de recherche, lourd) ni remplacement d'aucun de nos services.
+
+---
+
+## 4. 🔎 MàJ — Wan2GP & OmniRoute (09/10/2026)
+
+**Wan2GP → WanGP** (`deepbeepmeep/Wan2GP`, Python, ~10 200★, push 07/10/2026) : générateur **vidéo IA pour « GPU pauvres »** (dès 6 Go VRAM) — Gradio UI, file d'attente, LoRAs, mode headless + API. Modèles : Wan 2.1/2.2, Minimax H3, LTX-2, Hunyuan Video, Qwen Image, Flux [7](https://github.com/deepbeepmeep/Wan2GP)[8](https://wanvideogenerator.com/blog/wan2gp-free-guide). Attention : licence non standard (NOASSERTION), et le projet alerte sur les sites payants frauduleux qui usurpent son nom. **Verdict : pas adoptable maintenant** (pas de GPU ici, ni de budget pour en louer — le VPS est déjà reporté au 1ᵉʳ revenu). **Candidat « atelier vidéo » du département RÉSEAUX** le jour où une machine GPU existe (locale ou Colab gratuit) : clips pour LinkedIn/Bluesky sans payer d'outil. Alternative immédiate sans GPU : générer les visuels des posts autrement et réserver la vidéo aux offres type O3.
+
+**OmniRoute** (`diegosouzapw/OmniRoute`, TypeScript, MIT, ~74 300★, push hier) : **passerelle IA locale** — UN point d'entrée OpenAI-compatible (`localhost:20128/v1`) derrière lequel il route **359 fournisseurs / 1200+ modèles**, avec **fallback 4 niveaux** (abonnement → clé API → pas cher → gratuit), suivi de quotas en temps réel, compression de tokens RTK+Caveman (−15 à −95 %), serveur MCP (110 outils) + protocole A2A. Tourne sur laptop/VPS/Termux (~15 Mo), `npm install -g omniroute` ou Docker [9](https://github.com/diegosouzapw/OmniRoute)[10](https://devtoollab.com/blog/omniroute-free-ai-gateway)[11](https://hoangyell.com/omniroute-explained/).
+- **Pour nous c'est LA pièce manquante du jour** : le jour où on a des clés/abonnements modèles, OmniRoute devient la couche sous `arena` (accès multi-modèles bon marché pour les duels) et sous le futur portail `app/`.
+- **Pas maintenant** : sans aucun fournisseur de modèle configuré, une passerelle ne route rien — et les free tiers OAuth posent des questions de CGU fournisseurs (à lire avant usage).
+- **Pattern à copier dès maintenant** dans `docs/SYSTEMES-CONFRONTATION-MODELES.md` quand on branchera des modèles : fallback par palier + lockout par modèle (on ne coupe pas tout un fournisseur pour un modèle en échec) + quotas visibles.
+
+| Projet | État | Verdict |
+|---|---|---|
+| Wan2GP (WanGP) | actif, ~10 k★ | 📌 atelier vidéo — condition : accès GPU |
+| OmniRoute | très actif, ~74 k★, MIT | 📌 couche routage modèles — condition : 1ᵉʳ fournisseur/clé ; patterns notés |
 
 ---
 *09/10/2026 · sources vérifiées web + API GitHub.*

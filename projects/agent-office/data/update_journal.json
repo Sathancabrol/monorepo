@@ -28,5 +28,10 @@
     "date": "2026-10-09T02:13:53",
     "type": "outil",
     "note": "Fiches agents par département (convention The Agency) + QA gates : 5 fichiers agents/ couvrant 12 services, tests de couverture, veille Herald OS + The Agency (docs/AGENT-OS-ET-AGENCY-VEILLE.md)"
+  },
+  {
+    "date": "2026-10-09T02:19:43",
+    "type": "recherche",
+    "note": "Veille complétée : Wan2GP (atelier vidéo GPU-poor, condition accès GPU) + OmniRoute (passerelle multi-modèles MIT ~74k★, future couche sous arena/app dès la 1re clé modèle) — docs/AGENT-OS-ET-AGENCY-VEILLE.md section 4"
   }
 ]
