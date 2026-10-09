@@ -137,6 +137,8 @@ tr:hover td{background:#0C0C16}
 .tag.gris{background:#16162A;color:var(--dim);border-color:var(--line)}
 .tag.vide{background:transparent;color:var(--dim-2);border-color:var(--line)}
 .confiance{font:11px var(--mono);color:var(--dim-2)}
+/* marqueur de statut (méthode Frontignan) : lisible même imprimé en noir et blanc */
+.marq{font:14px/1 var(--mono);margin-right:5px;opacity:.95}
 
 /* ------------------------------------------------------------------ aparté */
 .onglets{display:flex;gap:4px;border-bottom:1px solid var(--line);padding:0 10px;

@@ -109,7 +109,8 @@ def build(config: dict | None = None, store: Store | None = None,
         from .core import canonical
         return {"schema": canonical.schema(),
                 "module_schema": canonical.schema("module.schema.json"),
-                "statuts": list(canonical.STATUTS)}
+                "statuts": list(canonical.STATUTS),
+                "marqueurs": canonical.MARQUEURS}
 
     @router.post("/api/canonique/valider")
     def canon_valider(req):

@@ -53,6 +53,14 @@ function toast(msg, type = 'info') {
 }
 
 /* -------------------------------------------------------------------- état */
+// Vocabulaire de lecture (méthode Frontignan) — chargé au démarrage.
+let MARQ = {
+  fact: { marqueur: '✅', libelle: 'Fait vérifié', critere: '' },
+  inference: { marqueur: '≈', libelle: 'Estimation', critere: '' },
+  hypothesis: { marqueur: '≈ ?', libelle: 'Hypothèse', critere: '' },
+  unknown: { marqueur: '❓', libelle: 'Incertain / à vérifier', critere: '' },
+};
+
 const S = {
   vue: 'accueil',
   modules: [],
@@ -805,7 +813,25 @@ async function saisirIndicateur(input) {
 window.saisirIndicateur = saisirIndicateur;
 
 /* ================================================================== OSINT */
+async function chargerMarqueurs() {
+  try { MARQ = (await get('/api/canonique/schema')).marqueurs || MARQ; }
+  catch (e) { /* on garde les valeurs par défaut */ }
+}
+
+/* Fiabilité OSINT → statut canonique → marqueur de lecture.
+   La correspondance est celle du serveur (FIABILITE_OSINT). */
+const M = {
+  statut(p) {
+    const f = (p.fiabilite || 'X').toUpperCase();
+    const s = (f === 'A' || f === 'B') ? 'fact'
+            : f === 'C' ? 'inference'
+            : f === 'D' ? 'hypothesis' : 'unknown';
+    return MARQ[s] || MARQ.unknown;
+  }
+};
+
 async function osint() {
+  if (!MARQ.fact.critere) await chargerMarqueurs();
   const [outils, categories, cas, cadre, registres, besoins] = await Promise.all([
     get('/api/osint/outils'), get('/api/osint/categories'),
     get('/api/osint/cas'), get('/api/osint/cadre'),
@@ -924,7 +950,10 @@ async function casDetail(id) {
         <td>${esc(p.titre)}<div class="meta" style="font-size:11.5px;color:var(--dim)">${nl2br(p.contenu || '')}</div></td>
         <td>${esc(p.source)}<div class="meta mono" style="font-size:11px">${esc((p.url || '').slice(0, 48))}</div></td>
         <td>${esc(p.outil)}</td><td class="mono">${esc(p.collecte_le)}</td>
-        <td><span class="tag ${p.fiabilite === 'A' || p.fiabilite === 'B' ? 'deci' : p.fiabilite === 'D' ? 'ris' : 'act'}">${esc(p.fiabilite)}</span></td>
+        <td title="${esc(M.statut(p).libelle)} : ${esc(M.statut(p).critere)}">
+          <span class="marq">${M.statut(p).marqueur}</span>
+          <span class="tag ${p.fiabilite === 'A' || p.fiabilite === 'B' ? 'deci' : p.fiabilite === 'D' ? 'ris' : 'act'}">${esc(p.fiabilite)}</span>
+        </td>
         <td><button class="petit danger" data-action="suppr-preuve" data-cas="${esc(c.id)}" data-id="${esc(p.id)}">×</button></td>
       </tr>`).join('')}</tbody></table></div>`
       : '<div class="vide">Aucun élément versé au dossier.</div>'}

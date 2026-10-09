@@ -43,8 +43,36 @@ MOTIFS_PII = [
 CHAMPS_ESTIMATION = ("estimation", "projection", "prevision", "score_estime",
                      "valeur_estimee", "extrapolation")
 
+# Producteurs publics : une seule de ces sources suffit à porter un fait.
+# C'est le second terme du critère Frontignan — « croisé ≥ 2 sources
+# indépendantes, OU source officielle primaire ».
+SOURCES_OFFICIELLES = (
+    "insee", "ign", "inpn", "mnhn", "georisques", "brgm", "meteo-france",
+    "meteo france", "geoportail", "etalab", "dgfip", "sirene", "cerema",
+    "ifremer", "dreal", "ddtm", "prefecture", "agglomeration", "agglo",
+    "smbt", "agence de l'eau", "open-meteo", "copernicus", "usgs", "nasa",
+    "inpi", "legifrance", "journal officiel", "anses", "santé publique france",
+)
+
 BLOQUANT = "bloquant"
 SIGNALEMENT = "signalement"
+
+
+def _sources(rec: dict) -> list[str]:
+    """Toutes les sources citées, sous forme de chaînes minuscules."""
+    out = []
+    s = rec.get("source")
+    if isinstance(s, str) and s.strip():
+        out.append(s.strip().lower())
+    for x in (rec.get("sources") or []):
+        if isinstance(x, str) and x.strip():
+            out.append(x.strip().lower())
+    # dédoublonnage en conservant l'ordre
+    return list(dict.fromkeys(out))
+
+
+def _officielle(sources: list[str]) -> bool:
+    return any(any(o in s for o in SOURCES_OFFICIELLES) for s in sources)
 
 
 def _texte(rec) -> str:
@@ -77,6 +105,16 @@ def admissible(rec: dict) -> tuple[bool, list[dict]]:
         ajouter("fait_sans_source", BLOQUANT,
                 "présenté comme un fait mais aucune source : c'est au mieux "
                 "une opinion, au pire une invention")
+
+    # 1 bis. Le critère du « fait vérifié » (méthode Frontignan) : croisé ≥ 2
+    #        sources indépendantes, ou une source officielle primaire.
+    #        Une seule source non officielle ne porte pas un fait vérifié.
+    sources = _sources(rec)
+    if statut == "fact" and len(sources) < 2 and not _officielle(sources):
+        ajouter("fait_non_croise", SIGNALEMENT,
+                f"une seule source ({sources[0] if sources else 'aucune'}) et "
+                f"aucun producteur public reconnu : le critère du fait vérifié "
+                f"demande 2 sources indépendantes ou une source officielle primaire")
 
     # 2. Une observation ne porte jamais de champ d'estimation.
     presents = [c for c in CHAMPS_ESTIMATION if c in rec]

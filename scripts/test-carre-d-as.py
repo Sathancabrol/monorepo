@@ -264,6 +264,26 @@ ok = adm({"id": "t:4", "type": "mesure", "source": "INPN", "status": "fact",
           "observed_at": "2026-09-01T00:00:00"})
 verifier(ok["presentable"] and ok["valide"], "un fait sourcé, daté et unité est accepté")
 
+# la règle du fait vérifié (méthode Frontignan) : 2 sources, ou une source officielle
+non_croise = adm({"id": "t:5", "type": "mesure", "source": "blog de M. Untel",
+                  "status": "fact", "label": "Fréquentation",
+                  "valeur": 1200, "unite": "visiteurs"})
+verifier(any(p["regle"] == "fait_non_croise" for p in non_croise["problemes"]),
+         "un fait sur une seule source privée est signalé")
+officiel = adm({"id": "t:6", "type": "mesure", "source": "INSEE", "status": "fact",
+                "label": "Population", "valeur": 131000, "unite": "habitants"})
+verifier(officiel["presentable"] and not officiel["problemes"],
+         "un fait appuyé par une source officielle est accepté")
+croise = adm({"id": "t:7", "type": "mesure", "source": "Midi Libre",
+              "sources": ["Midi Libre", "agglopole.fr"], "status": "fact",
+              "label": "Budget", "valeur": 242, "unite": "M€"})
+verifier(croise["presentable"] and not croise["problemes"],
+         "un fait croisé sur deux sources est accepté")
+
+mq = api("GET", "/api/canonique/schema")["marqueurs"]
+verifier(mq["fact"]["marqueur"] == "✅" and "sources" in mq["fact"]["critere"],
+         "le vocabulaire de lecture est aligné sur la méthode Frontignan")
+
 # ------------------------------------------------------------------ 8. bilan
 print(f"\n=== {len(produits)} documents produits · "
       f"{len(echecs)} échec(s) ===")

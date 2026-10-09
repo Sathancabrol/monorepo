@@ -36,6 +36,37 @@ STATUTS = ("fact", "inference", "hypothesis", "unknown")
 FIABILITE_OSINT = {"A": "fact", "B": "fact", "C": "inference",
                    "D": "hypothesis", "X": "unknown"}
 
+# Vocabulaire de lecture.
+#
+# On n'invente pas une notation : on reprend celle de la méthode Frontignan
+# (septembre 2026, `projects/frontignan`, dossier d'appui pour une commune de
+# Sète Agglopôle Méditerranée — la même agglomération). Elle a déjà servi sur
+# ce territoire, avec 249 sources datées. La reprendre évite d'avoir deux
+# langages pour le même destinataire.
+MARQUEURS = {
+    "fact": {
+        "marqueur": "✅", "libelle": "Fait vérifié",
+        "critere": "croisé ≥ 2 sources indépendantes, ou source officielle primaire",
+    },
+    "inference": {
+        "marqueur": "≈", "libelle": "Estimation",
+        "critere": "ordre de grandeur, source unique, ou calcul reconstitué",
+    },
+    "hypothesis": {
+        "marqueur": "≈ ?", "libelle": "Hypothèse",
+        "critere": "projection non confirmée",
+    },
+    "unknown": {
+        "marqueur": "❓", "libelle": "Incertain / à vérifier",
+        "critere": "contradiction entre sources ou donnée manquante",
+    },
+}
+
+
+def marque(statut: str) -> dict:
+    """Le marqueur et le critère d'un statut. Jamais d'exception."""
+    return MARQUEURS.get(statut, MARQUEURS["unknown"])
+
 
 def _charger(nom: str) -> dict:
     return json.loads((ICI / nom).read_text(encoding="utf-8"))
