@@ -204,6 +204,46 @@ def api_fs_file(project: str = Query(...), path: str = Query(...)):
     return {"name": target.name, "path": path, "size": size, "content": text, "ext": suffix}
 
 # preview static serving - MUST be after api
+
+# -------------------------------------------------------------
+# BTP Multi-Agent Autonomous Operations API
+# -------------------------------------------------------------
+try:
+    import sys
+    sys.path.insert(0, str(PROJECTS / "btp-conduite-travaux" / "engine"))
+    from btp_multi_agent import btp_agent_system
+except Exception as e:
+    btp_agent_system = None
+
+@app.get("/api/btp/agents")
+def get_btp_agents():
+    if not btp_agent_system:
+        return {"error": "BTP Agent System not initialized"}
+    return {"agents": btp_agent_system.agents}
+
+@app.post("/api/btp/lifecycle/run")
+def run_btp_lifecycle(project_id: str = Query("barbazan_giratoire")):
+    if not btp_agent_system:
+        raise HTTPException(500, "BTP Agent System unavailable")
+    result = btp_agent_system.run_automated_lifecycle(project_id)
+    return result
+
+@app.post("/api/btp/sensor/event")
+async def post_sensor_event(request: Request):
+    if not btp_agent_system:
+        raise HTTPException(500, "BTP Agent System unavailable")
+    data = await request.json()
+    sensor_type = data.get("sensor_type", "ASPHALT_THERMAL_CAM")
+    sensor_data = data.get("data", {})
+    res = btp_agent_system.process_sensor_event(sensor_type, sensor_data)
+    return res
+
+@app.get("/api/btp/audit/ledger")
+def get_btp_audit_ledger(limit: int = 50):
+    if not btp_agent_system:
+        raise HTTPException(500, "BTP Agent System unavailable")
+    return {"ledger": btp_agent_system.ledger.get_entries(limit)}
+
 @app.get("/preview/{project}/{path:path}")
 def preview_serve(project: str, path: str):
     # empty path => try preview entry

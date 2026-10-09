@@ -1,0 +1,964 @@
+# -*- coding: utf-8 -*-
+import json
+import os
+import sys
+
+print("Applying Patch v73: Fix Menu Routing (Aliasing), Remove Duplicate Scripts in JS3, and Ultra-Compact Sleek No-Scroll HUD...")
+
+# ==============================================================================
+# 1. UPDATE section_js_part3.py - Remove duplicate legacy V60 block at the bottom
+# ==============================================================================
+with open('scripts/section_js_part3.py', 'r', encoding='utf-8') as f:
+    js3 = f.read()
+
+# Locate the start of the duplicate block
+cut_pos = js3.find("/* ========================================================================== */\n    /* V60: LEFT FLYOUT DRAWER & NAVIGATION CONTROLLER")
+if cut_pos == -1:
+    cut_pos = js3.find("V60: LEFT FLYOUT DRAWER & NAVIGATION CONTROLLER")
+
+if cut_pos != -1:
+    print(f"Trimming duplicate legacy block from section_js_part3.py at position {cut_pos} (length was {len(js3)})")
+    js3 = js3[:cut_pos].rstrip() + "\n    </script>\n\"\"\"\n"
+    with open('scripts/section_js_part3.py', 'w', encoding='utf-8') as f:
+        f.write(js3)
+    print("Cleaned section_js_part3.py successfully!")
+else:
+    print("V60 duplicate block not found in section_js_part3.py, checking end of file...")
+
+# ==============================================================================
+# 2. UPDATE section_js_part1.py - Complete Tab Aliasing & Flawless Drawer Routing
+# ==============================================================================
+with open('scripts/section_js_part1.py', 'r', encoding='utf-8') as f:
+    js1 = f.read()
+
+# Replace switchNav implementation in section_js_part1.py with a robust aliased version
+old_switch_nav = """function switchNav(tabId, btn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+        const target = document.getElementById('tab-' + tabId);
+        if (target) target.classList.add('active');
+        if (btn) btn.classList.add('active');
+
+        currentNav = tabId;"""
+
+new_switch_nav = """window.tabAliases = {
+        'cockpit': 'cockpit',
+        'company': 'company',
+        'benchmarking': 'benchmark',
+        'benchmark': 'benchmark',
+        'legal_vault': 'archives',
+        'archives': 'archives',
+        'audit_blockchain': 'ledger',
+        'ledger': 'ledger',
+        'projects_hub': 'projects_hub',
+        'projects': 'projects_hub',
+        'planning_gantt': 'planning',
+        'planning': 'planning',
+        'pointage_terrain': 'compagnon_mobile',
+        'compagnon_mobile': 'compagnon_mobile',
+        'rdc_pesee': 'rdc',
+        'rdc': 'rdc',
+        'devis_express': 'sdp',
+        'sdp': 'sdp',
+        'technique_analyse': 'schemas',
+        'schemas': 'schemas',
+        'watchtower': 'simulator',
+        'simulator': 'simulator',
+        'safety_qse': 'safety',
+        'safety': 'safety',
+        'opbtp': 'opbtp',
+        'materiel_depot': 'depot',
+        'depot': 'depot',
+        'fleet': 'fleet',
+        'catalog': 'catalog',
+        'fournisseurs': 'procurement',
+        'procurement': 'procurement',
+        'rh_personnel': 'hr',
+        'hr': 'hr',
+        'ccag_travaux': 'docs',
+        'docs': 'docs',
+        'obsidian_wiki': 'obsidian',
+        'obsidian': 'obsidian'
+    };
+
+    function switchNav(rawTabId, btn) {
+        const tabId = (window.tabAliases && window.tabAliases[rawTabId]) ? window.tabAliases[rawTabId] : rawTabId;
+        
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.drawer-nav-item').forEach(b => b.classList.remove('active'));
+
+        const target = document.getElementById('tab-' + tabId);
+        if (target) {
+            target.classList.add('active');
+        } else {
+            console.warn('Tab not found for ID:', tabId, 'raw ID was:', rawTabId);
+        }
+
+        if (btn && btn.classList) {
+            btn.classList.add('active');
+        }
+
+        // Auto close flyout drawer on navigation
+        if (typeof window.toggleSidebarDrawer === 'function') {
+            window.toggleSidebarDrawer(false);
+        }
+
+        currentNav = tabId;"""
+
+js1 = js1.replace(old_switch_nav, new_switch_nav)
+
+with open('scripts/section_js_part1.py', 'w', encoding='utf-8') as f:
+    f.write(js1)
+print("Updated section_js_part1.py with universal switchNav tab routing!")
+
+# ==============================================================================
+# 3. UPDATE section_head_and_styles.py - Ultra-Compact Single-Line No-Overflow HUD
+# ==============================================================================
+head_styles_code = r'''# -*- coding: utf-8 -*-
+
+def get_head_and_styles():
+    return r"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Autonomous Command Suite — Direction & Conduite de Travaux</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        :root {
+            /* HIGH-LEGIBILITY ULTRA-CRISP MODERN DARK THEME */
+            --bg-base: #060913;
+            --bg-surface: #0a0f1d;
+            --bg-card: #0f172a;
+            --bg-card-hover: #1e293b;
+            --bg-card-alt: #162035;
+            --bg-input: #080d1a;
+            
+            --border: rgba(56, 189, 248, 0.22);
+            --border-light: rgba(148, 163, 184, 0.32);
+            --border-focus: #38bdf8;
+            --border-accent: rgba(56, 189, 248, 0.5);
+
+            --text-main: #ffffff;
+            --text-primary: #ffffff;
+            --text-secondary: #f8fafc;
+            --text-muted: #cbd5e1;
+            --text-dim: #94a3b8;
+
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.35);
+            --emerald: #34d399;
+            --amber: #fbbf24;
+            --rose: #f87171;
+            --purple: #c084fc;
+            --blue: #60a5fa;
+            --muscat: #d97706;
+
+            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 10px;
+            --radius-xl: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 13.5px;
+            line-height: 1.45;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.6); }
+
+        /* HIGH-CONTRAST TEXT UTILITIES */
+        .text-cyan { color: #38bdf8 !important; }
+        .text-emerald { color: #34d399 !important; }
+        .text-amber { color: #fbbf24 !important; }
+        .text-purple { color: #c084fc !important; }
+        .text-rose { color: #f87171 !important; }
+        .text-white { color: #ffffff !important; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            white-space: nowrap;
+            line-height: 1.2;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+            box-shadow: 0 3px 12px rgba(2, 132, 199, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-surface);
+            color: #ffffff;
+            border: 1px solid var(--border-light);
+            font-weight: 700;
+        }
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            color: #ffffff;
+            border-color: var(--cyan);
+            transform: translateY(-1px);
+        }
+        .btn-secondary.active {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: var(--cyan);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.45);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.25);
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.4);
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 0.85rem 1rem;
+            box-shadow: 0 3px 16px rgba(0, 0, 0, 0.35);
+            position: relative;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .card-title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        /* HIGH-CONTRAST COMPACT KPI HERO CARDS */
+        .kpi-card {
+            background: #0d1527 !important;
+            border: 1px solid rgba(56, 189, 248, 0.3) !important;
+            border-radius: var(--radius-md) !important;
+            padding: 0.6rem 0.85rem !important;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4) !important;
+            transition: all 0.18s ease;
+        }
+        .kpi-card:hover {
+            border-color: #38bdf8 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25) !important;
+        }
+        .kpi-label {
+            font-size: 0.72rem !important;
+            font-weight: 800 !important;
+            color: #f8fafc !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            margin-bottom: 0.15rem !important;
+            display: block !important;
+        }
+        .kpi-val {
+            font-size: 1.25rem !important;
+            font-weight: 900 !important;
+            font-family: var(--font-mono) !important;
+            color: #ffffff !important;
+            line-height: 1.2 !important;
+        }
+        .kpi-sub {
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            color: #93c5fd !important;
+            margin-top: 0.2rem !important;
+            display: block !important;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; }
+        .grid-split-40-60 { display: grid; grid-template-columns: 4fr 6fr; gap: 0.85rem; }
+        .grid-split-60-40 { display: grid; grid-template-columns: 6fr 4fr; gap: 0.85rem; }
+
+        @media (max-width: 1150px) {
+            .grid-2, .grid-3, .grid-4, .grid-split-40-60, .grid-split-60-40 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ======================================================= */
+        /* 1. TOP 4X STRATEGY COMMAND HUD BAR (ULTRA COMPACT 34px) */
+        /* ======================================================= */
+        .hud-topbar-4x {
+            background: rgba(6, 9, 19, 0.98);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 2px 8px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 9000;
+            box-shadow: 0 3px 20px rgba(0, 0, 0, 0.85);
+            gap: 0.45rem;
+            width: 100%;
+            min-height: 34px;
+            max-height: 36px;
+            overflow: hidden;
+        }
+
+        .drawer-toggle-btn {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.35) 0%, rgba(180, 83, 9, 0.5) 100%);
+            border: 1px solid #f59e0b;
+            color: #fef08a;
+            padding: 2px 7px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            transition: all 0.15s ease;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+            flex-shrink: 0;
+            user-select: none;
+            line-height: 1.1;
+        }
+        .drawer-toggle-btn:hover {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.6) 0%, rgba(180, 83, 9, 0.8) 100%);
+            border-color: #fbbf24;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.6);
+        }
+
+        .hud-4x-metrics {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 0.3rem;
+            flex: 1;
+            justify-content: space-between;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .kpi-chip-4x {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: var(--radius-sm);
+            padding: 1px 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 1;
+            user-select: none;
+        }
+        .kpi-chip-4x:hover {
+            border-color: var(--cyan);
+            background: rgba(22, 34, 59, 0.98);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+        .kpi-chip-4x span:first-child {
+            font-size: 0.82rem;
+            line-height: 1;
+        }
+        .kpi-chip-lbl {
+            font-size: 0.54rem;
+            font-weight: 800;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: block;
+            line-height: 1;
+        }
+        .kpi-chip-val {
+            font-size: 0.74rem;
+            font-weight: 900;
+            font-family: var(--font-mono);
+            line-height: 1.1;
+            color: #ffffff;
+        }
+        .kpi-chip-badge {
+            font-size: 0.58rem;
+            font-weight: 800;
+            padding: 0px 4px;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            line-height: 1.1;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.6); }
+        .badge-info { background: rgba(56, 189, 248, 0.25); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.6); }
+        .badge-warning { background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.6); }
+
+        .hud-account-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(22, 34, 59, 0.98) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            padding: 1px 6px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+            user-select: none;
+        }
+        .hud-account-card:hover {
+            border-color: #38bdf8;
+            background: rgba(2, 132, 199, 0.35);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.5);
+        }
+
+        /* ======================================================= */
+        /* 2. BREAKING NEWS TICKER BAR (ULTRA SLEEK 22px)          */
+        /* ======================================================= */
+        .news-ticker-bar {
+            background: rgba(10, 15, 29, 0.98);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 1px 8px;
+            font-size: 0.74rem;
+            gap: 0.5rem;
+            overflow: hidden;
+            position: sticky;
+            top: 34px;
+            z-index: 8990;
+            min-height: 22px;
+            max-height: 24px;
+        }
+        .ticker-mode-btns {
+            display: flex;
+            gap: 2px;
+            background: var(--bg-input);
+            padding: 1px;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .ticker-mode-btn {
+            background: transparent;
+            border: none;
+            color: #cbd5e1;
+            font-size: 0.58rem;
+            font-weight: 800;
+            padding: 1px 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            letter-spacing: 0.02em;
+        }
+        .ticker-mode-btn:hover {
+            color: #ffffff;
+            background: rgba(255,255,255,0.12);
+        }
+        .ticker-mode-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+        }
+        .ticker-content-track {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .ticker-text {
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.74rem;
+            animation: tickerSlide 45s linear infinite;
+        }
+        .ticker-text:hover {
+            animation-play-state: paused;
+        }
+        @keyframes tickerSlide {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ======================================================= */
+        /* 3. LEFT FLYOUT DRAWER (SLIDING SIDEBAR)                 */
+        /* ======================================================= */
+        .sidebar-drawer {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            width: 320px !important;
+            max-width: 90vw !important;
+            background: #080d1a !important;
+            border-right: 1px solid rgba(56, 189, 248, 0.4) !important;
+            z-index: 9999999 !important;
+            transform: translateX(-100%);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            box-shadow: 20px 0 50px rgba(0, 0, 0, 0.95) !important;
+            visibility: hidden;
+        }
+        .sidebar-drawer.active, .sidebar-drawer.open {
+            transform: translateX(0) !important;
+            visibility: visible !important;
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed !important;
+            top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+            background: rgba(3, 7, 18, 0.85) !important;
+            backdrop-filter: blur(6px) !important;
+            -webkit-backdrop-filter: blur(6px) !important;
+            z-index: 9999998 !important;
+            opacity: 0;
+            transition: opacity 0.2s ease !important;
+        }
+        .sidebar-backdrop.active, .sidebar-backdrop.open {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        .drawer-header {
+            padding: 0.75rem 1rem;
+            background: #050812;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .drawer-title {
+            font-size: 0.86rem;
+            font-weight: 900;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .drawer-close-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 26px;
+            height: 26px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 800;
+            transition: all 0.15s ease;
+        }
+        .drawer-close-btn:hover {
+            color: #ffffff;
+            background: #e11d48;
+            border-color: #e11d48;
+        }
+
+        .drawer-search-box {
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(12, 19, 34, 0.8);
+        }
+        .drawer-search-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 0.45rem 0.7rem;
+            font-size: 0.82rem;
+            color: #ffffff;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+        .drawer-search-input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.75rem 0.65rem;
+        }
+
+        .drawer-pillar {
+            margin-bottom: 0.85rem;
+        }
+        .drawer-pillar-title {
+            font-size: 0.68rem;
+            font-weight: 900;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.25rem 0.45rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+            margin-bottom: 0.3rem;
+        }
+
+        .drawer-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            width: 100%;
+            padding: 0.45rem 0.65rem;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            color: #f1f5f9;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s ease;
+            margin-bottom: 2px;
+        }
+        .drawer-nav-item:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: #ffffff;
+            transform: translateX(2px);
+        }
+        .drawer-nav-item.active {
+            background: linear-gradient(90deg, rgba(2, 132, 199, 0.45) 0%, rgba(6, 182, 212, 0.2) 100%);
+            border-color: #38bdf8;
+            color: #38bdf8;
+            font-weight: 900;
+            box-shadow: inset 3px 0 0 #38bdf8;
+        }
+
+        /* ======================================================= */
+        /* 4. MAIN APP CONTAINER & MODALS                          */
+        /* ======================================================= */
+        .app-main {
+            flex: 1;
+            padding: 0.35rem 0.65rem 2rem 0.65rem;
+            max-width: 1780px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-panel {
+            display: none;
+            padding-bottom: 2rem;
+            animation: fadeIn 0.15s ease forwards;
+        }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-backdrop, .modal-overlay {
+            display: none;
+            position: fixed !important;
+            top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+            background: rgba(3, 7, 18, 0.88) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            z-index: 9999999 !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 1rem !important;
+        }
+        .modal-backdrop.active, #account-modal.active {
+            display: flex !important;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 820px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .input-group { margin-bottom: 0.65rem; }
+        .input-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #f1f5f9;
+            margin-bottom: 0.25rem;
+        }
+        .input-field, .select-field {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 0.45rem 0.65rem;
+            color: #ffffff;
+            font-size: 0.82rem;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.15s ease;
+        }
+        .input-field:focus, .select-field:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            color: #f8fafc;
+        }
+        thead tr {
+            background: var(--bg-surface);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 2px solid var(--border);
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.12s ease;
+        }
+        tbody tr:hover {
+            background: rgba(56, 189, 248, 0.08);
+        }
+        td {
+            padding: 6px 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ======================================================= -->
+    <!-- 1. TOP 4X STRATEGY COMMAND HUD BAR (ULTRA COMPACT 34px) -->
+    <!-- ======================================================= -->
+    <header class="hud-topbar-4x">
+        <!-- PROMINENT FLYOUT DRAWER BUTTON WITH MUSCAT HELMET -->
+        <button class="drawer-toggle-btn" id="drawer-toggle-btn" onclick="window.toggleSidebarDrawer()" title="Ouvrir le menu de navigation (Volant latéral)">
+            <span style="font-size:0.95rem;">🪖</span>
+            <span>MENU (21) ☰</span>
+        </button>
+
+        <!-- CENTER: 4X ENTERPRISE MACRO INDICATORS -->
+        <div class="hud-4x-metrics">
+            <!-- 1. Trésorerie -->
+            <div class="kpi-chip-4x" id="hud-chip-tresorerie" onclick="window.switchNav('company', this)" title="Caisse active & BFR">
+                <span>💶</span>
+                <div>
+                    <span class="kpi-chip-lbl">TRÉSORERIE</span>
+                    <span class="kpi-chip-val" style="color:#34d399;" id="caisse-balance-top">1 450 000 €</span>
+                </div>
+                <span class="kpi-chip-badge badge-success" id="hud-tresorerie-badge">+14.2k€/m</span>
+            </div>
+
+            <!-- 2. Chantiers -->
+            <div class="kpi-chip-4x" id="hud-chip-chantiers" onclick="window.switchNav('projects_hub', this)" title="Chantiers en cours d'exécution">
+                <span>🏗️</span>
+                <div>
+                    <span class="kpi-chip-lbl">CHANTIERS</span>
+                    <span class="kpi-chip-val" style="color:#38bdf8;" id="hud-chantiers-val">4 / 4 Actifs</span>
+                </div>
+                <span class="kpi-chip-badge badge-info" id="hud-chantiers-badge">18.5 M€ CA</span>
+            </div>
+
+            <!-- 3. Flotte Engins -->
+            <div class="kpi-chip-4x" id="hud-chip-flotte" onclick="window.switchNav('materiel_depot', this)" title="Disponibilité parc matériel">
+                <span>🚜</span>
+                <div>
+                    <span class="kpi-chip-lbl">FLOTTE TP</span>
+                    <span class="kpi-chip-val" style="color:#fbbf24;" id="hud-flotte-val">14 / 14 Dispo</span>
+                </div>
+                <span class="kpi-chip-badge badge-warning" id="hud-flotte-badge">100% VGP</span>
+            </div>
+
+            <!-- 4. Effectif Salarié -->
+            <div class="kpi-chip-4x" id="hud-chip-effectif" onclick="window.switchNav('rh_personnel', this)" title="Personnel de chantier">
+                <span>👷</span>
+                <div>
+                    <span class="kpi-chip-lbl">EFFECTIF</span>
+                    <span class="kpi-chip-val" style="color:#f8fafc;" id="hud-effectif-val">68 Salariés</span>
+                </div>
+                <span class="kpi-chip-badge badge-success" id="hud-effectif-badge">100% AIPR</span>
+            </div>
+
+            <!-- 5. Sécurité QSE -->
+            <div class="kpi-chip-4x" id="hud-chip-securite" onclick="window.switchNav('safety_qse', this)" title="Score Sécurité & Prévention">
+                <span>🛡️</span>
+                <div>
+                    <span class="kpi-chip-lbl">SÉCURITÉ</span>
+                    <span class="kpi-chip-val" style="color:#34d399;" id="hud-qse-val">98.5% Conforme</span>
+                </div>
+                <span class="kpi-chip-badge badge-success" id="hud-qse-badge">0 Accid.</span>
+            </div>
+
+            <!-- 6. Météo Chantier -->
+            <div class="kpi-chip-4x" id="hud-chip-meteo" onclick="window.switchNav('cockpit', this)" title="Conditions météorologiques chantiers">
+                <span>⛅</span>
+                <div>
+                    <span class="kpi-chip-lbl">MÉTÉO LOCALE</span>
+                    <span class="kpi-chip-val" style="color:#38bdf8;" id="hud-meteo-val">Sète • 22°C</span>
+                </div>
+                <span class="kpi-chip-badge badge-info" id="hud-meteo-badge">Vent 14 km/h</span>
+            </div>
+        </div>
+
+        <!-- RIGHT: UNIFIED ACCOUNT & IDENTITY TRIGGER -->
+        <div class="hud-account-card" id="hud-account-card" onclick="window.openAccountModal()" title="Gestionnaire de compte, identité et hiérarchie">
+            <span style="font-size:0.95rem;">👤</span>
+            <div>
+                <span style="font-size:0.60rem; color:#cbd5e1; display:block; line-height:1;" id="hud-user-identity">👑 Romain CARAÏ</span>
+                <span style="font-size:0.74rem; font-weight:900; color:#38bdf8; line-height:1.1;" id="hud-company-name-display">Colas Sète ▾</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================= -->
+    <!-- 2. BREAKING NEWS TICKER WITH MODES (SLEEK 22px)         -->
+    <!-- ======================================================= -->
+    <div class="news-ticker-bar">
+        <div class="ticker-mode-btns">
+            <button class="ticker-mode-btn active" id="ticker-btn-general" onclick="window.setTickerMode('general')">📢 GÉNÉRAL</button>
+            <button class="ticker-mode-btn" id="ticker-btn-finance" onclick="window.setTickerMode('finance')">💰 FINANCE</button>
+            <button class="ticker-mode-btn" id="ticker-btn-security" onclick="window.setTickerMode('security')">🚨 SÉCURITÉ</button>
+            <button class="ticker-mode-btn" id="ticker-btn-logistics" onclick="window.setTickerMode('logistics')">🚛 LOGISTIQUE</button>
+        </div>
+        <div class="ticker-content-track">
+            <span class="ticker-text" id="live-ticker-text">
+                📢 DIRECT EXÉCUTION : Colas Agence Sète • Chantier Quai Richelieu (Hydromer) : Enrobés percolés Colstrong en cours • Voie Verte Bouzigues-Sète : Revêtement Colstab Ostrea® validé • Séparation Pluvial Caraussane / Simone Veil active • QSE 98.5%.
+            </span>
+        </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- 3. LEFT FLYOUT DRAWER (SLIDING SIDEBAR)                 -->
+    <!-- ======================================================= -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="window.toggleSidebarDrawer(false)"></div>
+    <aside class="sidebar-drawer" id="sidebar-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">🪖 Navigation Stratégique (21 Modules)</div>
+            <button class="drawer-close-btn" onclick="window.toggleSidebarDrawer(false)">&times;</button>
+        </div>
+
+        <div class="drawer-search-box">
+            <input type="text" class="drawer-search-input" id="drawerSearchInput" placeholder="🔍 Rechercher un module, calcul, formule..." oninput="window.filterDrawerItems()">
+        </div>
+
+        <div class="drawer-body">
+            <!-- PÔLE I -->
+            <div class="drawer-pillar">
+                <div class="drawer-pillar-title">🏛️ Pôle I : Direction & Stratégie</div>
+                <button class="drawer-nav-item active" onclick="window.switchNav('cockpit', this);">🌐 Cockpit SIG & IA Agents</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('company', this);">💶 Entreprise, Caisse & Trésorerie</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('benchmarking', this);">📊 Benchmark & Comparateur Prix</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('legal_vault', this);">🔒 Coffre Légal & Marchés Publics</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('audit_blockchain', this);">⛓️ Registre d'Audit Blockchain</button>
+            </div>
+
+            <!-- PÔLE II -->
+            <div class="drawer-pillar">
+                <div class="drawer-pillar-title">🏗️ Pôle II : Chantiers & Exécution</div>
+                <button class="drawer-nav-item" onclick="window.switchNav('projects_hub', this);">🏗️ Hub Chantiers & Avancement</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('planning_gantt', this);">📅 Planning Gantt 4D & Intempéries</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('pointage_terrain', this);">📱 Mode Terrain Compagnon</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('rdc_pesee', this);">📝 Journal RDC & Pesées Enrobés</button>
+            </div>
+
+            <!-- PÔLE III -->
+            <div class="drawer-pillar">
+                <div class="drawer-pillar-title">📐 Pôle III : Ingénierie & Études de Prix</div>
+                <button class="drawer-nav-item" onclick="window.switchNav('devis_express', this);">📐 28 SDP / DQE / Devis Express</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('technique_analyse', this);">🧪 Formules, Talus 3D & 2D Enrobés</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('watchtower', this);">🛰️ Watch Tower SIG & Cartes HD</button>
+            </div>
+
+            <!-- PÔLE IV -->
+            <div class="drawer-pillar">
+                <div class="drawer-pillar-title">🦺 Pôle IV : Sécurité, Moyens & RH</div>
+                <button class="drawer-nav-item" onclick="window.switchNav('safety_qse', this);">🦺 Sécurité AIPR & 1/4h QSE</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('materiel_depot', this);">🚜 Flotte Engins & Dépôt Stocks</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('fournisseurs', this);">🏢 Fournisseurs & Centrales TP</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('rh_personnel', this);">👥 Équipe Salariés & Compétences</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('ccag_travaux', this);">⚖️ Normes CCTG & Guide CCAG</button>
+                <button class="drawer-nav-item" onclick="window.switchNav('obsidian_wiki', this);">🧠 Base de Connaissances Obsidian</button>
+            </div>
+        </div>
+
+        <div style="padding:0.65rem 0.85rem; background:#050812; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <button class="btn btn-primary" style="width:100%; font-size:0.78rem;" onclick="window.openAccountModal(); window.toggleSidebarDrawer(false);">👤 Gérer Entreprise / Compte</button>
+        </div>
+    </aside>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="app-main">
+"""
+'''
+
+with open('scripts/section_head_and_styles.py', 'w', encoding='utf-8') as f:
+    f.write(head_styles_code)
+print("Updated section_head_and_styles.py with ultra-compact single line HUD and clean styles!")
+
+print("Patch v73 complete.")
