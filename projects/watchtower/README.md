@@ -963,3 +963,7 @@ grep -i ais audit/reference/REGISTRE.tsv                   # version plate ; cut
 `REFERENCE.md`, `REGISTRE-OUTILS.json`, `REGISTRE.tsv` et `AGENTS.md` sont **générés** : on édite
 `audit/reference/generate-reference.py`, puis `python3 audit/reference/generate-reference.py`.
 Le CI (`git diff --exit-code` après régénération) refuse toute édition manuelle du généré.
+
+## 🌊 Cas d'usage local — registre des signaux du bassin de Thau
+
+Watchtower est destiné à devenir la **couche « screen »** d'un registre territorial de signalements (odeurs, déchets, mobilité, eau, logement, urbanisme) : chaque point sur la carte renvoie à une ligne du registre `data/thau-signaux.json` (schéma et niveaux de preuve A/B/C dans `docs/WATCHTOWER-THAU-REGISTRE.md`).
