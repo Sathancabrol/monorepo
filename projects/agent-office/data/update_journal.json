@@ -63,5 +63,10 @@
     "date": "2026-10-09T05:44:45",
     "type": "outil",
     "note": "Watchtower → registre de signaux bassin de Thau : docs/WATCHTOWER-THAU-REGISTRE.md (vérifs dialogue citoyen 7 dates, ZIFMAR 2 consultation 12/10-12/01 + réunion 16/10 salle Voltaire, ATMO odeurs Signal'Air, dossier ISDI Pech Michel avec prudence) + data/thau-signaux.json 7 signaux seed (niveaux preuve A/B/C) + 3 tâches planning (16/10, 17/11, 26/11)"
+  },
+  {
+    "date": "2026-10-09T05:48:03",
+    "type": "recherche",
+    "note": "Analyse 2 transcripts YouTube (docs/VEILLE-PLAYBOOK-APP-SOLO-ET-TIKTOK.md) : playbook app solo = O1 créneau emploi validé + checklist durcissement app/ + distribution UGC (après 1er revenu) ; modèle TikTok Shop/personnages IA REJETÉ (entonnoir, fausses personas, reprise contenus) mais métrique conversions>vues adoptée (fiche marché)"
   }
 ]

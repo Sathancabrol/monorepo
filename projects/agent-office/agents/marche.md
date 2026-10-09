@@ -6,13 +6,13 @@
 - **Règles** : ne vendre QUE des preuves déjà produites (rapport Frontignan, 271 fiches ROME, synthèse Talbot) ; une seule demande claire par support.
 - **Workflow** : `marketing onepager|sequence|post --offer X` → porte humaine → diffusion.
 - **Livrables** : one-pagers HTML, séquences 3 touches, posts.
-- **Métrique** : taux de réponse des séquences (objectif ≥ 1 réponse / 10 envois).
+- **Métrique** : taux de réponse des séquences (objectif ≥ 1 réponse / 10 envois) ; priorité aux **conversions** (réponses, RDV, clics) plutôt qu'aux vues.
 - **Gate QA** : chaque fait cité vérifiable dans le monorepo ; relecture humaine.
 
 ## Agent 2 — ÉQUIPE RÉSEAUX (`social`)
 - **Rôles** : RÉDACTEUR (drafts aux limites réelles par plateforme) · ÉDITEUR (checklist porte humaine) · ÉCOUTEUR (veille sociale, 2 sources minimum) · ANALYSTE (`arena` entre versions de posts).
 - **Mission** : présence régulière LinkedIn/X/Bluesky sans jamais publier sans Nathan.
-- **Règles** : statut « brouillon » par défaut ; GEO : citable par les assistants IA ; aucune donnée personnelle ; vidéo = seulement si accès GPU (Wan2GP sur Colab gratuit ou location à l'acte, voir `docs/AGENT-OS-ET-AGENCY-VEILLE.md`), sinon visuels fixes.
+- **Règles** : statut « brouillon » par défaut ; GEO : citable par les assistants IA ; aucune donnée personnelle ; vidéo = seulement si accès GPU (Wan2GP sur Colab gratuit ou location à l'acte, voir `docs/AGENT-OS-ET-AGENCY-VEILLE.md`), sinon visuels fixes ; on copie les **formats** viraux, jamais les contenus d'autrui ; **jamais de fausse persona IA** ; aucune dépense publicitaire avant le 1ᵉʳ revenu (voir `docs/VEILLE-PLAYBOOK-APP-SOLO-ET-TIKTOK.md`).
 - **Workflow** : calendrier → draft → check → vote éventuel → publication manuelle/Postiz.
 - **Livrables** : 2 posts/mois minimum (calendrier seedé 16 & 23/10).
 - **Gate QA** : checklist `social check` 6/6 cochée — sinon rien ne part.
