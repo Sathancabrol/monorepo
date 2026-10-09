@@ -129,6 +129,26 @@ class TestKnowledge(unittest.TestCase):
         con.close()
 
 
+class TestAgents(unittest.TestCase):
+    def test_fiches_departements(self):
+        agents_dir = Path(__file__).resolve().parent.parent / "agents"
+        fichiers = ["finance.md", "marche.md", "recherche.md", "operations.md", "gouvernance.md"]
+        for f in fichiers:
+            p = agents_dir / f
+            self.assertTrue(p.exists(), f"manquant : {f}")
+            contenu = p.read_text(encoding="utf-8")
+            for section in ("Identité", "Mission", "Règles", "Gate QA"):
+                self.assertIn(section, contenu, f"section {section} absente de {f}")
+
+    def test_couverture_services(self):
+        agents_dir = Path(__file__).resolve().parent.parent / "agents"
+        tout = "".join((agents_dir / f).read_text(encoding="utf-8")
+                       for f in ("finance.md", "marche.md", "recherche.md", "operations.md", "gouvernance.md"))
+        for service in ("budget", "invoices", "marketing", "prospects", "research",
+                        "mail", "planning", "arena", "social", "knowledge", "update", "registry"):
+            self.assertIn(f"`{service}`", tout, f"service {service} sans fiche agent")
+
+
 class TestRegistry(unittest.TestCase):
     def test_collect(self):
         caps = registry.collect()

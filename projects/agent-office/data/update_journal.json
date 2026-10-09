@@ -23,5 +23,10 @@
     "date": "2026-10-09T02:01:11",
     "type": "outil",
     "note": "knowledge : mémoire SQLite + graphe de connaissances (pattern vidéo VPS/SQLite/KG)"
+  },
+  {
+    "date": "2026-10-09T02:13:53",
+    "type": "outil",
+    "note": "Fiches agents par département (convention The Agency) + QA gates : 5 fichiers agents/ couvrant 12 services, tests de couverture, veille Herald OS + The Agency (docs/AGENT-OS-ET-AGENCY-VEILLE.md)"
   }
 ]

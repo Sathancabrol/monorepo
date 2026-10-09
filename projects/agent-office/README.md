@@ -31,6 +31,15 @@ python3 -m agent_office budget report     # budget réel (seedé depuis USER/FIN
 
 Tous : `python3 -m agent_office <service> --help`.
 
+## 🤝 Les agents (fiches par département — convention The Agency)
+
+Chaque agent a sa fiche : identité, mission, règles, workflow, livrables, métriques, gate QA (QA gate obligatoire avant tout livrable, comme chez The Agency).
+- `agents/finance.md` — budget, invoices
+- `agents/marche.md` — marketing, social, prospects
+- `agents/recherche.md` — research, knowledge
+- `agents/operations.md` — mail, planning, update
+- `agents/gouvernance.md` — arena, registry
+
 ## 📁 Structure
 
 ```

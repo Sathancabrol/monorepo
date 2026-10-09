@@ -21,6 +21,7 @@ DIRECTION — registry (tools.json) : qui sait faire quoi, doctor = contrôle qu
 ```
 
 Implémentation : **`projects/agent-office/`** — 12 services, zéro dépendance (stdlib), 100 % testé (`tests/`), invocations CLI `python3 -m agent_office <service>`.
+Fiches agents : **`projects/agent-office/agents/`** — 5 départements, un agent par service (identité/mission/règles/workflow/livrables/métriques/gate QA), convention The Agency (analyse dans `docs/AGENT-OS-ET-AGENCY-VEILLE.md`).
 Méthode de référence : Jake Van Clief — agent = instructions + modèle loué + portée, 4 questions par dossier (outcome/how/touch/human-check) ; transcript et analyse dans `docs/INTERNET-ET-MARKETING-AGENTIQUE.md`.
 Auto-mise à jour : **`docs/AUTO-MAJ-SYSTEME-AGENTIQUE.md`** (Smithery/MCP, Voyager/skills, GPT-Researcher/Local Deep Research, Letta, Darwin Gödel Machine).
 Conception benchmark modèles : **`docs/SYSTEMES-CONFRONTATION-MODELES.md`** (LMArena, godmode, ChatEval, Promptfoo, patrons n8n).
