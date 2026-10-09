@@ -99,6 +99,8 @@ def creer_sous_agent(parent_id: str, domaine: str, tache: str, store,
         "nb_reussites": 0,
     }
     store.put("sousagents", sid, spec)
+    # le sous-agent a aussi sa mémoire : dossier + fiche + rôle
+    E.generer_fiche_sous_agent(store, spec)
     return spec
 
 
@@ -166,6 +168,113 @@ def etat_systeme(store, limite_travaux: int = 30,
     }
 
 
+# ------------------------------------------------- personnalisation (UI)
+# Le patron gère l'apparence — comme SOL gère l'interface dans cosmos/.
+# « Change le thème », « mets un fond bleu », « crée un thème sunset » :
+# le patron applique directement, en moins d'une minute, sans déléguer.
+
+THEMES_CONNUS = {
+    "nuit": "nuit", "night": "nuit", "sombre": "nuit", "dark": "nuit",
+    "jour": "jour", "day": "jour", "clair": "jour", "light": "jour",
+    "océan": "ocean", "ocean": "ocean", "mer": "ocean", "bleu": "ocean",
+    "forêt": "foret", "foret": "foret", "vert": "foret", "forest": "foret",
+    "sépia": "sepia", "sepia": "sepia", "chaud": "sepia",
+}
+MOTS_PERSONNALISATION = (
+    "thème", "theme", "fond", "couleur", "apparence", "arrière-plan",
+    "background", "clair", "sombre", "dark", "light", "océan", "forêt",
+    "sépia", "personnalise", "personnalise", "customise", "customize",
+    "change le thème", "change le fond", "couleur de fond",
+)
+
+
+def detecter_personnalisation(texte: str) -> dict | None:
+    """Extrait une demande de personnalisation (thème / fond / couleurs).
+
+    Retourne les modifications de config à appliquer, ou None si ce n'est
+    pas une demande de personnalisation.
+    """
+    t = E.normaliser(texte)
+    if not any(E.normaliser(m) in t for m in MOTS_PERSONNALISATION):
+        return None
+    modifs: dict = {"ui": {}}
+    resume = []
+
+    # 1. un thème prédéfini ?
+    theme_trouve = None
+    for mot, theme in THEMES_CONNUS.items():
+        if E.normaliser(mot) in t:
+            theme_trouve = theme
+            break
+
+    # 2. une couleur hex ? (fond ou accent)
+    import re as _re
+    hexas = _re.findall(r"#([0-9a-fA-F]{6})\b", texte)
+    hexas = [f"#{h.lower()}" for h in hexas]
+
+    # 3. création d'un thème personnalisé ? (« crée un thème sunset … »)
+    m_creer = _re.search(r"(?:cr[ée]e|cr[ée]er|nouveau|fait) (?:un |le )?th[èe]me (?:appel[ée] )?['\"]?([a-z0-9_-]+)",
+                         t)
+    if m_creer and hexas:
+        nom = m_creer.group(1)
+        # le fond = première couleur, l'accent = deuxième (ou première)
+        fond = hexas[0]
+        accent = hexas[1] if len(hexas) > 1 else hexas[0]
+        # jeu de variables dérivé du fond (approche sombre)
+        modifs["ui"]["themes"] = {nom: {
+            "nom": nom.capitalize(),
+            "fond": fond,
+            "variables": {
+                "--bg": fond, "--bg-elev": _eclaircir(fond, 8),
+                "--panel": _eclaircir(fond, 14), "--panel-2": _eclaircir(fond, 18),
+                "--line": _eclaircir(fond, 30), "--line-2": _eclaircir(fond, 24),
+                "--tx": "#E8E8F0", "--tx-2": "#A8A8C4",
+                "--dim": "#8A8AA8", "--dim-2": "#4A4A6A",
+                "--ac": accent, "--ac-dim": _assombrir(accent, 40),
+                "--warn": "#FFB020", "--bad": "#FF3366",
+                "--ok": "#3DDC97", "--info": "#4A90D9",
+            }}}
+        modifs["ui"]["theme"] = nom
+        resume.append(f"thème « {nom} » créé (fond {fond}, accent {accent}) et appliqué")
+    elif theme_trouve:
+        modifs["ui"]["theme"] = theme_trouve
+        resume.append(f"thème « {theme_trouve} » appliqué")
+    elif hexas:
+        # « mets un fond #0A1E38 » → fond custom
+        modifs["ui"]["fond"] = hexas[0]
+        resume.append(f"fond personnalisé appliqué ({hexas[0]})")
+    elif "d[ée]grad" in t or "dégradé" in t or "gradient" in t:
+        modifs["ui"]["fond"] = "linear-gradient(160deg, #050508 0%, #0A1E38 100%)"
+        resume.append("fond en dégradé appliqué")
+    else:
+        return None
+
+    return {"modifs": modifs, "resume": " · ".join(resume)}
+
+
+def _eclaircir(hexcol: str, pct: int) -> str:
+    """Éclaircit une couleur hex de pct % (approche simple)."""
+    try:
+        h = hexcol.lstrip("#")
+        r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+        f = 1 + pct / 100
+        return "#%02x%02x%02x" % (min(255, int(r * f)),
+                                  min(255, int(g * f)), min(255, int(b * f)))
+    except Exception:
+        return hexcol
+
+
+def _assombrir(hexcol: str, pct: int) -> str:
+    try:
+        h = hexcol.lstrip("#")
+        r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+        f = 1 - pct / 100
+        return "#%02x%02x%02x" % (max(0, int(r * f)),
+                                  max(0, int(g * f)), max(0, int(b * f)))
+    except Exception:
+        return hexcol
+
+
 # ------------------------------------------------------------- le patron
 def parler(texte: str, contexte: dict, store, broadcast=None,
            config: dict | None = None) -> dict:
@@ -178,8 +287,6 @@ def parler(texte: str, contexte: dict, store, broadcast=None,
     """
     texte = (texte or "").strip()
     cfg = _cfg_patron(config)
-    routes = E.router(texte, 3)
-    meilleur = routes[0] if routes else None
     log: list[dict] = []
 
     def _e(event, detail, **extra):
@@ -190,6 +297,35 @@ def parler(texte: str, contexte: dict, store, broadcast=None,
 
     _e("recu", f"demande reçue : « {texte[:60]} »")
 
+    # 0. PERSONNALISATION : le patron gère l'apparence lui-même
+    #    (thème, fond, couleurs) — pas de délégation, application immédiate.
+    perso = detecter_personnalisation(texte)
+    if perso:
+        _e("personnalisation", perso["resume"])
+        lignes = [f"{cfg['emoji']} **{cfg['nom']}** — j'applique votre demande "
+                  f"d'apparence : {perso['resume']}."]
+        lignes.append("C'est fait — le changement est visible immédiatement. "
+                      "Dites-moi si vous validez, ou demandez un ajustement.")
+        return {
+            "patron": {"nom": cfg["nom"], "emoji": cfg["emoji"]},
+            "texte_reponse": "\n\n".join(lignes),
+            "personnalisation": True,
+            "config_modifiee": True,
+            "config_modifs": perso["modifs"],
+            "agent": {"id": "sol", "nom": cfg["nom"], "emoji": cfg["emoji"],
+                      "role": "Le patron applique lui-même"},
+            "agent_choisi_par_le_patron": "sol",
+            "sous_agent": None, "domaine": "apparence",
+            "routes_analysees": [], "tache": {"phases": []},
+            "phases": [],
+            "recherche": {"outils": [], "sources": []},
+            "problemes": [], "signalements": [],
+            "document": None, "journal": log, "duree_s": 0,
+        }
+
+    routes = E.router(texte, 3)
+    meilleur = routes[0] if routes else None
+
     # 1. analyse
     agent_choisi = E.choisir(texte)
     score = meilleur["score"] if meilleur else 0.0
@@ -197,13 +333,34 @@ def parler(texte: str, contexte: dict, store, broadcast=None,
                else texte[:40])
     _e("analyse", f"domaine détecté : « {domaine} » (score {score})")
 
-    # 2. hors périmètre ? → sous-agent (seuil réglable dans l'OS)
+    # 2. hors périmètre ? → sous-agent (seuil réglable dans l'OS).
+    #    Deux cas : le routage est vraiment faible (score sous le seuil),
+    #    ou le meilleur match est un faux ami — le début de la demande est
+    #    un vrai domaine que l'agent ne couvre pas (« qualité de l'air » ≠ relecteur).
     sous_agent = None
-    if score < cfg["seuil_routage"] and cfg["creer_sous_agents"]:
+    agent_reel = E.agent(agent_choisi["id"])
+    inattendu = False
+    if agent_reel and meilleur and meilleur["declencheurs"]:
+        t_n = E.normaliser(texte)
+        declencheur = E.normaliser(meilleur["declencheurs"][0])
+        if declencheur in t_n:
+            isole = t_n.replace(declencheur, "")
+            mots = [m for m in isole.split() if len(m) > 4]
+            causes = " ".join(E.normaliser(
+                " ".join(agent_reel.get("declencheurs") or [])))
+            inattendu = bool(mots and sum(1 for m in mots if m in causes) == 0)
+
+    doit_creer = ((score < cfg["seuil_routage"])
+                  or (score <= 1.0 and inattendu)) \
+                 and cfg["creer_sous_agents"]
+    if doit_creer:
+        # le domaine = le texte de la demande tronqué (précis, retrouvable),
+        # pas le mot-clé — sinon tous les sous-agents s'appelleraient « qualité »
+        domaine_sous = texte[:60]
         sous_agent = creer_sous_agent(
-            agent_choisi["id"], domaine, texte, store, demande=texte)
+            agent_choisi["id"], domaine_sous, texte, store, demande=texte)
         _e("sous_agent_cree", f"☾ {sous_agent['nom']} "
-             f"(parent : {agent_choisi['nom']})", sous_agent=sous_agent["id"])
+           f"(parent : {agent_choisi['nom']})", sous_agent=sous_agent["id"])
         # le sous-agent hérite du rôle du parent et exécute à sa place
         agent_choisi = {"id": sous_agent["id"], "nom": sous_agent["nom"],
                         "emoji": "☾", "role": sous_agent["role"],

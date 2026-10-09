@@ -58,9 +58,114 @@ def _maintenant() -> str:
 
 def charger_agents() -> list[dict]:
     try:
-        return json.loads((DONNEES / "agents.json").read_text(encoding="utf-8"))["agents"]
+        agents = json.loads((DONNEES / "agents.json").read_text(encoding="utf-8"))["agents"]
     except Exception:
         return []
+    _generer_fiches_si_absentes(agents)
+    return agents
+
+
+# ------------------------------------------------- mémoire des agents
+# Chaque agent a son dossier : memory/<id>/fiche.md (fiche perso) +
+# memory/<id>/role.md (ce qu'il doit faire). Généré automatiquement,
+# à jour à chaque chargement. Les sous-agents ont le leur aussi.
+MEMOIRE_DIR = ICI / "memory"
+
+
+def _ecrire_fiche(dossier: Path, agent: dict, travaux: list[dict] | None = None):
+    """Écrit fiche.md (identité) + role.md (ce qu'il doit faire) dans le dossier."""
+    dossier.mkdir(parents=True, exist_ok=True)
+    lignes = [
+        f"# {agent.get('emoji', '⬢')} {agent.get('nom', agent.get('id'))}",
+        "",
+        f"**Rôle** : {agent.get('role', '')}",
+        f"**Type** : {'sous-agent (créé par le patron)' if agent.get('parent') else 'agent'}",
+        f"**Parent** : {agent.get('parent') or '—'}",
+        f"**Domaine** : {agent.get('domaine') or '—'}",
+        "",
+        "## Déclencheurs",
+        *[f"- {d}" for d in (agent.get("declencheurs") or [])],
+        "",
+        "## Capacités",
+        *[f"- {c}" for c in (agent.get("capacites") or [])],
+        "",
+        "## Sorties attendues",
+        *[f"- {s}" for s in (agent.get("sorties") or [])],
+        "",
+        "## Cycle",
+        " → ".join(agent.get("cycle") or CYCLE),
+        "",
+    ]
+    if agent.get("parent"):
+        lignes += [
+            "## Origine",
+            f"Créé par le patron pour : {agent.get('cree_pour', '')}",
+            f"Créé le : {agent.get('cree_le', '')} · réactivé le : {agent.get('reactive_le', '')}",
+            f"Utilisations : {agent.get('nb_utilisations', 1)} · "
+            f"tâches : {agent.get('nb_taches', 0)} · réussites : {agent.get('nb_reussites', 0)}",
+            "",
+        ]
+    if travaux:
+        lignes += ["## Derniers travaux", ""]
+        for t in travaux[:10]:
+            lignes.append(f"- {t.get('cree_le', '')} — {t.get('demande', '')[:80]}")
+        lignes.append("")
+    (dossier / "fiche.md").write_text("\n".join(lignes), encoding="utf-8")
+
+    role = [
+        f"Tu es **{agent.get('nom', agent.get('id'))}** {agent.get('emoji', '')}.",
+        "",
+        agent.get("role", ""),
+        "",
+        "Quand on te confie une demande :",
+    ]
+    for i, phase in enumerate(agent.get("cycle") or CYCLE, 1):
+        role.append(f"{i}. **{phase}** — {PHASES.get(phase, phase)}")
+    role += [
+        "",
+        "Règles :",
+        "- Ne produis que ce qui est vérifiable. Si tu ne trouves rien, dis-le.",
+        "- Cite tes sources. Jamais de chiffre sans unité.",
+        "- Un fait vérifié = 2 sources indépendantes ou 1 source officielle.",
+        "- Le document produit doit être complet, daté, et traçable.",
+    ]
+    (dossier / "role.md").write_text("\n".join(role), encoding="utf-8")
+
+
+def _generer_fiches_si_absentes(agents: list[dict]):
+    """Génère (ou met à jour) le dossier mémoire de chaque agent.
+    Idempotent et rapide : la mémoire ne doit jamais bloquer le chargement."""
+    try:
+        for a in agents:
+            _ecrire_fiche(MEMOIRE_DIR / a["id"], a)
+    except Exception:
+        pass
+
+
+def generer_fiche_sous_agent(store, sous_agent: dict):
+    """Un sous-agent créé par le patron a aussi sa mémoire (dossier + fiches)."""
+    try:
+        parent = agent(sous_agent.get("parent"))
+        dossier = MEMOIRE_DIR / "sousagents" / sous_agent["id"]
+        travaux = [t for t in store.all("agenttaches")
+                   if t.get("agent") == sous_agent["id"]]
+        fiche = {
+            "id": sous_agent["id"], "nom": sous_agent["nom"],
+            "emoji": "☾", "role": sous_agent["role"],
+            "parent": sous_agent.get("parent"), "domaine": sous_agent.get("domaine"),
+            "declencheurs": [sous_agent.get("domaine", "")],
+            "capacites": ["documents"], "sorties": ["document"],
+            "cycle": (parent or {}).get("cycle", []),
+            "cree_pour": sous_agent.get("cree_pour", ""),
+            "cree_le": sous_agent.get("cree_le", ""),
+            "reactive_le": sous_agent.get("reactive_le", ""),
+            "nb_utilisations": sous_agent.get("nb_utilisations", 1),
+            "nb_taches": sous_agent.get("nb_taches", 0),
+            "nb_reussites": sous_agent.get("nb_reussites", 0),
+        }
+        _ecrire_fiche(dossier, fiche, travaux)
+    except Exception:
+        pass
 
 
 def agent(agent_id: str) -> dict | None:

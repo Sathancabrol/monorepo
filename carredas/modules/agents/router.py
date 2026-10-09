@@ -22,6 +22,12 @@ def register(router, ctx):
     store = ctx["store"]
     config = ctx.get("config") or {}
     broadcast = ctx.get("broadcast") or (lambda *a, **k: None)
+    # Au chargement : génère la mémoire des agents (dossiers + fiches + rôles)
+    # pour qu'elle soit prête avant même la première demande.
+    try:
+        E.charger_agents()
+    except Exception:
+        pass
 
     def _contexte(p: dict) -> dict:
         """Le contexte réel : une session de réunion si elle est désignée."""
@@ -133,6 +139,13 @@ def register(router, ctx):
             return Response.error("il manque le texte", 400)
         contexte = _contexte(p)
         r = O.parler(texte, contexte, store, broadcast, config=config)
+        # le patron peut modifier la config (thème, fond…) : on applique
+        modifs = r.get("config_modifs")
+        if modifs:
+            from ... import paths
+            paths.patch_config(modifs)
+            if isinstance(config, dict):
+                config.clear(); config.update(paths.read_config())
         return r
 
     @router.get(PREFIX + "/:aid")

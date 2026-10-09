@@ -107,6 +107,14 @@ def register(router, ctx):
         # 2. transmettre au patron (c'est lui qui travaille)
         r = O.parler(texte, contexte, store, broadcast, config=config)
 
+        # le patron peut modifier la config (thème, fond…) : laplace applique
+        modifs = r.get("config_modifs")
+        if modifs:
+            from ... import paths
+            paths.patch_config(modifs)
+            if isinstance(config, dict):
+                config.clear(); config.update(paths.read_config())
+
         # 3. rendre compte — formaté pour le canal
         reponse = {
             "de": r["patron"]["nom"],

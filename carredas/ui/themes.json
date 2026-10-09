@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "titre": "Thèmes de Carré d'As",
+    "note": "Chaque thème = un jeu de variables CSS appliquées sur :root. Le client les applique au chargement et à chaque changement. Un thème personnalisé (créé via le chat) surclasse ceux-là.",
+    "variables": ["--bg", "--bg-elev", "--panel", "--panel-2", "--line", "--line-2", "--tx", "--tx-2", "--dim", "--dim-2", "--ac", "--ac-dim", "--warn", "--bad", "--ok", "--info"]
+  },
+  "themes": {
+    "nuit": {
+      "nom": "Nuit",
+      "icone": "🌙",
+      "fond": "#050508",
+      "variables": {
+        "--bg": "#050508", "--bg-elev": "#0A0A12", "--panel": "#0F0F1A",
+        "--panel-2": "#14141F", "--line": "#23233A", "--line-2": "#1A1A2E",
+        "--tx": "#E8E8F0", "--tx-2": "#A8A8C4", "--dim": "#8A8AA8",
+        "--dim-2": "#4A4A6A", "--ac": "#00E5CC", "--ac-dim": "#0F5C58",
+        "--warn": "#FFB020", "--bad": "#FF3366", "--ok": "#3DDC97",
+        "--info": "#4A90D9"
+      }
+    },
+    "jour": {
+      "nom": "Jour",
+      "icone": "☀️",
+      "fond": "#F4F5F8",
+      "variables": {
+        "--bg": "#F4F5F8", "--bg-elev": "#FFFFFF", "--panel": "#FFFFFF",
+        "--panel-2": "#EEF0F5", "--line": "#D8DCE6", "--line-2": "#E6E9F0",
+        "--tx": "#1A1A28", "--tx-2": "#4A4A66", "--dim": "#6A6A88",
+        "--dim-2": "#9A9AB8", "--ac": "#0088B8", "--ac-dim": "#CCEEF5",
+        "--warn": "#C87800", "--bad": "#D42A4A", "--ok": "#1E9E5A",
+        "--info": "#2A6AB8"
+      }
+    },
+    "ocean": {
+      "nom": "Océan",
+      "icone": "🌊",
+      "fond": "linear-gradient(160deg, #061224 0%, #0A1E38 55%, #0D2B4A 100%)",
+      "variables": {
+        "--bg": "#061224", "--bg-elev": "#0A1B33", "--panel": "#0D2240",
+        "--panel-2": "#12294D", "--line": "#1E3A5E", "--line-2": "#16304E",
+        "--tx": "#E0EEF8", "--tx-2": "#A8C4DC", "--dim": "#7A94B0",
+        "--dim-2": "#4A6484", "--ac": "#38BDF8", "--ac-dim": "#12384F",
+        "--warn": "#FBBF24", "--bad": "#F87171", "--ok": "#34D399",
+        "--info": "#60A5FA"
+      }
+    },
+    "foret": {
+      "nom": "Forêt",
+      "icone": "🌲",
+      "fond": "linear-gradient(150deg, #071A10 0%, #0C2416 60%, #103020 100%)",
+      "variables": {
+        "--bg": "#071A10", "--bg-elev": "#0C2416", "--panel": "#10301E",
+        "--panel-2": "#143A26", "--line": "#1E4A32", "--line-2": "#173D2A",
+        "--tx": "#E2F0E6", "--tx-2": "#A8C4B0", "--dim": "#7A9484",
+        "--dim-2": "#4A6A58", "--ac": "#4ADE80", "--ac-dim": "#14402A",
+        "--warn": "#FBBF24", "--bad": "#F87171", "--ok": "#4ADE80",
+        "--info": "#7DD3FC"
+      }
+    },
+    "sepia": {
+      "nom": "Sépia",
+      "icone": "📜",
+      "fond": "linear-gradient(155deg, #1A120A 0%, #241708 60%, #2E1E0E 100%)",
+      "variables": {
+        "--bg": "#1A120A", "--bg-elev": "#241708", "--panel": "#2E1E0E",
+        "--panel-2": "#3A2812", "--line": "#4E3A1E", "--line-2": "#42301A",
+        "--tx": "#F0E4D0", "--tx-2": "#C4B49A", "--dim": "#9A8A70",
+        "--dim-2": "#6E5E44", "--ac": "#E8B84A", "--ac-dim": "#4E3A14",
+        "--warn": "#FBBF24", "--bad": "#F87171", "--ok": "#84CC16",
+        "--info": "#93C5FD"
+      }
+    }
+  }
+}

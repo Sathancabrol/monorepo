@@ -1906,6 +1906,20 @@ async function systeme() {
         <label class="champ"><span>URL Ollama</span><input id="cfg-ollama" value="${esc((S.systeme.config.llm || {}).ollama_url || '')}"></label>
         <label class="champ"><span>Modèle Ollama</span><input id="cfg-modele" value="${esc((S.systeme.config.llm || {}).ollama_model || '')}"></label>
       </div>
+      <h3 style="margin:18px 0 8px">🎨 Apparence — thème & fond</h3>
+      <div class="grille-form">
+        <label class="champ"><span>Thème</span>
+          <select id="cfg-theme">
+            ${['nuit', 'jour', 'ocean', 'foret', 'sepia'].map(v =>
+              `<option ${(S.systeme.config.ui || {}).theme === v ? 'selected' : ''} value="${v}">${v}</option>`).join('')}
+            ${Object.keys((S.systeme.config.ui || {}).themes || {}).map(v =>
+              `<option ${(S.systeme.config.ui || {}).theme === v ? 'selected' : ''} value="${esc(v)}">${esc(v)} (perso)</option>`).join('')}
+          </select></label>
+        <label class="champ"><span>Fond (couleur ou dégradé CSS)</span>
+          <input id="cfg-fond" value="${esc(((S.systeme.config.ui || {}).fond) || '')}" placeholder="#0A1E38 ou linear-gradient(…)"></label>
+      </div>
+      <div style="margin:8px 0 4px">Astuce : demandez au patron dans le chat —
+        « change le thème en océan » ou « crée un thème sunset, fond #2A1810 ».</div>
       <h3 style="margin:18px 0 8px">☉ Le patron (SOL)</h3>
       <div class="grille-form">
         <label class="champ"><span>Nom du patron</span><input id="cfg-patron-nom" value="${esc(((S.systeme.config.patron || {}).nom) || 'SOL ☉')}"></label>
@@ -2082,6 +2096,8 @@ const ACTIONS = {
       `<div class="msg user"><div class="qui">vous</div><div class="bulle">${esc(texte)}</div></div>`);
     chatScrollBas();
     const r = await post(`/api/chat/conversations/${S.chat.active}/messages`, { texte });
+    // le patron a peut-être changé l'apparence (thème, fond) : on réapplique
+    if (r.message?.config_modifiee) await appliquerTheme();
     await render();
     chatScrollBas();
   },
@@ -2439,8 +2455,10 @@ const ACTIONS = {
         contact_nom: contact[0] || '',
         contact_email: contact.slice(1).join(' ') || '',
       },
+      ui: { theme: v('#cfg-theme'), fond: v('#cfg-fond') },
     });
-    toast('Configuration enregistrée');
+    await appliquerTheme();
+    toast('Configuration enregistrée — thème appliqué');
     majPilote(await get('/api/mise-a-jour'));
   },
   'sauvegarde': async () => {
@@ -2500,6 +2518,23 @@ function majPilote(maj) {
 }
 
 /* =================================================================== DÉMARRAGE */
+/* Applique le thème (variables CSS + fond) depuis /api/themes.
+   Appelé au démarrage, et à chaque fois que le patron a modifié la config
+   (ex : « change le thème » dans le chat). */
+async function appliquerTheme() {
+  try {
+    const t = await get('/api/themes');
+    const vars = t.variables || {};
+    const root = document.documentElement;
+    for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v);
+    if (t.fond) {
+      // le fond peut être une couleur ou un dégradé CSS
+      document.body.style.background = t.fond;
+    }
+    S.themeActif = t.actif;
+  } catch (e) { /* hors ligne : on garde le thème par défaut du CSS */ }
+}
+
 (async function demarrer() {
   try {
     const sante = await get('/api/health');
@@ -2516,6 +2551,7 @@ function majPilote(maj) {
   } catch (e) {
     $('#pied-infos').textContent = 'serveur injoignable';
   }
+  await appliquerTheme();
   connecter();
   await render();
   rendreAside();

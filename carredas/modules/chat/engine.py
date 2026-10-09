@@ -111,6 +111,13 @@ def envoyer(store, cid: str, texte: str,
         try:
             r = O.parler(texte, contexte or {}, store, broadcast,
                          config=config)
+            # le patron peut modifier la config (thème, fond…) : on applique
+            modifs = r.get("config_modifs")
+            if modifs:
+                from ... import paths
+                paths.patch_config(modifs)
+                if isinstance(config, dict):
+                    config.clear(); config.update(paths.read_config())
             reponse["texte_reponse"] = r["texte_reponse"]
             reponse["agent"] = r["agent"]["id"]
             reponse["agent_nom"] = r["agent"]["nom"]
@@ -124,7 +131,11 @@ def envoyer(store, cid: str, texte: str,
             reponse["signalements"] = r.get("signalements", [])
             reponse["duree_s"] = r["duree_s"]
             reponse["journal"] = r.get("journal", [])
-            reponse["document"] = r["document"]
+            reponse["document"] = r.get("document")
+            reponse["config_modifiee"] = bool(r.get("config_modifiee"))
+            reponse["personnalisation"] = r.get("personnalisation")
+            # transmis pour que laplace (ou un autre appelant) applique la config
+            reponse["config_modifs"] = r.get("config_modifs")
         except Exception as exc:
             reponse["texte_reponse"] = (f"☉ Le patron n'a pas pu mener la tâche "
                                         f"à bien : {exc}. Je ne produis pas de "

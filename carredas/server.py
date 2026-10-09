@@ -73,13 +73,47 @@ def build(config: dict | None = None, store: Store | None = None,
     def lire_config(req):
         return {"config": cfg, "defaut": paths.DEFAULT_CONFIG}
 
+    @router.get("/api/themes")
+    def themes(req):
+        """Les thèmes disponibles + le thème actif + les thèmes personnalisés."""
+        import json as _json
+        themes_path = paths.ui_dir() / "themes.json"
+        try:
+            data = _json.loads(themes_path.read_text(encoding="utf-8"))
+        except Exception:
+            data = {"themes": {}}
+        ui = cfg.get("ui") or {}
+        perso = ui.get("themes") or {}
+        actif = ui.get("theme") or "nuit"
+        # le thème actif peut être un thème perso (créé via le chat)
+        variables = {}
+        if actif in perso:
+            variables = (perso[actif] or {}).get("variables") or {}
+        elif actif in data["themes"]:
+            variables = data["themes"][actif].get("variables") or {}
+        # fond : la config (ui.fond) en priorité, puis le thème perso,
+        # puis le thème prédéfini
+        fond = ui.get("fond") \
+            or ((perso.get(actif) or {}).get("fond")) \
+            or ((data["themes"].get(actif) or {}).get("fond", ""))
+        return {
+            "themes": data["themes"],
+            "personnalises": perso,
+            "actif": actif,
+            "fond": fond,
+            "variables": variables,
+        }
+
     @router.put("/api/config")
     def ecrire_config(req):
         from .llm import reset as llm_reset
-        nonlocal cfg  # sinon on mettrait à jour une variable locale, pas celle du serveur
         frag = req.json() or {}
         paths.patch_config(frag)
-        cfg = paths.read_config()
+        # cfg est un dict partagé (ctx["config"] pointe dessus) :
+        # clear+update met à jour la référence pour TOUT le monde,
+        # y compris les routeurs qui ont capturé config = ctx["config"].
+        cfg.clear()
+        cfg.update(paths.read_config())
         llm_reset()
         log.info("serveur", "configuration mise à jour")
         return {"config": cfg}
