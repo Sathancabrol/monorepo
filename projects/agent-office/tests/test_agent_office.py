@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from agent_office import arena, budget, invoices, marketing, planning, registry  # noqa: E402
+from agent_office import arena, budget, invoices, marketing, planning, registry, update  # noqa: E402
 
 
 class TestBudget(unittest.TestCase):
@@ -72,6 +72,24 @@ class TestArena(unittest.TestCase):
     def test_grille_chateval(self):
         self.assertIn("3 rôles", arena.GRILLE_CHATEVAL)
         self.assertIn("biais", arena.GRILLE_CHATEVAL)
+
+
+class TestUpdate(unittest.TestCase):
+    def test_capabilite(self):
+        self.assertEqual(len(update.CAPABILITY["commands"]), 4)
+        self.assertIn("Évolution", update.CAPABILITY["service"])
+
+    def test_journal_et_lecons_fichiers(self):
+        j = update.load(update.JOURNAL, [])
+        le = update.load(update.LESSONS, [])
+        self.assertIsInstance(j, list)
+        self.assertIsInstance(le, list)
+
+    def test_check_garde_fou(self):
+        # le garde-fou doit être vert : tous les selftests des services passent
+        from agent_office import registry
+        for mod in registry.MODULES:
+            self.assertIn("OK", mod.selftest())
 
 
 class TestRegistry(unittest.TestCase):

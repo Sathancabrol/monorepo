@@ -13,10 +13,12 @@ DIRECTION — registry (tools.json) : qui sait faire quoi, doctor = contrôle qu
 ├── RECHERCHE    — research briefs/citations/veille → reaserch-engine
 ├── ORGANISATION — planning week/add/ics → Google Calendar
 ├── ARBITRAGE    — arena : duels en aveugle, ELO, grille ChatEval (jamais un seul juge)
+├── ÉVOLUTION    — update : journal des mises à jour, leçons, changelog auto, garde-fou
 └── PRODUCTION   — app/ (portail), frontignan (livrable), proto-cognitorium (moteur)
 ```
 
-Implémentation : **`projects/agent-office/`** — 9 services, zéro dépendance (stdlib), 100 % testé (`tests/`), invocations CLI `python3 -m agent_office <service>`.
+Implémentation : **`projects/agent-office/`** — 10 services, zéro dépendance (stdlib), 100 % testé (`tests/`), invocations CLI `python3 -m agent_office <service>`.
+Auto-mise à jour : **`docs/AUTO-MAJ-SYSTEME-AGENTIQUE.md`** (Smithery/MCP, Voyager/skills, GPT-Researcher/Local Deep Research, Letta, Darwin Gödel Machine).
 Conception benchmark modèles : **`docs/SYSTEMES-CONFRONTATION-MODELES.md`** (LMArena, godmode, ChatEval, Promptfoo, patrons n8n).
 
 ## 2. Règles d'or (issues des audits)

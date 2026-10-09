@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-10-09T00:28:23",
+    "type": "outil",
+    "note": "ajout du service arena (duels aveugles + ELO)"
+  },
+  {
+    "date": "2026-10-09T00:28:23",
+    "type": "recherche",
+    "note": "audit des systèmes d'auto-MAJ : Smithery, Voyager, GPT-Researcher, Letta, DGM"
+  }
+]

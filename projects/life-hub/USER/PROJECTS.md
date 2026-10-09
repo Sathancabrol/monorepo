@@ -37,9 +37,10 @@ source: MANIFEST.json, projects/, docs/ (08/10/2026)
 ## 🤖 L'entreprise IA
 | Pièce | Où | Rôle |
 |---|---|---|
-| **agent-office** | `projects/agent-office/` | 9 services bureautiques zéro-dépendance (budget, invoices, marketing, prospects, research, mail, planning, arena, registry) — `python3 -m agent_office registry doctor` |
+| **agent-office** | `projects/agent-office/` | 10 services bureautiques zéro-dépendance (budget, invoices, marketing, prospects, research, mail, planning, arena, update, registry) — `python3 -m agent_office registry doctor` |
 | Architecture | `docs/AGENT-ENTREPRISE.md` | organigramme, règles d'or, couche IA (litellm/Portkey retenus par l'audit), circuit hebdo |
 | Benchmark modèles | `docs/SYSTEMES-CONFRONTATION-MODELES.md` | LMArena, godmode, ChatEval, Promptfoo, patrons n8n → service `arena` (duels aveugles + ELO) |
+| Auto-mise à jour | `docs/AUTO-MAJ-SYSTEME-AGENTIQUE.md` | Smithery/MCP, Voyager/skills, GPT-Researcher/Local Deep Research, Letta, Darwin Gödel Machine → service `update` |
 | mail-organizer | `projects/mail-organizer/` | tri IMAP réel, déjà livré (jamais de suppression) |
 | reaserch-engine | `projects/reaserch-engine/` | moteur recherche branché sur les briefs `research` |
 

@@ -81,6 +81,17 @@
       ]
     },
     {
+      "name": "update",
+      "service": "Évolution",
+      "capability": "Auto-mise à jour : journal des évolutions, leçons (Reflexion), changelog auto, vérification du registre",
+      "commands": [
+        "update journal --type outil|recherche|decision --note ...",
+        "update lessons [--add 'leçon apprise']",
+        "update changelog [-n 20]",
+        "update check"
+      ]
+    },
+    {
       "name": "registry",
       "service": "Direction",
       "capability": "Registre des capacités de l'entreprise (tools.json) + auto-tests (doctor)",
