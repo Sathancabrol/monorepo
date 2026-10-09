@@ -79,4 +79,19 @@
 3. Le **VPS agent reste CPU** (Hetzner/OVH ≤ 6 €/mois, voir `docs/VPS-AGENT-SQLITE-GRAPH.md`) ; le GPU se loue **à l'acte** : un clip vidéo ≈ 1–2 h de 4090 ≈ 0,30–0,70 €.
 
 ---
+
+## 6. 🔎 MàJ 3 — La vidéo « MAPS » de Paf (Automation Orbit) : notre système en miroir (09/10/2026)
+
+Vidéo YouTube (Zs3faMCDYNs) : un consultant data (Automation Orbit, « systèmes IA pour petites équipes ») montre son OS d'entreprise en direct — des centaines de fichiers visualisés en dashboard. Son framework **MAPS = Memory · Agent · Pulse · Screen** :
+- **Memory** : un fichier **carte de ~40 lignes** (type Claude.md) sans aucun fait, juste des panneaux indicateurs ; chaque document du travail est à **2 sauts maximum**. Règle : « chaque fait a une seule maison » + contrôle nocturne des liens morts. Mesuré à l'écran : avec la carte, Claude trouve un fait en **30 s / 17 000 tokens** contre **62 s / 28 000** sans → **2× plus rapide, ~40 % de tokens en moins**.
+- **Agent** : le même abonnement Claude Code sur **deux machines** (laptop + VPS Hostinger à quelques $/mois), dossier synchronisé toutes les 5 min ; accès privé via **Tailscale** ; le Claude du serveur est **bridé par un fichier de permissions** : il peut rédiger un mail mais jamais l'envoyer (« le pire qu'il puisse faire : me laisser un brouillon »).
+- **Pulse** : `routines.yaml` = liste des routines planifiées (digest matinal, brain build, nettoyage), scheduler toutes les 5 min, journal d'exécution, plafond de dépenses anti-dérapage.
+- **Screen** : le dashboard **« montre mais ne stocke rien »** — chaque panneau lit un fichier ; s'il casse, on ne perd rien. Sa seule liste « qui attend un humain » : jamais cochée par le bot.
+
+**Comparaison honnête avec nous** : Memory ✅ (docs + knowledge + ce nouveau `MAP.md` racine) ; Screen ✅ partiellement (`app/`, à brancher sur les fichiers comme lui) ; Pulse ⚠️ (on a le concept — update/planning/social — mais pas encore de scheduler 24/7 : c'est l'argument n°1 du VPS, toujours reporté au 1ᵉʳ revenu) ; Agent à permissions ✅ (mail lecture seule, porte humaine, règle anti-distillation).
+- ✅ **Adopté ce tour** : `MAP.md` à la racine du monorepo (carte panneau-indicateur) + règle « un fait = une maison ».
+- 📌 À copier plus tard (VPS) : routines.yaml + digest matinal + pont voix Telegram + Tailscale.
+- 💡 Confirmation business : son service sponsorisé est un **« AI Search Visibility Audit »** (visibilité dans les réponses des assistants IA, score 47→62) — exactement notre service GEO : preuve qu'il se vend dès aujourd'hui à des petites entreprises.
+
+---
 *09/10/2026 · sources vérifiées web + API GitHub.*
