@@ -33,5 +33,10 @@
     "date": "2026-10-09T02:19:43",
     "type": "recherche",
     "note": "Veille complétée : Wan2GP (atelier vidéo GPU-poor, condition accès GPU) + OmniRoute (passerelle multi-modèles MIT ~74k★, future couche sous arena/app dès la 1re clé modèle) — docs/AGENT-OS-ET-AGENCY-VEILLE.md section 4"
+  },
+  {
+    "date": "2026-10-09T02:22:38",
+    "type": "recherche",
+    "note": "Dossier clés API gratuites (docs/CLES-API-GRATUITES.md) : GitHub Models via PAT, Mistral Experiment (UE, non-entraînement API), Google AI Studio, Groq/Cerebras, HF 0,10$/mois, OpenRouter free — stack empilable 0 € ; sécurité .env gitignoré ; actualité IA : Mistral Large 4 preview, Cloudflare Clef (décision Apache 2.0 = juges QA gates low-cost), LTX-2.5"
   }
 ]
