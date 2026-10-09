@@ -1,0 +1,19 @@
+{
+  "id": "agents",
+  "titre": "Agents",
+  "icone": "⬢",
+  "resume": "Système agentique : 22 agents spécialisés, routage par déclencheurs, cycle en six phases (plan → recherche → production → revue → vérification → mémoire). Chaque exécution rend un document réel et consigne sa trace.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": true,
+  "priorite": 5,
+  "palier": "P0",
+  "routes": [
+    "GET  /api/agents",
+    "GET  /api/agents/cycle",
+    "POST /api/agents/router",
+    "POST /api/agents/executer",
+    "GET  /api/agents/historique",
+    "GET  /api/agents/:aid"
+  ]
+}

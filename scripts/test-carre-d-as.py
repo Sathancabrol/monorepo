@@ -284,6 +284,46 @@ mq = api("GET", "/api/canonique/schema")["marqueurs"]
 verifier(mq["fact"]["marqueur"] == "✅" and "sources" in mq["fact"]["critere"],
          "le vocabulaire de lecture est aligné sur la méthode Frontignan")
 
+# ------------------------------------------------------- 7.5 système agentique
+agents = api("GET", "/api/agents")
+verifier(agents["total"] == 22, f"22 agents spécialisés ({agents['total']})")
+verifier(len(agents["cycle"]) == 6, "le cycle tient en 6 phases")
+
+cas_routes = {
+    "rédige le compte rendu de la réunion": "writer",
+    "il faut un planning pour la Frange Sud": "pm",
+    "combien coûte la phase 1 ?": "analyst",
+    "vérifie si ce prestataire est immatriculé": "osint",
+    "quelles sources pour la cartographie du territoire ?": "geo",
+    "peut-on utiliser cette licence en public ?": "jurist",
+}
+for texte, attendu in cas_routes.items():
+    r = api("POST", "/api/agents/router", {"texte": texte})
+    verifier(r["resultats"] and r["resultats"][0]["id"] == attendu,
+             f"routage « {texte[:38]}… » → {attendu}")
+
+# une exécution complète : six phases, un document, une trace consignée
+avant = api("GET", "/api/agents/historique")["total"]
+r = api("POST", "/api/agents/executer",
+        {"demande": "Établir le planning de la Frange Sud", "format": "md"})
+verifier("document" in r and r["document"]["taille"] > 300,
+         "une demande produit un document réel")
+verifier(len(r["tache"]["phases"]) == 6, "les six phases sont toutes tracées")
+verifier(all(p["statut"] in ("ok", "vide") for p in r["tache"]["phases"]),
+         "aucune phase en échec")
+apres = api("GET", "/api/agents/historique")["total"]
+verifier(apres == avant + 1, "l'exécution est consignée dans l'historique")
+
+# le contexte d'une réunion alimente le document produit
+sessions = api("GET", "/api/meeting")["sessions"]
+if sessions:
+    sid = sessions[0]["id"]
+    r2 = api("POST", "/api/agents/executer",
+             {"demande": "Rédiger le compte rendu de la réunion",
+              "reunion_id": sid, "format": "md"})
+    verifier(r2["tache"]["phases"][0]["detail"] != "",
+             "le compte rendu d'une réunion existante est produit")
+
 # ------------------------------------------------------------------ 8. bilan
 print(f"\n=== {len(produits)} documents produits · "
       f"{len(echecs)} échec(s) ===")

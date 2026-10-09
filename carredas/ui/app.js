@@ -77,6 +77,7 @@ const S = {
 
 const RAIL = [
   { id: 'accueil', icone: '◈', texte: 'Accueil' },
+  { id: 'agents', icone: '⬢', texte: 'Agents' },
   { id: 'reunion', icone: '◎', texte: 'Réunion' },
   { id: 'carto', icone: '▦', texte: 'Cartographie' },
   { id: 'cognitorium', icone: '◍', texte: 'Cognitorium' },
@@ -91,7 +92,7 @@ function rendreRail() {
        <span class="ico">${r.icone}</span><span class="texte">${r.texte}</span></button>`).join('');
 }
 
-const VUES = { accueil, reunion, carto, cognitorium, prevision, osint, systeme };
+const VUES = { accueil, agents, reunion, carto, cognitorium, prevision, osint, systeme };
 
 async function render() {
   rendreRail();
@@ -208,6 +209,120 @@ async function accueil() {
 }
 
 /* ================================================================ RÉUNION */
+/* ─────────────────────────────────────────────────── Agents : la chaîne ── */
+async function agents() {
+  const [liste, cycle, histo, reu] = await Promise.all([
+    get('/api/agents'), get('/api/agents/cycle'),
+    get('/api/agents/historique'), get('/api/meeting')]);
+  S.agents = { agents: liste.agents, cycle: cycle.cycle,
+               historique: histo.taches, sessions: reu.sessions || [] };
+
+  return `
+  <div class="titre-page">
+    <h1>Agents</h1>
+    <div class="actions">
+      <span class="pastille ${S.sante && S.sante.modele.provider_actif !== 'none' ? 'ok' : 'ac'}">
+        <i class="pt"></i>routage déterministe — fonctionne sans modèle</span>
+    </div>
+  </div>
+
+  <div class="note-info">
+    On confie une demande, elle traverse <b>six phases traçables</b> et rend un
+    document réel. Le routage se fait par mots-clés : la même demande donne
+    toujours le même agent, ce qui permet à un tiers de revérifier. Quand un
+    agent ne trouve rien, <b>il le dit</b> — c'est la consigne la plus utile.
+  </div>
+
+  <div class="grille g4" style="margin-bottom:22px">
+    <div class="carte"><div class="cle">Agents</div><div class="valeur">${liste.total}</div></div>
+    <div class="carte"><div class="cle">Phases du cycle</div><div class="valeur">${cycle.cycle.length}</div></div>
+    <div class="carte"><div class="cle">Exécutions</div><div class="valeur">${histo.total}</div></div>
+    <div class="carte"><div class="cle">Dernière</div>
+      <div class="valeur" style="font-size:12px">${S.agents.historique[0]
+        ? esc(S.agents.historique[0].agent) : '—'}</div></div>
+  </div>
+
+  <section class="bloc">
+    <h2>Confier une demande</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div style="flex:1 1 320px">
+        <label>La demande</label>
+        <textarea id="ag-demande" rows="3" style="width:100%"
+          placeholder="Établir le planning de la Frange Sud"></textarea>
+      </div>
+      <div style="flex:0 0 auto">
+        <label>Contexte</label>
+        <select id="ag-reunion">
+          <option value="">aucune réunion</option>
+          ${S.agents.sessions.map(s =>
+            `<option value="${esc(s.id)}">${esc(s.titre || s.id)}</option>`).join('')}
+        </select>
+      </div>
+      <div style="flex:0 0 auto">
+        <label>Format</label>
+        <select id="ag-format">
+          <option value="md">.md</option><option value="html">.html</option>
+          <option value="docx">.docx</option><option value="pptx">.pptx</option>
+        </select>
+      </div>
+      <button class="primaire" data-action="confier-demande">Lancer le cycle</button>
+    </div>
+    <div id="ag-resultat" style="margin-top:16px"></div>
+  </section>
+
+  <section class="bloc">
+    <h2>Le cycle <span class="dim">(6 phases)</span></h2>
+    <div class="liste">
+      ${S.agents.cycle.map((c, i) => `
+        <div class="ligne">
+          <div class="principal">
+            <div class="nom"><span class="marq">${i + 1}</span> ${esc(c.intitule)}</div>
+            <div class="meta mono" style="margin-top:3px">${esc(c.id)}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </section>
+
+  <section class="bloc">
+    <h2>Les ${liste.total} agents <span class="dim">— chacun branché sur une capacité réelle</span></h2>
+    <div class="grille g3">
+      ${S.agents.agents.map(a => `
+        <div class="carte">
+          <div class="nom" style="font-size:15px">${a.emoji} ${esc(a.nom)}
+            ${a.defaut ? '<span class="tag vide">défaut</span>' : ''}</div>
+          <div class="meta" style="margin:6px 0 8px">${esc(a.role)}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            ${(a.sorties || []).map(o => `<span class="tag gris">${esc(o)}</span>`).join('')}
+          </div>
+          <div class="meta mono" style="margin-top:8px;color:var(--dim-2)">
+            cycle : ${(a.cycle || []).join(' → ') || '—'}</div>
+          <div class="meta mono" style="margin-top:3px;color:var(--dim-2)">
+            capacités : ${(a.capacites || []).join(', ') || '—'}</div>
+        </div>`).join('')}
+    </div>
+  </section>
+
+  ${S.agents.historique.length ? `
+  <section class="bloc">
+    <h2>Dernières exécutions <span class="dim">(${S.agents.historique.length})</span></h2>
+    <div class="liste">
+      ${S.agents.historique.slice(0, 10).map(t => `
+        <div class="ligne">
+          <div class="principal">
+            <div class="nom">${esc(t.demande)}</div>
+            <div class="meta mono" style="margin-top:3px">
+              ${esc(t.agent)} · ${t.phases.length} phases · ${t.caracteres} car.
+              · ${t.outils || 0} outil(s) · ${t.sources || 0} source(s)
+              · ${t.problemes} bloquant(s) · ${t.signalements || 0} signalement(s)
+            </div>
+          </div>
+          <span class="meta mono">${esc((t.cree_le || '').slice(11, 19))}</span>
+        </div>`).join('')}
+    </div>
+  </section>` : ''}
+  `;
+}
+
 async function reunion() {
   if (!S.reu.session) return listeReunions();
   const id = S.reu.session;
@@ -1128,6 +1243,66 @@ const ACTIONS = {
     S.ongletAside = t.dataset.onglet;
     $$('.onglet').forEach(o => o.classList.toggle('actif', o === t));
     rendreAside();
+  },
+
+  /* ---------------------------------------------------------------- agents */
+  'confier-demande': async () => {
+    const demande = ($('#ag-demande') || {}).value || '';
+    if (!demande.trim()) { toast('Écris d\'abord la demande', 'erreur'); return; }
+    const btn = $$('[data-action="confier-demande"]')[0];
+    if (btn) { btn.disabled = true; btn.textContent = 'Cycle en cours…'; }
+    const zone = $('#ag-resultat');
+    zone.innerHTML = '<div class="note-info">Six phases en cours…</div>';
+    try {
+      const r = await post('/api/agents/executer', {
+        demande, reunion_id: ($('#ag-reunion') || {}).value || '',
+        format: ($('#ag-format') || {}).value || 'md',
+      });
+      const t = r.tache, a = r.agent;
+      zone.innerHTML = `
+        <div class="carte" style="border-left:3px solid var(--ok)">
+          <div class="nom" style="font-size:16px">
+            ${a.emoji} ${esc(a.nom)} a produit :
+            <a class="lien" href="/api/fichiers/${encodeURIComponent(r.document.nom)}?dl=1">${esc(r.document.nom)}</a>
+          </div>
+          <div class="meta" style="margin:4px 0 10px">${r.document.taille} octets · ${r.duree_s} s</div>
+          <div class="liste" style="margin-bottom:10px">
+            ${t.phases.map(p => {
+              const mk = { ok: '✓', vide: '·', signale: '!', bloque: '✗', echec: '✗' }[p.statut] || '?';
+              const coul = p.statut === 'ok' ? 'var(--ok)' : p.statut === 'vide' ? 'var(--dim)' : 'var(--alerte)';
+              return `<div class="ligne" style="padding:4px 0">
+                <span class="marq" style="color:${coul}">${mk}</span>
+                <span class="principal" style="font-size:13px">${esc(p.intitule)}</span>
+                <span class="meta mono">${esc(p.detail)}</span></div>`;
+            }).join('')}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="tag ${r.recherche.vide ? 'act' : 'deci'}">
+              ${r.recherche.outils.length} outil(s) · ${r.recherche.sources.length} source(s)</span>
+            <span class="tag ${r.problemes.length ? 'ris' : 'deci'}">
+              ${r.problemes.length} bloquant(s)</span>
+            <span class="tag act">${r.signalements ? r.signalements.length : 0} signalement(s)</span>
+            <span class="tag gris">trace ${esc(t.id)}</span>
+          </div>
+          ${(r.recherche.sources || []).length ? `
+          <div style="margin-top:10px">
+            <div class="cle">Sources mobilisables</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
+              ${r.recherche.sources.slice(0, 6).map(s =>
+                `<span class="tag ${s.usage === 'oui' ? 'deci' : 'act'}"
+                   title="${esc(s.licence || '')}">${esc(s.nom)}</span>`).join('')}
+            </div>
+          </div>` : ''}
+        </div>`;
+      await render(); // rafraîchit l'historique
+      // on revient sur la zone de résultat
+      const n = $('#ag-resultat'); if (n) n.innerHTML = zone.innerHTML;
+      toast(`Document produit par ${a.nom}`);
+    } catch (e) {
+      zone.innerHTML = `<div class="avertissement">${esc(e.message || String(e))}</div>`;
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Lancer le cycle'; }
+    }
   },
 
   /* --------------------------------------------------------------- réunion */

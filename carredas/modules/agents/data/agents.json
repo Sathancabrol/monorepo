@@ -1,0 +1,673 @@
+{
+  "meta": {
+    "titre": "Les 22 agents",
+    "origine": "nexus_os (branche arena/01a08385-monorepo) — 22 agents, 14 skills, 59 tests au vert. Adaptés, pas recopiés : ici chaque agent est branché sur une capacité réelle de Carré d'As et produit un document.",
+    "regle": "Un agent ne répond pas à la place d'un spécialiste. Le routage est déterministe (mots-clés), donc il fonctionne sans modèle de langage — et il est reproductible.",
+    "cycle": [
+      "plan",
+      "recherche",
+      "production",
+      "revue",
+      "verification",
+      "memoire"
+    ],
+    "capacites": {
+      "documents": "produit un document réel (.md .html .docx .pptx) via docsgen",
+      "registre_outils": "cherche dans les 120 outils référencés",
+      "sources": "cherche dans les 34 sources de données et leur licence",
+      "reunion": "lit une session de réunion (transcription, décisions, actions)",
+      "references": "cherche dans les références du Cognitorium",
+      "prevision": "lit les indicateurs et scénarios",
+      "cartographie": "lit les couches et points d'observation",
+      "admissibilite": "passe les affirmations au crible des 7 règles"
+    },
+    "cherche": "Graines de recherche par agent : complètent les termes de la demande quand elle est trop pauvre pour interroger les registres."
+  },
+  "agents": [
+    {
+      "id": "orchestrator",
+      "nom": "Orchestrateur",
+      "emoji": "🧭",
+      "role": "Découpe une demande, choisit les agents, délègue et consolide. Point d'entrée par défaut.",
+      "declencheurs": [
+        "orchestre",
+        "délègue",
+        "répartis",
+        "coordonne",
+        "qui doit",
+        "équipe",
+        "planifie le projet",
+        "conduis",
+        "pilote le dossier"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "plan d'action"
+      ],
+      "cycle": [
+        "plan",
+        "production"
+      ],
+      "defaut": true,
+      "cherche": []
+    },
+    {
+      "id": "writer",
+      "nom": "Rédacteur",
+      "emoji": "✍️",
+      "role": "Compte rendu, note de synthèse, texte destiné à être lu ou diffusé.",
+      "declencheurs": [
+        "rédige",
+        "écris",
+        "compte rendu",
+        "note",
+        "synthèse",
+        "résume",
+        "résume la réunion",
+        "texte",
+        "courrier",
+        "communiqué",
+        "rédaction"
+      ],
+      "capacites": [
+        "documents",
+        "reunion"
+      ],
+      "sorties": [
+        "compte rendu",
+        "note de synthèse"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "revue"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "pm",
+      "nom": "Chef de projet",
+      "emoji": "📋",
+      "role": "Planning, phasage, jalons, charges. Produit un Gantt.",
+      "declencheurs": [
+        "planning",
+        "planifie",
+        "échéance",
+        "jalon",
+        "phasage",
+        "calendrier",
+        "gantt",
+        "qui fait quoi",
+        "avancement",
+        "retard",
+        "délai"
+      ],
+      "capacites": [
+        "documents",
+        "reunion"
+      ],
+      "sorties": [
+        "planning",
+        "gantt"
+      ],
+      "cycle": [
+        "plan",
+        "production",
+        "verification"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "analyst",
+      "nom": "Analyste",
+      "emoji": "📊",
+      "role": "Budget, métriques, chiffres. Ne sort jamais un nombre sans unité ni source.",
+      "declencheurs": [
+        "budget",
+        "chiffre",
+        "coût",
+        "combien",
+        "métrique",
+        "indicateur",
+        "tableau",
+        "statistique",
+        "comparaison",
+        "ratio",
+        "montant"
+      ],
+      "capacites": [
+        "documents",
+        "prevision",
+        "admissibilite"
+      ],
+      "sorties": [
+        "budget",
+        "tableau de chiffres"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "revue",
+        "verification"
+      ],
+      "cherche": [
+        "donnees"
+      ]
+    },
+    {
+      "id": "researcher",
+      "nom": "Chercheur",
+      "emoji": "🔎",
+      "role": "Cherche dans les registres locaux avant de répondre. Cite toujours ses sources.",
+      "declencheurs": [
+        "cherche",
+        "trouve",
+        "quelle source",
+        "documente",
+        "état de l'art",
+        "référence",
+        "quelles données",
+        "existe-t-il",
+        "sourcer"
+      ],
+      "capacites": [
+        "documents",
+        "registre_outils",
+        "sources",
+        "references"
+      ],
+      "sorties": [
+        "note de recherche"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "revue"
+      ],
+      "cherche": [
+        "recherche",
+        "source",
+        "documentation"
+      ]
+    },
+    {
+      "id": "geo",
+      "nom": "Géographe",
+      "emoji": "🗺️",
+      "role": "Territoire, couches cartographiques, données spatiales et leurs licences.",
+      "declencheurs": [
+        "carte",
+        "cartographie",
+        "territoire",
+        "parcelle",
+        "cadastre",
+        "zonage",
+        "couche",
+        "commune",
+        "géographique",
+        "emprise",
+        "orthophoto"
+      ],
+      "capacites": [
+        "documents",
+        "cartographie",
+        "sources"
+      ],
+      "sorties": [
+        "note territoriale"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "revue"
+      ],
+      "cherche": [
+        "cadastre",
+        "cartographie",
+        "orthophoto",
+        "parcelle",
+        "territoire"
+      ]
+    },
+    {
+      "id": "osint",
+      "nom": "OSINT",
+      "emoji": "🛰️",
+      "role": "Vérifie une structure, une information publique, un prestataire. Chaîne de preuves.",
+      "declencheurs": [
+        "vérifie",
+        "vérifier",
+        "prestataire",
+        "entreprise",
+        "siren",
+        "siret",
+        "immatriculation",
+        "enquête",
+        "investigation",
+        "preuve",
+        "recouper"
+      ],
+      "capacites": [
+        "documents",
+        "registre_outils"
+      ],
+      "sorties": [
+        "note d'investigation"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "revue",
+        "verification"
+      ],
+      "cherche": [
+        "siren",
+        "immatriculation",
+        "investigation",
+        "entreprise"
+      ]
+    },
+    {
+      "id": "jurist",
+      "nom": "Juriste",
+      "emoji": "⚖️",
+      "role": "Conformité, licences, cadre légal. Dit ce qu'on n'a pas le droit d'utiliser.",
+      "declencheurs": [
+        "licence",
+        "droit",
+        "juridique",
+        "conformité",
+        "rgpd",
+        "légal",
+        "autorisation",
+        "peut-on utiliser",
+        "marché public",
+        "réglementaire"
+      ],
+      "capacites": [
+        "documents",
+        "sources",
+        "admissibilite"
+      ],
+      "sorties": [
+        "note de conformité"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "verification"
+      ],
+      "cherche": [
+        "licence",
+        "source"
+      ]
+    },
+    {
+      "id": "architect",
+      "nom": "Architecte",
+      "emoji": "📐",
+      "role": "Structure un dossier, un document, une architecture. Produit le sommaire.",
+      "declencheurs": [
+        "structure",
+        "architecture",
+        "sommaire",
+        "organisation du dossier",
+        "plan du document",
+        "schéma",
+        "articulation"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "structure de dossier"
+      ],
+      "cycle": [
+        "plan",
+        "production"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "designer",
+      "nom": "Designer",
+      "emoji": "🎨",
+      "role": "Mise en page, lisibilité, support de présentation.",
+      "declencheurs": [
+        "présentation",
+        "diapositive",
+        "slide",
+        "mise en page",
+        "support",
+        "visuel",
+        "deck",
+        "diaporama"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "présentation .pptx"
+      ],
+      "cycle": [
+        "production",
+        "verification"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "reviewer",
+      "nom": "Relecteur",
+      "emoji": "🛡️",
+      "role": "Relit et marque. Applique les 7 règles d'admissibilité et signale ce qui ne tient pas.",
+      "declencheurs": [
+        "relis",
+        "vérifie ce document",
+        "critique",
+        "relecture",
+        "est-ce solide",
+        "contradiction",
+        "cohérence",
+        "qualité"
+      ],
+      "capacites": [
+        "documents",
+        "admissibilite"
+      ],
+      "sorties": [
+        "rapport de relecture"
+      ],
+      "cycle": [
+        "revue",
+        "verification"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "qa",
+      "nom": "Qualité",
+      "emoji": "🧪",
+      "role": "Vérifie que ce qui est produit est complet et reproductible.",
+      "declencheurs": [
+        "teste",
+        "vérifie la complétude",
+        "est-ce complet",
+        "contrôle",
+        "reproductible",
+        "manque"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "rapport de contrôle"
+      ],
+      "cycle": [
+        "verification"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "coder",
+      "nom": "Ingénieur",
+      "emoji": "🛠️",
+      "role": "Implémentation, scripts, automatisation.",
+      "declencheurs": [
+        "code",
+        "script",
+        "automatise",
+        "développe",
+        "implémente",
+        "python",
+        "fonction"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "note technique"
+      ],
+      "cycle": [
+        "plan",
+        "production"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "builder",
+      "nom": "Créateur d'agents",
+      "emoji": "🧬",
+      "role": "Crée un agent spécialisé quand aucun n'existe. Demande son déclencheur et sa sortie.",
+      "declencheurs": [
+        "crée un agent",
+        "nouvel agent",
+        "agent qui",
+        "spécialise"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "fiche d'agent"
+      ],
+      "cycle": [
+        "plan",
+        "production"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "teacher",
+      "nom": "Pédagogue",
+      "emoji": "🎓",
+      "role": "Explique, forme, transmet. Définit les termes.",
+      "declencheurs": [
+        "explique",
+        "comment ça marche",
+        "qu'est-ce que",
+        "formation",
+        "apprendre",
+        "définition",
+        "vulgarise"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "note pédagogique"
+      ],
+      "cycle": [
+        "recherche",
+        "production"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "translator",
+      "nom": "Traducteur",
+      "emoji": "🌍",
+      "role": "Reformule pour un destinataire : élu, technique, habitant.",
+      "declencheurs": [
+        "traduis",
+        "reformule",
+        "pour un élu",
+        "pour les habitants",
+        "vulgarise",
+        "adapte le texte"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "version adaptée"
+      ],
+      "cycle": [
+        "production"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "promptsmith",
+      "nom": "Ingénieur de prompts",
+      "emoji": "🔮",
+      "role": "Formule la demande pour qu'elle soit traitable, et dit quand le modèle est absent.",
+      "declencheurs": [
+        "prompt",
+        "formule la demande",
+        "comment demander",
+        "instruction"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "prompt"
+      ],
+      "cycle": [
+        "plan"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "archivist",
+      "nom": "Archiviste",
+      "emoji": "📜",
+      "role": "Tient la mémoire du dossier : ce qui a été décidé, quand, et par qui.",
+      "declencheurs": [
+        "archives",
+        "historique",
+        "qu'a-t-on décidé",
+        "mémoire du dossier",
+        "chronologie",
+        "retrace"
+      ],
+      "capacites": [
+        "documents",
+        "reunion"
+      ],
+      "sorties": [
+        "chronologie"
+      ],
+      "cycle": [
+        "recherche",
+        "production",
+        "memoire"
+      ],
+      "cherche": [
+        "source"
+      ]
+    },
+    {
+      "id": "coach",
+      "nom": "Coach",
+      "emoji": "🎯",
+      "role": "Recadre sur l'essentiel et sur l'échéance. Coupe ce qui ne sert pas l'objectif.",
+      "declencheurs": [
+        "priorise",
+        "par où commencer",
+        "le plus urgent",
+        "recadre",
+        "on s'éparpille",
+        "essentiel"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "plan focalisé"
+      ],
+      "cycle": [
+        "plan",
+        "production"
+      ],
+      "cherche": []
+    },
+    {
+      "id": "devops",
+      "nom": "Exploitation",
+      "emoji": "🚀",
+      "role": "Installation, mises à jour, sauvegardes. Dit ce qui est reproductible.",
+      "declencheurs": [
+        "installe",
+        "déploie",
+        "mise à jour",
+        "sauvegarde",
+        "machine",
+        "windows",
+        "version"
+      ],
+      "capacites": [
+        "documents",
+        "registre_outils"
+      ],
+      "sorties": [
+        "note d'exploitation"
+      ],
+      "cycle": [
+        "plan",
+        "verification"
+      ],
+      "cherche": [
+        "installation",
+        "docker",
+        "automatisation"
+      ]
+    },
+    {
+      "id": "pilot",
+      "nom": "Pilote",
+      "emoji": "🌐",
+      "role": "Automatisation et récupération d'information. Dit ce qui n'est pas encore branché.",
+      "declencheurs": [
+        "automatise la collecte",
+        "récupère",
+        "aspire",
+        "navigateur",
+        "scraping",
+        "télécharge"
+      ],
+      "capacites": [
+        "documents",
+        "registre_outils",
+        "sources"
+      ],
+      "sorties": [
+        "note de collecte"
+      ],
+      "cycle": [
+        "plan",
+        "recherche"
+      ],
+      "cherche": [
+        "collecte",
+        "recherche"
+      ]
+    },
+    {
+      "id": "videomaker",
+      "nom": "Monteur",
+      "emoji": "🎬",
+      "role": "Storyboard et séquençage visuel. Produit le conducteur.",
+      "declencheurs": [
+        "vidéo",
+        "storyboard",
+        "séquence",
+        "conducteur",
+        "film"
+      ],
+      "capacites": [
+        "documents"
+      ],
+      "sorties": [
+        "conducteur"
+      ],
+      "cycle": [
+        "plan",
+        "production"
+      ],
+      "cherche": []
+    }
+  ]
+}
