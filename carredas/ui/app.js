@@ -143,11 +143,22 @@ async function aller(vue) {
 
 /* ================================================================ ACCUEIL */
 async function accueil() {
-  const [sante, tableau, modules, sessions] = await Promise.all([
-    get('/api/health'), get('/api/tableau'), get('/api/modules'), get('/api/meeting')]);
+  const [sante, tableau, modules, sessions, config] = await Promise.all([
+    get('/api/health'), get('/api/tableau'), get('/api/modules'),
+    get('/api/meeting'), get('/api/config')]);
   S.sante = sante; S.tableau = tableau; S.modules = modules.modules;
+  S.config = config.config;
   const t = tableau;
   const terr = (await get('/api/carto/territoire')).territoire || {};
+
+  // compte à rebours de l'échéance (objectif.date dans la config)
+  const obj = (config.config.objectif || {});
+  let carJours = '';
+  if (obj.date && obj.compte_a_rebours !== false) {
+    const echeance = new Date(obj.date + 'T09:00:00');
+    const j = Math.ceil((echeance - Date.now()) / 86400000);
+    carJours = j > 0 ? `J-${j}` : (j === 0 ? 'J-0' : 'dépassé');
+  }
 
   const cartes = [
     ['Réunions', t.reunions.total || 0, `${t.reunions.en_cours || 0} en cours · ${t.reunions.documents || 0} documents`],
@@ -165,6 +176,7 @@ async function accueil() {
   <div class="titre-page">
     <h1>${esc(terr.nom || 'Carré d\'As')}</h1>
     <div class="actions">
+      ${carJours ? `<span class="pastille ac"><i class="pt"></i>${esc(obj.titre || 'Échéance')} · ${carJours}</span>` : ''}
       <button class="primaire" data-action="nouvelle-reunion">＋ Nouvelle réunion</button>
     </div>
   </div>
@@ -1894,6 +1906,32 @@ async function systeme() {
         <label class="champ"><span>URL Ollama</span><input id="cfg-ollama" value="${esc((S.systeme.config.llm || {}).ollama_url || '')}"></label>
         <label class="champ"><span>Modèle Ollama</span><input id="cfg-modele" value="${esc((S.systeme.config.llm || {}).ollama_model || '')}"></label>
       </div>
+      <h3 style="margin:18px 0 8px">☉ Le patron (SOL)</h3>
+      <div class="grille-form">
+        <label class="champ"><span>Nom du patron</span><input id="cfg-patron-nom" value="${esc(((S.systeme.config.patron || {}).nom) || 'SOL ☉')}"></label>
+        <label class="champ"><span>Seuil de routage</span><input id="cfg-patron-seuil" type="number" step="0.1" min="0" value="${esc(((S.systeme.config.patron || {}).seuil_routage) ?? 1.0)}" title="Sous ce score, le patron crée un sous-agent"></label>
+        <label class="champ"><span>Visibilité d'un travail (s)</span><input id="cfg-patron-fenetre" type="number" step="1" min="1" value="${esc(((S.systeme.config.patron || {}).fenetre_visibilite_s) ?? 20)}"></label>
+      </div>
+      <h3 style="margin:18px 0 8px">✳ Laplace — IA légère (téléphone, Discord)</h3>
+      <div class="grille-form">
+        <label class="champ"><span>URL du patron</span><input id="cfg-laplace-url" value="${esc(((S.systeme.config.laplace || {}).patron_url) || '')}"></label>
+        <label class="champ"><span>Token d'accès (vide = ouvert en local)</span><input id="cfg-acces-token" type="password" value="${esc(((S.systeme.config.acces || {}).token) || '')}" placeholder="laisser vide en local"></label>
+        <label class="champ"><span>Mémoire si utile</span>
+          <select id="cfg-laplace-memoire">
+            ${[true, false].map(v => `<option ${(S.systeme.config.laplace || {}).memoire_si_utile === v ? 'selected' : ''} value="${v}">${v ? 'oui — seulement si le message le justifie' : 'non — jamais'}</option>`).join('')}
+          </select></label>
+        <label class="champ"><span>Canal Discord</span>
+          <select id="cfg-laplace-discord">
+            ${[false, true].map(v => `<option ${((S.systeme.config.laplace || {}).canaux || {}).discord === v ? 'selected' : ''} value="${v}">${v ? 'activé' : 'désactivé'}</option>`).join('')}
+          </select></label>
+      </div>
+      <h3 style="margin:18px 0 8px">🎯 Objectif & profil</h3>
+      <div class="grille-form">
+        <label class="champ"><span>Date de l'échéance</span><input id="cfg-obj-date" type="date" value="${esc(((S.systeme.config.objectif || {}).date) || '')}"></label>
+        <label class="champ"><span>Titre de l'échéance</span><input id="cfg-obj-titre" value="${esc(((S.systeme.config.objectif || {}).titre) || '')}"></label>
+        <label class="champ"><span>Organisation (sur les documents)</span><input id="cfg-profil-org" value="${esc(((S.systeme.config.profil || {}).organisation) || '')}"></label>
+        <label class="champ"><span>Contact (nom · email)</span><input id="cfg-profil-contact" value="${esc((((S.systeme.config.profil || {}).contact_nom) || '') + ' ' + (((S.systeme.config.profil || {}).contact_email) || ''))}"></label>
+      </div>
       <button class="primaire" data-action="sauver-config">Enregistrer</button>
       <span class="dim" style="margin-left:10px;font-size:12px">Ollama installé localement =
         gratuit, hors ligne, aucune donnée ne sort du poste.</span>
@@ -2380,10 +2418,29 @@ const ACTIONS = {
   },
   'sauver-config': async () => {
     const v = id => ($(id) || {}).value;
+    const contact = v('#cfg-profil-contact').split(/\s+/).filter(Boolean);
     await put('/api/config', {
       mises_a_jour: { canal: v('#cfg-canal'), depot: v('#cfg-depot') },
-      llm: { provider: v('#cfg-llm'), ollama_url: v('#cfg-ollama'), ollama_model: v('#cfg-modele') } });
-    toast('Configuration enregistrée — le modèle sera retesté au prochain appel');
+      llm: { provider: v('#cfg-llm'), ollama_url: v('#cfg-ollama'), ollama_model: v('#cfg-modele') },
+      patron: {
+        nom: v('#cfg-patron-nom'),
+        seuil_routage: parseFloat(v('#cfg-patron-seuil')) || 1.0,
+        fenetre_visibilite_s: parseInt(v('#cfg-patron-fenetre')) || 20,
+      },
+      laplace: {
+        patron_url: v('#cfg-laplace-url'),
+        memoire_si_utile: v('#cfg-laplace-memoire') === 'true',
+        canaux: { discord: v('#cfg-laplace-discord') === 'true' },
+      },
+      acces: { token: v('#cfg-acces-token') },
+      objectif: { date: v('#cfg-obj-date'), titre: v('#cfg-obj-titre') },
+      profil: {
+        organisation: v('#cfg-profil-org'),
+        contact_nom: contact[0] || '',
+        contact_email: contact.slice(1).join(' ') || '',
+      },
+    });
+    toast('Configuration enregistrée');
     majPilote(await get('/api/mise-a-jour'));
   },
   'sauvegarde': async () => {

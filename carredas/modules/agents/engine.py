@@ -290,7 +290,8 @@ PRODUCTEURS = {"pm": _doc_planning, "analyst": _doc_budget}
 
 
 # ------------------------------------------------------------- exécution
-def executer(demande: str, agent_id: str | None, contexte: dict, store) -> dict:
+def executer(demande: str, agent_id: str | None, contexte: dict, store,
+             config: dict | None = None) -> dict:
     """Une demande traverse les six phases. Chacune laisse une trace."""
     from ... import docsgen
     from ...core import admissibilite
@@ -349,7 +350,7 @@ def executer(demande: str, agent_id: str | None, contexte: dict, store) -> dict:
         for lig in (b.get("lignes") or []):
             rec = {"id": "doc", "type": "ligne", "source": "session",
                    "status": "unknown", "label": " ".join(str(x) for x in lig)[:120]}
-            _, pr = admissibilite.admissible(rec)
+            _, pr = admissibilite.admissible(rec, config)
             for x in pr:
                 (bloquants if x["gravite"] == "bloquant" else signalements).append(x)
     problems = bloquants

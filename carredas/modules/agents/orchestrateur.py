@@ -23,15 +23,25 @@ from ... import docsgen
 from ...store import new_id, slug
 from . import engine as E
 
-# seuil de routage : en dessous, le patron considère que la tâche
-# dépasse le périmètre des agents connus → il crée un sous-agent
-SEUIL_ROUTAGE = 1.0
+# Les valeurs par défaut — surclassées par la config de l'OS
+# (patron.seuil_routage, patron.fenetre_visibilite_s, patron.nom…)
+SEUIL_ROUTAGE_DEFAUT = 1.0
+FENETRE_VISIBILITE_DEFAUT = 20
+NOM_PATRON_DEFAUT = "SOL ☉"
+EMOJI_PATRON_DEFAUT = "☉"
 
-# un travail reste visible ce délai après sa fin (pour que l'humain le voie)
-FENETRE_VISIBILITE_S = 20
 
-NOM_PATRON = "SOL ☉"
-EMOJI_PATRON = "☉"
+def _cfg_patron(config: dict | None) -> dict:
+    """La section `patron` de la config, avec les défauts."""
+    p = ((config or {}).get("patron") or {})
+    return {
+        "nom": p.get("nom") or NOM_PATRON_DEFAUT,
+        "emoji": p.get("emoji") or EMOJI_PATRON_DEFAUT,
+        "seuil_routage": float(p.get("seuil_routage", SEUIL_ROUTAGE_DEFAUT)),
+        "fenetre_visibilite_s": float(p.get("fenetre_visibilite_s",
+                                             FENETRE_VISIBILITE_DEFAUT)),
+        "creer_sous_agents": bool(p.get("creer_sous_agents", True)),
+    }
 
 
 def _maintenant() -> str:
@@ -98,7 +108,9 @@ def lister_sous_agents(store) -> list[dict]:
 
 
 # ------------------------------------------------------------- état live
-def etat_systeme(store, limite_travaux: int = 30) -> dict:
+def etat_systeme(store, limite_travaux: int = 30,
+                 fenetre_s: float = FENETRE_VISIBILITE_DEFAUT,
+                 config: dict | None = None) -> dict:
     """L'état du système en temps réel : qui travaille, quoi, quels sous-agents.
 
     Un travail est « en cours » s'il a commencé il y a moins de
@@ -115,7 +127,7 @@ def etat_systeme(store, limite_travaux: int = 30) -> dict:
             "demande": t.get("demande", "")[:80],
             "cree_le": t.get("cree_le"),
             "age_s": round(age, 1),
-            "en_cours": age < FENETRE_VISIBILITE_S,
+            "en_cours": age < fenetre_s,
             "duree_s": t.get("duree_s", 0),
             "phases": len(t.get("phases") or []),
             "problemes": t.get("problemes", 0),
@@ -140,21 +152,23 @@ def etat_systeme(store, limite_travaux: int = 30) -> dict:
         })
 
     sous_agents = lister_sous_agents(store)
+    cfg = _cfg_patron(config)
     return {
-        "patron": {"nom": NOM_PATRON, "emoji": EMOJI_PATRON,
+        "patron": {"nom": cfg["nom"], "emoji": cfg["emoji"],
                    "role": "Orchestrateur — analyse, délègue, surveille, rend compte"},
         "agents": agents,
         "travaux": travaux,
         "travaux_en_cours": [t for t in travaux if t["en_cours"]],
         "sous_agents": sous_agents,
         "sous_agents_actifs": sum(1 for s in sous_agents
-                                  if _secondes(s.get("reactive_le", "")) < FENETRE_VISIBILITE_S),
+                                  if _secondes(s.get("reactive_le", "")) < fenetre_s),
         "maintenant": _maintenant(),
     }
 
 
 # ------------------------------------------------------------- le patron
-def parler(texte: str, contexte: dict, store, broadcast=None) -> dict:
+def parler(texte: str, contexte: dict, store, broadcast=None,
+           config: dict | None = None) -> dict:
     """Tu parles au patron. Lui seul répond.
 
     1. analyse la demande (routage déterministe)
@@ -163,6 +177,7 @@ def parler(texte: str, contexte: dict, store, broadcast=None) -> dict:
     4. rend compte : qui a travaillé, ce qui a été produit, ce qui bloque
     """
     texte = (texte or "").strip()
+    cfg = _cfg_patron(config)
     routes = E.router(texte, 3)
     meilleur = routes[0] if routes else None
     log: list[dict] = []
@@ -182,9 +197,9 @@ def parler(texte: str, contexte: dict, store, broadcast=None) -> dict:
                else texte[:40])
     _e("analyse", f"domaine détecté : « {domaine} » (score {score})")
 
-    # 2. hors périmètre ? → sous-agent
+    # 2. hors périmètre ? → sous-agent (seuil réglable dans l'OS)
     sous_agent = None
-    if score < SEUIL_ROUTAGE:
+    if score < cfg["seuil_routage"] and cfg["creer_sous_agents"]:
         sous_agent = creer_sous_agent(
             agent_choisi["id"], domaine, texte, store, demande=texte)
         _e("sous_agent_cree", f"☾ {sous_agent['nom']} "
@@ -200,7 +215,8 @@ def parler(texte: str, contexte: dict, store, broadcast=None) -> dict:
         _e("delegue", f"→ {agent_choisi['emoji']} {agent_choisi['nom']}")
 
     # 3. délègue (exécution des 6 phases)
-    res = E.executer(texte, agent_choisi["id"], contexte or {}, store)
+    res = E.executer(texte, agent_choisi["id"], contexte or {}, store,
+                     config=config)
     t = res["tache"]
     _e("travail_fini", f"{agent_choisi['nom']} a rendu son travail "
        f"({t['caracteres']} caractères)", tache=t["id"])
@@ -213,7 +229,7 @@ def parler(texte: str, contexte: dict, store, broadcast=None) -> dict:
         store.put("sousagents", sous_agent["id"], sous_agent)
 
     # 4. rend compte — le patron parle
-    lignes = [f"☉ **{NOM_PATRON}** — j'ai analysé votre demande "
+    lignes = [f"{cfg['emoji']} **{cfg['nom']}** — j'ai analysé votre demande "
               f"(domaine : « {domaine} »)."]
     if sous_agent:
         lignes.append(f"Aucun agent ne couvrait ce domaine : j'ai **créé un "
@@ -250,7 +266,7 @@ def parler(texte: str, contexte: dict, store, broadcast=None) -> dict:
     _e("rendu_compte", f"livrable proposé : {nom}")
 
     return {
-        "patron": {"nom": NOM_PATRON, "emoji": EMOJI_PATRON},
+        "patron": {"nom": cfg["nom"], "emoji": cfg["emoji"]},
         "texte_reponse": "\n\n".join(lignes),
         "agent": res["agent"], "agent_choisi_par_le_patron": agent_choisi["id"],
         "sous_agent": sous_agent, "domaine": domaine, "score_routage": round(score, 2),

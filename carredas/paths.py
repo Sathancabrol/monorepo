@@ -105,6 +105,78 @@ DEFAULT_CONFIG = {
         "verifier_au_demarrage": True,
     },
     "ui": {"theme": "nuit", "densite": "confortable"},
+
+    # ── le patron (SOL ☉) — unique interlocuteur ──────────────────────
+    "patron": {
+        "nom": "SOL ☉",
+        "emoji": "☉",
+        # sous ce score de routage, le patron crée un sous-agent
+        "seuil_routage": 1.0,
+        # un travail reste visible ce délai après sa fin (solaire live)
+        "fenetre_visibilite_s": 20,
+        "creer_sous_agents": True,
+        "montrer_qui_a_travaille": True,
+    },
+
+    # ── Laplace ✳ — IA légère sur les devices (ordi, téléphone, Discord) ──
+    # Elle ne travaille presque pas : elle transmet au patron et rend compte.
+    # Elle ne consulte la mémoire que si le message le justifie.
+    "laplace": {
+        "actif": True,
+        "nom": "Laplace ✳",
+        "patron_url": "http://127.0.0.1:8000",
+        "memoire_si_utile": True,
+        # mots-clés qui déclenchent une consultation mémoire
+        "memoire_si_mot_cle": ["rappelle", "retrouve", "mémoire", "memoire",
+                               "avant", "déjà", "deja", "historique",
+                               "dernier", "précédemment", "precedemment"],
+        "verifier_coherence": True,
+        "formater_par_canal": True,
+        "canaux": {"web": True, "discord": False, "telephone": True},
+        "longueur_max_message": 2000,
+        "retention_conversations_j": 90,
+    },
+
+    # ── accès distant (Laplace sur téléphone/Discord appelle l'API) ─────
+    "acces": {
+        "token": "",                     # vide = pas de vérification
+        "exiger_token_si_distant": True, # token exigé si origine != localhost
+        "origines_autorisees": [],
+    },
+
+    # ── admissibilité : enrichissable sans redeployer ────────────────────
+    "admissibilite": {
+        "signaler_fait_non_croise": True,
+        "sources_officielles": [
+            "insee", "ign", "inpn", "georisques", "brgm", "dreal", "ddtm",
+            "smbt", "ifremer", "open-meteo", "data.gouv", "geoportail",
+            "cadastre", "sirene", "inpi", "anses", "santepubliquefrance",
+            "meteofrance", "vigicrues", "littoral", "onf", "france-travail",
+            "education.gouv", "solidarites-sante.gouv", "economie.gouv",
+            "interieur.gouv", "ecologie.gouv", "culture.gouv",
+            "agriculture.gouv", "enseignementsup-recherche.gouv",
+            "data.economie.gouv", "observatoire-des-territoires",
+        ],
+    },
+
+    # ── objectif : l'échéance (RDV Agglo du 16 octobre 2026) ─────────────
+    "objectif": {
+        "date": "2026-10-16",
+        "titre": "RDV Agglo de Thau",
+        "compte_a_rebours": True,
+    },
+
+    # ── profil émetteur (sur les documents générés) ─────────────────────
+    "profil": {
+        "organisation": "",
+        "contact_nom": "",
+        "contact_email": "",
+    },
+
+    # ── modules : désactivation sans éditer de fichier ───────────────────
+    "modules": {
+        "desactives": [],
+    },
 }
 
 

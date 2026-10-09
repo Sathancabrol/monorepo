@@ -113,6 +113,9 @@ class Router:
 
     def __init__(self):
         self._routes: list[tuple[str, re.Pattern, callable, bool]] = []
+        # garde-fou optionnel : fn(req) → None (laisser passer) ou Response (refus)
+        # défini par le serveur (vérification du token d'accès, etc.)
+        self.garde = None
 
     def add(self, method: str, pattern: str, handler, stream=False):
         self._routes.append((method.upper(), _compile(pattern), handler, stream))
@@ -268,6 +271,14 @@ class Handler(BaseHTTPRequestHandler):
     # ---------- dispatch ----------
     def _dispatch(self, head_only=False):
         req = self._request()
+        if self.router.garde is not None:
+            try:
+                refus = self.router.garde(req)
+            except Exception:
+                refus = None
+            if refus is not None:
+                self._send(refus, head_only)
+                return
         handler, params, stream = self.router.resolve(req.method, req.path)
         if handler is None:
             self._send(Response.not_found(req.path), head_only)

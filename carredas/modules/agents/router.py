@@ -20,6 +20,7 @@ PREFIX = "/api/agents"
 
 def register(router, ctx):
     store = ctx["store"]
+    config = ctx.get("config") or {}
     broadcast = ctx.get("broadcast") or (lambda *a, **k: None)
 
     def _contexte(p: dict) -> dict:
@@ -112,7 +113,9 @@ def register(router, ctx):
     def systeme(req):
         """L'état live du système solaire : qui travaille, quoi, quels sous-agents."""
         from . import orchestrateur as O
-        return O.etat_systeme(store)
+        fenetre = float(((config.get("patron") or {}).get("fenetre_visibilite_s")
+                         or 20))
+        return O.etat_systeme(store, fenetre_s=fenetre, config=config)
 
     @router.get(PREFIX + "/sousagents")
     def sousagents(req):
@@ -129,7 +132,7 @@ def register(router, ctx):
         if not texte:
             return Response.error("il manque le texte", 400)
         contexte = _contexte(p)
-        r = O.parler(texte, contexte, store, broadcast)
+        r = O.parler(texte, contexte, store, broadcast, config=config)
         return r
 
     @router.get(PREFIX + "/:aid")

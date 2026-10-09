@@ -76,12 +76,37 @@ def build(config: dict | None = None, store: Store | None = None,
     @router.put("/api/config")
     def ecrire_config(req):
         from .llm import reset as llm_reset
+        nonlocal cfg  # sinon on mettrait à jour une variable locale, pas celle du serveur
         frag = req.json() or {}
         paths.patch_config(frag)
         cfg = paths.read_config()
         llm_reset()
         log.info("serveur", "configuration mise à jour")
         return {"config": cfg}
+
+    # ------------------------------------------------- garde-fou d'accès
+    # Si un token est configuré (acces.token) et que la requête vient d'une
+    # origine distante (Laplace sur téléphone/Discord), le token est exigé.
+    # En local (127.0.0.1), jamais de token — l'app reste fluide.
+    def _garde_acces(req):
+        acces = (cfg.get("acces") or {})
+        token = acces.get("token") or ""
+        if not token:
+            return None  # pas de token configuré = pas de vérification
+        if not acces.get("exiger_token_si_distant", True):
+            return None
+        client = (req.client or "")
+        if client in ("127.0.0.1", "::1", "localhost", ""):
+            return None  # origine locale : jamais de token
+        auth = (req.headers.get("Authorization") or "")
+        fourni = auth[7:].strip() if auth.lower().startswith("bearer ") else ""
+        if not fourni:
+            fourni = req.q("token") or ""
+        if fourni != token:
+            return Response.error("token d'accès requis (Laplace)", 401)
+        return None
+
+    router.garde = _garde_acces
 
     # ---------------------------------------------------------------- modules
     ctx = {"store": store, "config": cfg, "llm": llm, "broadcast": broadcast,
@@ -119,7 +144,7 @@ def build(config: dict | None = None, store: Store | None = None,
         from .core import admissibilite
         rec = req.json() or {}
         ok, erreurs = canonical.valider(rec)
-        presentable, problemes = admissibilite.admissible(rec)
+        presentable, problemes = admissibilite.admissible(rec, cfg)
         return {"valide": ok, "erreurs": erreurs,
                 "presentable": presentable, "problemes": problemes}
 
@@ -141,7 +166,7 @@ def build(config: dict | None = None, store: Store | None = None,
             "par_regle": r["par_regle"],
             "presentable": r["presentable"],
             "detail": [{"id": x.get("id"), "label": x.get("label"),
-                        "problemes": admissibilite.admissible(x)[1]}
+                        "problemes": admissibilite.admissible(x, cfg)[1]}
                        for x in (r["bloques"] + r["signalements"])],
         }
 

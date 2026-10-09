@@ -71,8 +71,11 @@ def _sources(rec: dict) -> list[str]:
     return list(dict.fromkeys(out))
 
 
-def _officielle(sources: list[str]) -> bool:
-    return any(any(o in s for o in SOURCES_OFFICIELLES) for s in sources)
+def _officielle(sources: list[str], liste=None) -> bool:
+    # la liste est enrichissable dans la config de l'OS
+    # (admissibilite.sources_officielles) sans redeployer
+    motifs = liste if liste else SOURCES_OFFICIELLES
+    return any(any(o in s for o in motifs) for s in sources)
 
 
 def _texte(rec) -> str:
@@ -86,7 +89,7 @@ def _texte(rec) -> str:
     return "\n".join(out)
 
 
-def admissible(rec: dict) -> tuple[bool, list[dict]]:
+def admissible(rec: dict, config: dict | None = None) -> tuple[bool, list[dict]]:
     """Un enregistrement est-il présentable tel quel ?
 
     Renvoie (présentable, problèmes). Un seul problème `bloquant` suffit à
@@ -110,7 +113,10 @@ def admissible(rec: dict) -> tuple[bool, list[dict]]:
     #        sources indépendantes, ou une source officielle primaire.
     #        Une seule source non officielle ne porte pas un fait vérifié.
     sources = _sources(rec)
-    if statut == "fact" and len(sources) < 2 and not _officielle(sources):
+    cfg_adm = (config or {}).get("admissibilite") or {}
+    liste_off = cfg_adm.get("sources_officielles")
+    if (statut == "fact" and cfg_adm.get("signaler_fait_non_croise", True)
+            and len(sources) < 2 and not _officielle(sources, liste_off)):
         ajouter("fait_non_croise", SIGNALEMENT,
                 f"une seule source ({sources[0] if sources else 'aucune'}) et "
                 f"aucun producteur public reconnu : le critère du fait vérifié "

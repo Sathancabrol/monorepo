@@ -79,9 +79,9 @@ def _reponse_texte(demande: str, res: dict) -> str:
     return "\n\n".join(lignes)
 
 
-def envoyer(store, cid: str, texte: str, agent_id: str | None = None,
+def envoyer(store, cid: str, texte: str,
             contexte: dict | None = None, produire: bool = True,
-            broadcast=None) -> dict:
+            broadcast=None, config: dict | None = None) -> dict:
     """Envoie un message au PATRON. Lui seul répond — il délègue en interne.
 
     L'utilisateur ne choisit jamais un agent : le patron (SOL ☉) analyse,
@@ -102,17 +102,15 @@ def envoyer(store, cid: str, texte: str, agent_id: str | None = None,
     routes = E.router(texte, 3)
 
     msg = {"id": new_id("msg"), "conversation": cid, "role": "user",
-           "texte": texte,
-           "routes_analysees": [{"id": r["agent"]["id"], "nom": r["agent"]["nom"],
-                                  "score": r["score"]} for r in routes],
-           "cree_le": _maintenant()}
+           "texte": texte, "cree_le": _maintenant()}
     store.put("chatmsgs", msg["id"], msg)
 
-    reponse: dict = {"role": "patron", "patron": O.NOM_PATRON,
-                     "emoji": O.EMOJI_PATRON}
+    reponse: dict = {"role": "patron", "patron": O.NOM_PATRON_DEFAUT,
+                     "emoji": O.EMOJI_PATRON_DEFAUT}
     if produire:
         try:
-            r = O.parler(texte, contexte or {}, store, broadcast)
+            r = O.parler(texte, contexte or {}, store, broadcast,
+                         config=config)
             reponse["texte_reponse"] = r["texte_reponse"]
             reponse["agent"] = r["agent"]["id"]
             reponse["agent_nom"] = r["agent"]["nom"]
@@ -133,7 +131,7 @@ def envoyer(store, cid: str, texte: str, agent_id: str | None = None,
                                         "résultat dans ce cas.")
             reponse["erreur"] = str(exc)
     else:
-        reponse["texte_reponse"] = f"☉ **{O.NOM_PATRON}** a bien reçu votre message."
+        reponse["texte_reponse"] = f"☉ **{O.NOM_PATRON_DEFAUT}** a bien reçu votre message."
 
     reponse.update({"id": new_id("msg"), "conversation": cid,
                     "cree_le": _maintenant()})

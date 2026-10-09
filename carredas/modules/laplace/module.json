@@ -1,0 +1,16 @@
+{
+  "id": "laplace",
+  "titre": "Laplace",
+  "icone": "✳",
+  "resume": "L'IA légère sur tous les devices (ordinateur, téléphone, Discord). Elle ne travaille presque pas : elle transmet au patron (SOL ☉) et rend compte. Elle ne consulte la mémoire que si le message le justifie.",
+  "version": "0.1.0",
+  "actif": true,
+  "obligatoire": false,
+  "priorite": 8,
+  "palier": "P0",
+  "routes": [
+    "POST /api/laplace/parler",
+    "GET  /api/laplace/memoire?q=",
+    "GET  /api/laplace/etat"
+  ]
+}

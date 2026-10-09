@@ -366,6 +366,52 @@ sous2 = api("GET", "/api/agents/sousagents")
 verifier(sous2["total"] == sous["total"],
          "le patron réutilise le sous-agent existant (pas de doublon)")
 
+# --------------------------------------------- 7.6c Laplace (IA légère, devices)
+etat_l = api("GET", "/api/laplace/etat")
+verifier(etat_l["patron"] == "SOL ☉", "Laplace connaît le patron")
+verifier(etat_l["memoire_si_utile"] is True,
+         "Laplace consulte la mémoire seulement si utile")
+
+# sans mot-clé de rappel → la mémoire n'est PAS consultée
+r_sans = api("POST", "/api/laplace/parler",
+             {"texte": "Rédige le compte rendu de la réunion", "canal": "web"})
+verifier(r_sans["de"] == "SOL ☉", "Laplace transmet au patron")
+verifier(r_sans["memoire_consultee"] is False,
+         "sans mot-clé de rappel, la mémoire n'est pas consultée")
+verifier(bool(r_sans.get("document")), "Laplace rend un document")
+
+# avec un mot-clé de rappel → la mémoire est consultée
+r_avec = api("POST", "/api/laplace/parler",
+             {"texte": "Retrouve ce qu'on a fait sur la Frange Sud",
+              "canal": "web"})
+verifier(r_avec["memoire_consultee"] is True,
+         "avec un mot-clé de rappel, la mémoire est consultée")
+verifier(len(r_avec["memoire"]) >= 1, "la mémoire retourne des entrées")
+
+# consultation mémoire explicite (à la demande)
+mem = api("GET", "/api/laplace/memoire?q=Frange%20Sud")
+verifier(mem["total"] >= 1, "la mémoire est consultable à la demande")
+
+# --------------------------------------------- 7.6d config : PUT persiste vraiment
+cfg_avant = api("GET", "/api/config")["config"]
+api("PUT", "/api/config", {"patron": {"seuil_routage": 2.5},
+                           "acces": {"token": "test-scenario"}})
+cfg_apres = api("GET", "/api/config")["config"]
+verifier(cfg_apres["patron"]["seuil_routage"] == 2.5,
+         "un PUT /api/config met à jour la config lue ensuite (bug nonlocal corrigé)")
+verifier(cfg_apres["acces"]["token"] == "test-scenario",
+         "le token d'accès est persisté")
+# le patron lit le seuil depuis la config
+m_seuil = api("POST", "/api/laplace/parler",
+              {"texte": "Bonjour, que peux-tu faire ?", "canal": "web"})
+verifier(m_seuil["sous_agent_cree"] is True,
+         "avec seuil=2.5, le patron crée un sous-agent même sur un score moyen")
+# remise à zéro
+api("PUT", "/api/config", {"patron": {"seuil_routage": 1.0},
+                           "acces": {"token": ""}})
+verifier(api("GET", "/api/config")["config"]["acces"]["token"] == "",
+         "la config est remise à zéro après le test")
+
 # ------------------------------------------------- 7.7 constellation (3 systèmes)
 sys3 = api("GET", "/api/constellation")
 verifier(sys3["total"] == 3, "la constellation expose 3 systèmes")
