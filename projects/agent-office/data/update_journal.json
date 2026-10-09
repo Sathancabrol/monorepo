@@ -43,5 +43,10 @@
     "date": "2026-10-09T02:35:49",
     "type": "recherche",
     "note": "Veille §5 : PewDiePie Ajax/Odysseus (harnais agent local AGPL, weights attendus ; règle anti-distillation ajoutée aux règles de l'Arbitre) + marché location GPU (Vast.ai 0,09-0,59$/h spot, RunPod 0,34-0,69$/h UE + 10$ crédit, Lambda 15$, Colab T4 gratuit = Wan2GP possible à 0 €)"
+  },
+  {
+    "date": "2026-10-09T02:44:28",
+    "type": "decision",
+    "note": "Veille triple : Augma Imaginatorium (format Goal+démo à adopter), reel géospatial NDVI/SAR/BFAST transformé en module ZAN pour le deck O2 (échéance 20/10), BOAMP API DILA gratuite + alerte Midi Libre = canal prospection n°4 dept 34 — docs/VEILLE-AUGMA-GEO-MARCHES-PUBLICS.md, 2 tâches ajoutées au planning"
   }
 ]

@@ -19,5 +19,19 @@
     "date": "2026-11-07",
     "heure": "09:00",
     "duree": 120
+  },
+  {
+    "id": 4,
+    "titre": "O2 : intégrer le module ZAN/artificialisation (méthode NDVI + SAR, données gratuites) au deck Frontignan",
+    "date": "2026-10-16",
+    "heure": "14:00",
+    "duree": 180
+  },
+  {
+    "id": 5,
+    "titre": "Prospection : mettre en place la veille marchés publics (API BOAMP dept 34 + alerte gratuite Midi Libre)",
+    "date": "2026-10-13",
+    "heure": "09:00",
+    "duree": 60
   }
 ]
