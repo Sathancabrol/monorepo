@@ -54,6 +54,10 @@ Les projets ci-dessous sont des **candidats non validés**, pas des dépendances
 - ArtCraft : applications PhotoCraft/VectorCraft/FilmCraft/etc.; vérifier séparément chaque application, licence, releases, maturité et besoins matériels.
 - Sloom Studio et autres suites créatives : à garder dans le registre de recherche jusqu'à inspection du code et des builds.
 - Genjutsu-OSS : pipeline de transformation vidéo orienté ComfyUI; source déclarée Apache-2.0, mais état actuel limité à une fondation et un pipeline simulé. Voir [la fiche d’intégration Nexus](genjutsu-video-integration.md); ne pas le traiter comme un moteur de production tant que les backends réels et les licences des poids ne sont pas vérifiés.
+- Motion Mirror : candidat de transfert de mouvement; contraintes annoncées (~9 GB VRAM / 32 GB RAM pour le backend léger) supérieures au PC cible, licences des poids/LoRA à vérifier.
+- Viggle-Animate : modèle de remplacement de personnage publié en septembre 2026; poids sous licence MiniMax H3 Community, exigences GPU élevées et limites reconnues sur lip-sync/plans coupés.
+- Maestro : studio vidéo/audio avec orchestration « Director »; licence WanGP Non-Commercial Evaluation, donc pas une base logicielle commerciale sans revue de licence.
+- Voir [la veille vidéo IA du 10 octobre 2026](../research/video-ai-landscape-2026-10-10.md) pour la comparaison, les sources et les contraintes matérielles.
 
 Les nombres d'outils, affirmations de compatibilité et annonces de prix sont des déclarations de projet tant qu'ils n'ont pas été reproduits par un test.
 
