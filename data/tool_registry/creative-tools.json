@@ -12,14 +12,28 @@
       "license": "GPL-3.0-or-later",
       "license_status": "declared",
       "maturity": "stable",
-      "platforms": ["windows"],
-      "integrations": ["python-api", "extensions"],
-      "requirements": {"gpu": "optional; workload dependent", "ram": "workload dependent"},
+      "platforms": [
+        "windows"
+      ],
+      "integrations": [
+        "python-api",
+        "extensions"
+      ],
+      "requirements": {
+        "gpu": "optional; workload dependent",
+        "ram": "workload dependent"
+      },
       "install_methods": [],
       "security_notes": "Les scripts et extensions peuvent exécuter du code dans le processus Blender.",
       "verification_status": "not_tested_locally",
       "last_verified": "2026-10-09",
-      "evidence": [{"url": "https://www.blender.org/", "kind": "official_project", "note": "Source officielle; version installée et compatibilité locale à détecter."}]
+      "evidence": [
+        {
+          "url": "https://www.blender.org/",
+          "kind": "official_project",
+          "note": "Source officielle; version installée et compatibilité locale à détecter."
+        }
+      ]
     },
     {
       "id": "unreal-engine",
@@ -30,14 +44,28 @@
       "license": "Epic EULA",
       "license_status": "declared",
       "maturity": "stable",
-      "platforms": ["windows"],
-      "integrations": ["editor-plugins", "python-api-version-dependent"],
-      "requirements": {"gpu": "workload dependent; high-end features may exceed local hardware", "ram": "workload dependent"},
+      "platforms": [
+        "windows"
+      ],
+      "integrations": [
+        "editor-plugins",
+        "python-api-version-dependent"
+      ],
+      "requirements": {
+        "gpu": "workload dependent; high-end features may exceed local hardware",
+        "ram": "workload dependent"
+      },
       "install_methods": [],
       "security_notes": "Les plugins natifs et scripts éditeur peuvent modifier les projets ou exécuter du code.",
       "verification_status": "not_tested_locally",
       "last_verified": "2026-10-09",
-      "evidence": [{"url": "https://www.unrealengine.com/", "kind": "official_project", "note": "Vérifier la version effectivement installée, les conditions de licence et les prérequis."}]
+      "evidence": [
+        {
+          "url": "https://www.unrealengine.com/",
+          "kind": "official_project",
+          "note": "Vérifier la version effectivement installée, les conditions de licence et les prérequis."
+        }
+      ]
     },
     {
       "id": "blender-mcp-official",
@@ -48,14 +76,27 @@
       "license": "unknown",
       "license_status": "unknown",
       "maturity": "experimental",
-      "platforms": ["windows"],
-      "integrations": ["mcp", "blender"],
-      "requirements": {"blender_version": "verify before use"},
+      "platforms": [
+        "windows"
+      ],
+      "integrations": [
+        "mcp",
+        "blender"
+      ],
+      "requirements": {
+        "blender_version": "verify before use"
+      },
       "install_methods": [],
       "security_notes": "Ne pas connecter à un agent non fiable; valider les opérations et limiter les accès fichiers.",
       "verification_status": "research_only",
       "last_verified": "2026-10-09",
-      "evidence": [{"url": "https://www.blender.org/lab/mcp-server/", "kind": "project_documentation", "note": "Compatibilité, disponibilité et statut doivent être revérifiés avant adoption."}]
+      "evidence": [
+        {
+          "url": "https://www.blender.org/lab/mcp-server/",
+          "kind": "project_documentation",
+          "note": "Compatibilité, disponibilité et statut doivent être revérifiés avant adoption."
+        }
+      ]
     },
     {
       "id": "artcraft-suite",
@@ -66,14 +107,67 @@
       "license": "per-application",
       "license_status": "unknown",
       "maturity": "experimental",
-      "platforms": ["windows"],
-      "integrations": ["local-applications", "automation-to-be-verified"],
-      "requirements": {"gpu": "per-application; verify", "ram": "per-application; verify"},
+      "platforms": [
+        "windows"
+      ],
+      "integrations": [
+        "local-applications",
+        "automation-to-be-verified"
+      ],
+      "requirements": {
+        "gpu": "per-application; verify",
+        "ram": "per-application; verify"
+      },
       "install_methods": [],
       "security_notes": "Auditer chaque dépôt et chaque binaire séparément; ne pas supposer une licence ou une maturité commune à toute la suite.",
       "verification_status": "research_only",
       "last_verified": "2026-10-09",
-      "evidence": [{"url": "https://github.com/smyrgeorge", "kind": "repository_owner", "note": "Lien de départ seulement; remplacer par les URLs canoniques des dépôts confirmés."}]
+      "evidence": [
+        {
+          "url": "https://github.com/smyrgeorge",
+          "kind": "repository_owner",
+          "note": "Lien de départ seulement; remplacer par les URLs canoniques des dépôts confirmés."
+        }
+      ]
+    },
+    {
+      "id": "genjutsu-oss",
+      "name": "Genjutsu-OSS",
+      "category": "ai-video-transformation",
+      "purpose": "Base modulaire de recherche pour transformation vidéo guidée par références via ComfyUI",
+      "source_url": "https://github.com/Tschuki/genjutsu-oss",
+      "license": "Apache-2.0 pour le code du dépôt; licences des modèles/poids à vérifier séparément",
+      "license_status": "declared",
+      "maturity": "experimental",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "integrations": [
+        "python",
+        "comfyui"
+      ],
+      "requirements": {
+        "python": ">=3.10",
+        "gpu": "Le test CPU actuel est simulé; les besoins du vrai moteur ne sont pas validés",
+        "models": "Aucun poids inclus"
+      },
+      "install_methods": [],
+      "security_notes": "Recherche seulement. Ne pas installer automatiquement. Le chemin simulé copie la vidéo source et ne prouve aucune transformation visuelle.",
+      "verification_status": "source_reviewed_mock_only_not_tested_locally",
+      "last_verified": "2026-10-10",
+      "evidence": [
+        {
+          "url": "https://github.com/Tschuki/genjutsu-oss",
+          "kind": "source_repository",
+          "note": "README et arborescence consultés le 2026-10-10; branche par défaut master; licence source déclarée Apache-2.0."
+        },
+        {
+          "url": "https://github.com/Tschuki/genjutsu-oss/blob/master/THIRD_PARTY_LICENSES.md",
+          "kind": "dependency_license_inventory",
+          "note": "Le mainteneur indique que les licences de plusieurs modèles et poids restent non vérifiées."
+        }
+      ]
     }
   ]
 }
