@@ -19,6 +19,22 @@ Il tourne **tout seul** : pas besoin du reste du monorepo.
 
 Le ZIP est autonome (pas le monorepo). Rebuild : `python packaging/build-zip.py`
 
+### Après install : plus de droits / connexions
+
+Tu n’as **pas** à réinstaller.
+
+1. **Dans Discord** — `/autorisations`  
+   Boutons : modération, vocal, salons & rôles, admin.  
+   Discord s’ouvre → tu **re-choisis le serveur** → Autoriser. Les droits s’ajoutent.
+
+2. **Sur le PC** — menu Démarrer → **Bone — autorisations**  
+   (ou `%LOCALAPPDATA%\Bone\autorisations.bat`)
+   - droits Discord
+   - intents membres / présence (portail Bot + `.env`)
+   - connexions OpenAI / Groq / Ollama
+
+3. **À la main** — Discord → Paramètres du serveur → **Rôles** → Bone → coches.
+
 ---
 
 ## Installer SEULEMENT Bone sur ton PC (Git / Linux)

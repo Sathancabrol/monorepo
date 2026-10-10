@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
 os.chdir(ROOT)
 
 from persona import reply as bone_reply, opener, help_text, set_mood, set_quiet, channel_state, DATA
+from perms import PACKS, invite_url, portal_bot_url
 
 try:
     from dotenv import load_dotenv
@@ -47,10 +48,16 @@ CHATTY_CHANNELS = {
     if c.strip()
 }
 
+def _flag(name: str) -> bool:
+    return os.getenv(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
 INTENTS = discord.Intents.default()
 INTENTS.message_content = True
 INTENTS.guilds = True
 INTENTS.messages = True
+INTENTS.members = _flag("BONE_MEMBERS_INTENT")
+INTENTS.presences = _flag("BONE_PRESENCE_INTENT")
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or("!bone ", "!bone", "!b "), intents=INTENTS, help_command=None)
 
@@ -204,9 +211,71 @@ async def on_message(msg: discord.Message):
         set_quiet(cid, False)
         await msg.reply("Re-bonjour. L'os est chaud.", mention_author=False)
         return
+    if low in {"autorisations", "permissions", "perms", "droits"}:
+        await _send_autorisations(msg.channel, ephemeral_user=None)
+        return
     async with msg.channel.typing():
         out = bone_reply(text, channel_id=cid, author=msg.author.display_name)
     await msg.reply(out, mention_author=False)
+
+
+class AutorisationsView(discord.ui.View):
+    def __init__(self, client_id: int):
+        super().__init__(timeout=180)
+        combos = [
+            ("Lecture + parler", ("base",)),
+            ("+ Modération", ("base", "moderation")),
+            ("+ Vocal", ("base", "vocal")),
+            ("+ Salons & rôles", ("base", "salons", "roles")),
+            ("Admin ⚠ tout", ("admin",)),
+        ]
+        for label, packs in combos:
+            self.add_item(discord.ui.Button(label=label, url=invite_url(client_id, *packs)))
+        self.add_item(discord.ui.Button(label="Intents (portail Bot)", url=portal_bot_url(client_id)))
+
+
+def _perm_lines(guild: discord.Guild | None) -> str:
+    if guild is None or guild.me is None:
+        return "Hors serveur : je vois pas mes droits."
+    p = guild.me.guild_permissions
+    flags = [
+        ("Parler", p.send_messages),
+        ("Slash", p.use_application_commands),
+        ("Lire l'historique", p.read_message_history),
+        ("Kick", p.kick_members),
+        ("Ban", p.ban_members),
+        ("Timeout", p.moderate_members),
+        ("Gérer messages", p.manage_messages),
+        ("Gérer salons", p.manage_channels),
+        ("Gérer rôles", p.manage_roles),
+        ("Vocal", p.connect),
+        ("Admin", p.administrator),
+    ]
+    rows = [("✅" if ok else "❌") + " " + name for name, ok in flags]
+    return "\n".join(rows)
+
+
+async def _send_autorisations(dest, ephemeral_user=None):
+    cid = bot.user.id if bot.user else 0
+    embed = discord.Embed(
+        title="Autorisations de Bone",
+        description=(
+            "Clique un bouton = Discord s'ouvre, tu **re-choisis le serveur**, Autoriser.\n"
+            "Ça **ajoute** des droits, ça n'enlève rien.\n\n"
+            f"**Droits actuels**\n{_perm_lines(getattr(dest, 'guild', None))}"
+        ),
+        color=0xE0A100,
+    )
+    view = AutorisationsView(cid)
+    if ephemeral_user is not None:
+        await dest.response.send_message(embed=embed, view=view, ephemeral=True)
+    else:
+        await dest.send(embed=embed, view=view)
+
+
+@bot.tree.command(name="autorisations", description="Ajouter des droits / connexions Discord à Bone (après install)")
+async def slash_autorisations(interaction: discord.Interaction):
+    await _send_autorisations(interaction, ephemeral_user=True)
 
 
 @bot.tree.command(name="aide", description="Bone explique (très mal) comment il marche")

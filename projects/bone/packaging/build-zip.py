@@ -17,6 +17,7 @@ PAYLOAD_FILES = [
     "discord_bot.py",
     "persona.py",
     "persona.json",
+    "perms.py",
     "requirements.txt",
     ".env.example",
 ]
@@ -56,6 +57,8 @@ def main() -> None:
     write_bom(HERE / "installer.ps1", STAGE / "installer.ps1")
     shutil.copy2(HERE / "INSTALLER.bat", STAGE / "INSTALLER.bat")
     write_bom(HERE / "LIREMOI.txt", STAGE / "LIREMOI.txt")
+    write_bom(HERE / "autorisations.ps1", payload / "autorisations.ps1")
+    shutil.copy2(HERE / "autorisations.bat", payload / "autorisations.bat")
 
     if ZIP_PATH.exists():
         ZIP_PATH.unlink()

@@ -180,12 +180,13 @@ def help_text(lang: str = "fr") -> str:
         return (
             "**Bone** — South Park skeleton intern on Olympus.\n"
             "Ping me, reply, or `!bone …`\n"
-            "`/aide` `/roast` `/mood` `/episode` `/projets`\n"
-            "`!bone tg` silence · `!bone parle` resume"
+            "`/aide` `/roast` `/mood` `/episode` `/projets` `/autorisations`\n"
+            "`!bone tg` silence · `!bone parle` resume · `/autorisations` extra perms"
         )
     return (
         "**Bone** — stagiaire squelette d'Olympus, construction paper.\n"
         "Ping-moi, réponds-moi, ou `!bone …`\n"
-        "`/aide` `/roast` `/mood` `/episode` `/projets`\n"
-        "`!bone tg` je me tais · `!bone parle` je reviens"
+        "`/aide` `/roast` `/mood` `/episode` `/projets` `/autorisations`\n"
+        "`!bone tg` je me tais · `!bone parle` je reviens\n"
+        "Après install : `/autorisations` ou `autorisations.bat` pour plus de droits."
     )

@@ -22,6 +22,17 @@ Créer le bot Discord (l'installeur t'ouvre la page) :
   MESSAGE CONTENT INTENT = ON
   Reset Token → copier
 
-Désinstaller : lance  %LOCALAPPDATA%\Bone\arreter.bat
-puis supprime le dossier  %LOCALAPPDATA%\Bone
-et le raccourci Bureau.
+Après install — plus de droits / connexions
+-------------------------------------------
+Dans Discord :  /autorisations
+  → boutons : modération, vocal, salons, admin
+  → Discord s'ouvre, tu re-choisis le serveur, Autoriser.
+
+Sur le PC : menu Démarrer → Bone — autorisations
+  1 Droits Discord
+  2 Intents (membres, présence) — portail Bot
+  3 Connexions (OpenAI / Groq / Ollama) dans .env
+
+Ou à la main : Discord → Paramètres du serveur → Rôles → Bone.
+
+Désinstaller : %LOCALAPPDATA%\Bone\desinstaller.bat

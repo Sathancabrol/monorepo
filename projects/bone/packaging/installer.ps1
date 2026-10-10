@@ -263,6 +263,7 @@ function Make-Shortcut($path, $target, $args, $work, $icon) {
 Make-Shortcut (Join-Path $desktop 'Bone.lnk') (Join-Path $InstallDir 'demarrer.bat') $null $InstallDir $ico
 Make-Shortcut (Join-Path $startDir 'Bone.lnk') (Join-Path $InstallDir 'demarrer.bat') $null $InstallDir $ico
 Make-Shortcut (Join-Path $startDir 'Arreter Bone.lnk') (Join-Path $InstallDir 'arreter.bat') $null $InstallDir $ico
+Make-Shortcut (Join-Path $startDir 'Bone — autorisations.lnk') (Join-Path $InstallDir 'autorisations.bat') $null $InstallDir $ico
 
 $boot = Ask 'Lancer Bone au demarrage de Windows ?  O / n'
 if ($boot -notmatch '^[nN]') {
@@ -285,6 +286,7 @@ Say '   Dossier : ' + $InstallDir 'Gray'
 Say '   ========================================' 'Green'
 Say ''
 Say '   Dans Discord :  @Bone salut   ou   /roast' 'Yellow'
+Say '   Plus tard :  /autorisations  ou  menu Demarrer → Bone — autorisations' 'Yellow'
 Say '   Laisse le PC allume (ou relance Bone au boot).' 'Gray'
 Say ''
 Pause-Bone 'Termine'
