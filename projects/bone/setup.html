@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bone Setup</title>
+  <style>
+    :root {
+      --pink: #ff2e8b;
+      --pink-2: #ff6eb0;
+      --pink-dim: #9a1856;
+      --bg: #0a0a0d;
+      --panel: #121216;
+      --side: #14040c;
+      --text: #f4e8ef;
+      --muted: #9a8894;
+      --ok: #3ee0a0;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: #050506; color: var(--text);
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif; user-select: none; }
+    .stage {
+      width: min(920px, 100%); height: min(560px, 100%);
+      margin: 4vh auto; display: grid; grid-template-columns: 280px 1fr;
+      background: var(--bg); border: 1px solid #2a1220;
+      box-shadow: 0 0 0 1px #000, 0 24px 80px rgba(255,46,139,.18), 0 0 120px rgba(255,46,139,.08);
+      overflow: hidden; position: relative;
+    }
+    .side {
+      background: #0c0308 url("./assets/setup-sidebar.png") center 20% / cover no-repeat;
+      position: relative; border-right: 1px solid #3a1028;
+    }
+    .side::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(10,0,8,.2) 0%, rgba(10,0,8,.05) 40%, rgba(10,0,8,.75) 100%);
+    }
+    .brand {
+      position: absolute; z-index: 2; left: 16px; right: 16px; bottom: 18px;
+    }
+    .brand h1 {
+      margin: 0; font-size: 34px; letter-spacing: 4px; color: #fff;
+      text-shadow: 0 0 18px var(--pink);
+    }
+    .brand p { margin: 4px 0 0; color: var(--pink-2); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+    .main { display: flex; flex-direction: column; min-width: 0; background: var(--panel); }
+    .bar {
+      height: 36px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px 0 16px; background: #0e0e12; border-bottom: 1px solid #2a1220;
+      font-size: 12px; color: var(--muted); letter-spacing: .6px;
+    }
+    .x { width: 36px; height: 24px; border: 0; background: transparent; color: var(--muted); font-size: 16px; cursor: pointer; }
+    .x:hover { background: #c41e3a; color: #fff; }
+    .page { flex: 1; padding: 28px 32px 12px; overflow: auto; }
+    .page h2 { margin: 0 0 10px; font-size: 22px; font-weight: 600; }
+    .page p { color: var(--muted); line-height: 1.55; font-size: 14px; }
+    .page.hidden { display: none; }
+    .opts { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+    label.ck {
+      display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px;
+      background: #0c0c10; border: 1px solid #2a2030; cursor: pointer; font-size: 13px;
+    }
+    label.ck:hover { border-color: var(--pink-dim); }
+    label.ck input { accent-color: var(--pink); margin-top: 3px; }
+    .path {
+      margin-top: 16px; font-size: 12px; color: var(--muted);
+    }
+    .path b { color: var(--pink-2); font-weight: 600; }
+    .log {
+      height: 210px; overflow: auto; background: #070709; border: 1px solid #2a1220;
+      padding: 10px 12px; font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 12px; line-height: 1.45; color: #ffb6d5;
+    }
+    .log .ok { color: var(--ok); }
+    .log .hi { color: #fff; }
+    .meter { margin-top: 12px; height: 18px; background: #070709; border: 1px solid #3a1028; padding: 2px; }
+    .meter > i { display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--pink-dim), var(--pink), var(--pink-2));
+      box-shadow: 0 0 12px var(--pink); }
+    .pct { margin-top: 6px; font-size: 12px; color: var(--pink-2); letter-spacing: 1px; }
+    .token {
+      width: 100%; margin-top: 12px; padding: 10px 12px; background: #070709;
+      border: 1px solid #3a1028; color: #fff; font-family: Consolas, monospace; font-size: 13px;
+    }
+    .token:focus { outline: 1px solid var(--pink); }
+    .steps { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; font-size: 13px; color: var(--muted); }
+    .steps b { color: var(--text); }
+    .foot {
+      height: 64px; display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+      padding: 0 20px; border-top: 1px solid #2a1220; background: #0e0e12;
+    }
+    .btn {
+      min-width: 108px; height: 32px; border: 1px solid #3a1028; background: #1a0c14;
+      color: var(--text); font-size: 13px; cursor: pointer; letter-spacing: .3px;
+    }
+    .btn:hover { border-color: var(--pink); color: #fff; }
+    .btn.pink {
+      background: linear-gradient(180deg, #ff4da6, #c41864); border-color: #ff6eb0;
+      color: #fff; font-weight: 700; text-shadow: 0 1px 0 rgba(0,0,0,.3);
+      box-shadow: 0 0 16px rgba(255,46,139,.35);
+    }
+    .btn.pink:hover { filter: brightness(1.08); }
+    .btn:disabled { opacity: .4; cursor: default; box-shadow: none; }
+    .okbig { color: var(--ok); font-size: 18px; margin: 8px 0; }
+    a { color: var(--pink-2); }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <aside class="side">
+      <div class="brand">
+        <h1>BONE</h1>
+        <p>Setup wizard · v1.0</p>
+      </div>
+    </aside>
+    <section class="main">
+      <div class="bar">
+        <span>Bone Setup — South Park agent for Discord</span>
+        <button class="x" type="button" onclick="alert('Sur le vrai installeur, ça quitte. Ici c’est la démo.')">✕</button>
+      </div>
+
+      <div class="page" id="p0">
+        <h2>Welcome to Bone Setup</h2>
+        <p>Cet assistant va installer <b style="color:#fff">Bone</b> sur ton PC — l’agent South Park pour Discord — puis t’ouvrir le choix du serveur.</p>
+        <p>Laisse la fenêtre ouverte. Ne coupe pas l’alim. Kenny s’en charge déjà.</p>
+        <p style="margin-top:28px;font-size:12px">Clique <b style="color:var(--pink-2)">Next</b> pour continuer. Clique <b>Cancel</b> pour… rester mort.</p>
+      </div>
+
+      <div class="page hidden" id="p1">
+        <h2>Destination &amp; components</h2>
+        <p>Dossier d’installation :</p>
+        <div class="path"><b>%LOCALAPPDATA%\Bone</b></div>
+        <div class="opts">
+          <label class="ck"><input type="checkbox" checked /> Raccourci Bureau</label>
+          <label class="ck"><input type="checkbox" checked /> Menu Démarrer</label>
+          <label class="ck"><input type="checkbox" checked /> Lancer Bone au démarrage de Windows</label>
+          <label class="ck"><input type="checkbox" /> Brancher une vraie IA plus tard (Groq / OpenAI / Ollama)</label>
+        </div>
+      </div>
+
+      <div class="page hidden" id="p2">
+        <h2>Installing</h2>
+        <p id="now">Préparation…</p>
+        <div class="log" id="log"></div>
+        <div class="meter"><i id="bar"></i></div>
+        <div class="pct" id="pct">0%</div>
+      </div>
+
+      <div class="page hidden" id="p3">
+        <h2>Discord application</h2>
+        <p>Une seule fois. L’installeur ouvre le portail ; tu reviens coller le token.</p>
+        <div class="steps">
+          <div>1. <b>New Application</b> → nom Bone</div>
+          <div>2. <b>Bot</b> → Add Bot</div>
+          <div>3. <b>MESSAGE CONTENT INTENT</b> = ON → Save</div>
+          <div>4. <b>Reset Token</b> → Copy</div>
+        </div>
+        <input class="token" id="tok" placeholder="Colle le TOKEN ici (MTAx...)" />
+        <p style="font-size:12px;margin-top:10px"><a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Ouvrir le Developer Portal</a></p>
+      </div>
+
+      <div class="page hidden" id="p4">
+        <h2>Choose your Discord server</h2>
+        <p>Une fenêtre Discord s’ouvre. Dans le menu, choisis <b style="color:#fff">Olympus</b> (ou un autre) → <b style="color:var(--pink-2)">Autoriser</b>.</p>
+        <p>Il te faut le droit de gérer le serveur.</p>
+        <p class="okbig" id="guild" style="display:none">✔ Bone rejoint le serveur.</p>
+      </div>
+
+      <div class="page hidden" id="p5">
+        <h2>Setup complete</h2>
+        <p class="okbig">Bone is installed.</p>
+        <p>Raccourci Bureau créé. Il est en ligne sur Discord.</p>
+        <p>Dans le salon : <b style="color:#fff">@Bone salut</b> · <b style="color:#fff">/roast</b> · <b style="color:#fff">/autorisations</b></p>
+        <p style="font-size:12px">C’est une démo du look. Le vrai wizard, c’est <b>INSTALLER.bat</b> dans le ZIP.</p>
+      </div>
+
+      <div class="foot">
+        <button class="btn" id="back" type="button">Back</button>
+        <button class="btn" id="cancel" type="button">Cancel</button>
+        <button class="btn pink" id="next" type="button">Next &gt;</button>
+      </div>
+    </section>
+  </div>
+  <script>
+    let i = 0;
+    const pages = [...document.querySelectorAll('.page')];
+    const back = document.getElementById('back');
+    const next = document.getElementById('next');
+    const LINES = [
+      ['Extracting: persona.json', 'hi'],
+      ['Extracting: discord_bot.py', 'hi'],
+      ['Extracting: llm.py', 'hi'],
+      ['Unpacking cerveau papier…', ''],
+      ['Creating venv…', ''],
+      ['Installing discord.py-2.4.0', 'hi'],
+      ['Installing python-dotenv', ''],
+      ['Writing shortcuts…', ''],
+      ['Registering startup…', ''],
+      ['Done. Bone unpacked.', 'ok'],
+    ];
+    function show() {
+      pages.forEach((p, n) => p.classList.toggle('hidden', n !== i));
+      back.disabled = i === 0 || i === 2;
+      if (i === 1) next.textContent = 'Install';
+      else if (i === 2) { next.textContent = 'Please wait…'; next.disabled = true; runInstall(); }
+      else if (i === 3) next.textContent = 'Verify token';
+      else if (i === 4) next.textContent = 'Open Discord';
+      else if (i === 5) { next.textContent = 'Finish'; next.disabled = false; }
+      else { next.textContent = 'Next >'; next.disabled = false; }
+    }
+    function runInstall() {
+      const log = document.getElementById('log');
+      const bar = document.getElementById('bar');
+      const pct = document.getElementById('pct');
+      const now = document.getElementById('now');
+      log.innerHTML = '';
+      let n = 0;
+      const t = setInterval(() => {
+        if (n >= LINES.length) {
+          clearInterval(t);
+          bar.style.width = '100%'; pct.textContent = '100%';
+          now.textContent = 'Installation complete.';
+          next.disabled = false; next.textContent = 'Next >';
+          return;
+        }
+        const [txt, cls] = LINES[n];
+        const d = document.createElement('div');
+        d.textContent = '> ' + txt;
+        if (cls) d.className = cls;
+        log.appendChild(d); log.scrollTop = log.scrollHeight;
+        now.textContent = txt;
+        const p = Math.round(((n + 1) / LINES.length) * 100);
+        bar.style.width = p + '%'; pct.textContent = p + '%';
+        n++;
+      }, 280);
+    }
+    back.onclick = () => { if (i > 0 && i !== 2) { i--; show(); } };
+    next.onclick = () => {
+      if (i === 3) {
+        const v = document.getElementById('tok').value.trim();
+        if (v.length < 12) { document.getElementById('tok').style.borderColor = '#c41e3a'; return; }
+      }
+      if (i === 4) {
+        window.open('https://discord.com/oauth2/authorize?client_id=0&scope=bot', '_blank');
+        document.getElementById('guild').style.display = 'block';
+      }
+      if (i < pages.length - 1) { i++; show(); }
+    };
+    document.getElementById('cancel').onclick = () => { i = 0; show(); };
+    show();
+  </script>
+</body>
+</html>
