@@ -14,14 +14,20 @@ from __future__ import annotations
 
 import os
 import re
+import sys
 import logging
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 from persona import reply as bone_reply, opener, help_text, set_mood, set_quiet, channel_state, DATA
 
 try:
     from dotenv import load_dotenv
-    load_dotenv(Path(__file__).parent / ".env")
+    load_dotenv(ROOT / ".env")
 except ImportError:
     pass
 
