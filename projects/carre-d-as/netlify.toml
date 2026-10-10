@@ -1,0 +1,35 @@
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build]
+  command = "npm run prisma:generate && npm run build"
+  # Note: publish directory is automatically handled by the Next.js adapter
+
+[build.environment]
+  NODE_VERSION = "22"
+  TZ = "America/Toronto"
+
+# Note: Next.js API routes work automatically with the adapter
+# No need for manual redirects - the adapter handles all routing
+
+# Scheduled Functions
+# Functions using schedule() wrapper (cleanup-holds, complete-past-appointments) are configured inline
+# Functions using Handler type need explicit schedule blocks below
+
+# Scheduled function for database ANALYZE (updates query planner statistics)
+# Runs every Sunday at 2 AM EST
+[[schedule]]
+  cron = "0 2 * * 0"
+  function = "analyze-database"
+
+# Scheduled function for cleaning up old error logs (90 days retention)
+# Runs every Sunday at 3 AM EST
+[[schedule]]
+  cron = "0 3 * * 0"
+  function = "cleanup-error-logs"
+
+# Scheduled function for syncing course active status based on tutor availability
+# Runs every hour to ensure all courses have correct active status
+[[schedule]]
+  cron = "0 * * * *"
+  function = "sync-course-status"

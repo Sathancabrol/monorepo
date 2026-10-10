@@ -1,0 +1,604 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+// Prisma 7: l'URL de connexion est définie dans prisma.config.ts (CLI)
+// et passée au client via l'adaptateur pg (lib/prisma.ts).
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                       String                    @id @default(uuid())
+  role                     Role                      @default(student)
+  firstName                String                    @map("first_name")
+  lastName                 String                    @map("last_name")
+  email                    String                    @unique
+  phone                    String?
+  createdAt                DateTime                  @default(now()) @map("created_at")
+  stripeCustomerId         String?                   @map("stripe_customer_id")
+  defaultPaymentMethodId   String?                   @map("default_payment_method_id")
+  appointmentModifications AppointmentModification[]
+  appointments             Appointment[]
+  carts                    Cart[]
+  creditTransactions       CreditTransaction[]
+  receivedMessages         Message[]                 @relation("ReceivedMessages")
+  sentMessages             Message[]                 @relation("SentMessages")
+  orders                   Order[]
+  processedRefunds         RefundRequest[]           @relation("ProcessedRefunds")
+  refundRequests           RefundRequest[]
+  slotHolds                SlotHold[]
+  tutor                    Tutor?
+  reviewedCourseRequests   TutorCourseRequest[]      @relation("CourseRequestReviewer")
+  assignedTickets          SupportTicket[]          @relation("AssignedTickets")
+  ticketMessages           TicketMessage[]
+  supportTickets           SupportTicket[]
+  tutorRatings             TutorRating[]
+  errorLogs                ErrorLog[]
+
+  @@index([defaultPaymentMethodId], map: "idx_users_default_payment_method_id")
+  @@index([stripeCustomerId], map: "idx_users_stripe_customer_id")
+  @@map("users")
+}
+
+model Course {
+  id                String             @id @default(uuid())
+  slug              String             @unique
+  code              String             @unique
+  titleFr           String             @map("title_fr")
+  descriptionFr     String             @map("description_fr")
+  institution       String?
+  domain            String?
+  active            Boolean            @default(true)
+  createdAt         DateTime           @default(now()) @map("created_at")
+  studentRateCad    Decimal            @default(45.00) @map("student_rate_cad") @db.Decimal(10, 2)
+  appointments      Appointment[]
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  slotHolds         SlotHold[]
+  tutorCourses      TutorCourse[]
+  tutorCourseRequests TutorCourseRequest[]
+  tutorRatings       TutorRating[]
+
+  @@index([code])
+  @@index([institution])
+  @@index([domain])
+  @@map("courses")
+}
+
+model Tutor {
+  id                     String                  @id
+  displayName            String                  @map("display_name")
+  bioFr                  String                  @map("bio_fr")
+  hourlyBaseRateCad      Decimal                 @map("hourly_base_rate_cad") @db.Decimal(10, 2)
+  priority               Int                     @default(100)
+  active                 Boolean                 @default(true)
+  appointments           Appointment[]
+  availabilityExceptions AvailabilityException[]
+  availabilityRules      AvailabilityRule[]
+  cartItems              CartItem[]
+  externalCalendars      ExternalCalendar[]
+  orderItems             OrderItem[]
+  slotHolds              SlotHold[]
+  timeOff                TimeOff[]
+  tutorCourses           TutorCourse[]
+  tutorCourseRequests    TutorCourseRequest[]
+  user                   User                    @relation(fields: [id], references: [id], onDelete: Cascade)
+  tutorRatings           TutorRating[]
+
+  @@map("tutors")
+}
+
+model TutorCourse {
+  id          String    @id @default(uuid())
+  tutorId     String    @map("tutor_id")
+  courseId    String    @map("course_id")
+  active      Boolean   @default(true)
+  status      String    @default("pending")
+  assignedAt  DateTime  @default(now()) @map("assigned_at")
+  assignedBy  String?   @map("assigned_by")
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tutor       Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@unique([tutorId, courseId])
+  @@index([courseId])
+  @@index([status])
+  @@index([assignedAt])
+  @@map("tutor_courses")
+}
+
+model TutorCourseRequest {
+  id          String    @id @default(uuid())
+  tutorId     String    @map("tutor_id")
+  courseId    String    @map("course_id")
+  status      String    @default("pending") // pending, approved, rejected
+  message     String?   @db.Text // Optional message from tutor
+  requestedAt DateTime  @default(now()) @map("requested_at")
+  reviewedAt  DateTime? @map("reviewed_at")
+  reviewedBy  String?   @map("reviewed_by") // Admin who reviewed
+  adminNote   String?   @map("admin_note") @db.Text // Admin's response
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tutor       Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  reviewer    User?     @relation("CourseRequestReviewer", fields: [reviewedBy], references: [id])
+
+  @@unique([tutorId, courseId])
+  @@index([courseId])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("tutor_course_requests")
+}
+
+model AvailabilityRule {
+  id        String @id @default(uuid())
+  tutorId   String @map("tutor_id")
+  weekday   Int
+  startTime String @map("start_time")
+  endTime   String @map("end_time")
+  tutor     Tutor  @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([tutorId, weekday])
+  @@map("availability_rules")
+}
+
+model AvailabilityException {
+  id             String  @id @default(uuid())
+  tutorId        String  @map("tutor_id")
+  startDate      DateTime @map("start_date")
+  endDate        DateTime @map("end_date")
+  isUnavailable  Boolean @map("is_unavailable")
+  tutor          Tutor   @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([tutorId, startDate])
+  @@map("availability_exceptions")
+}
+
+model TimeOff {
+  id            String   @id @default(uuid())
+  tutorId       String   @map("tutor_id")
+  startDatetime DateTime @map("start_datetime")
+  endDatetime   DateTime @map("end_datetime")
+  tutor         Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([tutorId, startDatetime])
+  @@map("time_off")
+}
+
+model ExternalCalendar {
+  id                    String                   @id @default(uuid())
+  tutorId               String                   @map("tutor_id")
+  provider              ExternalCalendarProvider
+  accountEmail          String                   @map("account_email")
+  accessTokenEncrypted  String                   @map("access_token_encrypted")
+  refreshTokenEncrypted String                   @map("refresh_token_encrypted")
+  expiresAt             DateTime                 @map("expires_at")
+  active                Boolean                  @default(true)
+  tutor                 Tutor                    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([tutorId])
+  @@map("external_calendars")
+}
+
+model Coupon {
+  id              String     @id @default(uuid())
+  code            String     @unique
+  type            CouponType
+  value           Decimal    @db.Decimal(10, 2)
+  active          Boolean    @default(true)
+  startsAt        DateTime?  @map("starts_at")
+  endsAt          DateTime?  @map("ends_at")
+  maxRedemptions  Int?       @map("max_redemptions")
+  redemptionCount Int        @default(0) @map("redemption_count")
+  carts           Cart[]
+
+  @@map("coupons")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String?    @map("user_id")
+  couponId  String?    @map("coupon_id")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  sessionId String?    @map("session_id")
+  items     CartItem[]
+  coupon    Coupon?    @relation(fields: [couponId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionId], map: "idx_carts_session_id")
+  @@map("carts")
+}
+
+model CartItem {
+  id            String   @id @default(uuid())
+  cartId        String   @map("cart_id")
+  courseId      String   @map("course_id")
+  tutorId       String   @map("tutor_id")
+  startDatetime DateTime @map("start_datetime")
+  durationMin   Int      @map("duration_min")
+  unitPriceCad  Decimal  @map("unit_price_cad") @db.Decimal(10, 2)
+  lineTotalCad  Decimal  @map("line_total_cad") @db.Decimal(10, 2)
+  cart          Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tutor         Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([cartId])
+  @@map("cart_items")
+}
+
+model SlotHold {
+  id                 String            @id @default(uuid())
+  userId             String?           @map("user_id")
+  tutorId            String            @map("tutor_id")
+  courseId           String            @map("course_id")
+  startDatetime      DateTime          @map("start_datetime")
+  durationMin        Int               @map("duration_min")
+  expiresAt          DateTime          @map("expires_at")
+  sessionId          String?           @map("session_id")
+  course             Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tutor              Tutor             @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  user               User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tutorId, startDatetime])
+  @@index([startDatetime, tutorId, expiresAt])
+  @@index([sessionId, tutorId, startDatetime, expiresAt], map: "idx_slot_holds_session")
+  @@map("slot_holds")
+}
+
+model Order {
+  id                      String          @id @default(uuid())
+  userId                  String          @map("user_id")
+  subtotalCad             Decimal         @map("subtotal_cad") @db.Decimal(10, 2)
+  discountCad             Decimal         @default(0) @map("discount_cad") @db.Decimal(10, 2)
+  totalCad                Decimal         @map("total_cad") @db.Decimal(10, 2)
+  currency                String          @default("CAD")
+  stripePaymentIntentId   String?         @unique @map("stripe_payment_intent_id")
+  stripeCheckoutSessionId String?         @unique @map("stripe_checkout_session_id")
+  status                  OrderStatus     @default(created)
+  createdAt               DateTime        @default(now()) @map("created_at")
+  items                   OrderItem[]
+  refundRequests          RefundRequest[]
+  supportTickets          SupportTicket[]
+  user                    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String       @id @default(uuid())
+  orderId          String       @map("order_id")
+  courseId         String       @map("course_id")
+  tutorId          String       @map("tutor_id")
+  startDatetime    DateTime     @map("start_datetime")
+  durationMin      Int          @map("duration_min")
+  unitPriceCad     Decimal      @map("unit_price_cad") @db.Decimal(10, 2)
+  lineTotalCad     Decimal      @map("line_total_cad") @db.Decimal(10, 2)
+  endDatetime      DateTime     @default(now()) @map("end_datetime") @db.Timestamptz(6)
+  tutorEarningsCad Decimal      @default(0.00) @map("tutor_earnings_cad") @db.Decimal(10, 2)
+  hoursWorked      Decimal?     @map("hours_worked") @db.Decimal(4, 2)
+  rateAtTime       Decimal?     @map("rate_at_time") @db.Decimal(10, 2)
+  earningsStatus   EarningsStatus? @map("earnings_status") @default(scheduled)
+  paidAt           DateTime?    @map("paid_at") @db.Timestamptz(6)
+  tutorNote        String?      @map("tutor_note") @db.Text
+  adminNote        String?      @map("admin_note") @db.Text
+  adjustedAt       DateTime?    @map("adjusted_at") @db.Timestamptz(6)
+  adjustedBy       String?      @map("adjusted_by")
+  appointment      Appointment?
+  course           Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  order            Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tutor            Tutor        @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([tutorId, earningsStatus])
+  @@map("order_items")
+}
+
+model Appointment {
+  id                 String                    @id @default(uuid())
+  userId             String                    @map("user_id")
+  tutorId            String                    @map("tutor_id")
+  courseId           String                    @map("course_id")
+  startDatetime      DateTime                  @map("start_datetime")
+  endDatetime        DateTime                  @map("end_datetime")
+  status             AppointmentStatus         @default(scheduled)
+  orderItemId        String                    @unique @map("order_item_id")
+  cancellationReason String?                   @map("cancellation_reason")
+  cancelledBy        String?                   @map("cancelled_by")
+  cancelledAt        DateTime?                 @map("cancelled_at") @db.Timestamp(6)
+  meetingLink        String?                   @map("meeting_link")
+  modifications      AppointmentModification[]
+  course             Course                    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  orderItem          OrderItem                 @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  tutor              Tutor                     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  user               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creditTransactions CreditTransaction[]
+  messages           Message[]
+  refundRequests     RefundRequest[]
+  supportTickets     SupportTicket[]
+
+  @@index([startDatetime, tutorId])
+  @@index([userId])
+  @@map("appointments")
+}
+
+model WebhookEvent {
+  id          String        @id @default(uuid())
+  source      WebhookSource
+  type        String
+  payloadJson String        @map("payload_json")
+  processedAt DateTime?     @map("processed_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  @@index([source, type])
+  @@map("webhook_events")
+}
+
+model PaymentIntentData {
+  id              String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  paymentIntentId String   @unique @map("payment_intent_id")
+  cartData        String   @map("cart_data")
+  userId          String?  @map("user_id")
+  paymentType     String?  @map("payment_type")
+  creditAmount    Decimal? @map("credit_amount") @db.Decimal(10, 2)
+  cardAmount      Decimal? @map("card_amount") @db.Decimal(10, 2)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([paymentIntentId], map: "idx_payment_intent_data_payment_intent_id")
+  @@map("payment_intent_data")
+}
+
+model CreditTransaction {
+  id            String       @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId        String       @map("user_id")
+  appointmentId String?      @map("appointment_id")
+  amount        Decimal      @map("amount") @db.Decimal(10, 2)
+  type          String
+  reason        String?
+  createdAt     DateTime?    @default(now()) @map("created_at") @db.Timestamp(6)
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onUpdate: NoAction)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([appointmentId], map: "idx_credit_transactions_appointment_id")
+  @@index([type], map: "idx_credit_transactions_type")
+  @@index([userId], map: "idx_credit_transactions_user_id")
+  @@map("credit_transactions")
+}
+
+model RefundRequest {
+  id              String      @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId          String      @map("user_id")
+  appointmentId   String      @map("appointment_id")
+  orderId         String?     @map("order_id")
+  amount          Decimal     @map("amount") @db.Decimal(10, 2)
+  reason          String
+  status          String?     @default("pending")
+  stripeRefundId  String?     @map("stripe_refund_id")
+  processedBy     String?     @map("processed_by")
+  processedAt     DateTime?   @map("processed_at") @db.Timestamp(6)
+  createdAt       DateTime?   @default(now()) @map("created_at") @db.Timestamp(6)
+  appointment     Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  order           Order?      @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  processor       User?       @relation("ProcessedRefunds", fields: [processedBy], references: [id], onUpdate: NoAction)
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([appointmentId], map: "idx_refund_requests_appointment_id")
+  @@index([orderId], map: "idx_refund_requests_order_id")
+  @@index([status], map: "idx_refund_requests_status")
+  @@index([userId], map: "idx_refund_requests_user_id")
+  @@map("refund_requests")
+}
+
+model AppointmentModification {
+  id               String      @id @default(dbgenerated("(gen_random_uuid())::text"))
+  appointmentId    String      @map("appointment_id")
+  modifiedBy       String      @map("modified_by")
+  modificationType String      @map("modification_type")
+  reason           String?
+  oldData          Json        @map("old_data")
+  newData          Json        @map("new_data")
+  createdAt        DateTime?   @default(now()) @map("created_at") @db.Timestamp(6)
+  appointment      Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  modifier         User        @relation(fields: [modifiedBy], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([appointmentId], map: "idx_appointment_modifications_appointment_id")
+  @@index([modifiedBy], map: "idx_appointment_modifications_modified_by")
+  @@index([modificationType], map: "idx_appointment_modifications_type")
+  @@map("appointment_modifications")
+}
+
+model Message {
+  id            String              @id @default(dbgenerated("(gen_random_uuid())::text"))
+  senderId      String              @map("sender_id")
+  receiverId    String              @map("receiver_id")
+  appointmentId String?             @map("appointment_id")
+  content       String
+  isRead        Boolean?            @default(false) @map("is_read")
+  createdAt     DateTime?           @default(now()) @map("created_at") @db.Timestamp(6)
+  attachments   MessageAttachment[]
+  appointment   Appointment?        @relation(fields: [appointmentId], references: [id], onUpdate: NoAction)
+  receiver      User                @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sender        User                @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([appointmentId], map: "idx_messages_appointment_id")
+  @@index([receiverId, isRead], map: "idx_messages_receiver_read")
+  @@index([senderId, receiverId], map: "idx_messages_sender_receiver")
+  @@map("messages")
+}
+
+model MessageAttachment {
+  id        String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  messageId String    @map("message_id")
+  fileName  String    @map("file_name")
+  fileSize  Int       @map("file_size")
+  fileType  String    @map("file_type")
+  filePath  String    @map("file_path")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  message   Message   @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([messageId], map: "idx_message_attachments_message_id")
+  @@map("message_attachments")
+}
+
+model SupportTicket {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  subject     String
+  description String         @db.Text
+  category    String         // "réservations", "soutient technique", "demande de cours", "changement de cours/tuteur", "paiement", "autre"
+  priority    TicketPriority @default(medium)
+  status      TicketStatus   @default(open)
+  assignedTo  String?        @map("assigned_to")
+  appointmentId String?      @map("appointment_id")
+  orderId     String?        @map("order_id")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  resolvedAt  DateTime?      @map("resolved_at")
+
+  user        User             @relation(fields: [userId], references: [id])
+  assignee    User?            @relation("AssignedTickets", fields: [assignedTo], references: [id])
+  appointment Appointment?     @relation(fields: [appointmentId], references: [id])
+  order       Order?           @relation(fields: [orderId], references: [id])
+  attachments TicketAttachment[]
+  messages    TicketMessage[]
+
+  @@index([userId, status])
+  @@index([assignedTo, status])
+  @@index([appointmentId])
+  @@index([orderId])
+  @@map("support_tickets")
+}
+
+model TicketAttachment {
+  id       String   @id @default(uuid())
+  ticketId String   @map("ticket_id")
+  fileName String   @map("file_name")
+  filePath String   @map("file_path")
+  fileType String   @map("file_type")
+  fileSize Int      @map("file_size")
+  
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  @@index([ticketId])
+  @@map("ticket_attachments")
+}
+
+model TicketMessage {
+  id        String   @id @default(uuid())
+  ticketId  String   @map("ticket_id")
+  userId    String   @map("user_id")
+  message   String   @db.Text
+  isInternal Boolean @default(false) @map("is_internal") // Admin-only notes
+  createdAt DateTime @default(now()) @map("created_at")
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User          @relation(fields: [userId], references: [id])
+
+  @@index([ticketId])
+  @@index([userId])
+  @@map("ticket_messages")
+}
+
+enum Role {
+  student
+  tutor
+  admin
+}
+
+enum EarningsStatus {
+  scheduled  // Appointment is booked but not yet completed (tutor hasn't earned yet)
+  earned     // Appointment is completed (tutor has earned but not paid)
+  paid       // Tutor has been paid
+  cancelled  // Appointment was cancelled/refunded (tutor earns nothing)
+}
+
+enum AppointmentStatus {
+  scheduled
+  cancelled
+  completed
+  refunded
+}
+
+enum OrderStatus {
+  created
+  paid
+  failed
+  refunded
+  partially_refunded
+}
+
+enum CouponType {
+  percent
+  fixed
+}
+
+enum ExternalCalendarProvider {
+  google
+  microsoft
+}
+
+enum WebhookSource {
+  stripe
+  make
+  app
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum TicketPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+model TutorRating {
+  id            String   @id @default(uuid())
+  studentId     String   @map("student_id")
+  tutorId       String   @map("tutor_id")
+  courseId      String   @map("course_id")
+  q1Courtoisie  Int      @map("q1_courtoisie")
+  q2Maitrise    Int      @map("q2_maitrise")
+  q3Pedagogie   Int      @map("q3_pedagogie")
+  q4Dynamisme   Int      @map("q4_dynamisme")
+  comment       String?  @db.Text
+  generalScore  Decimal  @map("general_score") @db.Decimal(3, 2)
+  hidden        Boolean  @default(false)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  student User        @relation(fields: [studentId], references: [id])
+  tutor   Tutor       @relation(fields: [tutorId], references: [id])
+  course  Course      @relation(fields: [courseId], references: [id])
+
+  @@unique([studentId, tutorId, courseId])
+  @@index([tutorId, courseId, hidden])
+  @@map("tutor_ratings")
+}
+
+model ErrorLog {
+  id        String   @id @default(uuid())
+  message   String   @db.Text
+  stack     String?  @db.Text
+  userId    String?  @map("user_id")
+  errorType String   @map("error_type")
+  severity  String   @default("error")
+  context   Json?
+  userAgent String?  @map("user_agent") @db.Text
+  url       String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([errorType])
+  @@index([severity])
+  @@index([createdAt])
+  @@map("error_logs")
+}

@@ -16,6 +16,7 @@ monorepo/
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
 │  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  └─ carre-d-as/               Carré d'As Tutorat — Next.js 16 + Prisma 7 + Supabase + Stripe (voir MISE-A-JOUR-MONOREPO.md)
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)

@@ -55,6 +55,13 @@
       "url": "https://github.com/Sathancabrol/watchtower",
       "sha": "715bfa793923fb8e0fddc3c0f9561e252178723a",
       "branch": "main"
+    },
+    {
+      "name": "carre-d-as",
+      "url": "https://github.com/dojofinancier/app4as",
+      "sha": "c66eb3a4d745c212ca9c833a335d639087e4f9f9",
+      "branch": "main",
+      "note": "Copie de travail dans projects/carre-d-as (dépendances mises à jour, voir projects/carre-d-as/MISE-A-JOUR-MONOREPO.md)"
     }
   ]
 }
