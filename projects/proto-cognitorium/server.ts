@@ -488,6 +488,18 @@ Expériences : ${JSON.stringify(allExperiences?.map((e: any) => e.name) || [])}
     }
   });
 
+  // --- PREVIEW DEEP-LINK (opt-in) ---
+  // PREVIEW_DEFAULT_TAB=network → la racine ouvre directement le module visé
+  // (utile pour les previews intégrées / iframes qui chargent toujours "/").
+  const previewDefaultTab = process.env.PREVIEW_DEFAULT_TAB;
+  if (previewDefaultTab) {
+    app.get("/", (req, res, next) => {
+      const tab = req.query.tab;
+      if (typeof tab === "string" && tab.length > 0) return next();
+      res.redirect(302, `/?tab=${encodeURIComponent(previewDefaultTab)}`);
+    });
+  }
+
   // --- VITE MIDDLEWARE ---
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

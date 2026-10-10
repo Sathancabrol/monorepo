@@ -34,6 +34,26 @@ import {
 
 const STORAGE_KEY = 'cognitorium_active_profile_v10_full_fusion';
 
+/** Onglets valides — permet le deep-link `?tab=network` (à garder aligné sur AppActiveTab). */
+const VALID_TABS: AppActiveTab[] = [
+  'dashboard', 'network', 'temporal', 'tree', 'table', 'horizons', 'metiers',
+  'decay', 'signature', 'atlas', 'posters', 'metacog', 'psyref', 'ressources', 'evaluations'
+];
+
+/** Lit l'onglet demandé dans l'URL (`?tab=` ou `#tab=`), sinon null. */
+function readTabFromUrl(): AppActiveTab | null {
+  try {
+    const fromQuery = new URLSearchParams(window.location.search).get('tab');
+    const fromHash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    const candidate = fromQuery || fromHash;
+    return candidate && (VALID_TABS as string[]).includes(candidate)
+      ? (candidate as AppActiveTab)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function App() {
   const [profile, setProfile] = useState<CognitiveProfile>(() => {
     try {
@@ -47,7 +67,7 @@ export default function App() {
     return INITIAL_COGNITORIUM_PROFILE;
   });
 
-  const [activeTab, setActiveTab] = useState<AppActiveTab>('dashboard');
+  const [activeTab, setActiveTab] = useState<AppActiveTab>(() => readTabFromUrl() ?? 'dashboard');
   const [complexityMode, setComplexityMode] = useState<ComplexityMode>('essential');
   const [simulationYear, setSimulationYear] = useState<number>(2026);
   const [selectedNode, setSelectedNode] = useState<AnyCognitiveNode | null>(null);
@@ -69,6 +89,18 @@ export default function App() {
       console.warn("Impossible de persister le profil:", e);
     }
   }, [profile]);
+
+  // Synchronise l'onglet courant dans l'URL → chaque vue est deep-linkable/partageable
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('tab') === activeTab) return;
+      url.searchParams.set('tab', activeTab);
+      window.history.replaceState(window.history.state, '', url.toString());
+    } catch (e) {
+      /* URL non modifiable (contexte sandbox) : on ignore silencieusement */
+    }
+  }, [activeTab]);
 
   // Compute pending validation count
   const pendingNodes = useMemo(() => {
