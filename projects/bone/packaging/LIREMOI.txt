@@ -1,0 +1,27 @@
+BONE — ZIP d'installation Windows
+=================================
+
+1. Extraire TOUT le zip dans un dossier (clic droit → Extraire).
+2. Double-clic sur  INSTALLER.bat
+   (si Windows bloque : Plus d'infos → Exécuter quand même)
+3. L'installeur :
+     - pose Python s'il manque (ou t'envoie sur python.org)
+     - installe Bone dans  %LOCALAPPDATA%\Bone
+     - te demande le TOKEN du bot Discord (une fois)
+     - OUVRE Discord pour que tu CHOISISSES le serveur
+     - lance Bone
+
+Ensuite Bone est en ligne sur le serveur que tu as coché.
+Raccourci Bureau : "Bone". Laisse le PC allumé, ou accepte
+"lancer au démarrage de Windows".
+
+Créer le bot Discord (l'installeur t'ouvre la page) :
+  https://discord.com/developers/applications
+  New Application → Bone
+  Bot → Add Bot
+  MESSAGE CONTENT INTENT = ON
+  Reset Token → copier
+
+Désinstaller : lance  %LOCALAPPDATA%\Bone\arreter.bat
+puis supprime le dossier  %LOCALAPPDATA%\Bone
+et le raccourci Bureau.

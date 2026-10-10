@@ -12,6 +12,7 @@ Lancer :
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -97,16 +98,80 @@ def _clean(msg: discord.Message) -> str:
     return text.strip()
 
 
+def _write_ready() -> None:
+    payload = {
+        "user": str(bot.user) if bot.user else None,
+        "id": bot.user.id if bot.user else None,
+        "guilds": [
+            {"id": g.id, "name": g.name, "members": g.member_count}
+            for g in bot.guilds
+        ],
+    }
+    (ROOT / "ready.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    (ROOT / "bone.pid").write_text(str(os.getpid()), encoding="utf-8")
+
+
+async def _sync_guild(guild: discord.Guild) -> None:
+    try:
+        synced = await bot.tree.sync(guild=guild)
+        log.info("slash @ %s : %s", guild.name, [c.name for c in synced])
+    except Exception as e:
+        log.warning("sync %s : %s", guild.name, e)
+
+
+async def _hello_channel(guild: discord.Guild):
+    me = guild.me
+    if me is None:
+        return None
+    if guild.system_channel and guild.system_channel.permissions_for(me).send_messages:
+        return guild.system_channel
+    for c in guild.text_channels:
+        if c.permissions_for(me).send_messages:
+            return c
+    return None
+
+
 @bot.event
 async def on_ready():
     log.info("Bone en ligne : %s (id=%s)", bot.user, bot.user.id if bot.user else "?")
-    activity = discord.Activity(type=discord.ActivityType.watching, name="South Park · Olympus")
+    names = ", ".join(g.name for g in bot.guilds) or "(aucun serveur — invite le bot)"
+    log.info("Serveurs : %s", names)
+    watching = GUILD_NAME if len(bot.guilds) != 1 else bot.guilds[0].name
+    activity = discord.Activity(type=discord.ActivityType.watching, name=f"South Park · {watching}")
     await bot.change_presence(status=discord.Status.online, activity=activity)
+    for g in bot.guilds:
+        await _sync_guild(g)
     try:
-        synced = await bot.tree.sync()
-        log.info("slash commands : %s", [c.name for c in synced])
+        await bot.tree.sync()
     except Exception as e:
-        log.warning("sync slash : %s", e)
+        log.warning("sync global : %s", e)
+    _write_ready()
+
+
+@bot.event
+async def on_guild_join(guild: discord.Guild):
+    log.info("Nouveau serveur : %s (%s)", guild.name, guild.id)
+    try:
+        await guild.me.edit(nick="Bone")
+    except Exception:
+        pass
+    await _sync_guild(guild)
+    _write_ready()
+    ch = await _hello_channel(guild)
+    if ch is None:
+        return
+    intro = opener("fr")
+    text = (
+        f"{intro}\n\n"
+        f"On m'a installé sur **{guild.name}**. J'suis Bone. "
+        f"Ping-moi, tape `!bone` ou `/aide`."
+    )
+    try:
+        await ch.send(text)
+    except Exception as e:
+        log.warning("hello %s : %s", guild.name, e)
 
 
 @bot.event
@@ -189,7 +254,15 @@ async def slash_projets(interaction: discord.Interaction):
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    log_file = ROOT / "bone.log"
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler(log_file, encoding="utf-8"),
+        ],
+    )
     if not TOKEN:
         raise SystemExit(
             "DISCORD_TOKEN manquant.\n"

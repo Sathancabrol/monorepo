@@ -9,7 +9,19 @@ Il tourne **tout seul** : pas besoin du reste du monorepo.
 
 ---
 
-## Installer SEULEMENT Bone sur ton PC
+## Windows : ZIP + installeur (recommandé)
+
+1. Télécharge **`Bone-Olympus-Install.zip`**
+2. Clic droit → Extraire tout
+3. Double-clic **`INSTALLER.bat`**
+4. L’installeur ouvre Discord : **tu choisis le serveur** (Olympus ou un autre) → Autoriser
+5. Boom. Bone est en ligne. Raccourci Bureau.
+
+Le ZIP est autonome (pas le monorepo). Rebuild : `python packaging/build-zip.py`
+
+---
+
+## Installer SEULEMENT Bone sur ton PC (Git / Linux)
 
 Ne clone **pas** tout le monorepo (il est énorme, plein de PDF).
 Tu n’as besoin que de ce dossier.
