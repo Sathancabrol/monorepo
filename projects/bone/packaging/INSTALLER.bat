@@ -1,18 +1,17 @@
 @echo off
 setlocal
-chcp 65001 >nul
-title Bone — Installateur
 cd /d "%~dp0"
+title Bone Setup
+REM Wizard graphique (STA). Si WPF refuse, fallback console.
+powershell -STA -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%~dp0setup-ui.ps1"
+if "%ERRORLEVEL%"=="0" exit /b 0
 echo.
-echo   Bone — installateur Discord
-echo   Ne ferme pas cette fenetre.
+echo  Wizard graphique indisponible — mode console.
 echo.
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0installer.ps1"
 set ERR=%ERRORLEVEL%
 if not "%ERR%"=="0" (
-  echo.
-  echo   Installation interrompue. Code %ERR%
-  echo.
+  echo Installation interrompue. Code %ERR%
+  pause
 )
-pause
 exit /b %ERR%

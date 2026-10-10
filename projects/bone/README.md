@@ -14,8 +14,7 @@ Il tourne **tout seul** : pas besoin du reste du monorepo.
 1. Télécharge **`Bone-Olympus-Install.zip`**
 2. Clic droit → Extraire tout
 3. Double-clic **`INSTALLER.bat`**
-4. L’installeur ouvre Discord : **tu choisis le serveur** (Olympus ou un autre) → Autoriser
-5. Boom. Bone est en ligne. Raccourci Bureau.
+4. Wizard sombre (bandeau Bone, barre rose) : Next → **Install** → token Discord → tu **choisis le serveur** → Finish
 
 Le ZIP est autonome (pas le monorepo). Rebuild : `python packaging/build-zip.py`
 

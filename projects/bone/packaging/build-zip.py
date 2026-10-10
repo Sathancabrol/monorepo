@@ -54,12 +54,26 @@ def main() -> None:
     png = BONE / "assets" / "bone.png"
     shutil.copy2(png, assets / "bone.png")
     convert_ico(png, assets / "bone.ico")
+    side = HERE / "sidebar.png"
+    if not side.exists():
+        side = BONE / "assets" / "setup-sidebar.png"
+    if side.exists():
+        shutil.copy2(side, assets / "setup-sidebar.png")
 
     write_bom(HERE / "installer.ps1", STAGE / "installer.ps1")
+    write_bom(HERE / "setup-ui.ps1", STAGE / "setup-ui.ps1")
     shutil.copy2(HERE / "INSTALLER.bat", STAGE / "INSTALLER.bat")
     write_bom(HERE / "LIREMOI.txt", STAGE / "LIREMOI.txt")
     write_bom(HERE / "autorisations.ps1", payload / "autorisations.ps1")
     shutil.copy2(HERE / "autorisations.bat", payload / "autorisations.bat")
+    setup_html = BONE / "setup.html"
+    if setup_html.exists():
+        shutil.copy2(setup_html, STAGE / "setup.html")
+        demo_assets = STAGE / "assets"
+        demo_assets.mkdir(exist_ok=True)
+        side_out = assets / "setup-sidebar.png"
+        if side_out.exists():
+            shutil.copy2(side_out, demo_assets / "setup-sidebar.png")
 
     if ZIP_PATH.exists():
         ZIP_PATH.unlink()
