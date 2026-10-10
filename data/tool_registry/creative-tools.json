@@ -168,6 +168,129 @@
           "note": "Le mainteneur indique que les licences de plusieurs modèles et poids restent non vérifiées."
         }
       ]
+    },
+    {
+      "id": "motion-mirror",
+      "name": "Motion Mirror",
+      "category": "ai-video-motion-transfer",
+      "purpose": "Transférer le mouvement d'une vidéo de référence vers un personnage à partir d'une image, avec CLI, API Python, interface web et nœuds ComfyUI",
+      "source_url": "https://github.com/halli75/motion-mirror",
+      "license": "MIT pour le code du dépôt; licences des modèles et artefacts à vérifier séparément",
+      "license_status": "declared",
+      "maturity": "experimental",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "integrations": [
+        "python",
+        "cli",
+        "web-ui",
+        "comfyui"
+      ],
+      "requirements": {
+        "python": ">=3.11",
+        "minimum_gpu_vram": "environ 9 GB annoncés pour le backend 1.3B",
+        "system_ram": "32 GB annoncés",
+        "disk": "environ 20 GB pour le cache 1.3B; plus pour les modèles 14B",
+        "local_fit": "Ne correspond pas à la configuration connue de développement (GTX 1060 6 GB, RAM 16 GB)"
+      },
+      "install_methods": [],
+      "security_notes": "Ne pas télécharger automatiquement les poids. Vérifier licence par backend/LoRA; le mode rapide 1.3B utilise un artefact annoncé CC-BY-NC-SA-4.0. Les poids demandent plusieurs dizaines de Go selon le backend.",
+      "verification_status": "source_reviewed_not_tested_locally",
+      "last_verified": "2026-10-10",
+      "evidence": [
+        {
+          "url": "https://github.com/halli75/motion-mirror",
+          "kind": "source_repository",
+          "note": "README consulté le 2026-10-10; pipeline annoncé segmenter → pose 133 points → génération Wan2.1-VACE → passage audio."
+        },
+        {
+          "url": "https://github.com/halli75/motion-mirror",
+          "kind": "maintainer_documentation",
+          "note": "Le README annonce environ 9 GB VRAM et 32 GB RAM minimum pour le backend le plus léger; aucun test sur la machine de l'utilisateur."
+        }
+      ]
+    },
+    {
+      "id": "viggle-animate",
+      "name": "Viggle-Animate",
+      "category": "ai-video-character-replacement",
+      "purpose": "Remplacement de personnage dans une vidéo à partir d'une image de référence repeinte extraite de la vidéo source",
+      "source_url": "https://huggingface.co/Viggle/Viggle-Animate",
+      "license": "Code d'inférence Apache-2.0; poids sous MiniMax H3 Community License",
+      "license_status": "declared",
+      "maturity": "experimental",
+      "platforms": [
+        "gpu-workstation",
+        "cloud"
+      ],
+      "integrations": [
+        "huggingface",
+        "video-inference",
+        "comfyui-candidate"
+      ],
+      "requirements": {
+        "model": "MiniMax-H3-derived 33.1B parameter model",
+        "gpu": "Nécessite une mémoire GPU importante; non adapté a priori à 6 GB VRAM",
+        "workflow": "Vidéo source + une image repeinte alignée avec la vidéo"
+      },
+      "install_methods": [],
+      "security_notes": "Lire les conditions de la licence communautaire avant usage commercial/redistribution. Utiliser uniquement des personnes et images de référence autorisées; signaler le média généré. La recherche annonce des limites sur les changements de plan, interactions complexes et synchronisation labiale.",
+      "verification_status": "research_release_reviewed_not_tested_locally",
+      "last_verified": "2026-10-10",
+      "evidence": [
+        {
+          "url": "https://viggle.ai/research/viggle-animate-character-replacement-from-a-repainted-frame",
+          "kind": "research_release",
+          "note": "Publication du 4 septembre 2026; les performances annoncées sont des résultats du fournisseur sur un GPU B200 et ne préjugent pas des performances sur PC grand public."
+        },
+        {
+          "url": "https://huggingface.co/Viggle/Viggle-Animate",
+          "kind": "model_card",
+          "note": "Carte modèle consultée; poids sous MiniMax H3 Community License et code d'inférence Apache-2.0."
+        }
+      ]
+    },
+    {
+      "id": "maestro-video-studio",
+      "name": "Maestro",
+      "category": "ai-creative-studio",
+      "purpose": "Interface de studio vidéo, image et audio avec orchestration de plans, mode Director et modèles locaux variés",
+      "source_url": "https://github.com/chitaodu-pixel/maestro",
+      "license": "WanGP Non-Commercial Evaluation License 1.1; licences de chaque modèle et poids à vérifier séparément",
+      "license_status": "declared",
+      "maturity": "experimental",
+      "platforms": [
+        "windows"
+      ],
+      "integrations": [
+        "local-llm",
+        "wan-gp",
+        "video-generation",
+        "audio-generation"
+      ],
+      "requirements": {
+        "gpu": "Dépend fortement du modèle choisi; auto-tuning ne garantit pas qu'un modèle donné tourne sur 6 GB VRAM",
+        "disk": "Plusieurs modèles peuvent nécessiter des téléchargements importants",
+        "local_fit": "À tester sur la configuration cible avant adoption"
+      },
+      "install_methods": [],
+      "security_notes": "Licence du projet non commerciale pour le logiciel et les dérivés; ne pas intégrer dans un produit/service commercial sans revue juridique et autorisation appropriée. Téléchargements de modèles à contrôler.",
+      "verification_status": "source_and_license_reviewed_not_tested_locally",
+      "last_verified": "2026-10-10",
+      "evidence": [
+        {
+          "url": "https://github.com/chitaodu-pixel/maestro",
+          "kind": "source_repository",
+          "note": "README et historique consultés; version 1.9.1 datée du 25 août 2026 dans les commits consultés."
+        },
+        {
+          "url": "https://github.com/chitaodu-pixel/maestro/blob/main/LICENSE",
+          "kind": "license_notice",
+          "note": "Le dépôt déclare WanGP Non-Commercial Evaluation License 1.1 et limite les usages commerciaux du logiciel/service."
+        }
+      ]
     }
   ]
 }
