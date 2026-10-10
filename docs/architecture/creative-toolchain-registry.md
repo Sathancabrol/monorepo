@@ -53,6 +53,7 @@ Les projets ci-dessous sont des **candidats non validés**, pas des dépendances
 - Pont Blender–Unreal : uniquement après validation des formats, licences et workflow.
 - ArtCraft : applications PhotoCraft/VectorCraft/FilmCraft/etc.; vérifier séparément chaque application, licence, releases, maturité et besoins matériels.
 - Sloom Studio et autres suites créatives : à garder dans le registre de recherche jusqu'à inspection du code et des builds.
+- Genjutsu-OSS : pipeline de transformation vidéo orienté ComfyUI; source déclarée Apache-2.0, mais état actuel limité à une fondation et un pipeline simulé. Voir [la fiche d’intégration Nexus](genjutsu-video-integration.md); ne pas le traiter comme un moteur de production tant que les backends réels et les licences des poids ne sont pas vérifiés.
 
 Les nombres d'outils, affirmations de compatibilité et annonces de prix sont des déclarations de projet tant qu'ils n'ont pas été reproduits par un test.
 
