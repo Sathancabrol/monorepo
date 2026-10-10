@@ -134,9 +134,23 @@ async function main() {
     const b = brainOf(channel);
     typing.classList.add('on');
     talkOn(true);
-    const wait = Math.min(1800, 380 + String(userText || '').length * 12);
-    await new Promise((r) => setTimeout(r, wait));
-    const out = b.reply(userText, 'Satan');
+    let out = null;
+    try {
+      const r = await fetch('/api/bone/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ text: userText, channel, author: 'Satan' }),
+      });
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.text) out = j.text;
+      }
+    } catch (_) { /* preview statique : cerveau JS */ }
+    if (!out) {
+      const wait = Math.min(1800, 380 + String(userText || '').length * 12);
+      await new Promise((res) => setTimeout(res, wait));
+      out = b.reply(userText, 'Satan');
+    }
     addMsg(msgsEl, { author: 'Bone', av: BONE_AV, bot: true, text: out });
     $('#stage-line').textContent = out.length > 72 ? `${out.slice(0, 70)}…` : out;
     typing.classList.remove('on');

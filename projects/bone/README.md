@@ -35,6 +35,19 @@ Tu n’as **pas** à réinstaller.
 
 3. **À la main** — Discord → Paramètres du serveur → **Rôles** → Bone → coches.
 
+### Vraie IA / agent
+
+Sans clé, Bone parle avec le **cerveau papier** (répliques locales). Dès que tu colles une clé :
+
+- **Groq** (gratuit) → `GROQ_API_KEY` — [console.groq.com](https://console.groq.com)
+- **OpenAI** → `OPENAI_API_KEY`
+- **Ollama** en local → `OLLAMA_HOST=http://127.0.0.1:11434`
+
+Menu PC : **Bone — autorisations** → 3 Connexions → relancer Bone.  
+Dans Discord : `/cerveau` dit si tu es en papier ou en vraie IA.
+
+C’est un **agent** : perso Bone + mémoire du salon + tes repos. Pas un AutoGPT (pas encore d’outils web / fichiers).
+
 ---
 
 ## Installer SEULEMENT Bone sur ton PC (Git / Linux)

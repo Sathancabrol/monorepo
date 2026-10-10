@@ -102,6 +102,73 @@ def _decorate(text: str, mood: str) -> str:
     return text
 
 
+def system_prompt(lang: str = "fr", author: str | None = None, mood: str = "chill") -> str:
+    ident = DATA.get("identity", {})
+    style = "\n".join(f"- {s}" for s in DATA.get("style", []))
+    kn = "\n".join(f"- {k}: {v}" for k, v in DATA.get("knowledge", {}).items())
+    who = author or "un humain"
+    if lang == "en":
+        return (
+            f"You are {ident.get('name', 'Bone')}, {ident.get('species')}. "
+            f"You live on Discord server {ident.get('server')}. Boss: {ident.get('owner')}. "
+            f"Job: {ident.get('job')}. Catchphrase: {ident.get('catchphrase')}. "
+            f"Mood now: {mood}. Talking to: {who}.\n"
+            f"Style:\n{style}\n"
+            f"You know these projects:\n{kn}\n"
+            "You are a real AI agent wearing this character. Short answers (1–4 sentences). "
+            "Never say you are ChatGPT, Claude, Groq, or Llama. You are Bone."
+        )
+    return (
+        f"Tu es {ident.get('name', 'Bone')}, {ident.get('species')}. "
+        f"Tu habites le serveur Discord {ident.get('server')}. Patron : {ident.get('owner')}. "
+        f"Job : {ident.get('job')}. Punchline : {ident.get('catchphrase')}. "
+        f"Humeur : {mood}. Tu parles à : {who}.\n"
+        f"Style :\n{style}\n"
+        f"Tu connais ces projets :\n{kn}\n"
+        "Tu es un VRAI agent IA, déguisé en ce perso. Réponses courtes (1 à 4 phrases). "
+        "Jamais dire que tu es ChatGPT, Claude, Groq ou Llama. T'es Bone."
+    )
+
+
+def think(text: str, channel_id: str = "default", author: str | None = None) -> str:
+    """Cerveau : vraie IA si une clé est là, sinon répliques papier."""
+    st = channel_state(channel_id)
+    raw = (text or "").strip()
+    lowered = _strip(raw)
+    if lowered in {"tg", "silence", "chut", "quiet", "parle", "speak", "reviens"}:
+        return reply(text, channel_id=channel_id, author=author)
+
+    try:
+        from llm import complete, provider
+    except Exception:
+        return reply(text, channel_id=channel_id, author=author)
+
+    if not provider():
+        return reply(text, channel_id=channel_id, author=author)
+
+    lang = detect_lang(raw)
+    sys = system_prompt(lang=lang, author=author, mood=st.get("mood") or "chill")
+    messages = [{"role": "system", "content": sys}]
+    for h in st.get("history") or []:
+        role = "assistant" if h.get("role") == "bone" else "user"
+        content = (h.get("text") or "").strip()
+        if content:
+            messages.append({"role": role, "content": content})
+    messages.append({"role": "user", "content": raw if not author else f"{author}: {raw}"})
+    out = complete(messages)
+    if not out:
+        return reply(text, channel_id=channel_id, author=author)
+    # coupe si le modèle bavarde
+    if len(out) > 800:
+        out = out[:797] + "…"
+    st["last"] = out
+    hist = st["history"]
+    hist.append({"role": "user", "text": raw})
+    hist.append({"role": "bone", "text": out})
+    del hist[:-16]
+    return out
+
+
 def reply(text: str, channel_id: str = "default", author: str | None = None) -> str:
     """Réponse Bone. Déterministe-ish : intent + mood + anti-répétition."""
     st = channel_state(channel_id)
@@ -180,13 +247,14 @@ def help_text(lang: str = "fr") -> str:
         return (
             "**Bone** — South Park skeleton intern on Olympus.\n"
             "Ping me, reply, or `!bone …`\n"
-            "`/aide` `/roast` `/mood` `/episode` `/projets` `/autorisations`\n"
-            "`!bone tg` silence · `!bone parle` resume · `/autorisations` extra perms"
+            "`/aide` `/roast` `/mood` `/episode` `/projets` `/autorisations` `/cerveau`\n"
+            "`!bone tg` silence · `!bone parle` resume"
         )
     return (
         "**Bone** — stagiaire squelette d'Olympus, construction paper.\n"
         "Ping-moi, réponds-moi, ou `!bone …`\n"
-        "`/aide` `/roast` `/mood` `/episode` `/projets` `/autorisations`\n"
+        "`/aide` `/roast` `/mood` `/episode` `/projets` `/autorisations` `/cerveau`\n"
         "`!bone tg` je me tais · `!bone parle` je reviens\n"
-        "Après install : `/autorisations` ou `autorisations.bat` pour plus de droits."
+        "IA : colle une clé (Groq / OpenAI / Ollama) dans autorisations.bat → 3. "
+        "`/cerveau` dit si c'est du papier ou une vraie IA."
     )

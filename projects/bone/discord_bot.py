@@ -24,7 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 os.chdir(ROOT)
 
-from persona import reply as bone_reply, opener, help_text, set_mood, set_quiet, channel_state, DATA
+from persona import think as bone_reply, opener, help_text, set_mood, set_quiet, channel_state, DATA
 from perms import PACKS, invite_url, portal_bot_url
 
 try:
@@ -276,6 +276,20 @@ async def _send_autorisations(dest, ephemeral_user=None):
 @bot.tree.command(name="autorisations", description="Ajouter des droits / connexions Discord à Bone (après install)")
 async def slash_autorisations(interaction: discord.Interaction):
     await _send_autorisations(interaction, ephemeral_user=True)
+
+
+@bot.tree.command(name="cerveau", description="Quelle IA parle : papier, Groq, OpenAI, Ollama")
+async def slash_cerveau(interaction: discord.Interaction):
+    try:
+        from llm import describe
+        txt = describe()
+    except Exception:
+        txt = "papier"
+    await interaction.response.send_message(
+        f"Cerveau actuel : **{txt}**\n"
+        "Pour brancher une vraie IA : `autorisations.bat` → option 3 (clé) puis relance Bone.",
+        ephemeral=True,
+    )
 
 
 @bot.tree.command(name="aide", description="Bone explique (très mal) comment il marche")

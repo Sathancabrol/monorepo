@@ -105,12 +105,17 @@ async def api_bone_chat(request: Request):
     if str(bone_dir) not in sys.path:
         sys.path.insert(0, str(bone_dir))
     try:
-        from persona import reply as bone_reply  # type: ignore
+        from persona import think as bone_reply  # type: ignore
+        from llm import describe as bone_brain  # type: ignore
     except Exception as e:
         raise HTTPException(500, f"Bone KO: {e}")
     channel = str(body.get("channel") or "web")
     author = body.get("author")
-    return {"text": bone_reply(text, channel_id=channel, author=author), "author": "Bone"}
+    return {
+        "text": bone_reply(text, channel_id=channel, author=author),
+        "author": "Bone",
+        "brain": bone_brain(),
+    }
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):

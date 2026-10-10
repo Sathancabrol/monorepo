@@ -18,6 +18,7 @@ PAYLOAD_FILES = [
     "persona.py",
     "persona.json",
     "perms.py",
+    "llm.py",
     "requirements.txt",
     ".env.example",
 ]
