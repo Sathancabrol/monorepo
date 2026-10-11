@@ -43,6 +43,7 @@ jobs:
         run: |
           python -m py_compile scripts/project_audit/audit_portfolio.py scripts/project_audit/audit_gaps.py
           python -m json.tool data/audit/portfolio.json > /dev/null
+          python -m unittest discover -s tests -p "test_project_audit*.py"
 
       - name: Run read-only portfolio audit
         env:
