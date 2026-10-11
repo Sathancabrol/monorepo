@@ -92,3 +92,12 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 ## 📚 Fusion réelle (option b)
 
 Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+
+
+## 📱 AR mobile / HUD personnalisable — dossier de recherche
+
+- Archive de référence : [`docs/research/AR-MOBILE-HUD-QUICKSTART-2026-10-11.md`](docs/research/AR-MOBILE-HUD-QUICKSTART-2026-10-11.md).
+- Priorité P0 : tester **xTech5x/AR-HUD** sur le téléphone comme HUD/PWA de départ avant de développer un moteur AR complet.
+- Backlog : interface à couches activables, provenance des données, permissions explicites, manifeste de modules et connecteurs vers Watchtower, Atlas Frontignan, BTP, Cognitorium et Nexus.
+- Pistes secondaires archivées : AR.js, AR-Viewer, GPS/WebAR, Robot Heads, agent sandbox, webhooks, catalogue self-hosted et sources cartographiques.
+- Le dossier sépare les capacités annoncées, les fonctions estimées/démonstratives, les risques et les tâches à valider. Aucun projet tiers n'est encore intégré au code applicatif.
