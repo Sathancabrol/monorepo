@@ -17,10 +17,13 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [x] Terminer la pagination de recherche des branches pour les 9 dépôts ciblés.
 - [x] Faire un premier passage sur les branches prioritaires : Nexus OS, Carré d'As, BTP, Watchtower INTEL, Language-decoder, OSINT Workbench, audit de convergence, catalogue outils et squelette d'interface.
 - [x] Comparer les références de Nexus OS, Carré d'As, gap-driven audit, catalogue d'outils, BTP, Watchtower INTEL et Language-decoder à leurs références `main` ; résultats détaillés dans [l'addendum de comparaisons](DELTA-COMPARAISONS-BRANCHES-2026-10-11.md).
+- [x] Vérifier les chemins OSINT Workbench sur les références `main` : absent aux deux chemins testés, présent sur la branche prototype COGNITORIUM ; ce constat ne couvre pas toutes les branches.
 - [x] Confirmer par diff GitHub que `watchtower/osint-workbench-v0.1` contient une spécification et des modules OSINT additionnels.
 - [ ] Finir l'examen sémantique des branches pertinentes restantes, y compris les autres branches de proto-Cognitorium et des dépôts de recherche.
 - [ ] Comparer fichier par fichier les copies `watchtower-mods` dans Watchtower, COGNITORIUM et le monorepo ; consigner les différences exactes et les SHA.
 - [ ] Examiner les branches non prioritaires restantes avec le protocole gap-driven et consigner pourquoi chaque branche est ignorée ou retenue.
+- [x] Lire les scripts `audit_gaps.py` et `audit_portfolio.py` ainsi que le workflow ; consigner le budget de 15 arbres par exécution, la limite de 100 branches du rapport portefeuille et l'absence de revue sémantique automatique dans l'addendum.
+- [ ] Ajouter/valider des tests du scanner sur fixtures et un déclencheur de validation PR, sans publier automatiquement depuis une PR vers `main`.
 - [x] Retrouver les modules Nexus OS, BTP, Atlas/Watchtower INTEL et Language-decoder dans les branches, sans les déclarer intégrés ou validés.
 - [x] Définir une gouvernance provisoire : Watchtower comme application canonique, OSINT Workbench comme prototype à porter sélectivement, copies monorepo comme archive.
 
@@ -56,6 +59,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [x] Consigner que les résultats CI disponibles pour le commit de l'audit ne montrent aucun workflow associé.
 - [x] Noter que l'audit de convergence historique rapporte deux tests Research Engine à revérifier ; ce signal est historique et non confirmé actuellement.
 - [ ] Exécuter les tests/builds de Watchtower, Research Engine, HCSM, proto-Cognitorium, Language-decoder, Nexus OS et Carré d'As.
+- [x] Recontrôler les statuts GitHub du dernier commit d'audit : aucun workflow associé et aucun statut combiné visible ; l'exécution CI n'est pas confirmée.
 - [ ] Archiver les commandes, versions d'environnement, logs et résultats (pass/fail/skip).
 - [ ] Exécuter les tests d'intégration et vérifier les interfaces de convergence.
 - [ ] Publier le bilan final séparant : réutilisable maintenant, à adapter, à tester, à différer, bloqué par licence ou par accès.
