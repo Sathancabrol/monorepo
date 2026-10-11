@@ -61,6 +61,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [x] Noter que l'audit de convergence historique rapporte deux tests Research Engine à revérifier ; ce signal est historique et non confirmé actuellement.
 - [ ] Exécuter les tests/builds de Watchtower, Research Engine, HCSM, proto-Cognitorium, Language-decoder, Nexus OS et Carré d'As.
 - [x] Recontrôler les statuts GitHub du dernier commit d'audit : aucun workflow associé et aucun statut combiné visible ; l'exécution CI n'est pas confirmée.
+- [x] Tenter l'accès Git en lecture seule depuis l'environnement d'exécution : `git ls-remote` échoue car `github.com` n'est pas résolu dans cet environnement ; aucun clone local ni lancement de tests n'est donc possible ici.
 - [ ] Archiver les commandes, versions d'environnement, logs et résultats (pass/fail/skip).
 - [ ] Exécuter les tests d'intégration et vérifier les interfaces de convergence.
 - [ ] Publier le bilan final séparant : réutilisable maintenant, à adapter, à tester, à différer, bloqué par licence ou par accès.
