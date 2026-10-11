@@ -54,3 +54,22 @@ Lire docs/AGENT_CONTINUITY.md et docs/AUDIT_AUTOMATION.md. Valider le script d'a
 - Ne pas fusionner, déployer, publier, supprimer de branche ou engager une dépense sans autorisation explicite.
 - Séparer les faits observés, les hypothèses et les recommandations.
 - Pour la recherche externe, conserver URL, date, provenance et lien avec le besoin; respecter les licences et limites d'accès.
+
+
+## Nouvelle orientation utilisateur — mémoire adaptative et recherches itératives (2026-10-11)
+
+Documents préparés sur cette branche :
+- `docs/MEMOIRE_ADAPTATIVE_ET_DECAY.md` : couches logiques de mémoire, consolidation, abstraction, decay, récupération rapide, métriques et critères d'acceptation.
+- `templates/research/RECHERCHE.md` : gabarit humain/IA par question de recherche, avec état de processus, sources, preuves, réponse provisoire, boucle d'amélioration et consolidation mémoire.
+
+Ces documents sont des propositions d'architecture, pas la preuve d'une implémentation opérationnelle.
+
+### Prochaine action recommandée
+1. Auditer les mécanismes réels déjà présents dans Nexus OS, HCSM et Research Engine avant de développer des doublons.
+2. Faire un mapping explicite entre les capacités existantes et le modèle de mémoire adaptative.
+3. Choisir un prototype vertical minimal : une recherche possède un dossier et un `RECHERCHE.md`, des checkpoints persistants, des preuves sourcées et une boucle d'évaluation.
+4. Tester récupération après interruption, détection d'information périmée, retour du résumé vers la preuve originale et mesure du contexte chargé.
+5. Ne pas implémenter le decay destructif; commencer par un score de rappel, une abstraction versionnée et une archive réversible.
+
+### Critère de réussite
+Un agent qui reprend une recherche doit retrouver la bonne question, son état vérifié, les preuves et la prochaine action depuis le dossier de recherche, sans charger toutes les données historiques ni recommencer l'audit global.
