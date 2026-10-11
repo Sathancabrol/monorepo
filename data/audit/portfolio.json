@@ -5,10 +5,10 @@
   "repositories": [
     {
       "name": "monorepo",
-      "role": "Portfolio hub, integration skeleton and project archive",
+      "role": "Portfolio hub, integration shell, Carré d'As and agent OS",
       "priority": "P0",
-      "focus_branches": ["feat/final-interface-skeleton-2026-10-07", "arena/01a08449-monorepo", "arena/01a08385-monorepo"],
-      "signals": ["app/", "scripts/", "projects/", "nexus_os/", "docs/"]
+      "focus_branches": ["feat/final-interface-skeleton-2026-10-07", "arena/01a08449-monorepo", "arena/01a08385-monorepo", "arena/0034230e-monorepo", "audit/convergence-2026-10-10", "feat/tool-data-catalog-2026-10", "feat/automated-project-audit-2026-10-11"],
+      "signals": ["app/", "scripts/", "projects/", "nexus_os/", "docs/", "audit/", "maquettes/"]
     },
     {
       "name": "watchtower",
@@ -51,6 +51,20 @@
       "priority": "P0",
       "focus_branches": [],
       "signals": ["README.md", "docs/"]
+    },
+    {
+      "name": "animation-chronos",
+      "role": "Temporal experience and progressive interface",
+      "priority": "P1",
+      "focus_branches": [],
+      "signals": ["README.md", "src/", "dist/"]
+    },
+    {
+      "name": "Language-decoder",
+      "role": "Human language and cognitive inference",
+      "priority": "P1",
+      "focus_branches": [],
+      "signals": ["README.md", "ontology/", "inference/"]
     }
   ],
   "kpi_rules": {
