@@ -34,3 +34,15 @@
 - [ ] Comparaison exhaustive de toutes les branches restantes et lecture sémantique des fichiers pertinents.
 - [ ] Exécution des suites de tests/builds dans un environnement exécutable.
 - [ ] Validation par tests d'intégration du contrat mémoire commun.
+
+
+## Vérification des chemins OSINT — présence et absence constatées
+
+Une vérification ciblée des répertoires GitHub confirme que la branche `COGNITORIUM:watchtower/osint-workbench-v0.1` contient les six fichiers de `watchtower-mods/src/osint/` (README, index, case, evidence, registry, workbench). En revanche, les deux chemins suivants renvoient 404 sur les références interrogées :
+
+- `Sathancabrol/monorepo:main/projects/COGNITORIUM/watchtower-mods/src/osint/`
+- `Sathancabrol/watchtower:main/src/osint/`
+
+**Interprétation limitée :** ce workbench n'est pas présent à ces chemins sur les références `main` vérifiées. Cela ne prouve pas son absence de toutes les branches, ni l'absence de fonctions équivalentes dans d'autres modules Watchtower. Il faut encore examiner les autres branches et chercher les concepts/fonctions équivalents avant de conclure à un vrai manque fonctionnel.
+
+**Décision :** conserver le prototype COGNITORIUM comme source de portage potentielle ; avant portage, définir la destination canonique, vérifier les imports/contrats et ajouter des tests d'intégration. Ne pas recopier le dossier dans le monorepo en supposant que cela l'intègre à Watchtower.
