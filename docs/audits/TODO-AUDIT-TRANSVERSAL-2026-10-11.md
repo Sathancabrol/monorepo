@@ -23,31 +23,31 @@
 - [x] Recenser les arbres de fichiers `main` des dépôts principaux.
 - [x] Faire un premier inventaire des capacités et doublons visibles dans le code.
 - [x] Documenter les restrictions de licence de Watchtower et de ses données.
-- [ ] Parcourir les pages de résultats de branches jusqu'à épuisement pour chaque dépôt.
-- [ ] Comparer les branches non-main pertinentes aux versions main (commits/fichiers distinctifs), en distinguant les branches de travail automatisées `arena/*`.
-- [ ] Rechercher Atlas, Nexus OS, BTP et simulateur dans toutes les branches/archives et produire un tableau des chemins trouvés.
-- [ ] Déterminer la source canonique des copies `watchtower-mods` et documenter les écarts.
+- [x] Parcourir les pages de résultats de branches jusqu'à épuisement pour les 9 dépôts accessibles ciblés (pagination terminée).
+- [x] Comparer un premier lot de branches prioritaires : Nexus OS, Carré d'As, BTP, Watchtower INTEL, Language-decoder, OSINT workbench, audit convergence, catalogue outils et squelette d'interface.\n- [ ] Finir l'examen sémantique de toutes les branches pertinentes et relancer les compares avant toute fusion.
+- [x] Retrouver les chemins de Nexus OS, BTP, Atlas/Watchtower INTEL et Language-decoder dans les branches prioritaires et documenter leurs capacités.\n- [ ] Compléter la recherche exhaustive sur toutes les branches et archives qui restent non examinées.
+- [x] Proposer une règle de gouvernance : dépôt Watchtower pour l'application, branche OSINT comme prototype à porter sélectivement, copies monorepo comme archive.\n- [ ] Comparer fichier par fichier les copies `watchtower-mods` et enregistrer les écarts exacts.
 
 ### B. Audit technique de réutilisation
 - [x] Rédiger l'audit initial Watchtower / proto-Cognitorium / Cognitorium / HCSM / Research Engine.
 - [x] Étendre l'inventaire à l'état de l'art, animation-chronos, Language-decoder et Frontignan.
-- [ ] Vérifier les scripts de tests/build et les contrats de persistance de chaque moteur.
-- [ ] Contrôler les dépendances cloud/API et les possibilités local-first.
-- [ ] Créer la matrice finale EXISTANT / À RÉUTILISER / À ADAPTER / MANQUANT / À ÉCARTER avec chemin, preuve, dépendance, licence, test et coût d'intégration.
-- [ ] Définir les contrats d'échange minimaux entre Watchtower, Cognitorium, HCSM et Research Engine.
+- [x] Inspecter statiquement les principales briques de persistance (Nexus Memory, Research Engine checkpoints, Watchtower context, proto decay, Language-decoder dynamics).\n- [ ] Exécuter les scripts de tests/build de chaque moteur et enregistrer les logs.
+- [x] Repérer les dépendances cloud/API et les options local-first dans les manifestes et README principaux.\n- [ ] Confirmer les dépendances et les comportements en exécution.
+- [x] Créer la matrice EXISTANT / À RÉUTILISER / À ADAPTER / À DIFFÉRER avec chemins et preuves statiques.\n- [ ] Compléter pour chaque entrée les dépendances, licences, statut de tests et estimation de coût d'intégration.
+- [x] Proposer le contrat minimal commun et identifier `carredas/core/canonical.py`, HCSM et Language-decoder comme schémas à comparer.\n- [ ] Valider le schéma par des fixtures et tests d'intégration.
 
 ### C. Mémoire adaptative et fiches de recherche
-- [ ] Spécifier la fiche Markdown de recherche minimale et ses liens vers sources, preuves, claims, contradictions et artefacts.
-- [ ] Définir l'identité stable des souvenirs/épisodes, leur provenance, validité temporelle, confiance et statut de validation humaine.
-- [ ] Définir les couches mémoire (travail, épisode, concept, archive) et le decay sans suppression des preuves sources.
-- [ ] Définir la boucle d'amélioration après chaque tâche : résultat, écart, correction, leçon, consolidation.
-- [ ] Définir un benchmark minimal de rappel, reprise après interruption, contradiction et traçabilité.
+- [x] Spécifier le modèle de fiche Markdown et les liens vers sources/preuves/résultats/historique dans `templates/research/RECHERCHE.md` et le rapport d'audit.
+- [x] Proposer les champs d'identité, provenance, validité temporelle, statut épistémique et validation humaine.\n- [ ] Implémenter et tester le schéma commun.
+- [x] Définir les couches de mémoire et le principe de decay sans suppression de la preuve source.
+- [x] Définir la boucle d'amélioration après chaque tâche et le stockage des leçons.
+- [x] Définir les scénarios d'acceptation pour reprise, rappel par paraphrase, contradiction, decay/récupération, provenance, correction humaine et minimisation.
 
 ### D. Vérification et compte rendu
-- [ ] Vérifier les suites de tests/build accessibles et exécuter celles qui peuvent être exécutées via CI ou environnement disponible.
-- [ ] Marquer explicitement les tests non exécutables depuis les outils distants.
-- [ ] Mettre à jour l'audit avec les preuves et limites restantes.
-- [ ] Publier un résumé final ici avec les tâches terminées, les décisions et les blocages restants.
+- [ ] Exécuter les suites de tests/build. Les outils GitHub consultés ne montrent aucun workflow associé au commit de l'audit et aucun environnement local n'est disponible dans cette session.
+- [x] Marquer explicitement les tests non exécutés : présence du code ≠ exécution ≠ succès ; l'audit historique rapporte deux tests rouges Research Engine à revérifier.
+- [x] Mettre à jour l'audit avec les découvertes de branches, les contrats de convergence, le benchmark et les limites.
+- [ ] Publier le bilan final après le dernier passage sur les branches et la vérification des tests.
 
 ## Critère de fin
 
