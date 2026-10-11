@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas Frontignan — El Niño 2026 « Godzilla » × bassin de Thau</title>
+<meta name="description" content="Module pédagogique interactif : El Niño 2026–2027, faits observés vs projections, frise opérationnelle golfe du Lion / Thau Agglo (Frontignan, Sète, Marseillan), risques, scénarios, simulation, quiz et prévention.">
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║ GÉNÉRÉ — ne pas éditer à la main.                                    ║
+  ║ Source de vérité : data/climat/el-nino-2026/el-nino-godzilla-2026.json║
+  ║ Template         : scripts/templates/climat/frontignan-module.html.tmpl║
+  ║ Régénérer        : python3 scripts/build_climat_assets.py            ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<style>
+:root{
+  --bg:#0b1220; --bg2:#0e1830; --card:#121e38; --card2:#16244534;
+  --line:#22345c; --txt:#dbe7ff; --mut:#8aa0c8; --dim:#5d7199;
+  --oc:#35c4e8; --oc2:#1b7f9c; --hot:#ff6b4a; --gold:#ffc857; --green:#3ddc97;
+  --obs:#3ddc97; --prev:#ffc857; --inc:#ff6b4a;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(1200px 600px at 80% -10%,#12325a55,transparent),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55;min-height:100vh}
+a{color:var(--oc)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+header.hero{padding:44px 20px 26px;text-align:center;background:linear-gradient(180deg,#0a1830ee,transparent);border-bottom:1px solid var(--line)}
+.kicker{letter-spacing:3px;text-transform:uppercase;font-size:12px;color:var(--oc);font-weight:700}
+h1{font-size:clamp(26px,4.4vw,46px);line-height:1.08;margin:10px 0 6px;background:linear-gradient(90deg,#fff,var(--oc) 60%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{color:var(--mut);max-width:820px;margin:8px auto;font-size:15.5px}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.badge{border:1px solid var(--line);background:#0e1a34;border-radius:999px;padding:5px 13px;font-size:12.5px;color:var(--mut)}
+.badge b{color:var(--txt)}
+.badge.obs{border-color:#3ddc9755;color:var(--obs)} .badge.prev{border-color:#ffc85755;color:var(--prev)} .badge.inc{border-color:#ff6b4a55;color:var(--inc)}
+nav.tabs{position:sticky;top:0;z-index:50;display:flex;gap:6px;overflow-x:auto;padding:10px 14px;background:#0b1220ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);justify-content:center;flex-wrap:nowrap}
+nav.tabs button{white-space:nowrap;border:1px solid var(--line);background:transparent;color:var(--mut);border-radius:999px;padding:8px 15px;font-size:13.5px;cursor:pointer;transition:.18s}
+nav.tabs button:hover{color:var(--txt);border-color:var(--oc2)}
+nav.tabs button.on{background:linear-gradient(90deg,var(--oc2),#2a6fdb);color:#fff;border-color:transparent;font-weight:600}
+section.tab{display:none;padding-top:30px;animation:fade .25s ease}
+section.tab.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-size:24px;margin:6px 0 14px;color:#fff}
+h2 .tag{font-size:12px;color:var(--oc);vertical-align:middle;margin-left:10px;letter-spacing:1px;text-transform:uppercase}
+h3{font-size:17px;color:var(--gold);margin:18px 0 8px}
+p.lead{color:var(--mut);max-width:900px;margin-bottom:16px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.card{background:linear-gradient(180deg,var(--card),#101a33);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.card.hl{border-color:#2a6fdb66;box-shadow:0 0 0 1px #2a6fdb22,0 8px 30px #0006}
+.stat{ text-align:center}
+.stat b{display:block;font-size:30px;color:var(--oc)}
+.stat b.hot{color:var(--hot)} .stat b.gold{color:var(--gold)}
+.stat span{display:block;font-size:12.5px;color:var(--mut);margin-top:4px}
+.pill{display:inline-block;font-size:11px;border-radius:999px;padding:3px 10px;font-weight:700;letter-spacing:.4px}
+.pill.obs{background:#3ddc9722;color:var(--obs);border:1px solid #3ddc9755}
+.pill.prev{background:#ffc85722;color:var(--prev);border:1px solid #ffc85755}
+.pill.inc{background:#ff6b4a22;color:var(--inc);border:1px solid #ff6b4a55}
+.pill.attr{background:#2a6fdb22;color:#9cc3ff;border:1px solid #2a6fdb55}
+ul.clean{list-style:none} ul.clean li{padding:5px 0 5px 22px;position:relative;color:var(--txt);font-size:14.5px}
+ul.clean li::before{content:'▸';position:absolute;left:4px;color:var(--oc)}
+ul.clean.warn li::before{content:'⚠';font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{color:var(--oc);text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid #1a2947;color:var(--txt);vertical-align:top}
+tr:hover td{background:#16244533}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}
+.filters select,.filters button{background:#0e1a34;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer}
+.filters select:focus{outline:1px solid var(--oc)}
+.timeline{position:relative;margin:20px 0 8px;padding-left:26px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--obs),var(--prev) 55%,var(--hot))}
+.phase{position:relative;margin-bottom:16px}
+.phase::before{content:'';position:absolute;left:-24px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--oc);border:2px solid var(--bg);box-shadow:0 0 0 3px #2a6fdb44}
+.phase.observe::before{background:var(--obs);box-shadow:0 0 0 3px #3ddc9733}
+.phase.prevu::before{background:var(--prev);box-shadow:0 0 0 3px #ffc85733}
+.phase .per{font-size:12px;color:var(--oc);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:12px 0}
+.chain .step{flex:1;min-width:170px;background:#0e1a34;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px;position:relative}
+.chain .step b{display:block;color:var(--gold);font-size:13px;margin-bottom:4px}
+.chain .arrow{align-self:center;color:var(--oc);font-size:18px}
+.quote{border-left:3px solid var(--gold);background:#1a1c2e66;padding:12px 16px;border-radius:0 12px 12px 0;margin:10px 0;font-style:italic;color:#e8ecff;font-size:14.5px}
+.quote small{display:block;margin-top:6px;color:var(--mut);font-style:normal}
+.note{border:1px dashed var(--line);background:#0e1a3466;border-radius:12px;padding:12px 14px;font-size:13px;color:var(--mut);margin:12px 0}
+.note b{color:var(--gold)}
+.scen{border-top:4px solid var(--oc)}
+.scen.A{border-top-color:var(--green)} .scen.B{border-top-color:var(--gold)} .scen.C{border-top-color:var(--hot)}
+.fact-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.fact-head h3{margin:0;color:#fff;font-size:16px}
+.fact-region{font-size:12px;color:var(--oc);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.kv .chip{background:#0e1a34;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12.5px}
+.kv .chip b{color:var(--gold)}
+/* simulation */
+#simbox{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#08101f}
+#simcanvas{display:block;width:100%;height:auto}
+.simctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.simctrl button{border:1px solid var(--line);background:#0e1a34;color:var(--txt);border-radius:10px;padding:9px 14px;font-size:13.5px;cursor:pointer}
+.simctrl button.on{background:linear-gradient(90deg,var(--oc2),#2a6fdb);border-color:transparent;font-weight:600}
+.simctrl label{font-size:12.5px;color:var(--mut);display:flex;align-items:center;gap:8px}
+input[type=range]{accent-color:var(--oc)}
+#simstate{font-size:13.5px;padding:10px 14px;border-radius:10px;background:#0e1a34;border:1px solid var(--line);color:var(--txt);min-height:42px}
+/* quiz */
+.quiz-q{margin-bottom:14px}
+.quiz-q .q{font-weight:600;margin-bottom:10px;font-size:15px}
+.quiz-q button.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:#0e1a34;color:var(--txt);font-size:14px;cursor:pointer}
+.quiz-q button.opt:hover{border-color:var(--oc2)}
+.quiz-q button.opt.good{border-color:var(--green);background:#3ddc9718}
+.quiz-q button.opt.bad{border-color:var(--hot);background:#ff6b4a18}
+.quiz-exp{display:none;margin-top:8px;font-size:13px;color:var(--mut);border-left:3px solid var(--oc);padding:8px 12px;background:#0e1a3488;border-radius:0 10px 10px 0}
+.quiz-exp.on{display:block}
+#quizscore{font-size:15px;color:var(--gold);font-weight:700}
+/* checklist */
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 4px;border-bottom:1px solid #1a2947;font-size:14px}
+.chk input{margin-top:4px;accent-color:var(--green);width:16px;height:16px}
+.chk.done label{color:var(--dim);text-decoration:line-through}
+.progressbar{height:8px;background:#0e1a34;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:8px 0 16px}
+.progressbar div{height:100%;background:linear-gradient(90deg,var(--green),var(--oc));width:0%;transition:.3s}
+footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;text-align:center}
+.src-list{font-size:13px;color:var(--mut)} .src-list li{padding:6px 0;border-bottom:1px solid #1a2947}
+.small{font-size:12.5px;color:var(--dim)}
+.gloss dt{color:var(--gold);font-weight:700;font-size:14px;margin-top:10px}
+.gloss dd{color:var(--mut);font-size:13.5px;margin-left:0}
+.maplegend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:8px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+@media (max-width:640px){nav.tabs{justify-content:flex-start}.wrap{padding:0 12px 60px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Atlas Frontignan · module climat · dataset monorepo</div>
+  <h1 id="h-title">El Niño 2026–2027 « Godzilla » × bassin de Thau</h1>
+  <p class="sub" id="h-sub"></p>
+  <div class="badges" id="h-badges"></div>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<div class="wrap">
+
+  <!-- ══════════ 1. VUE D'ENSEMBLE ══════════ -->
+  <section class="tab on" id="tab-overview">
+    <h2>Vue d'ensemble <span class="tag">contexte global</span></h2>
+    <p class="lead" id="ov-lead"></p>
+    <div class="grid g4" id="ov-stats"></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card">
+        <h3>🔗 La chaîne causale</h3>
+        <div class="chain" id="ov-chain"></div>
+        <div class="note" id="ov-distinction"></div>
+      </div>
+      <div class="card">
+        <h3>🌡 Deux thermomètres pour une même fièvre</h3>
+        <div id="ov-thermo"></div>
+        <h3 style="margin-top:16px">📈 Les modèles courent derrière la réalité</h3>
+        <div id="ov-proba"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>🎙 Dans les mots de Xavier Fettweis (climatologue, ULiège)</h3>
+      <div id="ov-quotes"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>🧭 Les trois niveaux de lecture — à ne jamais mélanger</h3>
+      <div class="grid g3" id="ov-levels"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2. FRISE THAU ══════════ -->
+  <section class="tab" id="tab-timeline">
+    <h2>Frise opérationnelle — golfe du Lion &amp; Thau Agglo <span class="tag" id="tl-scope-tag"></span></h2>
+    <p class="lead" id="tl-lead"></p>
+    <div class="card" id="tl-context" style="margin-bottom:16px"></div>
+    <div class="filters" id="tl-filters"></div>
+    <div class="timeline" id="tl-phases"></div>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card"><h3>🧰 Les outils territoriaux, déjà là</h3><div id="tl-tools"></div></div>
+      <div class="card"><h3>📟 Tableau de bord de surveillance</h3><table id="tl-dash"></table></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>⏱ Plan d'action temporel</h3><div class="grid g4" id="tl-actionplan"></div>
+      <div class="note" id="tl-primacy"></div>
+    </div>
+    <div class="note" style="margin-top:14px" id="tl-reco"></div>
+  </section>
+
+  <!-- ══════════ 3. FAITS GLOBAUX ══════════ -->
+  <section class="tab" id="tab-facts">
+    <h2>Ce qui est déjà arrivé — et ce qui est annoncé <span class="tag">monde</span></h2>
+    <p class="lead">Chaque fait porte son <b>statut</b> (<span class="pill obs">observé/rapporté</span> <span class="pill prev">prévu</span> <span class="pill inc">incertain</span>) et son <b>attribution</b>. Filtre pour vérifier une intuition — El Niño n'est pas coupable de tout.</p>
+    <div class="filters" id="fact-filters"></div>
+    <div class="grid g2" id="fact-cards"></div>
+  </section>
+
+  <!-- ══════════ 4. RISQUES & SCÉNARIOS ══════════ -->
+  <section class="tab" id="tab-risks">
+    <h2>Risques locaux, scénarios &amp; effets en cascade <span class="tag">Thau + global</span></h2>
+    <div class="card"><h3>🗺 Les 7 risques à intégrer dans une analyse communale (Frontignan, Sète, bassin de Thau)</h3>
+      <table id="risk-table"></table>
+    </div>
+    <h3 style="margin-top:22px">🎲 Trois scénarios de planification — pas trois prévisions probabilisées</h3>
+    <div class="grid g3" id="scen-cards"></div>
+    <div class="note" id="scen-note"></div>
+    <div class="card" style="margin-top:14px"><h3>⚖️ El Niño n'est pas uniformément négatif</h3><table id="effects-table"></table>
+      <div class="note" id="effects-note"></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>🌀 Risques de second ordre : la cascade</h3>
+      <div class="chain" id="cascade-chain"></div>
+      <div class="grid g2" id="cascade-cards"></div>
+      <div class="note" id="cascade-1877"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5. SIMULATION ══════════ -->
+  <section class="tab" id="tab-sim">
+    <h2>Mini-simulation pédagogique — pluie, ruissellement &amp; lagune <span class="tag">Frontignan · Sète · Thau</span></h2>
+    <p class="lead">Coupe schématique Gardiole → plaine urbaine (Frontignan) → étang de Thau → mer (golfe du Lion). Compare une pluie progressive, un épisode méditerranéen intense, et le cumul pluie + mer agitée (vagues-submersion). Les curseurs modifient l'intensité et le niveau marin.</p>
+    <div class="simctrl" id="sim-buttons"></div>
+    <div class="simctrl">
+      <label>🌧 Intensité pluie <input type="range" id="sim-rain" min="0" max="100" value="35"></label>
+      <label>🌊 Niveau mer / houle <input type="range" id="sim-sea" min="0" max="100" value="15"></label>
+      <label>🧽 Sols saturés (épisode précédent) <input type="range" id="sim-soil" min="0" max="100" value="20"></label>
+    </div>
+    <div id="simbox"><canvas id="simcanvas" width="1140" height="430"></canvas></div>
+    <div id="simstate" style="margin-top:10px"></div>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card"><h3>💧 Pluie progressive</h3><p class="small">Réseau pluvial dimensionné pour absorber : les avaloirs évacuent au rythme de la pluie. C'est le scénario « A » du quotidien.</p></div>
+      <div class="card"><h3>⛈ Épisode méditerranéen</h3><p class="small">Intensités horaires très fortes (jusqu'à >250 mm observés fin septembre 2026 dans l'Hérault) : le ruissellement dépasse la capacité des réseaux, l'eau descend de la Gardiole vers les points bas.</p></div>
+      <div class="card"><h3>🌊 Pluie + mer agitée</h3><p class="small">Le pire combo du littoral bas : les exutoires ne peuvent plus évacuer vers la lagune/la mer (vagues-submersion), l'eau stagne dans les quartiers bas et les parkings.</p></div>
+    </div>
+    <div class="note">⚠️ <b>Simulation pédagogique</b> : schéma de principe, pas un calcul de risque réel à la parcelle. Pour toute décision : vigilances Météo-France, Vigicrues, arrêtés préfectoraux, PPRI/PCS de la commune.</div>
+  </section>
+
+  <!-- ══════════ 6. QUIZ ══════════ -->
+  <section class="tab" id="tab-quiz">
+    <h2>Quiz — démêle le vrai contexte des faux raccourcis <span class="tag">10 questions</span></h2>
+    <p class="lead">Score : <span id="quizscore">0 / 0</span> — les explications citent les sources (vidéo, errata, institutions).</p>
+    <div id="quiz-box"></div>
+    <div class="card" style="margin-top:14px;text-align:center">
+      <button class="opt" style="display:inline-block;width:auto;padding:10px 22px;border-radius:11px;border:1px solid var(--line);background:#0e1a34;color:var(--txt);cursor:pointer" onclick="initQuiz()">↺ Recommencer le quiz</button>
+    </div>
+  </section>
+
+  <!-- ══════════ 7. PRÉVENTION ══════════ -->
+  <section class="tab" id="tab-prev">
+    <h2>Prévention — la checklist qui sert dans les trois scénarios <span class="tag">actionnable</span></h2>
+    <p class="lead">Coche au fur et à mesure — la progression est sauvegardée dans ce navigateur (localStorage). Principe directeur : <i>« Les mesures les plus utiles sont celles qui fonctionnent même si l'intensité finale d'El Niño diffère des prévisions. »</i></p>
+    <div class="progressbar"><div id="prev-bar"></div></div>
+    <div class="small" id="prev-count" style="margin-bottom:14px"></div>
+    <div class="grid g2" id="prev-cards"></div>
+    <div class="card" style="margin-top:14px"><h3>📆 Plan d'action temporel (Thau)</h3><div class="grid g4" id="prev-actionplan"></div></div>
+    <div class="note" id="prev-system"></div>
+    <div style="text-align:center;margin-top:12px"><button onclick="resetCheck()" style="border:1px solid var(--line);background:#0e1a34;color:var(--mut);border-radius:10px;padding:8px 16px;cursor:pointer;font-size:13px">↺ Réinitialiser la checklist</button></div>
+  </section>
+
+  <!-- ══════════ 8. SOURCES ══════════ -->
+  <section class="tab" id="tab-sources">
+    <h2>Sources, épistémologie &amp; glossaire <span class="tag">transparence</span></h2>
+    <div class="grid g2">
+      <div class="card"><h3>✅ Bien établi scientifiquement</h3><ul class="clean" id="ep-well"></ul></div>
+      <div class="card"><h3>🟡 Plausible, dépend des données actualisées</h3><ul class="clean" id="ep-plaus"></ul></div>
+      <div class="card"><h3>🟠 À présenter avec prudence</h3><ul class="clean warn" id="ep-caution"></ul></div>
+      <div class="card"><h3>⛔ À ne pas attribuer automatiquement à El Niño</h3><ul class="clean warn" id="ep-notattr"></ul></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>🔟 Les dix conclusions à retenir</h3><ul class="clean" id="conclusions"></ul></div>
+    <div class="card" style="margin-top:14px"><h3>📚 Sources référencées</h3><ul class="clean src-list" id="src-list"></ul>
+      <p class="small" style="margin-top:10px" id="src-disclaimer"></p></div>
+    <div class="card" style="margin-top:14px"><h3>📖 Glossaire</h3><dl class="gloss" id="glossary"></dl></div>
+    <div class="card" style="margin-top:14px"><h3>🔌 Réutilisation dans le monorepo</h3>
+      <ul class="clean">
+        <li>Dataset canonique : <code>data/climat/el-nino-2026/el-nino-godzilla-2026.json</code></li>
+        <li>API : <code>/api/climat/el-nino</code> et <code>/api/climat/el-nino/{section}</code> (ex. <code>thau</code>, <code>quiz</code>, <code>geo</code>)</li>
+        <li>Globe watchtower : glisser-déposer <code>projects/watchtower/public/data/enso-thau-watchpoints.geojson</code> sur la carte (import GeoJSON natif)</li>
+        <li>Parcours pédagogique : <code>/preview/COGNITORIUM/learning/el-nino-poc.html</code></li>
+        <li>Ce module est généré : <code>python3 scripts/build_climat_assets.py</code> (template + JSON canonique)</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div id="foot-meta"></div>
+    <div style="margin-top:6px">Module Atlas Frontignan — El Niño &amp; risques climatiques · généré depuis <code>data/climat/el-nino-2026/</code> ·
+    vidéo source : LIMIT « EL NIÑO : GODZILLA » (11/10/2026, Vinz × Xavier Fettweis) · errata 24/09/2026 intégré.</div>
+  </footer>
+</div>
+
+<script type="application/json" id="elnino-data">__ELNINO_DATA__</script>
+
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('elnino-data').textContent);
+const $ = (s,el)=> (el||document).querySelector(s);
+const el = (tag,cls,html)=>{const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e;};
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STATUS = {observe:['obs','observé / rapporté'], prevu:['prev','prévu / projection'], incertain:['inc','incertain / hypothèse']};
+const ATTR = {el_nino:'attribution : El Niño (établi)', mixte:'attribution mixte (El Niño + météo locale / fond)', meteo_locale:'météo locale (≠ El Niño direct)', rechauffement_fond:'réchauffement de fond', non_attribue:'attribution non établie'};
+const pill = st => `<span class="pill ${STATUS[st]?STATUS[st][0]:'inc'}">${STATUS[st]?STATUS[st][1]:esc(st)}</span>`;
+const byId = {}; D.sources.forEach(s=>byId[s.id]=s);
+
+/* ── header ── */
+$('#h-sub').textContent = D.key_message.central_idea;
+$('#h-badges').innerHTML =
+  `<span class="badge">dataset <b>v${D.meta.version}</b></span>`+
+  `<span class="badge">situation au <b>${D.meta.as_of}</b></span>`+
+  `<span class="badge obs">● observé</span><span class="badge prev">● prévu</span><span class="badge inc">● incertain</span>`+
+  `<span class="badge">périmètre local : <b>Frontignan · Sète · Thau</b></span>`;
+
+/* ── tabs ── */
+const TABS = [
+  ['overview','🌍 Vue d’ensemble'],['timeline','🗓 Frise Thau'],['facts','📰 Faits globaux'],
+  ['risks','⚠️ Risques & scénarios'],['sim','🌧 Simulation'],['quiz','🎯 Quiz'],
+  ['prev','🛡 Prévention'],['sources','📚 Sources']
+];
+const tabsEl = $('#tabs');
+TABS.forEach(([id,label],i)=>{
+  const b = el('button',i===0?'on':'',label);
+  b.onclick = ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); $('#tab-'+id).classList.add('on');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(id==='sim') resizeSim();
+  };
+  tabsEl.appendChild(b);
+});
+
+/* ══════════ 1. OVERVIEW ══════════ */
+$('#ov-lead').innerHTML = `<b>« ${esc(D.key_message.headline)} »</b> — ${esc(D.mechanism.periodicity)} ${esc(D.mechanism.history_note)}`;
+const n34 = D.indicators.nino34.observed_2026.find(o=>typeof o.value_c==='number');
+$('#ov-stats').innerHTML = [
+  ['+3,07 °C','Niño 3.4 le 22/09/2026 — record 2015 égalé, ~2 mois d’avance sur le pic','hot'],
+  ['+1,4 °C','RONI (NOAA) été 2026 — « El Niño moins le réchauffement de fond ». L’écart, c’est nous','gold'],
+  ['75 %','probabilité NOAA de dépasser tout ce qui est mesuré depuis 1950 (25→60→69→75 % depuis mars)',''],
+  ['~100 %','probabilité OMM (03/09/2026) qu’El Niño tienne jusqu’en février 2027 — jamais écrit auparavant',''],
+  ['451 000','décès supplémentaires PROJETÉS par la chaleur (juin 2026→févr. 2027, Climate Impact Lab — projection ≠ bilan)','hot'],
+  ['−34 %','pluies du bassin du canal de Panama (mai–août) — transits 36→34→32/jour',''],
+  ['23 %','du quota de pêche atteint au Pérou avant suspension (12/05) — état d’urgence le 23/08',''],
+  ['>250 mm','cumuls locaux de l’épisode méditerranéen 29/09–1/10/2026 (Hérault, vigilance rouge)','hot']
+].map(([v,l,c])=>`<div class="card stat"><b class="${c}">${v}</b><span>${l}</span></div>`).join('');
+
+$('#ov-chain').innerHTML = D.mechanism.causal_chain.map((c,i)=>
+  `<div class="step"><b>${i+1}. ${esc(c.step)}</b>${esc(c.effect)}</div>`+(i<D.mechanism.causal_chain.length-1?'<div class="arrow">→</div>':'')).join('');
+$('#ov-distinction').innerHTML = `<b>Distinction essentielle :</b> ${esc(D.mechanism.key_distinction)}`;
+
+$('#ov-thermo').innerHTML = `
+  <div class="kv"><span class="chip">Ancien thermomètre (normale fixe 1991–2020) : <b>+3 °C</b></span>
+  <span class="chip">RONI depuis le 01/02/2026 (« El Niño − réchauffement de fond ») : <b>+1,4 °C</b></span></div>
+  <p class="small">${esc(D.indicators.roni.why)}</p>
+  <p style="margin-top:8px"><i>« ${esc(D.indicators.roni.interpretation)} »</i></p>
+  <p class="small" style="margin-top:8px">${esc(D.indicators.roni.record_holds)}</p>`;
+$('#ov-proba').innerHTML = D.indicators.probability_evolution.map(p=>
+  `<div class="kv"><span class="chip"><b>${p.value_pct} %</b> — ${esc(p.date)}</span></div><p class="small" style="margin:-2px 0 8px">${esc(p.note||'')}</p>`).join('') +
+  `<p class="small">${esc(D.indicators.wmo_persistence.value)} <span class="pill prev">prévu</span><br>${esc(D.indicators.wmo_persistence.note)}</p>`;
+
+$('#ov-quotes').innerHTML = D.quotes.map(q=>
+  `<div class="quote">« ${esc(q.text)} »<small>${esc(q.speaker)} — ${esc(q.timecode)}${q.use?' · '+esc(q.use):''}</small></div>`).join('');
+
+$('#ov-levels').innerHTML = D.key_message.three_levels.map((t,i)=>{
+  const cls=['obs','prev','inc'][i]; const icons=['🔭','📈','❓'];
+  return `<div class="card"><span class="pill ${cls}">${['observations rapportées','prévisions & projections','hypothèses à confirmer'][i]}</span>
+    ${icons[i]}<p style="margin-top:8px;font-size:14px">${esc(t)}</p></div>`;}).join('') +
+  `<div class="card" style="grid-column:1/-1"><p style="font-size:14.5px"><b style="color:var(--gold)">Leçon essentielle :</b> ${esc(D.key_message.essential_lesson)}</p></div>`;
+
+/* ══════════ 2. TIMELINE ══════════ */
+const T = D.thau;
+$('#tl-scope-tag').textContent = T.scope.period;
+$('#tl-lead').textContent = T.scope.principle;
+$('#tl-context').innerHTML = `<h3 style="margin-top:0">📡 Contexte saisonnier (${esc(T.seasonal_context.date)})</h3>
+  <p style="font-size:14px">${esc(T.seasonal_context.meteofrance)} — <i>${esc(T.seasonal_context.reading)}</i></p>
+  <p style="font-size:14px;margin-top:6px">${esc(T.seasonal_context.mediterranean_risk)}</p>
+  ${T.local_facts.map(f=>`<div class="note" style="margin-top:10px"><b>${esc(f.title)}</b> ${pill(f.status)}<br>
+    ${f.figures.map(g=>`<span class="pill attr" style="margin:3px 3px 0 0">${esc(g.label)} : ${esc(g.value)}</span>`).join('')}
+    ${f.caveat?`<br><span class="small">⚠️ ${esc(f.caveat)}</span>`:''}</div>`).join('')}`;
+
+let fHorizon='*', fRisk='*';
+function renderFilters(){
+  const box=$('#tl-filters'); box.innerHTML='';
+  const s1=el('select'); s1.innerHTML=`<option value="*">Tous les horizons</option>`+T.timeline_filters.horizons.map(h=>`<option value="${h.id}" ${h.id===fHorizon?'selected':''}>${esc(h.label)}</option>`).join('');
+  s1.onchange=()=>{fHorizon=s1.value;renderPhases();};
+  const s2=el('select'); s2.innerHTML=`<option value="*">Tous les risques</option>`+T.timeline_filters.risk_types.filter(r=>r.id!=='tous').map(r=>`<option value="${r.id}" ${r.id===fRisk?'selected':''}>${esc(r.label)}</option>`).join('');
+  s2.onchange=()=>{fRisk=s2.value;renderPhases();};
+  const reset=el('button',null,'↺ Réinitialiser'); reset.onclick=()=>{fHorizon='*';fRisk='*';renderFilters();renderPhases();};
+  box.append(s1,s2,reset);
+}
+const PRIO={tres_elevee:['🔥','Priorité très élevée'],elevee:['⚠️','Priorité élevée'],moyenne:['📌','Priorité moyenne']};
+function renderPhases(){
+  const box=$('#tl-phases'); box.innerHTML='';
+  const phases=T.timeline.filter(p=>(fHorizon==='*'||p.horizon===fHorizon)&&(fRisk==='*'||(p.risk_types||[]).includes(fRisk)));
+  if(!phases.length){box.innerHTML='<p class="small">Aucune phase ne correspond à ces filtres.</p>';return;}
+  phases.forEach(p=>{
+    const st=p.status==='observe'?'observe':'prevu';
+    const c=el('div','card phase '+st);
+    c.innerHTML=`<div class="per">Phase ${p.phase} · ${esc(p.period)}</div>
+      <div class="fact-head" style="margin:4px 0 8px"><h3>${esc(p.title)}</h3>
+        <div>${pill(p.status)} ${p.priority?`<span class="pill attr">${PRIO[p.priority]?PRIO[p.priority][0]+' '+PRIO[p.priority][1]:esc(p.priority)}</span>`:''}</div></div>
+      ${(p.events&&p.events.length)?`<h3 style="font-size:13px">Événements / contexte</h3><ul class="clean">${p.events.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}
+      ${(p.watch&&p.watch.length)?`<h3 style="font-size:13px">À surveiller</h3><ul class="clean">${p.watch.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}
+      ${(p.actions&&p.actions.length)?`<h3 style="font-size:13px">À faire</h3><ul class="clean">${p.actions.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}
+      ${p.objective?`<div class="note">🎯 ${esc(p.objective)}</div>`:''}
+      <div class="small" style="margin-top:6px">${(p.risk_types||[]).map(r=>{const f=T.timeline_filters.risk_types.find(x=>x.id===r);return f?`<span class="pill attr" style="margin-right:4px">${esc(f.label)}</span>`:''}).join('')}</div>`;
+    box.appendChild(c);
+  });
+}
+renderFilters(); renderPhases();
+
+$('#tl-tools').innerHTML = T.tools.map(t=>`<div class="note" style="margin:8px 0"><b>${esc(t.name)}</b> <span class="pill attr">${esc(t.role)}</span><br>
+  <span class="small">${esc(t.org)} — ${esc(t.details)}<br>→ ${esc(t.use)}</span></div>`).join('');
+$('#tl-dash').innerHTML = `<tr><th>Indicateur</th><th>Source</th><th>Utilité</th></tr>`+
+  T.dashboard.map(d=>`<tr><td>${esc(d.indicator)}</td><td class="small">${esc(d.source)}</td><td class="small">${esc(d.utility)}</td></tr>`).join('');
+const apHtml = T.action_plan.map(a=>`<div class="card"><b style="color:var(--oc)">${esc(a.when)}</b><br><b>${esc(a.label)}</b><p class="small" style="margin-top:6px">${esc(a.actions)}</p></div>`).join('');
+$('#tl-actionplan').innerHTML = apHtml;
+$('#tl-primacy').innerHTML = `<b>Règle de primauté :</b> ${esc(T.primacy_rule)}`;
+$('#tl-reco').innerHTML = `<b>🧭 Recommandation :</b> ${esc(T.recommendation)}`;
+
+/* ══════════ 3. GLOBAL FACTS ══════════ */
+let fStatus='*', fAttr='*';
+function renderFactFilters(){
+  const box=$('#fact-filters'); box.innerHTML='';
+  const s1=el('select'); s1.innerHTML=`<option value="*">Tous les statuts</option>`+Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===fStatus?'selected':''}>${v[1]}</option>`).join('');
+  s1.onchange=()=>{fStatus=s1.value;renderFacts();};
+  const s2=el('select'); s2.innerHTML=`<option value="*">Toutes les attributions</option>`+Object.entries(ATTR).map(([k,v])=>`<option value="${k}" ${k===fAttr?'selected':''}>${v}</option>`).join('');
+  s2.onchange=()=>{fAttr=s2.value;renderFacts();};
+  box.append(s1,s2);
+}
+function renderFacts(){
+  const box=$('#fact-cards'); box.innerHTML='';
+  D.global_facts.filter(f=>(fStatus==='*'||f.status===fStatus)&&(fAttr==='*'||f.attribution===fAttr)).forEach(f=>{
+    const c=el('div','card');
+    c.innerHTML=`<div class="fact-region">${esc(f.region)} · ${esc(f.sector)}</div>
+      <div class="fact-head"><h3>${esc(f.title)}</h3><div>${pill(f.status)}<br><span class="pill attr" style="margin-top:4px">${esc(ATTR[f.attribution]||f.attribution)}</span></div></div>
+      ${(f.figures&&f.figures.length)?`<div class="kv">${f.figures.map(g=>`<span class="chip">${esc(g.label)} : <b>${esc(g.value)}</b></span>`).join('')}</div>`:''}
+      ${f.mechanism?`<p class="small" style="margin-top:6px">⚙️ ${esc(f.mechanism)}</p>`:''}
+      ${f.cascade?`<p class="small" style="margin-top:4px">🔗 ${esc(f.cascade)}</p>`:''}
+      ${f.outlook?`<p class="small" style="margin-top:4px">🔭 ${esc(f.outlook)}</p>`:''}
+      ${f.errata?`<div class="note">✏️ Errata : ${esc(f.errata)}</div>`:''}
+      ${f.caution?`<div class="note">⚠️ ${esc(f.caution)}</div>`:''}
+      ${f.caveat?`<div class="note">⚠️ ${esc(f.caveat)}</div>`:''}
+      ${f.pedagogy?`<div class="note">🎓 ${esc(f.pedagogy)}</div>`:''}
+      <div class="small" style="margin-top:8px">Sources : ${(f.source_ids||[]).map(id=>byId[id]?esc(byId[id].title):esc(id)).join(' · ')}</div>`;
+    box.appendChild(c);
+  });
+  if(!box.children.length) box.innerHTML='<p class="small">Aucun fait ne correspond à ces filtres.</p>';
+}
+renderFactFilters(); renderFacts();
+
+/* ══════════ 4. RISKS & SCENARIOS ══════════ */
+$('#risk-table').innerHTML=`<tr><th>Risque</th><th>Ce qu'il faut examiner localement</th><th>Préparation utile</th></tr>`+
+  T.risks.map(r=>`<tr><td><b>${esc(r.risk)}</b></td><td>${esc(r.examine)}</td><td class="small">${esc(r.preparation)}</td></tr>`).join('');
+$('#scen-cards').innerHTML = D.scenarios.map(s=>`<div class="card scen ${s.id}">
+    <span class="pill attr">Scénario ${s.id} · ${esc(s.role)}</span>
+    <h3 style="color:#fff">${esc(s.label)}</h3>
+    <p class="small">${esc(s.description)}</p>
+    <p style="margin-top:8px;font-size:13.5px"><b style="color:var(--green)">Ce qui aide :</b> ${s.what_helps.map(esc).join(', ')}.</p>
+    <p style="margin-top:6px;font-size:13.5px"><b style="color:var(--hot)">Risque résiduel :</b> ${esc(s.residual_risk)}</p></div>`).join('');
+$('#scen-note').textContent = D.scenarios_note;
+$('#effects-table').innerHTML=`<tr><th>Domaine</th><th style="color:var(--green)">Effets potentiellement positifs</th><th style="color:var(--hot)">Effets négatifs possibles</th></tr>`+
+  D.effects_matrix.map(e=>`<tr><td><b>${esc(e.domain)}</b></td><td class="small">${esc(e.positive)}</td><td class="small">${esc(e.negative)}</td></tr>`).join('');
+$('#effects-note').textContent = D.effects_note;
+const casc=D.second_order_risks.example_cascade;
+$('#cascade-chain').innerHTML=`<b style="width:100%;color:var(--gold);font-size:13px">${esc(casc.title)}</b>`+
+  casc.chain.map((c,i)=>`<div class="step">${i+1}. ${esc(c)}</div>`+(i<casc.chain.length-1?'<div class="arrow">→</div>':'')).join('');
+$('#cascade-cards').innerHTML=D.second_order_risks.cascades.map(c=>`<div class="note" style="margin:6px 0"><b>${esc(c.domain)}</b> — ${esc(c.description)}</div>`).join('');
+$('#cascade-1877').innerHTML=`<b>Leçon historique (1877, citée par LIMIT) :</b> ${esc(D.second_order_risks.history_1877.replace('Le cas historique de 1877 évoqué par LIMIT : ',''))}`;
+
+/* ══════════ 5. SIMULATION ══════════ */
+const cv=$('#simcanvas');
+const ctx=cv.getContext?cv.getContext('2d'):null;
+let simMode='mediterranean', drops=[], W=1140,H=430;
+const MODES=[['progressive','🚿 Pluie progressive',30],['mediterranean','⛈ Épisode méditerranéen',85],['storm','🌊 Pluie + mer agitée',85]];
+function renderSimButtons(){
+  const box=$('#sim-buttons'); box.innerHTML='';
+  MODES.forEach(([id,label,val])=>{
+    const b=el('button',id===simMode?'on':'',label);
+    b.onclick=()=>{simMode=id; $('#sim-rain').value=val;
+      if(id==='storm'){$('#sim-sea').value=85;} else if(id==='mediterranean'){$('#sim-sea').value=25;} else {$('#sim-sea').value=10;}
+      renderSimButtons();};
+    box.appendChild(b);
+  });
+}
+function resizeSim(){ const w=cv.parentElement.clientWidth; cv.style.width='100%'; cv.style.height=(w*H/W)+'px'; }
+window.addEventListener('resize',resizeSim);
+const GY=300; /* sol/lagune baseline */
+function simTick(){
+  if(!ctx) return; /* canvas indisponible : la page reste utilisable, la simulation est simplement inactive */
+  const rain=+$('#sim-rain').value, sea=+$('#sim-sea').value, soil=+$('#sim-soil').value;
+  ctx.clearRect(0,0,W,H);
+  /* ciel */
+  const sky=ctx.createLinearGradient(0,0,0,H);
+  const darkness=Math.min(.85,rain/130+.1);
+  sky.addColorStop(0,`rgba(${10+20*(1-darkness)},${18+22*(1-darkness)},${40+30*(1-darkness)},1)`);
+  sky.addColorStop(1,'#0a1526');
+  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+  /* mer (droite) */
+  const seaLift=Math.round(sea*.45);
+  const seaY=GY-seaLift+Math.sin(Date.now()/300)*2;
+  ctx.fillStyle='#0e3a5c'; ctx.fillRect(880,seaY,260,H-seaY);
+  for(let i=0;i<5;i++){ctx.fillStyle='rgba(53,196,232,.12)';ctx.fillRect(880,seaY+i*8,260,3);}
+  /* lagune de Thau */
+  const lagoonRise=Math.min(46, rain*.28 + soil*.18 + sea*.12);
+  const lagY=GY-lagoonRise+Math.sin(Date.now()/420)*1.5;
+  ctx.fillStyle='#12506e'; ctx.fillRect(560,lagY,320,H-lagY+6);
+  ctx.fillStyle='rgba(53,196,232,.18)'; ctx.fillRect(560,lagY,320,3);
+  /* massif de la Gardiole (gauche) */
+  ctx.fillStyle='#1c2c1e';
+  ctx.beginPath(); ctx.moveTo(0,GY+10); ctx.lineTo(70,GY-120); ctx.lineTo(150,GY-70); ctx.lineTo(220,GY-140); ctx.lineTo(310,GY+10); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#243826'; ctx.beginPath(); ctx.moveTo(0,GY+10); ctx.lineTo(70,GY-120); ctx.lineTo(110,GY-95); ctx.lineTo(40,GY+10); ctx.closePath(); ctx.fill();
+  /* plaine urbaine */
+  ctx.fillStyle='#20293c'; ctx.fillRect(240,GY,330,H-GY);
+  const houses=[[260,44],[318,58],[382,40],[436,62],[498,48]];
+  houses.forEach(([x,h])=>{
+    ctx.fillStyle='#2c3a58'; ctx.fillRect(x,GY-h,44,h);
+    ctx.fillStyle='#3a4d75'; ctx.beginPath(); ctx.moveTo(x-5,GY-h); ctx.lineTo(x+22,GY-h-16); ctx.lineTo(x+49,GY-h); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=rain>60?'#ffc857':'#8aa0c8'; ctx.fillRect(x+8,GY-h+10,9,9); ctx.fillRect(x+27,GY-h+10,9,9);
+  });
+  /* route littorale + exutoires */
+  ctx.fillStyle='#171f31'; ctx.fillRect(240,GY+4,330,10);
+  ctx.fillStyle='#35c4e855';
+  for(let x=575;x<880;x+=60){ctx.fillRect(x,Math.max(lagY,GY)-2,7,10);} /* exutoires vers lagune */
+  /* pluie */
+  const n=Math.round(rain*1.4);
+  while(drops.length<n) drops.push({x:Math.random()*880,y:Math.random()*H,s:4+Math.random()*7});
+  if(drops.length>n) drops.length=n;
+  ctx.strokeStyle='rgba(140,200,255,.55)'; ctx.lineWidth=1;
+  drops.forEach(d=>{
+    d.y+=d.s; ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d.x-1.5,d.y-9); ctx.stroke();
+    if(d.y>GY-6){d.y=-10;d.x=Math.random()*880;}
+  });
+  /* ruissellement depuis la Gardiole */
+  const runoff=Math.min(1, (rain/100)*(0.4+soil/140));
+  if(runoff>.18){
+    ctx.strokeStyle=`rgba(53,196,232,${0.25+runoff*0.5})`; ctx.lineWidth=2+runoff*4;
+    ctx.beginPath(); ctx.moveTo(150,GY-60); ctx.quadraticCurveTo(200,GY-10,255,GY+2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(230,GY-95); ctx.quadraticCurveTo(250,GY-20,300,GY+2); ctx.stroke();
+  }
+  /* inondation urbaine si débordement */
+  const flood=Math.max(0, runoff-0.55)*120 + Math.max(0,(sea/100)-(0.72))*90*(rain>40?1:0.25);
+  if(flood>2){
+    ctx.fillStyle='rgba(30,120,190,.55)';
+    ctx.fillRect(240,GY+14-flood*.35,330,H-GY-14+flood*.35);
+    ctx.fillStyle='rgba(140,200,255,.25)';
+    for(let x=250;x<560;x+=40)ctx.fillRect(x,GY+16-flood*.35,26,2);
+  }
+  /* submersion littorale si mer très haute */
+  if(sea>78 && rain>40){
+    ctx.fillStyle='rgba(30,120,190,.4)'; ctx.fillRect(505,GY+8,70,H-GY);
+  }
+  /* étiquettes */
+  ctx.font='12px Segoe UI, Arial'; ctx.fillStyle='#8aa0c8';
+  ctx.fillText('Massif de la Gardiole',30,GY-150);
+  ctx.fillText('Frontignan (plaine urbaine, points bas)',262,GY-84);
+  ctx.fillText('Étang de Thau',660,lagY-8);
+  ctx.fillText('Mer / golfe du Lion',940,seaY-8);
+  ctx.fillText('← exutoires pluviaux',600,GY+26);
+  /* état */
+  let msg,icon;
+  if(rain<12){msg='Temps sec. Networks au repos — profite-en pour le REX, le contrôle des avaloirs et la veille (Vigicrues, arrêtés).';icon='🌤';}
+  else if(flood<=2 && sea<=78){msg='Pluie en cours, réseau pluvial absorbant. Surveille la saturation des sols si un épisode précédent est passé.';icon='🌧';}
+  else if(sea>78 && rain>40){msg='COMBO CRITIQUE : pluie intense + mer agitée — les exutoires ne peuvent plus évacuer, vagues-submersion sur les secteurs littoraux bas. Consignes officielles : ne pas traverser une route inondée, ne pas descendre dans les sous-sols.';icon='🌊';}
+  else{msg='DÉBORDEMENT : ruissellement urbain en cours (points bas, parkings, sous-sols). Sols saturés : '+(soil>55?'oui — chaque millimètre ruisselle davantage.':'partiellement.')+' Déclenche les mesures PCS si vigilance en cours.';icon='⛈';}
+  $('#simstate').innerHTML=`<b>${icon}</b> ${esc(msg)} <span class="small">(pluie ${rain} · mer ${sea} · sols ${soil})</span>`;
+  requestAnimationFrame(simTick);
+}
+['sim-rain','sim-sea','sim-soil'].forEach(id=>$('#'+id).addEventListener('input',()=>{}));
+
+/* ══════════ 6. QUIZ ══════════ */
+let qScore=0,qAnswered=0;
+function initQuiz(){
+  qScore=0;qAnswered=0;
+  const box=$('#quiz-box'); box.innerHTML='';
+  $('#quizscore').textContent='0 / '+D.quiz.length;
+  D.quiz.forEach((q,qi)=>{
+    const c=el('div','card quiz-q');
+    c.innerHTML=`<div class="q">${qi+1}. ${esc(q.question)}</div>`;
+    q.options.forEach((o,oi)=>{
+      const b=el('button','opt',esc(o));
+      b.onclick=()=>{
+        if(c.dataset.done)return; c.dataset.done='1'; qAnswered++;
+        const btns=c.querySelectorAll('button.opt');
+        btns.forEach((x,xi)=>{ x.disabled=true; if(xi===q.answer)x.classList.add('good'); });
+        if(oi!==q.answer)b.classList.add('bad'); else qScore++;
+        $('#quizscore').textContent=qScore+' / '+D.quiz.length+(qAnswered===D.quiz.length?' — terminé 🎉':'');
+        const e=$('.quiz-exp',c); e.classList.add('on');
+      };
+      c.appendChild(b);
+    });
+    c.appendChild(el('div','quiz-exp','💡 '+esc(q.explanation)));
+    box.appendChild(c);
+  });
+}
+initQuiz();
+
+/* ══════════ 7. PRÉVENTION ══════════ */
+const LS='atlas-frontignan-elnino-checklist-v1';
+const store=(()=>{ /* localStorage peut être absent ou protégé (mode privé) — la checklist doit rester fonctionnelle */
+  try{ const t=window.localStorage; t.setItem('__t','1'); t.removeItem('__t'); return t; }catch(e){
+    let mem={}; return {getItem:k=>mem[k]||null,setItem:(k,v)=>{mem[k]=String(v);},removeItem:k=>{delete mem[k];}};
+  }
+})();
+let checks=JSON.parse(store.getItem(LS)||'{}');
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i);h|=0;}return h;}
+function chkRow(key,labelHtml,plain){
+  const row=el('div','chk'+(checks[key]?' done':''));
+  const id='chk-'+Math.abs(hash(key));
+  row.innerHTML=`<input type="checkbox" id="${id}" ${checks[key]?'checked':''}><label for="${id}">${labelHtml}</label>`;
+  row.querySelector('input').onchange=e=>{
+    if(e.target.checked)checks[key]=true; else delete checks[key];
+    store.setItem(LS,JSON.stringify(checks));
+    row.classList.toggle('done',e.target.checked);
+    updateBar();
+  };
+  return row;
+}
+function updateBar(){
+  const total=document.querySelectorAll('.chk input').length;
+  const done=document.querySelectorAll('.chk input:checked').length;
+  $('#prev-bar').style.width=(total?Math.round(done/total*100):0)+'%';
+  $('#prev-count').textContent=`${done} / ${total} actions cochées`;
+}
+function renderCheck(){
+  const box=$('#prev-cards'); box.innerHTML='';
+  D.prevention.priorities.forEach(p=>{
+    const c=el('div','card');
+    c.innerHTML=`<h3 style="margin-top:0">${esc(p.id)} — ${esc(p.title)}</h3>`;
+    if(p.groups){
+      p.groups.forEach(g=>{
+        c.appendChild(el('h3',null,'<span class="small" style="color:var(--oc)">'+esc(g.name)+'</span>'));
+        g.actions.forEach(a=>{
+          const key=p.id+'·'+g.name+'|'+a.slice(0,40);
+          c.appendChild(chkRow(key,esc(a)));
+        });
+      });
+    }
+    (p.actions||[]).forEach(a=>{
+      const key=p.id+'|'+a.slice(0,40);
+      c.appendChild(chkRow(key,esc(a)));
+    });
+    if(p.table){
+      const d=el('div');
+      d.innerHTML=`<table style="margin-top:10px"><tr><th>Mesure</th><th>Action pratique</th><th>Indicateur à suivre</th></tr>`+
+        p.table.map(r=>`<tr><td><b>${esc(r.mesure)}</b></td><td class="small">${esc(r.action)}</td><td class="small">${esc(r.indicateur)}</td></tr>`).join('')+`</table>`+
+        (p.rule?`<div class="note"><b>Règle :</b> ${esc(p.rule)}</div>`:'')+
+        ((p.anti_patterns||[]).length?`<div class="note">⛔ Erreurs à éviter : ${p.anti_patterns.map(esc).join(' ')}</div>`:'');
+      c.appendChild(d);
+    }
+    box.appendChild(c);
+  });
+  /* jalons territoriaux Thau */
+  const cp=el('div','card');
+  cp.innerHTML=`<h3 style="margin-top:0">📆 Jalons territoriaux (Thau)</h3>`;
+  T.action_plan.forEach(a=>{
+    a.actions.split('. ').filter(Boolean).forEach(s=>{
+      const act=s.replace(/\.$/,'')+'.';
+      const key='plan·'+a.when+'|'+act.slice(0,40);
+      cp.appendChild(chkRow(key,`<b>${esc(a.when)} — ${esc(a.label)} :</b> ${esc(act)}`));
+    });
+  });
+  box.appendChild(cp);
+  updateBar();
+}
+function resetCheck(){checks={};store.removeItem(LS);renderCheck();}
+renderCheck();
+$('#prev-actionplan').innerHTML=apHtml;
+$('#prev-system').innerHTML=`<b>Le bon dispositif :</b> ${esc(D.prevention.good_system)}`;
+
+/* ══════════ 8. SOURCES ══════════ */
+$('#ep-well').innerHTML=D.epistemics.well_established.map(x=>`<li>${esc(x)}</li>`).join('');
+$('#ep-plaus').innerHTML=D.epistemics.plausible_data_dependent.map(x=>`<li>${esc(x)}</li>`).join('');
+$('#ep-caution').innerHTML=D.epistemics.present_with_caution.map(x=>`<li>${esc(x)}</li>`).join('');
+$('#ep-notattr').innerHTML=D.epistemics.not_auto_attributable.map(x=>`<li>${esc(x)}</li>`).join('');
+$('#conclusions').innerHTML=D.conclusions.map((c,i)=>`<li><b>${i+1}.</b> ${esc(c)}</li>`).join('');
+$('#src-list').innerHTML=D.sources.map(s=>`<li><b>${esc(s.title)}</b>${s.url?` — <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>`:''} <span class="small">(${esc(s.date||'')}${s.note?' · '+esc(s.note):''})</span></li>`).join('');
+$('#src-disclaimer').textContent=D.meta.disclaimer;
+$('#glossary').innerHTML=D.glossary.map(g=>`<dt>${esc(g.term)}</dt><dd>${esc(g.definition)}</dd>`).join('');
+$('#foot-meta').textContent=`${D.meta.title} — v${D.meta.version}, situation au ${D.meta.as_of} · ${D.sources.length} sources · ${D.global_facts.length} faits · ${D.geo.watchpoints.length} watchpoints géo`;
+
+/* démarrage de la simulation en dernier : un échec canvas ne doit jamais casser le reste de l'onglet */
+renderSimButtons(); resizeSim(); simTick();
+</script>
+</body>
+</html>

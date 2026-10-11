@@ -14,6 +14,7 @@ BASE = Path(__file__).resolve().parent.parent
 PROJECTS = BASE / "projects"
 DATA_SNAPSHOT = BASE / "data" / "github_inventory.json"
 MANIFEST = BASE / "MANIFEST.json"
+CLIMAT_DIR = BASE / "data" / "climat"
 
 app = FastAPI(title="Sathancabrol Monorepo — Panorama & Preview")
 
@@ -104,7 +105,56 @@ def monorepo_page(request: Request):
     snap = load_snapshot()
     return templates.TemplateResponse(request, "monorepo.html", {"projects": projects, "snapshot": snap})
 
-# --- API ---
+# --- API : climat (datasets data/climat/*, ex. El Niño 2026 × Thau) ---
+def _climat_datasets() -> list:
+    """Liste les datasets climat disponibles (un dossier = un dataset)."""
+    out = []
+    if CLIMAT_DIR.exists():
+        for p in sorted(CLIMAT_DIR.iterdir()):
+            if p.is_dir():
+                for j in sorted(p.glob("*.json")):
+                    try:
+                        meta = json.loads(j.read_text(encoding="utf-8")).get("meta", {})
+                    except Exception:
+                        meta = {"id": j.stem}
+                    out.append({
+                        "id": meta.get("id", j.stem),
+                        "title": meta.get("title", j.stem),
+                        "version": meta.get("version"),
+                        "as_of": meta.get("as_of"),
+                        "path": str(j.relative_to(BASE)),
+                        "size": j.stat().st_size,
+                        "_file": j,
+                    })
+    return out
+
+def _load_climat_dataset(dataset: str) -> dict:
+    for d in _climat_datasets():
+        if d["id"] == dataset:
+            if d["size"] > 2_000_000:
+                raise HTTPException(413, f"Dataset trop volumineux pour l'API : {d['path']}")
+            return json.loads(d["_file"].read_text(encoding="utf-8"))
+    raise HTTPException(404, f"Dataset climat inconnu : {dataset}")
+
+@app.get("/api/climat/datasets")
+def api_climat_datasets():
+    """Index des datasets climat (id, titre, version, chemin)."""
+    return [{k: d[k] for k in ("id", "title", "version", "as_of", "path")} for d in _climat_datasets()]
+
+@app.get("/api/climat/{dataset}")
+def api_climat_dataset(dataset: str):
+    """Dataset complet (JSON canonique)."""
+    return JSONResponse(_load_climat_dataset(dataset))
+
+@app.get("/api/climat/{dataset}/{section}")
+def api_climat_section(dataset: str, section: str):
+    """Une section du dataset : thau, geo, quiz, learning, indicators, sources, ..."""
+    data = _load_climat_dataset(dataset)
+    if section not in data:
+        raise HTTPException(404, f"Section inconnue : {section} (disponibles : {', '.join(data.keys())})")
+    return JSONResponse(data[section])
+
+# --- API : GitHub ---
 @app.get("/api/github/snapshot")
 def api_snapshot():
     snap = load_snapshot()

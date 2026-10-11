@@ -1,0 +1,948 @@
+{
+  "meta": {
+    "id": "el-nino-godzilla-2026",
+    "title": "El Niño 2026–2027 « Godzilla » — dataset stratégique & territorial",
+    "short_title": "El Niño 2026 — Godzilla × Thau",
+    "version": "1.0.0",
+    "created_at": "2026-10-11",
+    "as_of": "2026-10-11",
+    "language": "fr",
+    "scope": {
+      "global": "Épisode El Niño 2026–2027 : observations, prévisions, impacts et projections rapportés par la vidéo LIMIT « EL NIÑO : GODZILLA » (11 octobre 2026) et sa synthèse avec errata.",
+      "local": "Golfe du Lion, littoral de l'Hérault, Frontignan, Sète, lagune de Thau et communes de Sète Agglopôle Méditerranée (frise opérationnelle octobre 2026 → décembre 2027)."
+    },
+    "origin": {
+      "video": {
+        "title": "EL NIÑO : GODZILLA",
+        "channel": "LIMIT (limit.media)",
+        "presenter": "Vinz",
+        "expert": "Xavier Fettweis, climatologue (ULiège)",
+        "url": "https://youtu.be/Uv39BroUx-Q",
+        "online_date": "2026-10-11T15:00:00+02:00",
+        "script_version": "2026-09-24"
+      },
+      "analysis": {
+        "title": "EL NIÑO 2026–2027 : synthèse stratégique complète",
+        "note": "Analyse du texte de LIMIT et de son errata du 24 septembre 2026 — situation rapportée au 11 octobre 2026.",
+        "errata_included": true
+      },
+      "transmitted_by": "Utilisateur du monorepo (Sathancabrol), 11 octobre 2026",
+      "raw_sources": [
+        "data/climat/el-nino-2026/sources/limit-script-tournage-2026-09-24.md",
+        "data/climat/el-nino-2026/sources/synthese-strategique-2026-10-11.md",
+        "data/climat/el-nino-2026/sources/frise-thau-golfe-lion-2026-2027.md"
+      ]
+    },
+    "status_legend": {
+      "observe": "Observé ou rapporté — événement passé décrit par le texte (corrigé par l'errata le cas échéant).",
+      "prevu": "Prévu — projection ou risque futur, probabiliste, non acquis.",
+      "incertain": "Incertain — attribution causale ou hypothèse à ne pas présenter comme une certitude."
+    },
+    "attribution_legend": {
+      "el_nino": "Conséquence établie d'El Niño (mécanisme direct).",
+      "mixte": "El Niño modifie les probabilités + déclencheur météo local et/ou réchauffement de fond.",
+      "meteo_locale": "Mécanisme météorologique local dominant ; El Niño n'est pas la cause directe.",
+      "rechauffement_fond": "Part attribuable au réchauffement climatique de fond, qui persiste après El Niño.",
+      "non_attribue": "Attribution scientifique non établie dans les sources transmises."
+    },
+    "disclaimer": "Dataset documentaire construit à partir des sources transmises (vidéo LIMIT + synthèse + errata). Il ne constitue pas une vérification indépendante de chaque chiffre. Les valeurs doivent être lues avec leur indice, leur période, leur statut et leur source. Pour les décisions opérationnelles locales, les bulletins officiels (Météo-France, Vigicrues, préfecture) priment toujours sur les tendances saisonnières."
+  },
+
+  "key_message": {
+    "headline": "El Niño accentue. Il ne crée pas, il accentue.",
+    "central_idea": "El Niño est un phénomène naturel qui redistribue la chaleur et modifie les probabilités météorologiques. Le réchauffement climatique augmente le niveau de chaleur de fond sur lequel il agit. Leurs effets se combinent avec la vulnérabilité des populations, l'état des infrastructures, les échanges commerciaux et la capacité des gouvernements à anticiper.",
+    "three_levels": [
+      "Les observations déjà rapportées dans le texte.",
+      "Les prévisions et projections.",
+      "Les hypothèses ou interprétations qui restent à confirmer."
+    ],
+    "essential_lesson": "Un phénomène climatique prévisible à l'échelle saisonnière peut produire des conséquences très graves lorsque les sociétés ne disposent pas des moyens de s'y préparer. Le climat fixe une partie des contraintes ; les décisions humaines déterminent une partie importante des dommages évitables."
+  },
+
+  "sources": [
+    { "id": "limit-video", "type": "video", "title": "EL NIÑO : GODZILLA — LIMIT (Vinz × Xavier Fettweis)", "url": "https://youtu.be/Uv39BroUx-Q", "date": "2026-10-11", "note": "Texte de tournage version 24 septembre 2026 ; errata intégré." },
+    { "id": "limit-media", "type": "site", "title": "LIMIT — articles", "url": "https://www.limit.media", "date": "2026-10-11" },
+    { "id": "wmo", "type": "institution", "title": "Organisation météorologique mondiale (OMM/WMO) — prévision saisonnière du 3 septembre 2026", "date": "2026-09-03", "note": "Probabilité qu'El Niño tienne jusqu'en février : « près de 100 % » — formulation jamais écrite auparavant selon le texte." },
+    { "id": "noaa-cpc", "type": "institution", "title": "NOAA Climate Prediction Center — ENSO, indice Niño 3.4 et nouvel indice RONI (depuis le 1er février 2026)", "date": "2026-10-11", "note": "Probabilité que l'événement dépasse tout ce qui est mesuré depuis 1950 : 60 % → 69 % → 75 % (révisions successives)." },
+    { "id": "berkeley-earth", "type": "dataset", "title": "Zeke Hausfather (Berkeley Earth) — graphique Niño 3.4 2026 vs 2015 ; carte des zones impactées par El Niño", "date": "2026-09-22", "note": "Le 22 septembre 2026, la ligne 2026 rattrape le record 2015 : +3,07 °C au-dessus de la normale, avec ~2 mois d'avance sur le pic habituel." },
+    { "id": "climate-impact-lab", "type": "study", "title": "Climate Impact Lab (Université de Chicago) — projection de mortalité liée à la chaleur", "date": "2026-09", "note": "451 000 décès supplémentaires projetés juin 2026 → février 2027 ; ~239 000 sur septembre 2026 → février 2027 (errata). Méthodologie signalée comme non encore évaluée par les pairs." },
+    { "id": "oxfam", "type": "assessment", "title": "Oxfam — évaluation Corredor Seco (Guatemala, Honduras, Salvador)", "date": "2026", "note": "70 342 foyers en perte de récolte ; 78,6 % ont perdu 75–100 % du maïs ; intention de semer la seconde récolte −62 %." },
+    { "id": "jma", "type": "institution", "title": "Agence météorologique japonaise (JMA) — record de pluie horaire à Nagoya", "date": "2026-09-08", "note": "10,4 cm/h le 8 septembre 2026 (mesures depuis 1890). Errata : épisode attribué à un front stationnaire alimenté par l'humidité de la tempête Krovanh." },
+    { "id": "meteofrance", "type": "institution", "title": "Météo-France — épisode méditerranéen 29 septembre–1er octobre 2026 (Gard, Hérault) ; pluies du 7 octobre ; tendances saisonnières du 5 octobre", "date": "2026-10-05", "note": "Vigilance rouge Hérault ; cumuls > 250 mm dans certains secteurs du département. Au 5 octobre : trimestre plus chaud que la normale privilégié en France, aucun scénario de précipitations privilégié pour le Sud-Est." },
+    { "id": "smbt", "type": "institution", "title": "Syndicat mixte du bassin de Thau — PAPI 2026–2031", "date": "2026-04", "note": "Labellisé avril 2026 : 46 actions, 25 communes, ≈ 6,8 M€ (surveillance, alerte, réduction de la vulnérabilité, ouvrages hydrauliques)." },
+    { "id": "frontignan-ville", "type": "institution", "title": "Ville de Frontignan-la Peyrade — PCS, PPRI, DICRIM", "date": "2026", "note": "Documents communaux traitant notamment du ruissellement venant de la Gardiole et des risques littoraux." },
+    { "id": "vigicrues", "type": "service", "title": "Vigicrues — vigilance crues", "url": "https://www.vigicrues.gouv.fr", "date": "2026" },
+    { "id": "georisques", "type": "service", "title": "Géorisques — risques naturels communaux", "url": "https://www.georisques.gouv.fr", "date": "2026" },
+    { "id": "heat-europe-study", "type": "study", "title": "Étude citée — décès liés à la chaleur en Europe, étés 2022–2024", "date": "2026", "note": "≈ 181 000 décès estimés sur les trois étés." },
+    { "id": "belgique-surmortalite", "type": "report", "title": "Chiffres cités — surmortalité Belgique, 18 juin–12 juillet 2026", "date": "2026-07", "note": "2 112 décès en excès dont 1 095 en Wallonie. Une surmortalité n'est pas une attribution individuelle certaine à la chaleur." }
+  ],
+
+  "glossary": [
+    { "term": "El Niño (ENSO)", "definition": "Phase chaude de l'oscillation australe : affaiblissement des alizés, reflux de l'eau chaude vers le centre-est du Pacifique, réorganisation de la circulation atmosphérique mondiale. Phénomène naturel revenant tous les 2 à 7 ans." },
+    { "term": "Alizés", "definition": "Vents soufflant d'est en ouest dans le Pacifique tropical ; ils poussent l'eau chaude de surface vers l'Indonésie et l'Australie (« la baignoire dans laquelle on souffle »)." },
+    { "term": "Upwelling (remontée d'eau froide)", "definition": "Remontée d'eau profonde, froide et riche en nutriments, le long des côtes du Pérou. Elle nourrit le plancton puis l'anchois. Elle s'arrête pendant El Niño." },
+    { "term": "Indice Niño 3.4", "definition": "Anomalie de température de surface de la mer dans un rectangle du Pacifique central (5°N–5°S, 120°–170°W), comparée à la normale. Au-dessus de +2 °C : « super El Niño » (1982, 1997, 2015)." },
+    { "term": "RONI", "definition": "Nouvel indice NOAA (depuis le 1er février 2026) : « El Niño moins le réchauffement de fond ». Il retire la part du réchauffement climatique déguisée en El Niño dans l'ancien thermomètre (normale fixe 1991–2020)." },
+    { "term": "Réchauffement de fond", "definition": "Élévation persistante des températures océaniques et atmosphériques due aux émissions de gaz à effet de serre. « La part de la fièvre qui ne redescendra pas quand El Niño sera parti. »" },
+    { "term": "Clausius–Clapeyron", "definition": "Relation physique : ≈ +7 % de capacité de saturation en vapeur d'eau par degré de réchauffement, aux températures usuelles. Ne signifie pas que chaque pluie devient automatiquement +7 % plus intense par degré." },
+    { "term": "Eau précipitable", "definition": "Quantité totale de vapeur d'eau contenue dans une colonne atmosphérique. Record moyen d'août 2026 rapporté dans le document." },
+    { "term": "Goutte froide", "definition": "Dépression isolée d'altitude apportant de l'air très froid et instable ; déclencheur météorologique immédiat des neiges d'août 2026 dans l'Atacama (attribution mixte avec El Niño)." },
+    { "term": "Épisode méditerranéen", "definition": "Pluies intenses automnales du pourtour méditerranéen : mer chaude + remontées d'air humide + configuration atmosphérique favorable. Risque récurrent du golfe du Lion." },
+    { "term": "Corredor Seco", "definition": "« Couloir sec » d'Amérique centrale (Guatemala, Honduras, Salvador…) : zone de sécheresse agricole récurrente où 7 millions de personnes sont exposées." },
+    { "term": "PAPI", "definition": "Programme d'Actions de Prévention des Inondations. Celui de Thau 2026–2031 : 46 actions, 25 communes, ≈ 6,8 M€ (labellisé avril 2026)." },
+    { "term": "PCS", "definition": "Plan Communal de Sauvegarde : organisation de la commune en cas d'événement majeur (alerte, information, protection, soutien de la population)." },
+    { "term": "PPRI", "definition": "Plan de Prévention des Risques d'Inondation : servitudes réglementaires selon l'aléa (PHE centennale ≈ 2,00 m à Frontignan)." },
+    { "term": "DICRIM", "definition": "Document d'Information Communal sur les Risques Majeurs : consignes destinées aux habitants." },
+    { "term": "Vigilance / Vigicrues", "definition": "Vigilance Météo-France (vert/jaune/orange/rouge, affinage intra-départemental en 2026 pour pluie-inondation et orages) et Vigicrues (montée des cours d'eau) : les déclencheurs opérationnels locaux." },
+    { "term": "Surmortalité", "definition": "Excès de décès toutes causes sur une période donnée, par rapport à la normale. À distinguer d'une attribution individuelle certaine à la chaleur." },
+    { "term": "Vagues-submersion", "definition": "Élévation du niveau marin côtier par la houle et le vent ; risque combiné aux fortes pluies sur les secteurs littoraux bas (Frontignan-plage, Sète, Marseillan)." }
+  ],
+
+  "mechanism": {
+    "normal_pacific": [
+      "Les alizés soufflent d'est en ouest.",
+      "Ils poussent l'eau chaude de surface vers l'Indonésie et l'Australie.",
+      "Le long du Pérou, de l'eau froide remonte des profondeurs (upwelling) pour prendre la place.",
+      "Image : une baignoire dans laquelle quelqu'un souffle en permanence — l'eau chaude s'accumule au bout."
+    ],
+    "el_nino": [
+      "Les alizés faiblissent — « le souffle s'arrête ».",
+      "L'eau chaude reflue vers l'Amérique (centre-est du Pacifique).",
+      "La remontée d'eau froide s'arrête : plus de nutriments, plus de plancton, plus d'anchois.",
+      "L'atmosphère se réorganise autour de cette bosse de chaleur : la météo change, pas qu'au Pérou — partout."
+    ],
+    "causal_chain": [
+      { "step": "El Niño", "effect": "Redistribution de la chaleur du Pacifique" },
+      { "step": "Modification des circulations atmosphériques", "effect": "Pluies, sécheresses, tempêtes et températures régionales" },
+      { "step": "Interaction avec le réchauffement de fond", "effect": "Océans plus chauds, chaleur accrue, atmosphère pouvant contenir davantage de vapeur d'eau" },
+      { "step": "Impacts humains et systémiques", "effect": "Santé, agriculture, eau, énergie, commerce et infrastructures" }
+    ],
+    "periodicity": "Tous les 2 à 7 ans — naturel, antérieur à l'humanité.",
+    "history_note": "Historiquement, les variations d'intensité et de fréquence d'El Niño auraient contribué à l'effondrement de civilisations entières (évoqué par LIMIT).",
+    "key_distinction": "El Niño n'est pas la cause de tous les événements météorologiques de 2026. Il peut augmenter la probabilité ou l'intensité de certains phénomènes, tandis que d'autres dépendent d'un mécanisme local ou du réchauffement climatique.",
+    "metaphor": "Un mec qui fait de la salle 3 jours/semaine vs 7 jours/semaine avec stéroïdes : El Niño intensifie selon la région et la saison — certaines « parties du corps » prennent plus de masse que d'autres."
+  },
+
+  "indicators": {
+    "nino34": {
+      "definition": "Anomalie de SST dans la zone Niño 3.4 (centre du Pacifique) vs normale 1991–2020.",
+      "super_threshold_c": 2.0,
+      "super_events": [1982, 1997, 2015],
+      "previous_record": { "year": 2015, "value_c": "juste en dessous de +3 (l'événement le plus important jamais enregistré était < +3 °C)" },
+      "observed_2026": [
+        { "date": "2026-09-08", "value_c": "6 à 7 °C d'anomalie locale sur la carte (Xavier Fettweis) ; zone Niño 3.4 déjà > +2 °C", "status": "observe" },
+        { "date": "2026-09-22", "value_c": 3.07, "status": "observe", "note": "Record 2015 égalé (ligne rouge rattrape la bleue), avec ~2 mois d'avance sur le pic habituel — « donc peut-être que ça va encore monter ». Source : graphique Zeke Hausfather / Berkeley Earth." }
+      ],
+      "projection": "Vers +3, voire +3,5 °C (Xavier Fettweis, début septembre 2026)."
+    },
+    "roni": {
+      "definition": "Indice NOAA depuis le 1er février 2026 : « El Niño moins le réchauffement de fond ».",
+      "why": "L'océan tropical s'est réchauffé depuis la normale fixe 1991–2020 : une partie du « +3 » n'est pas El Niño, c'est le réchauffement climatique déguisé en El Niño.",
+      "summer_2026_value": 1.4,
+      "interpretation": "+3 avec l'ancien thermomètre, +1,4 avec le nouveau. Cet écart-là, c'est nous — la part de la fièvre qui ne redescendra pas quand El Niño sera parti.",
+      "record_holds": "Même avec le RONI (thermomètre sévère), 75 % de chances de battre tous les records depuis 1950 : le record tient dans les deux systèmes."
+    },
+    "probability_evolution": [
+      { "date": "2026-printemps", "value_pct": 25, "note": "Cité par Vinz lors de la vidéo du printemps." },
+      { "date": "2026-08 (≈)", "value_pct": 60, "note": "NOAA — probabilité de dépasser tout ce qui est mesuré depuis 1950." },
+      { "date": "2026-09 (mi)", "value_pct": 69, "note": "NOAA — révision à la hausse." },
+      { "date": "2026-09-22 (≈)", "value_pct": 75, "note": "NOAA — « les modèles courent derrière la réalité » : depuis mars, chaque mois, les probabilités sont révisées à la hausse." }
+    ],
+    "wmo_persistence": {
+      "date": "2026-09-03",
+      "value": "Probabilité qu'El Niño tienne jusqu'en février 2027 : 100 % (« près de 100 % » dans la formulation OMM rapportée).",
+      "note": "Ils n'avaient jamais écrit ça. À distinguer des probabilités d'intensité extrême publiées par d'autres organismes (NOAA).",
+      "status": "prevu"
+    },
+    "visual_comparison": {
+      "images": ["Pacifique 1983", "Pacifique 1997", "Pacifique 2015", "Pacifique 2026"],
+      "reading": "1983/1997 : une bande chaude au milieu d'un océan globalement froid (bleu). 2026 : la même bande, sur un océan entièrement rouge. « Le bug dans la matrice… gros comme l'éléphant dans la pièce. »"
+    },
+    "precipitable_water": { "value": "Record d'eau précipitable moyenne d'août 2026 rapporté dans le document.", "status": "observe", "caveat": "Potentiel de précipitations accru dans certaines situations, sans déterminisme événement par événement." },
+    "clausius_clapeyron": { "value_pct_per_degree": 7, "caveat": "≈ +7 % de capacité de saturation en vapeur d'eau par degré aux températures usuelles. Cela ne veut pas dire que chaque pluie ou tempête devient automatiquement 7 % plus intense par degré." }
+  },
+
+  "quotes": [
+    { "id": "xavier-0000", "speaker": "Xavier Fettweis", "timecode": "00:00", "text": "Ici, c'est l'anomalie de température de l'eau de mer le 8 septembre, et tu vois très bien le signal d'El Niño. On est à 6, 7 degrés ici, en anomalie." },
+    { "id": "xavier-0148", "speaker": "Xavier Fettweis", "timecode": "01:48", "text": "El Niño, c'est toujours un peu celui qui renforce en toile de fond. Il accentue des anomalies qui seraient présentes par la variabilité naturelle. Et c'est aussi en fonction des saisons : les anomalies en été ou en hiver ne sont pas les mêmes, pour un même El Niño.", "use": "Phrase à garder pour toute la vidéo : El Niño accentue, il ne crée pas." },
+    { "id": "xavier-0401", "speaker": "Xavier Fettweis", "timecode": "04:01", "text": "L'El Niño qui était prévu au printemps a maintenant pleinement démarré, et on est déjà à des intensités exceptionnelles ici début septembre." },
+    { "id": "xavier-0457", "speaker": "Xavier Fettweis", "timecode": "04:57", "text": "On qualifie El Niño avec l'anomalie de température de l'eau de mer. Ici, on est déjà au-dessus de 2 degrés. Et on va vers un événement qui serait à plus 3, voire plus 3,5. Et l'événement le plus important jamais enregistré était en dessous de 3 degrés." },
+    { "id": "xavier-0611", "speaker": "Xavier Fettweis", "timecode": "06:11", "text": "Avoir des eaux si chaudes, ça tue complètement la pêche. Plus les eaux sont froides, plus on a de biodiversité dans ces eaux-là. Si les eaux sont trop chaudes, on n'a plus de poissons." }
+  ],
+
+  "global_facts": [
+    {
+      "id": "perou-peche",
+      "region": "Pérou",
+      "sector": "Pêche & écosystèmes marins",
+      "title": "L'anchois péruvien : la première pêcherie du monde à l'arrêt",
+      "status": "observe",
+      "attribution": "el_nino",
+      "dates": ["2026-05-12", "2026-08-23"],
+      "figures": [
+        { "label": "Saison de pêche suspendue après 28 jours", "value": "23 % du quota atteint", "date": "2026-05-12" },
+        { "label": "Pêche déclarée en état d'urgence", "value": "2026-08-23" },
+        { "label": "Anomalie thermique côtière", "value": "≈ +3 °C par rapport à la norme" }
+      ],
+      "mechanism": "Upwelling coupé → plus de nutriments → plus de plancton → plus d'anchois. La flotte est restée au port.",
+      "cascade": "L'anchois péruvien finit en farine de poisson, qui nourrit les saumons norvégiens et une bonne partie des poulets de la planète — causes à effets des limites planétaires.",
+      "outlook": "La reprise dépend de l'évolution des eaux, de la biomasse et des décisions de gestion. La chaleur marine ne permet pas à elle seule de prévoir le volume final des captures.",
+      "source_ids": ["limit-video", "noaa-cpc"]
+    },
+    {
+      "id": "panama-canal",
+      "region": "Panama",
+      "sector": "Eau douce & commerce mondial",
+      "title": "Le canal de Panama rationne ses transits, faute de pluie",
+      "status": "observe",
+      "attribution": "el_nino",
+      "dates": ["2026-02", "2026-05/2026-08", "2026-09-04", "2026-09-15"],
+      "figures": [
+        { "label": "Part du commerce mondial transitant par le canal", "value": "5 %" },
+        { "label": "Baisse des pluies du bassin (mai–août 2026)", "value": "−34 %" },
+        { "label": "Transits quotidiens au 4 septembre", "value": "34 (puis 32 au 15 septembre, contre ≈ 36 auparavant)" },
+        { "label": "Février 2026", "value": "Le lac était trop plein — contraste intra-annuel" }
+      ],
+      "mechanism": "Le canal fonctionne à l'eau douce : chaque transit vide une écluse remplie par l'eau de pluie stockée dans deux lacs. Pas de pluie → pas de lac → pas de bateau.",
+      "outlook": "Baisse de capacité, retards, coûts logistiques, arbitrages entre eau potable et navigation.",
+      "caution": "L'hypothèse de pluies torrentielles futures au Panama est une possibilité évoquée par Xavier Fettweis, pas une prévision confirmée pour le bassin du canal.",
+      "source_ids": ["limit-video"]
+    },
+    {
+      "id": "corredor-seco",
+      "region": "Guatemala · Honduras · Salvador (Corredor Seco)",
+      "sector": "Agriculture & sécurité alimentaire",
+      "title": "7 millions de personnes regardent leurs champs de maïs mourir",
+      "status": "observe",
+      "attribution": "el_nino",
+      "figures": [
+        { "label": "Population exposée", "value": "7 millions de personnes" },
+        { "label": "Foyers en perte de récolte (évaluation Oxfam)", "value": "70 342" },
+        { "label": "Foyers ayant perdu 75–100 % de leur maïs", "value": "78,6 %" },
+        { "label": "Intention de semer la seconde récolte", "value": "−62 %" }
+      ],
+      "mechanism": "Sécheresse du couloir sec amplifiée par El Niño ; pertes simultanées de nourriture, de revenus et de capacité à financer la saison suivante.",
+      "outlook": "Le retour des pluies ne suffit pas à rétablir immédiatement la production : aide alimentaire, financement des semences, soutien aux revenus et accès à l'eau deviennent déterminants.",
+      "source_ids": ["oxfam", "limit-video"]
+    },
+    {
+      "id": "cyclones-pacifique-atlantique",
+      "region": "Pacifique · Atlantique",
+      "sector": "Cyclones tropicaux",
+      "title": "3 ouragans simultanés dans le Pacifique, Atlantique exceptionnellement calme",
+      "status": "observe",
+      "attribution": "el_nino",
+      "dates": ["2026-09 (début)"],
+      "figures": [
+        { "label": "Ouragans simultanés dans le Pacifique", "value": "3, le même jour (« à la queuleuleu »)" },
+        { "label": "Atlantique", "value": "exceptionnellement calme en pleine saison des ouragans" }
+      ],
+      "mechanism": "El Niño favorise l'activité cyclonique dans certaines parties du Pacifique et réduit celle de l'Atlantique par les cisaillements de vent. L'effet varie selon les bassins et les conditions de l'année.",
+      "outlook": "Trajectoires, vents, pluies et zones touchées à suivre individuellement ; une saison active ne signifie pas que chaque territoire sera frappé.",
+      "source_ids": ["limit-video"]
+    },
+    {
+      "id": "atacama-neige",
+      "region": "Désert d'Atacama, Chili",
+      "sector": "Anomalie de précipitations",
+      "title": "Jusqu'à 1 m de neige sur le plateau de Chajnantor (5 000 m)",
+      "status": "observe",
+      "attribution": "mixte",
+      "dates": ["2026-08-06", "2026-08-14", "2026-08-19 (≈)"],
+      "figures": [
+        { "label": "6 août 2026", "value": "sol brun" },
+        { "label": "14 août 2026", "value": "sol blanc — jusqu'à 1 m de neige à 5 000 m" },
+        { "label": "Cinq jours plus tard", "value": "nouvel épisode de neige" }
+      ],
+      "mechanism": "El Niño peut favoriser des conditions plus humides dans cette région (l'un des déserts les plus arides du monde, avec des stations n'ayant jamais enregistré une goutte de pluie), mais la goutte froide est le déclencheur météorologique immédiat. Précédents de neige : 2011 et 2025.",
+      "pedagogy": "Cas d'école : un phénomène climatique modifie les probabilités sans être la cause unique de chaque événement.",
+      "source_ids": ["limit-video"]
+    },
+    {
+      "id": "nagoya-pluie",
+      "region": "Nagoya, Japon",
+      "sector": "Pluie extrême",
+      "title": "10,4 cm de pluie en une heure — jamais vu depuis 1890",
+      "status": "observe",
+      "attribution": "meteo_locale",
+      "dates": ["2026-09-08"],
+      "figures": [
+        { "label": "Cumul horaire", "value": "10,4 cm (104 mm)" },
+        { "label": "Séries de mesure", "value": "depuis 1890 — record" }
+      ],
+      "errata": "L'agence météorologique japonaise attribue cet épisode à un front stationnaire alimenté par l'humidité de la tempête Krovanh — pas un mécanisme El Niño direct.",
+      "interpretation": "L'air plus chaud peut contenir davantage de vapeur d'eau (Clausius–Clapeyron ≈ +7 %/°C), mais l'intensité réelle d'une pluie dépend aussi de la dynamique atmosphérique, de la durée et de la configuration locale.",
+      "source_ids": ["jma", "limit-video"]
+    },
+    {
+      "id": "indonesie-feux",
+      "region": "Indonésie",
+      "sector": "Feux de végétation",
+      "title": "≈ 202 000 hectares brûlés de janvier à juillet 2026",
+      "status": "observe",
+      "attribution": "el_nino",
+      "figures": [
+        { "label": "Surface brûlée (janvier–juillet 2026)", "value": "≈ 202 000 ha" }
+      ],
+      "mechanism": "La sécheresse El Niño assèche sols et végétation ; les incendies dégradent écosystèmes, qualité de l'air et conditions sanitaires.",
+      "outlook": "Surveillance des points chauds, prévention des départs de feu, protection des tourbières, moyens d'extinction prépositionnés.",
+      "source_ids": ["limit-video"]
+    },
+    {
+      "id": "inde-mousson",
+      "region": "Inde",
+      "sector": "Mousson",
+      "title": "Mousson déficitaire : −13 % au national, −24 % dans le sud (bilan errata)",
+      "status": "observe",
+      "attribution": "el_nino",
+      "figures": [
+        { "label": "Déficit de pluie national (bilan final, errata)", "value": "−13 %" },
+        { "label": "Déficit dans le sud", "value": "−24 %" }
+      ],
+      "outlook": "Les conséquences dépendent de la répartition géographique des pluies, des réserves d'eau, des cultures et des infrastructures d'irrigation. Suivi des réservoirs, adaptation des semis, gestion de l'irrigation, aide ciblée aux agriculteurs.",
+      "source_ids": ["limit-video"]
+    },
+    {
+      "id": "europe-chaleur",
+      "region": "Europe · Belgique",
+      "sector": "Santé publique (chaleur)",
+      "title": "La chaleur tue déjà : 181 000 décès estimés (étés 2022–2024), 2 112 décès en excès en Belgique (juin–juillet 2026)",
+      "status": "observe",
+      "attribution": "mixte",
+      "figures": [
+        { "label": "Décès liés à la chaleur, étés 2022–2024 (étude citée)", "value": "≈ 181 000" },
+        { "label": "Décès en excès, Belgique, 18 juin–12 juillet 2026", "value": "2 112, dont 1 095 en Wallonie" }
+      ],
+      "caveat": "Un bilan de surmortalité doit être distingué d'une attribution individuelle certaine à la chaleur.",
+      "source_ids": ["heat-europe-study", "belgique-surmortalite"]
+    },
+    {
+      "id": "mediterranee-risque",
+      "region": "Europe · Méditerranée occidentale",
+      "sector": "Pluies intenses",
+      "title": "Automne 2026 : mer chaude + risque de pluies intenses — signal de vigilance",
+      "status": "prevu",
+      "attribution": "mixte",
+      "figures": [
+        { "label": "Risque automne 2026", "value": "pluies intenses en Méditerranée occidentale" }
+      ],
+      "caveat": "Signal de vigilance probabiliste, pas la prévision précise d'une inondation à une date et dans une commune données. Déjà illustré par l'épisode du 29 septembre–1er octobre 2026 (Gard, Hérault).",
+      "source_ids": ["meteofrance", "limit-video"]
+    }
+  ],
+
+  "projections": {
+    "seasonal": [
+      { "horizon": "Automne 2026", "projection": "Risque élevé de pluies intenses en Méditerranée occidentale", "limit": "Signal de vigilance, pas prévision précise d'une inondation.", "status": "prevu" },
+      { "horizon": "Fin 2026", "projection": "Pic d'El Niño attendu autour de novembre–décembre", "limit": "Prévision dépendante des modèles et des conditions océaniques.", "status": "prevu" },
+      { "horizon": "Hiver 2026–2027", "projection": "Risque de chaleur extrême, de sécheresse dans certaines régions et d'excès de pluie dans d'autres", "limit": "Les effets ne sont ni uniformes ni simultanés partout.", "status": "prevu" },
+      { "horizon": "2027", "projection": "Hausse de la température moyenne mondiale potentiellement exceptionnelle", "limit": "Un record annuel dépend aussi des observations et des conditions qui suivent le pic.", "status": "prevu" },
+      { "horizon": "2027 et après", "projection": "Un climat comparable à celui projeté pour 2046 (mesure pondérée par la population)", "limit": "Analogie illustrative — pas la prévision que toutes les régions auront littéralement le climat de 2046.", "status": "incertain" }
+    ],
+    "mortality": {
+      "warning": "Ce sont des PROJECTIONS de modèle, pas des bilans de décès constatés. À étiqueter avec leur période, leur modèle et leur incertitude.",
+      "source_id": "climate-impact-lab",
+      "peer_review": "Méthodologie signalée comme non encore évaluée par les pairs dans le document transmis.",
+      "figures": [
+        { "label": "Décès supplémentaires liés à la chaleur — fenêtre longue (juin 2026 → février 2027)", "value": 451000, "window": "2026-06 → 2027-02", "status": "prevu", "note": "« Un demi-million de personnes d'ici février » dans l'intro de la vidéo." },
+        { "label": "Décès supplémentaires — fenêtre courte (septembre 2026 → février 2027)", "value": 239000, "window": "2026-09 → 2027-02", "status": "prevu", "note": "Errata : ne pas confondre avec la projection sur neuf mois." },
+        { "label": "Sahel (fenêtre courte)", "value": 66800, "window": "2026-09 → 2027-02", "status": "prevu" },
+        { "label": "Nigeria (fenêtre courte)", "value": 31400, "window": "2026-09 → 2027-02", "status": "prevu" }
+      ]
+    },
+    "records": [
+      { "label": "Probabilité NOAA de dépasser tout ce qui est mesuré depuis 1950", "value_pct": 75, "status": "prevu", "note": "Tient aussi avec le RONI (thermomètre sévère). Évolution : 25 % (printemps) → 60 % → 69 % → 75 %." },
+      { "label": "Probabilité OMM qu'El Niño tienne jusqu'en février 2027", "value": "près de 100 %", "status": "prevu" },
+      { "label": "Intensité", "value": "« Le plus fort jamais mesuré » (NOAA) ; « le plus fort depuis au moins 1000 ans » (certains scientifiques)", "status": "incertain" }
+    ]
+  },
+
+  "scenarios": [
+    {
+      "id": "A",
+      "label": "Scénario favorable — impacts contenus",
+      "role": "Conséquences limitées",
+      "description": "El Niño s'affaiblit progressivement après son pic ; les conditions régionales restent gérables ; les récoltes, les réserves d'eau et les réseaux logistiques absorbent une partie du choc.",
+      "what_helps": ["réserves alimentaires", "surveillance météo", "stocks de sécurité", "plans communaux", "aides rapides"],
+      "residual_risk": "Le réchauffement de fond, les pertes déjà subies et les inégalités persistent."
+    },
+    {
+      "id": "B",
+      "label": "Scénario intermédiaire — crises régionales simultanées",
+      "role": "Scénario de planification",
+      "description": "Certaines régions connaissent des déficits agricoles, d'autres des pluies intenses, tandis que les coûts alimentaires et logistiques augmentent.",
+      "what_helps": ["allocation prioritaire de l'eau", "soutien aux ménages", "diversification des fournisseurs", "renforcement des systèmes de santé et d'alerte"],
+      "residual_risk": "Plusieurs crises locales se renforcent mutuellement et mobilisent les mêmes ressources financières et humaines."
+    },
+    {
+      "id": "C",
+      "label": "Scénario défavorable — effets en cascade",
+      "role": "Préparation renforcée",
+      "description": "Les extrêmes régionaux coïncident avec des réserves insuffisantes, des infrastructures vulnérables, des récoltes défaillantes et une capacité d'intervention saturée.",
+      "what_helps": ["plans de continuité", "stocks stratégiques", "évacuations ciblées", "secours intercommunaux", "financements d'urgence", "protection des infrastructures vitales"],
+      "residual_risk": "Pénuries, déplacements de population, surmortalité et coûts économiques durables."
+    }
+  ],
+  "scenarios_note": "Ces scénarios sont des cadres de planification, pas trois prévisions probabilisées : on ne dispose pas d'éléments suffisants pour attribuer un pourcentage fiable à chacun. La bonne stratégie consiste à identifier ce qui reste utile dans les trois scénarios.",
+
+  "effects_matrix": [
+    { "domain": "Agriculture", "positive": "Pluies bienvenues dans certaines régions normalement sèches ; réduction temporaire du stress hydrique ailleurs", "negative": "Sécheresse, excès d'eau, pertes de rendement, perturbation des semis" },
+    { "domain": "Eau", "positive": "Recharge de certains réservoirs et nappes dans les régions bénéficiant de pluies", "negative": "Baisse des réserves, concurrence entre eau potable, irrigation et industrie" },
+    { "domain": "Écosystèmes marins", "positive": "Redistribution temporaire de certaines espèces", "negative": "Baisse des nutriments dans les eaux côtières du Pérou, déplacements d'espèces et perturbations des pêcheries" },
+    { "domain": "Santé", "positive": "Certaines régions peuvent connaître moins de froid extrême", "negative": "Stress thermique, déshydratation, aggravation de certaines maladies et mortalité" },
+    { "domain": "Énergie", "positive": "Baisse locale de la demande de chauffage lors d'un hiver doux", "negative": "Hausse de la demande de refroidissement, baisse de la production hydroélectrique dans les régions sèches, dommages aux réseaux" },
+    { "domain": "Transport", "positive": "Certaines routes maritimes ou terrestres peuvent rester opérationnelles dans des régions moins affectées", "negative": "Restrictions du canal de Panama, inondations, fermetures de routes et ruptures logistiques" },
+    { "domain": "Économie", "positive": "Certaines filières et régions peuvent bénéficier de conditions favorables", "negative": "Hausse des prix alimentaires, pertes de revenus agricoles et coûts d'assurance" },
+    { "domain": "Gestion publique", "positive": "Occasion de tester et d'améliorer les dispositifs d'alerte", "negative": "Réponse tardive, dépenses d'urgence élevées, inégalités d'accès à la protection" }
+  ],
+  "effects_note": "L'effet net dépend moins d'une étiquette globale « El Niño bon ou mauvais » que de la capacité d'un territoire à absorber une perturbation particulière.",
+
+  "second_order_risks": {
+    "example_cascade": {
+      "title": "Exemple : une sécheresse agricole",
+      "chain": ["Déficit de pluie", "Baisse des récoltes et pertes de revenus", "Moins de semences, de crédit et de nourriture disponibles", "Baisse de la production suivante et hausse des prix", "Insécurité alimentaire, endettement, migration et crise sociale"]
+    },
+    "cascades": [
+      { "domain": "Alimentation et commerce", "description": "Mauvaises récoltes, perturbations des pêcheries, coûts de transport et tensions sur les stocks peuvent se combiner." },
+      { "domain": "Eau et énergie", "description": "Un manque d'eau peut affecter simultanément l'agriculture, l'approvisionnement urbain, la navigation et la production électrique." },
+      { "domain": "Santé et travail", "description": "La chaleur diminue les capacités de travail, augmente les risques sanitaires et peut perturber les services de secours." },
+      { "domain": "Infrastructures", "description": "Une inondation peut endommager routes, réseaux électriques, télécommunications, stations de pompage et accès aux hôpitaux." },
+      { "domain": "Finances publiques", "description": "Plusieurs événements simultanés épuisent les budgets d'urgence et retardent la reconstruction." },
+      { "domain": "Inégalités", "description": "Les ménages avec peu d'épargne, des logements mal adaptés ou un accès limité aux soins subissent souvent les dommages les plus lourds." }
+    ],
+    "history_1877": "Le cas historique de 1877 évoqué par LIMIT : une pénurie physique ne suffit pas à expliquer une famine — la distribution des ressources, les prix, les décisions politiques et l'accès à l'aide déterminent aussi qui peut survivre."
+  },
+
+  "prevention": {
+    "principle": "Les mesures les plus utiles sont celles qui fonctionnent même si l'intensité finale d'El Niño diffère des prévisions.",
+    "priorities": [
+      {
+        "id": "P1",
+        "title": "Prévenir les pertes humaines",
+        "groups": [
+          {
+            "name": "Chaleur extrême",
+            "actions": [
+              "Déclencher les plans canicule et les visites aux personnes vulnérables.",
+              "Ouvrir des lieux rafraîchis accessibles au public.",
+              "Organiser des horaires de travail adaptés, notamment sur les chantiers.",
+              "Prévoir eau, ombre, pauses et procédures d'arrêt du travail en cas de danger."
+            ]
+          },
+          {
+            "name": "Pluies intenses et inondations",
+            "actions": [
+              "Nettoyer les avaloirs et contrôler les points d'évacuation.",
+              "Identifier les sous-sols, routes, parkings et quartiers vulnérables.",
+              "Vérifier les systèmes d'alerte, les itinéraires de secours et les lieux d'accueil.",
+              "Préparer les pompes et les barrières mobiles là où elles sont adaptées.",
+              "Ne pas traverser une route inondée ni pénétrer dans un sous-sol menacé."
+            ]
+          },
+          {
+            "name": "Sécheresse et incendies",
+            "actions": [
+              "Suivre les niveaux des réservoirs et les restrictions d'eau.",
+              "Prévoir des moyens de lutte contre les feux et des procédures d'évacuation.",
+              "Sécuriser les points d'eau et les approvisionnements essentiels."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "P2",
+        "title": "Protéger l'eau et l'alimentation",
+        "table": [
+          { "mesure": "Réserves d'eau", "action": "Suivi régulier des stocks et scénarios de consommation", "indicateur": "Niveau des réservoirs, débit des cours d'eau" },
+          { "mesure": "Agriculture", "action": "Ajuster les calendriers de semis et les cultures selon les prévisions locales", "indicateur": "Humidité des sols, prévisions saisonnières" },
+          { "mesure": "Aide alimentaire", "action": "Préparer des distributions et des transferts monétaires ciblés", "indicateur": "Prix des denrées, pertes agricoles, ménages en difficulté" },
+          { "mesure": "Stocks", "action": "Repérer les dépendances à quelques fournisseurs ou routes commerciales", "indicateur": "Délais, volumes disponibles, concentration des achats" },
+          { "mesure": "Pêche", "action": "Adapter les quotas et surveiller la biomasse", "indicateur": "Température marine, remontée des nutriments, état des stocks" }
+        ],
+        "anti_patterns": ["Stocker sans connaître les besoins réels.", "Attendre que les prix flambent pour déclencher l'aide."],
+        "rule": "Les seuils de déclenchement doivent être décidés à l'avance."
+      },
+      {
+        "id": "P3",
+        "title": "Réduire la vulnérabilité des infrastructures",
+        "actions": [
+          "Cartographier les zones inondables et les installations sensibles.",
+          "Contrôler le drainage, les ouvrages de protection, les talus et les réseaux.",
+          "Protéger les transformateurs électriques, les télécommunications et les stations de pompage.",
+          "Prévoir des solutions de continuité pour les routes, les hôpitaux et les services municipaux.",
+          "Tester les plans de crise par des exercices réalistes avant les événements.",
+          "Prévoir des équipes, des équipements et des budgets mobilisables rapidement."
+        ]
+      },
+      {
+        "id": "P4",
+        "title": "Améliorer la gouvernance de crise",
+        "actions": [
+          "Désigner un responsable de coordination et des suppléants.",
+          "Associer météo, eau, santé, agriculture, transport, énergie et sécurité civile.",
+          "Définir qui décide, qui alerte, qui finance et qui intervient.",
+          "Partager une situation commune et actualisée entre les services.",
+          "Communiquer les incertitudes sans minimiser le danger ni annoncer des catastrophes certaines.",
+          "Prévoir une procédure de retour d'expérience après chaque événement."
+        ]
+      }
+    ],
+    "good_system": "Le bon dispositif n'est pas celui qui prédit tout parfaitement : c'est celui qui détecte les signaux utiles, prend une décision assez tôt et ajuste les moyens à mesure que les observations arrivent."
+  },
+
+  "epistemics": {
+    "intro": "Distinction indispensable pour transformer la vidéo en document de recherche ou en outil de décision.",
+    "well_established": [
+      "El Niño modifie la circulation atmosphérique et les probabilités de certains extrêmes régionaux.",
+      "Le réchauffement climatique augmente les températures de fond.",
+      "Une atmosphère plus chaude peut contenir davantage de vapeur d'eau.",
+      "La chaleur extrême présente des risques sanitaires majeurs."
+    ],
+    "plausible_data_dependent": [
+      "Le classement d'El Niño 2026–2027 parmi les épisodes historiques.",
+      "Les records de températures et de vapeur d'eau.",
+      "Les prévisions saisonnières.",
+      "→ Consulter les séries officielles les plus récentes et préciser les indices employés."
+    ],
+    "present_with_caution": [
+      "Les 451 000 décès projetés (dépendent de la méthodologie et des hypothèses du modèle).",
+      "L'analogie climatique avec 2046–2047.",
+      "L'hypothèse de pluies torrentielles au Panama.",
+      "→ Ne pas présenter comme des événements futurs certains."
+    ],
+    "not_auto_attributable": [
+      "Chaque inondation, sécheresse, tempête, incendie ou record de pluie ne se rattache pas automatiquement à El Niño.",
+      "→ L'attribution scientifique examine le mécanisme météorologique, la variabilité naturelle, l'influence du réchauffement de fond et les facteurs locaux."
+    ]
+  },
+
+  "conclusions": [
+    "El Niño est naturel. Il n'est pas créé par les émissions humaines, mais agit dans un climat déjà réchauffé.",
+    "L'épisode décrit est potentiellement exceptionnel. Les valeurs et probabilités citées doivent être lues avec leur indice, leur période et leur source.",
+    "Les effets sont régionaux et contrastés. Une région peut subir une sécheresse quand une autre connaît des pluies abondantes.",
+    "Les premières conséquences sont déjà systémiques. Agriculture, pêche, eau, transport, santé et commerce peuvent se perturber mutuellement.",
+    "Le retour à des conditions météorologiques normales ne répare pas immédiatement les dégâts. Récoltes perdues, dettes, infrastructures endommagées et stocks épuisés peuvent prolonger la crise.",
+    "La chaleur extrême mérite une priorité sanitaire majeure. Elle tue souvent sans catastrophe visuellement spectaculaire.",
+    "Les chiffres de mortalité sont des projections, pas des bilans. Il faut séparer la période estimée, les causes étudiées et le degré de validation scientifique.",
+    "Le sud de la France doit préparer plusieurs risques en parallèle. Pluies intenses, ruissellement, chaleur, incendies et tensions sur l'eau ne se gèrent pas avec un seul plan.",
+    "Les solutions existent déjà en grande partie. Alertes, cartes de vulnérabilité, plans communaux, stocks, protections thermiques et procédures de crise peuvent réduire les dommages.",
+    "La meilleure stratégie est anticipative et adaptative. On prépare les mesures utiles maintenant, on définit des seuils de déclenchement, puis on ajuste la réponse aux observations réelles."
+  ],
+
+  "thau": {
+    "scope": {
+      "period": "octobre 2026 → décembre 2027",
+      "perimeter": "Golfe du Lion, littoral de l'Hérault, Frontignan, Sète, lagune de Thau et communes de Sète Agglopôle Méditerranée.",
+      "principle": "La chronologie doit partir des conditions locales observées, pas uniquement du calendrier d'El Niño. Les prévisions mondiales d'El Niño sont un contexte, pas un déclencheur local automatique."
+    },
+    "seasonal_context": {
+      "date": "2026-10-05",
+      "meteofrance": "Trimestre plus chaud que la normale privilégié en France ; aucun scénario de précipitations privilégié pour le Sud-Est.",
+      "reading": "Cela ne confirme ni un automne forcément très pluvieux, ni une catastrophe annoncée.",
+      "mediterranean_risk": "Le risque d'épisode méditerranéen est particulièrement pertinent en automne : mer chaude + remontées d'air humide + configuration atmosphérique favorable.",
+      "source_id": "meteofrance"
+    },
+    "local_facts": [
+      {
+        "id": "episode-29-09-2026",
+        "title": "Épisode méditerranéen du 29 septembre–1er octobre 2026 (Gard, Hérault)",
+        "status": "observe",
+        "figures": [
+          { "label": "Vigilance", "value": "rouge dans l'Hérault" },
+          { "label": "Cumuls", "value": "> 250 mm dans certains secteurs du département" },
+          { "label": "7 octobre 2026", "value": "nouvelles pluies intenses sur le Sud-Est" }
+        ],
+        "caveat": "Ne pas confondre les cumuls observés dans l'arrière-pays avec ceux de Frontignan ou Sète.",
+        "source_id": "meteofrance"
+      }
+    ],
+    "risks": [
+      { "risk": "Pluies intenses", "examine": "Ruissellement, points bas, passages souterrains, réseaux pluviaux", "preparation": "Cartographie des écoulements et vérification des alertes" },
+      { "risk": "Submersion et niveau marin", "examine": "Zones littorales basses, ouvrages de protection, conditions marines", "preparation": "Utiliser les cartes officielles de risques et les scénarios adaptés" },
+      { "risk": "Chaleur", "examine": "Quartiers peu ombragés, logements, écoles, établissements accueillant des personnes vulnérables", "preparation": "Îlots de fraîcheur, ombrage, lieux climatisés accessibles" },
+      { "risk": "Sécheresse", "examine": "Réserves d'eau, végétation, besoins agricoles et urbains", "preparation": "Suivi des restrictions, économies d'eau et gestion des espaces verts" },
+      { "risk": "Incendies", "examine": "Végétation sèche, interfaces entre habitat et zones naturelles", "preparation": "Prévention, accès des secours, débroussaillement réglementaire" },
+      { "risk": "Réseaux et chantiers", "examine": "Routes, drainage, réseaux électriques, télécommunications et travaux en cours", "preparation": "Protection du matériel, procédures d'arrêt et de remise en sécurité" },
+      { "risk": "Santé publique", "examine": "Personnes isolées, travailleurs en extérieur, capacités des services d'urgence", "preparation": "Registre de veille selon les dispositifs légaux, visites et plans de continuité" }
+    ],
+    "timeline": [
+      {
+        "id": "phase-1",
+        "phase": 1,
+        "period": "29 septembre – 11 octobre 2026",
+        "title": "Épisode méditerranéen et retour d'expérience",
+        "status": "observe",
+        "risk_types": ["inondation", "pluie_intense", "ruissellement"],
+        "horizon": "automne-2026",
+        "priority": "tres_elevee",
+        "events": [
+          "Épisode remarquable Gard/Hérault du 29 septembre au 1er octobre : vigilance rouge dans l'Hérault, cumuls > 250 mm dans certains secteurs du département.",
+          "7 octobre : nouvelles pluies intenses sur le Sud-Est."
+        ],
+        "watch": [],
+        "actions": [
+          "Vérifier les secteurs de ruissellement et les dégâts récents.",
+          "Contrôler les avaloirs, fossés et réseaux pluviaux.",
+          "Capitaliser sur les alertes et les interventions de début octobre (REX).",
+          "Ne pas confondre les cumuls de l'arrière-pays avec ceux de Frontignan ou Sète."
+        ],
+        "source_ids": ["meteofrance"]
+      },
+      {
+        "id": "phase-2",
+        "phase": 2,
+        "period": "Mi-octobre – mi-décembre 2026",
+        "title": "Fenêtre de vigilance automnale",
+        "status": "prevu",
+        "risk_types": ["pluie_intense", "ruissellement", "submersion", "inondation"],
+        "horizon": "automne-2026",
+        "priority": "elevee",
+        "events": [
+          "Risque saisonnier récurrent : la Méditerranée peut encore alimenter des épisodes de pluies intenses.",
+          "Le scénario de pluie du trimestre n'est pas déterminé spécifiquement pour le Sud-Est (Météo-France, 5 octobre)."
+        ],
+        "watch": [
+          "Pluie intense et ruissellement dans les zones urbaines.",
+          "Débordements des cours d'eau du bassin versant.",
+          "Vagues-submersion et accès aux secteurs littoraux bas.",
+          "État des chantiers, parkings, sous-sols et réseaux."
+        ],
+        "actions": [
+          "Activer la veille renforcée dès qu'une vigilance ou une prévision locale le justifie.",
+          "Préparer les mesures communales adaptées (PCS)."
+        ],
+        "source_ids": ["meteofrance"]
+      },
+      {
+        "id": "phase-3",
+        "phase": 3,
+        "period": "Décembre 2026 – février 2027",
+        "title": "Surveillance hivernale",
+        "status": "prevu",
+        "risk_types": ["inondation", "ruissellement", "submersion"],
+        "horizon": "hiver-2026-2027",
+        "priority": "moyenne",
+        "events": [
+          "Pic d'El Niño attendu vers novembre–décembre dans les prévisions citées.",
+          "Le pic d'El Niño ne permet pas de déduire directement la quantité de pluie qui tombera sur Thau."
+        ],
+        "watch": [
+          "Succession de perturbations.",
+          "Sols déjà saturés après un épisode.",
+          "Ruissellement et érosion côtière.",
+          "Épisodes de vent fort."
+        ],
+        "actions": [
+          "Maintenir les plans de crise disponibles.",
+          "Inspecter les ouvrages après les événements.",
+          "Réévaluer les risques à partir des observations locales."
+        ],
+        "source_ids": ["meteofrance", "noaa-cpc"]
+      },
+      {
+        "id": "phase-4",
+        "phase": 4,
+        "period": "Mars – mai 2027",
+        "title": "Bilan hydrologique et préparation estivale",
+        "status": "prevu",
+        "risk_types": ["secheresse", "bilan"],
+        "horizon": "printemps-2027",
+        "priority": "moyenne",
+        "events": [
+          "Scénario à évaluer au printemps selon les pluies de l'hiver, l'état des nappes, les réserves et l'évolution du Pacifique.",
+          "Un affaiblissement d'El Niño ne signifie pas un retour à un climat antérieur au réchauffement."
+        ],
+        "watch": [],
+        "actions": [
+          "Faire le bilan des ressources en eau.",
+          "Réviser les plans de prévention incendie.",
+          "Préparer les dispositifs de protection contre la chaleur.",
+          "Programmer les travaux prioritaires sur le drainage et les infrastructures."
+        ],
+        "source_ids": []
+      },
+      {
+        "id": "phase-5",
+        "phase": 5,
+        "period": "Juin – septembre 2027",
+        "title": "Chaleur, eau et incendies",
+        "status": "prevu",
+        "risk_types": ["chaleur", "incendie", "secheresse"],
+        "horizon": "ete-2027",
+        "priority": "elevee",
+        "events": [
+          "La chaleur mondiale de 2027 pourrait être exceptionnellement élevée selon les projections — pas une prévision de température précise pour Thau."
+        ],
+        "watch": [
+          "Températures, nuits chaudes et exposition des personnes vulnérables.",
+          "Restrictions d'eau et état de la végétation.",
+          "Risque incendie et disponibilité des moyens de secours.",
+          "État des milieux lagunaires et des activités dépendantes de l'eau (conchyliculture, tourisme, pêche)."
+        ],
+        "actions": [
+          "Adapter les horaires de travail extérieur.",
+          "Adapter les espaces publics (ombrage, îlots de fraîcheur).",
+          "Mettre à jour les plans de continuité des services."
+        ],
+        "source_ids": []
+      },
+      {
+        "id": "phase-6",
+        "phase": 6,
+        "period": "Septembre – décembre 2027",
+        "title": "Deuxième bilan annuel et adaptation",
+        "status": "prevu",
+        "risk_types": ["bilan"],
+        "horizon": "fin-2027",
+        "priority": "moyenne",
+        "events": [],
+        "watch": [],
+        "actions": [
+          "Refaire le bilan des événements, des dépenses, des dégâts et des délais d'alerte.",
+          "Comparer les prévisions aux observations.",
+          "Corriger les seuils opérationnels.",
+          "Prioriser les investissements pour 2028."
+        ],
+        "objective": "Transformer une saison d'événements en amélioration mesurable de la résilience territoriale.",
+        "source_ids": []
+      }
+    ],
+    "timeline_filters": {
+      "horizons": [
+        { "id": "automne-2026", "label": "Automne 2026" },
+        { "id": "hiver-2026-2027", "label": "Hiver 2026–2027" },
+        { "id": "printemps-2027", "label": "Printemps 2027" },
+        { "id": "ete-2027", "label": "Été 2027" },
+        { "id": "fin-2027", "label": "Fin 2027" }
+      ],
+      "risk_types": [
+        { "id": "tous", "label": "Tous les risques" },
+        { "id": "inondation", "label": "Inondation" },
+        { "id": "pluie_intense", "label": "Pluie intense" },
+        { "id": "ruissellement", "label": "Ruissellement" },
+        { "id": "submersion", "label": "Submersion marine" },
+        { "id": "secheresse", "label": "Sécheresse" },
+        { "id": "chaleur", "label": "Chaleur" },
+        { "id": "incendie", "label": "Incendie" },
+        { "id": "bilan", "label": "Bilan multi-risques" }
+      ]
+    },
+    "tools": [
+      { "id": "papi-thau", "name": "PAPI de Thau 2026–2031", "org": "Syndicat mixte du bassin de Thau", "role": "Coordination et prévention", "details": "Labellisé avril 2026 — 46 actions sur 25 communes, ≈ 6,8 M€ : surveillance, alerte, réduction de la vulnérabilité, gestion des ouvrages hydrauliques.", "use": "Identifier les actions prévues, les communes concernées et les dispositifs de surveillance existants.", "source_id": "smbt" },
+      { "id": "pcs-ppri-frontignan", "name": "PCS · PPRI · DICRIM — Frontignan-la Peyrade", "org": "Ville de Frontignan-la Peyrade", "role": "Risques urbains et littoraux", "details": "Documents communaux traitant notamment du ruissellement venant de la Gardiole et des risques littoraux.", "source_id": "frontignan-ville" },
+      { "id": "vigilance", "name": "Vigilance Météo-France · Vigicrues", "org": "Météo-France / Vigicrues", "role": "Déclenchement opérationnel", "details": "En 2026, Météo-France propose dans certaines situations une information géographique plus fine à l'intérieur du département pour la pluie-inondation et les orages.", "source_id": "meteofrance" }
+    ],
+    "dashboard": [
+      { "indicator": "État d'El Niño et indice RONI", "source": "NOAA Climate Prediction Center", "utility": "Comprendre l'évolution du phénomène et les probabilités saisonnières" },
+      { "indicator": "Prévisions saisonnières mondiales", "source": "Organisation météorologique mondiale", "utility": "Identifier les grandes anomalies possibles" },
+      { "indicator": "Prévisions météorologiques locales", "source": "Météo-France", "utility": "Décider des mesures avant un épisode" },
+      { "indicator": "Vigilance crues", "source": "Vigicrues et services compétents", "utility": "Suivre la montée des cours d'eau" },
+      { "indicator": "Restriction d'eau", "source": "Préfecture, commune et services de l'eau", "utility": "Adapter les usages et l'approvisionnement" },
+      { "indicator": "Risques naturels communaux", "source": "Géorisques et documents locaux", "utility": "Identifier les bâtiments et infrastructures exposés" },
+      { "indicator": "Chaleur et santé", "source": "Autorités sanitaires et dispositifs locaux", "utility": "Protéger les personnes vulnérables" },
+      { "indicator": "Agriculture et alimentation", "source": "FAO, PAM, autorités agricoles et observatoires de prix", "utility": "Détecter les tensions d'approvisionnement" }
+    ],
+    "action_plan": [
+      { "when": "Maintenant", "label": "Préparation immédiate", "actions": "Vérifier le DICRIM de la commune, le plan communal de sauvegarde lorsqu'il existe, les consignes de vigilance, les voies vulnérables et les moyens d'alerte. Repérer les installations et personnes nécessitant une attention particulière." },
+      { "when": "Chaque semaine", "label": "Veille opérationnelle", "actions": "Consulter les vigilances de Météo-France et les informations officielles sur les crues via Vigicrues. Suivre les restrictions d'eau, les alertes incendie et les arrêtés préfectoraux. En cas de signal sérieux, passer à une veille plus fréquente." },
+      { "when": "Avant l'épisode", "label": "Mise en sécurité", "actions": "Suivre les consignes officielles, sécuriser les équipements extérieurs, protéger les installations sensibles et préparer les moyens de communication et d'évacuation adaptés. Ne pas attendre une estimation parfaite des cumuls de pluie." },
+      { "when": "Après", "label": "Retour à la normale", "actions": "Évaluer les dommages, vérifier la sécurité des réseaux, documenter les interventions et mettre à jour les cartes de vulnérabilité. Toute intervention dans une zone inondée doit respecter les consignes de sécurité." }
+    ],
+    "primacy_rule": "Pour les décisions immédiates, les bulletins locaux officiels priment sur les tendances saisonnières générales.",
+    "recommendation": "Pour le bassin du Lion et Thau Agglo : priorité à la période automnale déjà engagée, puis préparation simultanée à l'eau en excès et à l'eau manquante. Intégrer alertes météo, risques communaux, ressources hydriques et état des infrastructures dans une seule chronologie — les prévisions mondiales d'El Niño restent un contexte, pas un déclencheur local automatique."
+  },
+
+  "geo": {
+    "description": "Points de surveillance et lieux cités — exportés en GeoJSON pour watchtower (projects/watchtower/public/data/enso-thau-watchpoints.geojson).",
+    "watchpoints": [
+      { "id": "thau-lagune", "name": "Étang de Thau", "lat": 43.4, "lon": 3.62, "category": "local", "scope": "thau", "status": "observe", "description": "Lagune méditerranéenne — indicateur vital du territoire (conchyliculture, qualité de l'eau, tourisme). Exposée aux épisodes méditerranéens, au ruissellement et aux vagues-submersion." },
+      { "id": "frontignan", "name": "Frontignan-la Peyrade", "lat": 43.4467, "lon": 3.7053, "category": "local", "scope": "thau", "status": "observe", "description": "Commune littorale basse (24 136 hab.) : ruissellement de la Gardiole, risque littoral, PCS/PPRI/DICRIM. PHE centennale ≈ 2,00 m (PPRI)." },
+      { "id": "sete", "name": "Sète", "lat": 43.4063, "lon": 3.7005, "category": "local", "scope": "thau", "status": "observe", "description": "Ville portuaire entre mer et lagune — siège de Sète Agglopôle Méditerranée. Ne pas confondre les cumuls de l'arrière-pays avec ceux de Sète." },
+      { "id": "marseillan", "name": "Marseillan", "lat": 43.3564, "lon": 3.5287, "category": "local", "scope": "thau", "status": "observe", "description": "Rive ouest de Thau — secteurs littoraux bas sensibles aux vagues-submersion." },
+      { "id": "gardiole", "name": "Massif de la Gardiole", "lat": 43.5069, "lon": 3.8167, "category": "local", "scope": "thau", "status": "observe", "description": "Relief au nord de Frontignan : origine des ruissellements vers la plaine littorale lors des pluies intenses ; interface habitat/nature exposée aux incendies." },
+      { "id": "golfe-lion", "name": "Golfe du Lion (mer)", "lat": 42.75, "lon": 3.9, "category": "local", "scope": "thau", "status": "prevu", "description": "Mer chaude en automne : carburant des épisodes méditerranéens (remontées d'air humide + configuration atmosphérique favorable)." },
+      { "id": "nino34", "name": "Zone Niño 3.4", "lat": 0.0, "lon": -145.0, "category": "global", "scope": "pacifique", "status": "observe", "description": "Rectangle de mesure (5°N–5°S, 120°–170°W) : +3,07 °C le 22 septembre 2026 — record 2015 égalé avec ~2 mois d'avance. RONI été 2026 : +1,4 °C." },
+      { "id": "perou-upwelling", "name": "Côtes du Pérou (upwelling)", "lat": -12.05, "lon": -77.15, "category": "global", "scope": "perou", "status": "observe", "description": "Remontée d'eau froide coupée : anchois disparus, saison de pêche suspendue le 12 mai à 23 % du quota, état d'urgence le 23 août." },
+      { "id": "atacama-chajnantor", "name": "Plateau de Chajnantor (Atacama)", "lat": -23.02, "lon": -67.75, "category": "global", "scope": "chili", "status": "observe", "description": "5 000 m — jusqu'à 1 m de neige le 14 août 2026 dans le désert le plus sec de la planète. Attribution mixte : goutte froide (déclencheur) + El Niño (probabilités)." },
+      { "id": "panama-gatun", "name": "Canal de Panama (lac Gatún)", "lat": 9.27, "lon": -79.92, "category": "global", "scope": "panama", "status": "observe", "description": "5 % du commerce mondial — pluies du bassin −34 % (mai–août), transits réduits à 34/jour (4 sept.) puis 32/jour (15 sept.)." },
+      { "id": "corredor-seco", "name": "Corredor Seco", "lat": 14.5, "lon": -89.0, "category": "global", "scope": "amerique-centrale", "status": "observe", "description": "Guatemala/Honduras/Salvador — 7 millions de personnes exposées ; 70 342 foyers en perte de récolte (Oxfam), −62 % d'intention de semer." },
+      { "id": "nagoya", "name": "Nagoya (Japon)", "lat": 35.18, "lon": 136.91, "category": "global", "scope": "japon", "status": "observe", "description": "10,4 cm de pluie en 1 h le 8 septembre 2026 — record depuis 1890. Errata : front stationnaire alimenté par la tempête Krovanh (météo locale, pas El Niño direct)." },
+      { "id": "indonesie-feux", "name": "Indonésie (feux)", "lat": -0.5, "lon": 102.0, "category": "global", "scope": "indonesie", "status": "observe", "description": "≈ 202 000 ha brûlés janvier–juillet 2026 — sécheresse El Niño, tourbières, qualité de l'air." },
+      { "id": "inde-mousson", "name": "Inde (mousson)", "lat": 20.0, "lon": 78.0, "category": "global", "scope": "inde", "status": "observe", "description": "Bilan errata : déficit de mousson −13 % au national, −24 % dans le sud." },
+      { "id": "med-ouest", "name": "Méditerranée occidentale", "lat": 39.5, "lon": 2.5, "category": "global", "scope": "mediterranee", "status": "prevu", "description": "Automne 2026 : mer chaude + risque élevé de pluies intenses (signal de vigilance probabiliste, pas une date ni une commune précises)." }
+    ]
+  },
+
+  "quiz": [
+    { "id": "q1", "question": "Que fait El Niño aux événements météo extrêmes ?", "options": ["Il les crée de toutes pièces", "Il accentue des anomalies qui seraient présentes par la variabilité naturelle", "Il les annule partout"], "answer": 1, "explanation": "« El Niño accentue. Il ne crée pas, il accentue. » (Xavier Fettweis, 01:48) — et l'effet dépend de la région et de la saison." },
+    { "id": "q2", "question": "Que mesure le nouvel indice RONI de la NOAA ?", "options": ["La température brute du Pacifique", "El Niño moins le réchauffement de fond", "Le niveau des lacs du canal de Panama"], "answer": 1, "explanation": "RONI ≈ « El Niño moins le réchauffement de fond » : +3 °C avec l'ancien thermomètre (normale fixe 1991–2020), +1,4 °C avec le RONI pour l'été 2026. L'écart, c'est la part du réchauffement climatique qui ne repartira pas avec El Niño." },
+    { "id": "q3", "question": "Pourquoi la pêche péruvienne s'est-elle effondrée ?", "options": ["Un quota politique trop bas", "L'arrêt de la remontée d'eau froide riche en nutriments (upwelling)", "Une pollution chimique"], "answer": 1, "explanation": "Alizés affaiblis → upwelling coupé → plus de plancton → plus d'anchois. Saison suspendue le 12 mai à 23 % du quota, état d'urgence le 23 août. ≈ +3 °C par rapport à la norme suffisent." },
+    { "id": "q4", "question": "Le record de 10,4 cm de pluie en une heure à Nagoya (8 septembre 2026) est-il attribué directement à El Niño ?", "options": ["Oui, à 100 %", "Non — l'errata l'attribue à un front stationnaire alimenté par l'humidité de la tempête Krovanh", "Aucune attribution n'est possible en principe"], "answer": 1, "explanation": "Cas typique d'attribution à ne pas automatiser : le mécanisme immédiat est local. L'air plus chaud peut contenir plus de vapeur d'eau (Clausius–Clapeyron ≈ +7 %/°C), mais chaque événement dépend de sa dynamique atmosphérique." },
+    { "id": "q5", "question": "Les « 451 000 décès d'ici février » du Climate Impact Lab sont…", "options": ["Un bilan de décès déjà constatés", "Une projection de modèle sur juin 2026 → février 2027, non encore évaluée par les pairs", "Une estimation de l'OMM"], "answer": 1, "explanation": "Projection ≠ bilan : il faut étiqueter la période (9 mois), le modèle et l'incertitude. L'errata donne ≈ 239 000 sur la fenêtre plus courte septembre 2026 → février 2027 — à ne pas confondre." },
+    { "id": "q6", "question": "Au 5 octobre 2026, que dit Météo-France pour le Sud-Est ?", "options": ["Automne très pluvieux garanti", "Trimestre plus chaud que la normale en France, mais aucun scénario de précipitations privilégié pour le Sud-Est", "Aucune anomalie attendue nulle part"], "answer": 1, "explanation": "Ni catastrophe annoncée, ni automne forcément très pluvieux : le risque d'épisode méditerranéen reste saisonnièrement pertinent (mer chaude), mais les bulletins locaux priment sur les tendances saisonnières." },
+    { "id": "q7", "question": "Quel événement local de fin septembre–début octobre 2026 illustre le risque méditerranéen ?", "options": ["Une vague de froid historique", "Un épisode remarquable Gard/Hérault : vigilance rouge, cumuls > 250 mm par secteurs", "Une tempête de sable"], "answer": 1, "explanation": "Épisode du 29 septembre–1er octobre 2026, puis nouvelles pluies intenses le 7 octobre. Attention : les cumuls de l'arrière-pays ne sont pas ceux de Frontignan ou Sète." },
+    { "id": "q8", "question": "Quand El Niño s'affaiblira au printemps 2027, que restera-t-il ?", "options": ["Rien — retour au climat d'avant", "Le réchauffement de fond, les pertes déjà subies et les inégalités", "Uniquement les dégâts du canal de Panama"], "answer": 1, "explanation": "« Quelque chose qui ne repartira pas au printemps quand El Niño se calmera » : la part de la fièvre qui reste, c'est le réchauffement climatique de fond — plus les dettes, récoltes perdues et infrastructures endommagées qui prolongent la crise." },
+    { "id": "q9", "question": "Combien d'actions contient le PAPI de Thau 2026–2031, et sur combien de communes ?", "options": ["12 actions sur 5 communes", "46 actions sur 25 communes (≈ 6,8 M€)", "100 actions sur 46 communes"], "answer": 1, "explanation": "Labellisé en avril 2026 par le Syndicat mixte du bassin de Thau : surveillance, alerte, réduction de la vulnérabilité, gestion des ouvrages hydrauliques." },
+    { "id": "q10", "question": "Pourquoi le canal de Panama dépend-il de la pluie ?", "options": ["Les bateaux naviguent à vue", "Chaque transit vide une écluse remplie par l'eau de pluie stockée dans deux lacs", "L'eau de mer corrode les portes"], "answer": 1, "explanation": "Pas de pluie → pas de lac → pas de bateau. Pluies du bassin −34 % (mai–août 2026) ; transits passés de ≈ 36 à 34/j (4 sept.) puis 32/j (15 sept.) — avec arbitrages entre eau potable et navigation." }
+  ],
+
+  "learning": {
+    "title": "Comprendre El Niño : du Pacifique au bassin de Thau",
+    "subtitle": "Un parcours où chaque décision construit ton modèle climatique — puis territorial.",
+    "transfer_question": "Pourquoi ne peut-on pas attribuer automatiquement chaque inondation, sécheresse ou record de pluie à El Niño ? Réponds avec tes propres mots.",
+    "transfer_keywords": ["probabilité", "accentue", "réchauffement", "fond", "local", "attribution", "météo"],
+    "concepts_graph": ["Alizés", "Upwelling", "Bosse de chaleur", "Circulation atmosphérique", "Niño 3.4", "Super El Niño", "RONI", "Réchauffement de fond", "Clausius–Clapeyron", "Attribution", "Épisode méditerranéen", "PAPI", "PCS", "Vigilance/Vigicrues", "Projection vs bilan"],
+    "levels": [
+      {
+        "id": "baignoire",
+        "title": "La baignoire Pacifique",
+        "situation": "Dans le Pacifique tropical, des vents soufflent en permanence d'est en ouest : les alizés. Ils poussent l'eau chaude de surface vers l'Indonésie et l'Australie.",
+        "problem": "Que se passe-t-il le long des côtes du Pérou pendant ce temps ?",
+        "choices": [
+          ["De l'eau froide remonte des profondeurs pour prendre la place", "Exact : c'est l'upwelling. Cette eau froide est pleine de nutriments — elle nourrit le plancton, puis l'anchois, première pêcherie du monde en tonnage."],
+          ["Rien, l'eau reste uniforme", "Non : le « souffle » permanent des alizés accumule l'eau chaude à l'ouest et laisse remonter l'eau froide à l'est."],
+          ["L'eau chaude s'accumule aussi au Pérou", "À l'inverse : l'eau chaude est poussée vers l'ouest (Indonésie/Australie). Image de la baignoire dans laquelle on souffle."]
+        ],
+        "correct": 0,
+        "concepts": ["Alizés", "Upwelling"],
+        "previous": "Point de départ : un océan organisé par des vents permanents.",
+        "next": "Que se passe-t-il quand le souffle s'arrête ?"
+      },
+      {
+        "id": "el-nino",
+        "title": "Le souffle s'arrête : El Niño démarre",
+        "situation": "Les alizés faiblissent. L'eau chaude reflue vers l'Amérique et la remontée d'eau froide s'arrête. Une « bosse de chaleur » se forme au centre-est du Pacifique.",
+        "problem": "Quelle est la conséquence atmosphérique principale de cette bosse de chaleur ?",
+        "choices": [
+          ["L'atmosphère se réorganise autour : la météo change, pas qu'au Pérou — partout", "Exact : la circulation atmosphérique mondiale est modifiée — pluies, sécheresses, tempêtes et températures régionales sont redistribuées."],
+          ["Seul le Pérou est affecté", "Non : El Niño est un phénomène couplé océan-atmosphère à l'échelle du globe."],
+          ["Le climat mondial se refroidit", "Au contraire : El Niño redistribue la chaleur du Pacifique et tend à hausser la température moyenne mondiale — 2027 pourrait être exceptionnellement chaude."]
+        ],
+        "correct": 0,
+        "concepts": ["Bosse de chaleur", "Circulation atmosphérique"],
+        "previous": "En temps normal, alizés + upwelling structurent le Pacifique.",
+        "next": "Comment mesure-t-on l'intensité du phénomène ?"
+      },
+      {
+        "id": "mesure",
+        "title": "Mesurer El Niño : la zone Niño 3.4",
+        "situation": "Pour qualifier El Niño, on mesure l'anomalie de température de surface de la mer dans un rectangle du Pacifique central : la zone Niño 3.4, comparée à la normale. Au-dessus de +2 °C, on parle de « super El Niño » — il y en a eu trois depuis qu'on mesure correctement : 1982, 1997, 2015.",
+        "problem": "Le 22 septembre 2026, la courbe 2026 atteint +3,07 °C. Que faut-il en conclure ?",
+        "choices": [
+          ["Le record 2015 est égalé, avec ~2 mois d'avance sur le pic habituel — et l'année n'est pas finie", "Exact : la ligne rouge rattrape la bleue (graphique Zeke Hausfather, Berkeley Earth). Xavier Fettweis évoquait début septembre un événement vers +3, voire +3,5, alors que le record précédent restait sous +3."],
+          ["L'événement est terminé puisqu'il atteint son record", "Non : le pic habituel se situe plutôt vers novembre–décembre. « Donc peut-être que ça va encore monter. »"],
+          ["C'est une erreur de mesure", "Les modèles révisent au contraire leurs probabilités à la hausse chaque mois depuis mars : 60 % → 69 % → 75 % de chances de dépasser tout ce qui est mesuré depuis 1950 (NOAA)."]
+        ],
+        "correct": 0,
+        "concepts": ["Niño 3.4", "Super El Niño"],
+        "previous": "La bosse de chaleur se mesure par anomalie de température de surface.",
+        "next": "Mais tout le « +3 » vient-il vraiment d'El Niño ?"
+      },
+      {
+        "id": "roni",
+        "title": "Deux thermomètres : Niño 3.4 vs RONI",
+        "situation": "Le 1er février 2026, la NOAA a changé de thermomètre. Jusque-là, El Niño était comparé à une normale fixe (1991–2020). Or depuis, tout l'océan tropical s'est réchauffé. Le nouvel indice RONI retire cette part : « El Niño moins le réchauffement de fond ». Pour l'été 2026 : +3 avec l'ancien thermomètre, +1,4 avec le RONI.",
+        "problem": "Que représente l'écart entre les deux lectures ?",
+        "choices": [
+          ["La part du réchauffement climatique — « la fièvre qui ne redescendra pas quand El Niño sera parti »", "Exact : « Cet écart-là, c'est nous. » C'est la part structurelle, déguisée en El Niño, qui persiste après l'épisode."],
+          ["Une marge d'erreur des instruments", "Non : c'est un changement de référence — l'ancien indice mélange variabilité naturelle (El Niño) et réchauffement de fond anthropique."],
+          ["La preuve qu'El Niño est créé par les émissions humaines", "El Niño reste un phénomène naturel (tous les 2 à 7 ans, bien avant l'humanité) — mais il agit désormais dans un climat déjà réchauffé. Même avec le RONI sévère : 75 % de chances de battre les records depuis 1950."]
+        ],
+        "correct": 0,
+        "concepts": ["RONI", "Réchauffement de fond"],
+        "previous": "Niño 3.4 mesure l'anomalie totale ; une partie n'est pas El Niño.",
+        "next": "Comment l'atmosphère plus chaude influence-t-elle les pluies ?"
+      },
+      {
+        "id": "vapeur",
+        "title": "Vapeur d'eau et pluies extrêmes",
+        "situation": "Record d'eau précipitable moyenne rapporté pour août 2026. La relation de Clausius–Clapeyron donne ≈ +7 % de capacité de saturation de l'air en vapeur d'eau par degré de réchauffement, aux températures usuelles.",
+        "problem": "Peut-on en déduire que chaque pluie devient automatiquement 7 % plus intense par degré ?",
+        "choices": [
+          ["Non — le potentiel augmente, mais l'intensité réelle dépend de la dynamique atmosphérique, de la durée et de la configuration locale", "Exact : plus de « carburant » eau ne signifie pas déterminisme événement par événement. Nagoya (10,4 cm/h, 8 septembre) vient d'un front stationnaire alimenté par la tempête Krovanh."],
+          ["Oui, c'est une loi physique directe", "La relation vaut pour la capacité de saturation de l'air — pas pour chaque événement pluvieux pris isolément."],
+          ["Non, la vapeur d'eau n'a aucun lien avec les pluies", "Au contraire : davantage de vapeur d'eau disponible augmente le potentiel de précipitations intenses dans certaines situations."]
+        ],
+        "correct": 0,
+        "concepts": ["Clausius–Clapeyron"],
+        "previous": "Le réchauffement de fond charge l'atmosphère en vapeur d'eau.",
+        "next": "Comment démêler El Niño du reste ?"
+      },
+      {
+        "id": "attribution",
+        "title": "Attribution : El Niño accentue, il ne crée pas",
+        "situation": "Trois semaines d'août–septembre 2026 : neige record dans l'Atacama (1 m à Chajnantor, 5 000 m), anchois disparus au Pérou, 3 ouragans simultanés dans le Pacifique et Atlantique calme, record de pluie à Nagoya, canal de Panama rationné.",
+        "problem": "Lequel de ces événements n'est PAS une conséquence établie d'El Niño ?",
+        "choices": [
+          ["Le record de pluie horaire de Nagoya — front stationnaire alimenté par la tempête Krovanh (météo locale)", "Exact : l'errata de l'agence météorologique japonaise attribue l'épisode à un mécanisme local. La neige de l'Atacama est, elle, d'attribution mixte : goutte froide (déclencheur immédiat) sur des probabilités rendues plus humides par El Niño. Pêche péruvienne, cyclones Pacifique/Atlantique et Panama sont en revanche des mécanismes El Niño établis."],
+          ["L'effondrement de la pêche péruvienne", "Si : upwelling coupé par les eaux chaudes (≈ +3 °C) — lien direct et établi. Saison suspendue à 23 % du quota, état d'urgence le 23 août."],
+          ["Le calme exceptionnel de l'Atlantique en pleine saison cyclonique", "Si : El Niño augmente les cisaillements de vent dans l'Atlantique et y réduit l'activité cyclonique, pendant qu'il la favorise dans le Pacifique."]
+        ],
+        "correct": 0,
+        "concepts": ["Attribution"],
+        "previous": "El Niño modifie les probabilités régionales selon la saison.",
+        "next": "Du Pacifique à la Méditerranée : que change El Niño pour Thau ?"
+      },
+      {
+        "id": "episode-med",
+        "title": "L'épisode méditerranéen : le risque d'automne du golfe du Lion",
+        "situation": "29 septembre–1er octobre 2026 : épisode remarquable sur le Gard et l'Hérault, vigilance rouge, cumuls > 250 mm dans certains secteurs du département ; nouvelles pluies intenses le 7 octobre. Au 5 octobre, Météo-France privilégie un trimestre plus chaud que la normale, sans scénario de précipitations privilégié pour le Sud-Est.",
+        "problem": "Que peut-on en déduire pour Frontignan et Sète cet automne ?",
+        "choices": [
+          ["Le risque d'épisode méditerranéen reste saisonnièrement élevé (mer chaude), mais aucune catastrophe certaine ni date précise ne peut être annoncée — les bulletins locaux priment", "Exact : mer chaude + remontées d'air humide + configuration atmosphérique favorable = risque probabiliste récurrent. Et les cumuls de l'arrière-pays ne sont pas ceux de Frontignan ou Sète."],
+          ["Une inondation majeure est certaine avant décembre", "Non : la prévision saisonnière ne détermine pas le scénario de pluie du Sud-Est. On prépare des seuils et des mesures utiles dans tous les scénarios."],
+          ["Rien à prévoir, l'automne sera sec", "Non plus : l'épisode de fin septembre montre que le risque est déjà actif — d'où la veille renforcée (vigilances Météo-France, Vigicrues)."]
+        ],
+        "correct": 0,
+        "concepts": ["Épisode méditerranéen"],
+        "previous": "Le contexte global est un signal, pas un déclencheur local automatique.",
+        "next": "Quels outils le territoire possède-t-il déjà ?"
+      },
+      {
+        "id": "outils",
+        "title": "Les outils du territoire : PAPI, PCS, vigilances",
+        "situation": "Le bassin de Thau dispose de dispositifs structurants : le PAPI de Thau 2026–2031 (labellisé avril 2026 : 46 actions, 25 communes, ≈ 6,8 M€), les plans communaux (PCS, PPRI, DICRIM à Frontignan — dont le ruissellement venant de la Gardiole), et les vigilances Météo-France/Vigicrues (avec en 2026 une information géographique plus fine pour pluie-inondation et orages).",
+        "problem": "À quoi sert concrètement cet empilement d'outils ?",
+        "choices": [
+          ["À détecter les signaux utiles, décider assez tôt et ajuster les moyens à mesure que les observations arrivent", "Exact : le bon dispositif ne prédit pas tout parfaitement. Il combine surveillance (globale : NOAA/RONI, OMM), déclenchement opérationnel (local : vigilances, crues, arrêtés) et préparation (PAPI, PCS, cartes de vulnérabilité)."],
+          ["À prédire exactement où et quand tombera la pluie", "Non : la prévision saisonnière donne des tendances probabilistes ; ce sont les bulletins locaux qui déclenchent les mesures."],
+          ["À rassurer la population sans agir", "Au contraire : chaque outil porte des actions — avaloirs, sous-sols, itinéraires de secours, pompes, lieux rafraîchis, registres de personnes vulnérables."]
+        ],
+        "correct": 0,
+        "concepts": ["PAPI", "PCS", "Vigilance/Vigicrues"],
+        "previous": "Le risque local est récurrent ; les outils existent déjà.",
+        "next": "Dernier piège : lire les chiffres de mortalité."
+      },
+      {
+        "id": "projections",
+        "title": "Projections vs bilans : lire les chiffres sans se tromper",
+        "situation": "Le Climate Impact Lab (Université de Chicago) projette 451 000 décès supplémentaires liés à la chaleur de juin 2026 à février 2027 (≈ 239 000 sur la fenêtre plus courte septembre–février selon l'errata ; Sahel ≈ 66 800, Nigeria ≈ 31 400). La méthodologie est signalée comme non encore évaluée par les pairs.",
+        "problem": "Comment faut-il utiliser ce chiffre dans un document de décision ?",
+        "choices": [
+          ["Comme une projection de modèle, étiquetée avec sa période, son modèle et son incertitude — utile pour dimensionner la prévention", "Exact : ce ne sont pas des décès constatés. Il faut aussi distinguer surmortalité et attribution individuelle certaine à la chaleur (ex. Belgique : 2 112 décès en excès du 18 juin au 12 juillet 2026)."],
+          ["Comme un bilan déjà acquis de la saison", "Non : c'est une estimation sur neuf mois, à ne pas confondre avec la fenêtre courte de l'errata (≈ 239 000), ni avec un décompte réel."],
+          ["En le supprimant, car non évalué par les pairs", "Le présenter avec prudence suffit : ces valeurs aident à calibrer les plans canicule, les lieux rafraîchis et les horaires de chantier — la chaleur tue souvent sans catastrophe spectaculaire."]
+        ],
+        "correct": 0,
+        "concepts": ["Projection vs bilan"],
+        "previous": "Les chiffres circulent vite ; leur statut circule moins.",
+        "next": "Synthèse : construire ta stratégie territoriale"
+      },
+      {
+        "id": "synthese",
+        "title": "Synthèse : la stratégie anticipative et adaptative",
+        "situation": "El Niño culminera probablement vers novembre–décembre 2026, puis s'affaiblira au printemps 2027. Pour le bassin du Lion et Thau Agglo, la frise court jusqu'à décembre 2027 : REX de l'épisode de fin septembre, vigilance automnale, surveillance hivernale, bilan hydrologique, été chaleur/eau/incendies, second bilan annuel.",
+        "problem": "Quelle est la meilleure stratégie pour le territoire ?",
+        "choices": [
+          ["Préparer maintenant les mesures utiles dans les trois scénarios, définir des seuils de déclenchement à l'avance, puis ajuster la réponse aux observations réelles", "Exact : prioriser la période automnale déjà engagée, préparer simultanément l'eau en excès (ruissellement, submersion) et l'eau manquante (sécheresse, incendies, chaleur) — en gardant El Niño comme contexte, jamais comme déclencheur local automatique."],
+          ["Attendre le pic de novembre pour décider", "Trop tard : les seuils doivent être décidés à l'avance, et l'épisode de fin septembre est déjà là. Deux erreurs à éviter : stocker sans connaître les besoins, et attendre que les prix flambent pour aider."],
+          ["Se concentrer uniquement sur le scénario du pire", "Non : on ne construit pas un plan sur le seul scénario spectaculaire. Ce qui reste utile dans les scénarios A, B et C (alertes, stocks, plans communaux, protections thermiques) est prioritaire."]
+        ],
+        "correct": 0,
+        "concepts": [],
+        "previous": "Le climat fixe une partie des contraintes.",
+        "next": "Les décisions humaines déterminent une partie importante des dommages évitables."
+      }
+    ]
+  }
+}

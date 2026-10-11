@@ -15,11 +15,13 @@ monorepo/
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
-│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html) + module climat el-nino-thau.html
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
+├─ data/climat/el-nino-2026/    🌊 Dataset climat « El Niño Godzilla × Thau » (JSON canonique + sources)
 ├─ scripts/github_inventory.py  Inventaire GitHub (stdlib, 62 appels max, snapshot JSON)
+├─ scripts/validate_climat_data.py + build_climat_assets.py   Validation & génération des modules climat
 ├─ data/github_inventory.json   Snapshot (cache serveur, refresh via POST)
 ├─ MANIFEST.json                Provenance (URL, branche, SHA)
 └─ requirements.txt             fastapi, uvicorn, jinja2
@@ -51,13 +53,27 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
 - **Preview** en iframe same-origin :
   - `← / → / ⌂ / ⟳` + barre d'adresse synchronisée avec tes clics *dans* la preview (interception `a[href]` même origine)
   - sélecteur d'entrée, bouton ↗ nouvel onglet
-  - **Entrées par projet** :
-    - `watchtower` → `dist/index.html` (Cesium globe, build Vite `--base=./`)
-    - `animation-chronos` → `dist/index.html`
-    - `proto-cognitorium` → `dist/index.html` (frontend statique ; `server.ts` Express non exécuté dans l'iframe)
-    - `COGNITORIUM` → `learning/index.html` + `watchtower-mods/`
-    - `ETAT-…` → `output/visual/index.html` + `d3_interactive.html` + `taxonomy_graph.html`
-    - `HCSM` / `reaserch-engine` / `Language-decoder` → code seul + README
+- **Entrées par projet** :
+  - `watchtower` → `dist/index.html` (Cesium globe, build Vite `--base=./`)
+  - `animation-chronos` → `dist/index.html`
+  - `proto-cognitorium` → `dist/index.html` (frontend statique ; `server.ts` Express non exécuté dans l'iframe)
+  - `COGNITORIUM` → `learning/index.html` (+ PoC `el-nino-poc.html`) + `watchtower-mods/`
+  - `ETAT-…` → `output/visual/index.html` + `d3_interactive.html` + `taxonomy_graph.html`
+  - `HCSM` / `reaserch-engine` / `Language-decoder` → code seul + README
+  - `frontignan` → `index.html` (deck 19 slides) + **module climat `el-nino-thau.html`**
+
+## 🌊 Données climat — El Niño 2026–2027 « Godzilla » × bassin de Thau
+
+Un **dataset canonique** (`data/climat/el-nino-2026/`) enrichit les modules pertinents du monorepo : observations & projections de l'épisode (vidéo LIMIT « EL NIÑO : GODZILLA » du 11/10/2026 avec Xavier Fettweis, errata 24/09 intégré) + frise opérationnelle golfe du Lion / Thau Agglo (oct. 2026 → déc. 2027). Chaque élément porte un **statut** (`observe` / `prevu` / `incertain`) et une **attribution** — El Niño n'est pas coupable de tout.
+
+| Consommateur | Artefact | Accès |
+|---|---|---|
+| **frontignan** (Atlas) | `projects/frontignan/el-nino-thau.html` — module interactif 8 onglets : vue d'ensemble, frise filtrable (horizon × risque), faits globaux, risques & scénarios, simulation canvas, quiz, checklist, sources | `/preview/frontignan/el-nino-thau.html` (aussi lié depuis la slide 18 du deck) |
+| **COGNITORIUM** (learning) | `projects/COGNITORIUM/learning/el-nino-poc.html` — PoC « Comprendre El Niño » (10 niveaux, concept graph, transfert) | `/preview/COGNITORIUM/learning/el-nino-poc.html` |
+| **watchtower** (globe) | `projects/watchtower/public/data/enso-thau-watchpoints.geojson` — 15 watchpoints (6 Thau + 9 mondiaux) + boîte Niño 3.4 | glisser-déposer sur le globe (import GeoJSON natif) |
+| **API** | endpoints climat | `GET /api/climat/datasets` · `GET /api/climat/el-nino-godzilla-2026` · `GET /api/climat/el-nino-godzilla-2026/{section}` (`thau`, `geo`, `quiz`, `learning`, `indicators`…) |
+
+Gouvernance : le JSON canonique est la seule source de vérité ; les artefacts modules sont **générés** (`python3 scripts/build_climat_assets.py`) et validés (`python3 scripts/validate_climat_data.py`). Les sources brutes (script de tournage, synthèse, frise) sont archivées dans `data/climat/el-nino-2026/sources/`.
   - Servie via `GET /preview/{project}/{path}` (FileResponse, pas de `X-Frame-Options` côté monorepo ; `watchtower` buildée sans en-têtes DENY).
 
 ## 🛠 Rebuild des previews Vite
