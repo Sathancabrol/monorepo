@@ -7,6 +7,7 @@ Dossier d'appui pour l'accompagnement de la municipalité de Frontignan (Héraul
 | Fichier | Contenu |
 |---|---|
 | **`index.html`** | 🎞️ **Deck de présentation** « Frontignan 2026→2040, focale 2030 » — 18 slides, autonome (images intégrées), scroll vertical, ← → au clavier, Ctrl+P → export PDF paysage |
+| **`climat-el-nino-thau.html`** | 🌦️ **Module interactif « El Niño & risques climatiques du bassin de Thau »** — frise chronologique, lecture locale des risques, schéma pédagogique, mini-simulation qualitative, quiz, checklist de préparation et sources officielles. Autonome, sans dépendance externe. |
 | `vision-frontignan-2026-2040.md` | 🔮 **Vision prospective** macro/micro 2026→2040 (focale 2030) — source éditable |
 | `vision-frontignan-2026-2040.html` | Même document, version consultation autonome (images base64) |
 | `rapport-frontignan-analyse-territoriale.md` | 📊 **Rapport d'analyse territoriale** complet — entonnoir France→ville, 11 sections, 13 fiches projets, 249 sources |
@@ -21,6 +22,10 @@ Dossier d'appui pour l'accompagnement de la municipalité de Frontignan (Héraul
 - **Focale 2030** : 5 conditions de succès (PEM livré *et desservi*, friche programmée *et financée*, +300-600 emplois, qualité de l'eau de Thau, mixité du centre).
 - **3 scénarios 2040** : S1 « Thau tranquille » · S2 « Couronne métropolitaine » · S3 « Pôle de la transition » ★.
 - **Méthode** : sources croisées et datées, balises ✅ engagé / 📅 annoncé / 🔮 tendance / ⚠️ incertain, estimations propres distinguées des prévisions officielles.
+
+## 🌦️ Module pédagogique : El Niño & risques climatiques
+
+Ouvrir `climat-el-nino-thau.html` pour explorer la frise d'octobre 2026 à 2031, les risques de ruissellement/crues/submersion, une simulation pédagogique comparative, un quiz et une checklist de prévention. Le module distingue les faits observés des tendances et des scénarios ; il ne constitue pas une prévision météo locale.
 
 ## ▶️ Voir le deck
 
