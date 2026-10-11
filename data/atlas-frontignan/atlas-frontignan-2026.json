@@ -1,0 +1,442 @@
+{
+  "meta": {
+    "id": "atlas-frontignan-2026",
+    "title": "Atlas Frontignan — console territoriale (spécification Phase 0)",
+    "version": "1.0.0",
+    "as_of": "2026-10-11",
+    "schema": "atlas-frontignan-v1",
+    "phase": "phase-0",
+    "product": {
+      "metaphor": "Console de décision territoriale inspirée des interfaces 4X (lentilles, arbre d'actions, yields) branchée sur le territoire réel de Frontignan-la Peyrade",
+      "audience": "Décideurs (élus, techniciens, acteurs locaux) — pas seulement les analystes SIG",
+      "loop": ["Observer", "Diagnostiquer", "Simuler", "Décider", "Suivre"],
+      "not_a": "Ni un logiciel d'inondation, ni un SIG expert, ni un outil opérationnel de crise"
+    },
+    "origin": {
+      "method": "Placeholder complet d'abord, remplissage progressif par urgence — tout déclarer (modes, modules, objets, actions), puis enrichir",
+      "documents": [
+        "Synthèses de discussion ×2 (11/10/2026) — sources/syntheses-discussion-2026-10-11.md",
+        "PCS Frontignan 2025 (via dataset cévenols)",
+        "Programme d'études SMBT (via dataset cévenols)",
+        "PAPI de Thau 2026-2031 (via dataset cévenols)"
+      ],
+      "inspiration": [
+        "FastFlood Global (Fast Hazard, nov. 2025) — référence UX/perf citée en discussion, non vérifiée en ligne",
+        "LISEM, LISFLOOD-FP — moteurs open source, pistes Phase 3",
+        "Interfaces 4X (Civilization…) — lentilles de vue, arbre technologique, indicateurs"
+      ]
+    },
+    "related_datasets": ["frontignan-cevenols-2026", "el-nino-godzilla-2026"],
+    "disclaimer": "Phase 0 = coquille. La carte est stylisée et indicative (ce n'est pas une étude hydraulique) ; tout chiffre marqué « placeholder » est un chiffre de démonstration, pas une estimation fiable ; les contenus DATA proviennent des datasets canoniques climat (PCS 2025, SMBT, PAPI Thau 2026-2031). Pour toute décision : les bulletins officiels et les données techniques des services compétents priment.",
+    "usage": "Artefacts générés depuis cette spec : projects/frontignan/atlas.html (coquille jouable) — ne pas éditer à la main ; relancer scripts/build_atlas_assets.py."
+  },
+
+  "key_message": {
+    "headline": "Atlas n'est pas un logiciel d'inondation : c'est une console de décision territoriale multi-thématiques dont l'inondation n'est qu'une branche.",
+    "one_liner": "Une carte stratégique jouable du territoire réel, extensible par modules, où l'on explore des vues, leurs interactions et des décisions.",
+    "fil_rouge": "pentes → écoulement → réseau pluvial → risque d'inondation → moyens de sauvetage (l'exemple prioritaire, pas le projet entier)",
+    "method_steps": [
+      "Rendre l'interface et les modes utilisables",
+      "Intégrer les données territoriales jugées urgentes",
+      "Approfondir les modules et leurs liens",
+      "Ajouter des simulations seulement lorsqu'elles sont fondées et vérifiables"
+    ],
+    "vigilance": "Un placeholder, une donnée réelle, une prévision officielle et un résultat simulé doivent rester clairement distingués. Un chiffre ou un « effet avant/après » inventé pour la démonstration ne doit jamais ressembler à une estimation fiable."
+  },
+
+  "statuses": [
+    { "id": "EMPTY",  "label": "Vide",       "color": "#8a8f98", "meaning": "Déclaré dans la structure, aucun contenu ni géométrie" },
+    { "id": "SHELL",  "label": "Coquille",   "color": "#4a90d9", "meaning": "Structure navigable, contenu/géométrie indicatifs (placeholder assumé)" },
+    { "id": "DATA",   "label": "Donnée",     "color": "#2e9e5b", "meaning": "Alimenté par un dataset canonique ou une source documentaire" },
+    { "id": "LIVE",   "label": "Temps réel", "color": "#0fb5b5", "meaning": "Flux ou suivi en continu (cible, rien n'est live en Phase 0)" },
+    { "id": "SIM",    "label": "Simulation", "color": "#e08a2e", "meaning": "Résultat calculé par un moteur vérifiable — les deltas actuels sont des placeholders, pas des simulations" }
+  ],
+
+  "modes": [
+    { "id": "territoire", "icon": "🗺️", "name": "Territoire", "status": "SHELL",
+      "question": "Qu'y a-t-il, où, et sous quelle gouvernance ?",
+      "note": "Limites stylisées ; bâti/quartiers indicatifs → données IGN Phase 1",
+      "layers": [
+        { "name": "Limites communales", "status": "SHELL" },
+        { "name": "Bâti & quartiers", "status": "SHELL" },
+        { "name": "Voisins (Sète, Vic, Poussan, Mireval)", "status": "SHELL" },
+        { "name": "Voie ferrée & grands axes", "status": "SHELL" }
+      ] },
+    { "id": "relief", "icon": "⛰️", "name": "Relief & pentes", "status": "SHELL",
+      "question": "Où l'eau va-t-elle quand il pleut ?",
+      "note": "Ombrage stylisé de la Gardiole ; talwegs & bassins versants indicatifs → MNT RGE ALTI Phase 1",
+      "layers": [
+        { "name": "Massif de la Gardiole (ombrage)", "status": "SHELL" },
+        { "name": "Talwegs — écoulements préférentiels", "status": "SHELL" },
+        { "name": "Bassin versant nord", "status": "SHELL" },
+        { "name": "MNT / pentes fines", "status": "EMPTY" }
+      ] },
+    { "id": "eau", "icon": "💧", "name": "Cycle de l'eau", "status": "SHELL",
+      "question": "Comment vivent Thau, les nappes et les zones humides ?",
+      "note": "Thau & exutoires alimentés par le dataset cévenols ; nappes à documenter",
+      "layers": [
+        { "name": "Étang de Thau", "status": "DATA" },
+        { "name": "Exutoires vers Thau", "status": "DATA" },
+        { "name": "Canal du Rhône à Sète", "status": "SHELL" },
+        { "name": "Zones humides (Aresquiers)", "status": "SHELL" },
+        { "name": "Nappes", "status": "EMPTY" }
+      ] },
+    { "id": "pluvial", "icon": "🚰", "name": "Réseaux pluviaux", "status": "SHELL",
+      "question": "Le réseau absorbe-t-il la pluie normale… et l'exceptionnelle ?",
+      "note": "Tracés indicatifs ; plan des réseaux (mairie) = priorité Phase 1 ; désordres SMBT & épisode 2019 en DATA",
+      "layers": [
+        { "name": "Collecteur principal", "status": "SHELL" },
+        { "name": "Collecteurs secondaires", "status": "SHELL" },
+        { "name": "Avantoirs / points noirs", "status": "SHELL" },
+        { "name": "Exutoires (sollicitation début 2026, SMBT)", "status": "DATA" },
+        { "name": "Bassins existants (recensement)", "status": "EMPTY" }
+      ] },
+    { "id": "inondation", "icon": "🌊", "name": "Inondation", "status": "DATA",
+      "question": "Que se passe-t-il quand la capacité est dépassée ?",
+      "note": "Zones de blocage alimentées par le dataset cévenols (PCS 2025, SMBT, PPRI) ; aléas réglementaires (PPRI/AZI) en coquille → Géorisques Phase 1",
+      "layers": [
+        { "name": "Zones de blocage cévenols (5)", "status": "DATA" },
+        { "name": "PPRI (périmètre indicatif)", "status": "SHELL" },
+        { "name": "Submersion marine (lido)", "status": "SHELL" },
+        { "name": "AZI — atlas des zones inondables", "status": "EMPTY" },
+        { "name": "Enjeux industriels / ICPE (pollutions secondaires)", "status": "SHELL" }
+      ] },
+    { "id": "secours", "icon": "🚨", "name": "Urgence & secours", "status": "DATA",
+      "question": "Qui agit, par où, et en combien de temps ?",
+      "note": "PCS 2025 & axes de secours via dataset cévenols ; équipes mobiles = unités stylisées",
+      "layers": [
+        { "name": "PCS 2025 (organisation, alerte)", "status": "DATA" },
+        { "name": "Axes & itinéraires de secours", "status": "DATA" },
+        { "name": "Équipes mobiles (unités)", "status": "SHELL" },
+        { "name": "Bâtiments enjeux (mairie, CSI, écoles, campings)", "status": "SHELL" },
+        { "name": "Points de regroupement / refuges", "status": "EMPTY" }
+      ] },
+    { "id": "reseaux", "icon": "🔌", "name": "Réseaux techniques", "status": "EMPTY",
+      "question": "Quels autres réseaux soutiennent le territoire ?",
+      "note": "Déclaré vide volontairement : AEP, assainissement, électricité à intégrer plus tard",
+      "layers": [
+        { "name": "AEP (eau potable)", "status": "EMPTY" },
+        { "name": "Assainissement / STEP", "status": "EMPTY" },
+        { "name": "Électricité / éclairage", "status": "EMPTY" }
+      ] },
+    { "id": "urbanisme", "icon": "🏙️", "name": "Urbanisme & foncier", "status": "SHELL",
+      "question": "Où construit-on, où désimperméabilise-t-on ?",
+      "note": "Zonage stylisé ; PLU/SCoT & foncier → agglo/DGFIP Phase 2",
+      "layers": [
+        { "name": "Zones PLU (stylisées)", "status": "SHELL" },
+        { "name": "Trajectoire ZAN", "status": "SHELL" },
+        { "name": "Foncier mobilisable", "status": "EMPTY" }
+      ] },
+    { "id": "nature", "icon": "🌳", "name": "Nature & milieux", "status": "SHELL",
+      "question": "Quelles trames et milieux protègent et rafraîchissent ?",
+      "note": "Gardiole (Natura 2000), Aresquiers, TVB ; vignoble AOC Muscat",
+      "layers": [
+        { "name": "Massif de la Gardiole (espaces naturels)", "status": "SHELL" },
+        { "name": "Zones humides & Aresquiers", "status": "SHELL" },
+        { "name": "TVB — corridor écologique", "status": "SHELL" },
+        { "name": "Vignoble AOC Muscat", "status": "SHELL" }
+      ] },
+    { "id": "climat", "icon": "🌡️", "name": "Climat", "status": "DATA",
+      "question": "Quel climat se prépare, de Thau au Pacifique ?",
+      "note": "Watchpoints climat du bassin de Thau alimentés par le dataset El Niño 2026 ; ICU à documenter",
+      "layers": [
+        { "name": "Watchpoints climat Thau (dataset El Niño)", "status": "DATA" },
+        { "name": "Littoral & lagune", "status": "SHELL" },
+        { "name": "Îlots de chaleur urbains (ICU)", "status": "EMPTY" }
+      ] },
+    { "id": "mobilites", "icon": "🚌", "name": "Mobilités", "status": "SHELL",
+      "question": "Comment entre-t-on, sort-on, se déplace-t-on ?",
+      "note": "Axes principaux stylisés (D600, voie ferrée, route de la plage) ; TC & modes doux à intégrer",
+      "layers": [
+        { "name": "Axes routiers & ferroviaires", "status": "SHELL" },
+        { "name": "Gare & pôles", "status": "SHELL" },
+        { "name": "Transports collectifs", "status": "EMPTY" },
+        { "name": "Modes doux", "status": "EMPTY" }
+      ] },
+    { "id": "economie", "icon": "💼", "name": "Économie & société", "status": "SHELL",
+      "question": "Quelles activités, quelle saisonnalité, quels enjeux ?",
+      "note": "Port, ZI La Peyrade, vignoble AOC, tourisme & saisonnalité (campings)",
+      "layers": [
+        { "name": "Port & activités maritimes", "status": "SHELL" },
+        { "name": "ZI La Peyrade (emplois, ICPE)", "status": "SHELL" },
+        { "name": "Vignoble AOC Muscat", "status": "SHELL" },
+        { "name": "Tourisme & saisonnalité (campings)", "status": "SHELL" }
+      ] },
+    { "id": "gouvernance", "icon": "🏛️", "name": "Gouvernance", "status": "DATA",
+      "question": "Qui décide, avec quels budgets et compétences ?",
+      "note": "PAPI de Thau 2026-2031 (46 actions, 25 communes, ≈6,8 M€) via dataset cévenols ; acteurs & compétences à documenter",
+      "layers": [
+        { "name": "Budgets & programmes (PAPI Thau)", "status": "DATA" },
+        { "name": "Acteurs & compétences (commune, agglo, SMBT)", "status": "SHELL" },
+        { "name": "Intercommunalité (Sète Agglopôle)", "status": "SHELL" }
+      ] },
+    { "id": "scenario", "icon": "⚖️", "name": "Scénario", "status": "SIM",
+      "question": "Que changerait telle ou telle action ?",
+      "note": "Comparateur avant/après sur la base des actions choisies dans l'arbre — deltas 100 % placeholders jusqu'aux simulations Phase 3",
+      "layers": [
+        { "name": "Projets « fantômes » (actions sur la carte)", "status": "SHELL" },
+        { "name": "Deltas indicateurs avant/après", "status": "SIM" }
+      ] }
+  ],
+
+  "modules": [
+    { "id": "risques", "icon": "🛡️", "name": "Risques & résilience", "color": "#d9534f", "status": "DATA",
+      "modes": ["inondation"],
+      "submodules": [
+        { "id": "inondation-ruissellement", "name": "Inondation — ruissellement Gardiole→ville", "status": "DATA" },
+        { "id": "submersion-marine", "name": "Submersion marine (lido, littoral bas)", "status": "SHELL" },
+        { "id": "risque-industriel", "name": "Risque industriel / ICPE (La Peyrade)", "status": "SHELL" },
+        { "id": "incendie", "name": "Incendie de végétation (Gardiole)", "status": "EMPTY" },
+        { "id": "argiles", "name": "Retrait-gonflement des argiles", "status": "EMPTY" },
+        { "id": "multi-risques", "name": "Multi-risques & effets en chaîne", "status": "EMPTY" }
+      ] },
+    { "id": "pluvial", "icon": "🚰", "name": "Pluvial & drainage", "color": "#4a90d9", "status": "SHELL",
+      "modes": ["pluvial"],
+      "submodules": [
+        { "id": "plan-reseaux", "name": "Plan des réseaux (collecteurs, exutoires)", "status": "SHELL" },
+        { "id": "pentes-ecoulements", "name": "Pentes & écoulements (talwegs)", "status": "SHELL" },
+        { "id": "capacites", "name": "Capacités & dimensionnement", "status": "EMPTY" },
+        { "id": "entretien", "name": "Entretien (curage, débris)", "status": "EMPTY" },
+        { "id": "alternatives", "name": "Noues, bassins, désimperméabilisation", "status": "SHELL" }
+      ] },
+    { "id": "secours", "icon": "🚨", "name": "Secours & crise", "color": "#e08a2e", "status": "DATA",
+      "modes": ["secours"],
+      "submodules": [
+        { "id": "pcs", "name": "PCS 2025 (plan communal de sauvegarde)", "status": "DATA" },
+        { "id": "equipes", "name": "Équipes mobiles (sauvetage, curage)", "status": "SHELL" },
+        { "id": "evacuation", "name": "Axes & itinéraires d'évacuation", "status": "DATA" },
+        { "id": "materiel", "name": "Matériel & moyens", "status": "EMPTY" },
+        { "id": "temps-reel", "name": "Cellule de crise temps réel (cible LIVE)", "status": "EMPTY" },
+        { "id": "retex", "name": "RETEX (retours d'expérience)", "status": "SHELL" }
+      ] },
+    { "id": "eau", "icon": "🌊", "name": "Eau & milieux", "color": "#0fb5b5", "status": "DATA",
+      "modes": ["eau"],
+      "submodules": [
+        { "id": "thau", "name": "Étang de Thau (lagune, exutoires)", "status": "DATA" },
+        { "id": "qualite", "name": "Qualité des eaux", "status": "SHELL" },
+        { "id": "usages", "name": "Usages (conchyliculture, pêche, loisirs)", "status": "SHELL" },
+        { "id": "nappes", "name": "Nappes & ressources", "status": "EMPTY" }
+      ] },
+    { "id": "amenagement", "icon": "🏙️", "name": "Aménagement & urbanisme", "color": "#9b59b6", "status": "SHELL",
+      "modes": ["urbanisme"],
+      "submodules": [
+        { "id": "plu", "name": "PLU / zonage", "status": "SHELL" },
+        { "id": "zan", "name": "ZAN — trajectoire d'artificialisation", "status": "SHELL" },
+        { "id": "renaturation", "name": "Renaturation & désimperméabilisation", "status": "SHELL" },
+        { "id": "habitat", "name": "Habitat & foncier", "status": "EMPTY" }
+      ] },
+    { "id": "nature", "icon": "🌳", "name": "Nature & climat", "color": "#2e9e5b", "status": "DATA",
+      "modes": ["nature", "climat"],
+      "submodules": [
+        { "id": "tvb", "name": "TVB — trame verte et bleue", "status": "SHELL" },
+        { "id": "milieux", "name": "Milieux (Gardiole, Aresquiers, zones humides)", "status": "SHELL" },
+        { "id": "icu", "name": "Îlots de chaleur urbains", "status": "EMPTY" },
+        { "id": "scenarios-climat", "name": "Scénarios climat (dataset El Niño 2026)", "status": "DATA" },
+        { "id": "littoral", "name": "Littoral & trait de côte", "status": "SHELL" }
+      ] },
+    { "id": "societe", "icon": "🏛️", "name": "Société, économie & gouvernance", "color": "#c9a227", "status": "DATA",
+      "modes": ["economie", "gouvernance"],
+      "submodules": [
+        { "id": "demographie-saison", "name": "Démographie & saisonnalité (campings, tourisme)", "status": "SHELL" },
+        { "id": "economie-locale", "name": "Économie locale (port, ZI, AOC Muscat)", "status": "SHELL" },
+        { "id": "competences", "name": "Compétences & acteurs (commune, agglo, SMBT, GEMAPI)", "status": "SHELL" },
+        { "id": "budgets", "name": "Budgets & programmes (PAPI Thau 2026-2031)", "status": "DATA" },
+        { "id": "participation", "name": "Participation citoyenne", "status": "EMPTY" }
+      ] }
+  ],
+
+  "actions": [
+    { "id": "a-carto", "name": "Cartographie fine du ruissellement (AZI+)", "module": "risques",
+      "cost": "150–250 k€", "cost_basis": "placeholder", "delay": "12–18 mois", "prereqs": [],
+      "effects": [ { "indicator": "risque", "delta": -5, "basis": "placeholder" }, { "indicator": "perf", "delta": 3, "basis": "placeholder" } ],
+      "map_object": "talwegs", "sim_hook": "Alimenterait le mode Relief et la future simulation d'écoulement",
+      "status": "SHELL", "note": "Étude préalable : désordres majeurs Gardiole→centre-ville documentés par le SMBT", "source_id": "s-smbt" },
+    { "id": "a-capteurs", "name": "Capteurs & observatoire amont (type VigiThau)", "module": "risques",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "6–12 mois", "prereqs": ["a-carto"],
+      "effects": [ { "indicator": "preparation", "delta": 10, "basis": "placeholder" }, { "indicator": "risque", "delta": -3, "basis": "placeholder" } ],
+      "map_object": "gardiole", "map_preview": { "lat": 43.4950, "lon": 3.7950, "label": "Capteurs amont" },
+      "sim_hook": "Prérequis de la cellule temps réel (cible LIVE)", "status": "SHELL", "note": "Connaître avant d'agir — priorité P1 du diagnostic cévenols", "source_id": "s-cevenols" },
+    { "id": "a-noues", "name": "Noues végétalisées le long des talwegs", "module": "pluvial",
+      "cost": "80–150 €/m²", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": [],
+      "effects": [ { "indicator": "perf", "delta": 8, "basis": "placeholder" }, { "indicator": "nature", "delta": 3, "basis": "placeholder" }, { "indicator": "icu", "delta": -2, "basis": "placeholder" }, { "indicator": "acceptabilite", "delta": 2, "basis": "placeholder" } ],
+      "map_object": "talwegs", "map_preview": { "lat": 43.4620, "lon": 3.7350, "label": "Noues" },
+      "sim_hook": "Ralentir l'eau avant la ville — effet à simuler (Phase 3)", "status": "SHELL", "note": "Solution P2 « retenir / ralentir » du diagnostic cévenols", "source_id": "s-cevenols" },
+    { "id": "a-bassin", "name": "Bassin de rétention amont (pied de Gardiole)", "module": "pluvial",
+      "cost": "1,5–3 M€", "cost_basis": "placeholder", "delay": "24 mois", "prereqs": ["a-carto"],
+      "effects": [ { "indicator": "perf", "delta": 12, "basis": "placeholder" }, { "indicator": "risque", "delta": -10, "basis": "placeholder" } ],
+      "map_object": "gardiole", "map_preview": { "lat": 43.4780, "lon": 3.7520, "label": "Bassin amont" },
+      "sim_hook": "Écrêter le pic — dimensionnement à étudier (pas une estimation)", "status": "SHELL", "note": "Dimension : placeholder ; site exact à définir par étude", "source_id": "s-papi" },
+    { "id": "a-collecteur", "name": "Reprise du collecteur principal", "module": "pluvial",
+      "cost": "2–4 M€", "cost_basis": "placeholder", "delay": "36 mois", "prereqs": [],
+      "effects": [ { "indicator": "perf", "delta": 15, "basis": "placeholder" }, { "indicator": "risque", "delta": -8, "basis": "placeholder" } ],
+      "map_object": "collecteur-principal", "sim_hook": "Déboucher le goulot — capacité réelle inconnue (plan des réseaux requis)", "status": "SHELL", "note": "Chantier lourd : activer l'overlay « chantiers » pendant les travaux", "source_id": "s-smbt" },
+    { "id": "a-desimperm", "name": "Désimperméabilisation (écoles, stationnements)", "module": "amenagement",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "6–12 mois", "prereqs": [],
+      "effects": [ { "indicator": "perf", "delta": 2, "basis": "placeholder" }, { "indicator": "icu", "delta": -1, "basis": "placeholder" }, { "indicator": "acceptabilite", "delta": 3, "basis": "placeholder" } ],
+      "map_object": "ecoles", "map_preview": { "lat": 43.4520, "lon": 3.7090, "label": "Désimperméabilisation" },
+      "sim_hook": "Gagner sur tous les tableaux, à petite échelle", "status": "SHELL", "note": "Cibles : cours d'écoles, parkings, voiries basses", "source_id": "s-cevenols" },
+    { "id": "a-pcs", "name": "Renforcement du PCS (formation + exercice annuel)", "module": "secours",
+      "cost": "50–100 k€/an", "cost_basis": "placeholder", "delay": "6 mois", "prereqs": [],
+      "effects": [ { "indicator": "preparation", "delta": 12, "basis": "placeholder" }, { "indicator": "conformite", "delta": 5, "basis": "placeholder" } ],
+      "map_object": "mairie", "sim_hook": "Délais d'alerte courts documentés par le PCS 2025 — l'exercice est le vrai test", "status": "SHELL", "note": "Le PCS 2025 existe déjà : il s'agit de l'entretenir et de l'exercer", "source_id": "s-pcs" },
+    { "id": "a-axes", "name": "Axe d'évacuation alternatif (vers le nord)", "module": "secours",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": ["a-carto"],
+      "effects": [ { "indicator": "preparation", "delta": 6, "basis": "placeholder" }, { "indicator": "risque", "delta": -2, "basis": "placeholder" } ],
+      "map_object": "axes-secours", "sim_hook": "Isolement de quartiers documenté (PCS) — tester les itinéraires en crue", "status": "SHELL", "note": "Répond au blocage « déplacements & secours » du diagnostic cévenols", "source_id": "s-cevenols" },
+    { "id": "a-cellule", "name": "Cellule de crise temps réel (capteurs + main courante)", "module": "secours",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "18 mois", "prereqs": ["a-capteurs", "a-pcs"],
+      "effects": [ { "indicator": "preparation", "delta": 15, "basis": "placeholder" } ],
+      "map_object": "csi", "sim_hook": "Cible le statut LIVE : rien n'est temps réel en Phase 0", "status": "SHELL", "note": "Nécessite capteurs (a-capteurs) ET exercice PCS (a-pcs)", "source_id": "s-vigithau" },
+    { "id": "a-restauration", "name": "Restauration des écoulements Gardiole→centre (PAPI)", "module": "eau",
+      "cost": "programme PAPI 2026–2031 (à confirmer)", "cost_basis": "placeholder", "delay": "2026–2031", "prereqs": ["a-carto"],
+      "effects": [ { "indicator": "perf", "delta": 10, "basis": "placeholder" }, { "indicator": "nature", "delta": 4, "basis": "placeholder" } ],
+      "map_object": "talwegs", "map_preview": { "lat": 43.4650, "lon": 3.7420, "label": "Restauration écoulements" },
+      "sim_hook": "Programme réel (PAPI) — l'ampleur des effets reste à évaluer", "status": "SHELL", "note": "Action inscrite au PAPI de Thau (46 actions, 25 communes, ≈6,8 M€)", "source_id": "s-papi" },
+    { "id": "a-renaturation", "name": "Renaturation d'un talweg urbain", "module": "nature",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "18 mois", "prereqs": ["a-noues"],
+      "effects": [ { "indicator": "nature", "delta": 6, "basis": "placeholder" }, { "indicator": "icu", "delta": -2, "basis": "placeholder" }, { "indicator": "acceptabilite", "delta": 2, "basis": "placeholder" } ],
+      "map_object": "talwegs", "map_preview": { "lat": 43.4580, "lon": 3.7280, "label": "Renaturation" },
+      "sim_hook": "Cumul avec les noues — interactions à modéliser", "status": "SHELL", "note": "S'appuie sur les noues (a-noues)", "source_id": "s-cevenols" },
+    { "id": "a-tvb", "name": "Corridor écologique Gardiole–étang", "module": "nature",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "36 mois", "prereqs": [],
+      "effects": [ { "indicator": "nature", "delta": 8, "basis": "placeholder" } ],
+      "map_object": "tvb", "sim_hook": "Reconnecter les milieux — bénéfices diffusoires", "status": "SHELL", "note": "Trame verte & bleue : Gardiole → Aresquiers → Thau", "source_id": "s-atlas" },
+    { "id": "a-zan", "name": "Trajectoire ZAN inscrite au PLU", "module": "amenagement",
+      "cost": "étude", "cost_basis": "placeholder", "delay": "24 mois", "prereqs": [],
+      "effects": [ { "indicator": "zan", "delta": 10, "basis": "placeholder" }, { "indicator": "conformite", "delta": 3, "basis": "placeholder" } ],
+      "map_object": "plu-zones", "sim_hook": "Cadre réglementaire : effet lent et structurel", "status": "SHELL", "note": "ZAN = zéro artificialisation nette (trajectoire)", "source_id": "s-atlas" },
+    { "id": "a-budget", "name": "Enveloppe résilience (budget participatif)", "module": "societe",
+      "cost": "à documenter", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": [],
+      "effects": [ { "indicator": "acceptabilite", "delta": 8, "basis": "placeholder" }, { "indicator": "budget", "delta": -0.5, "basis": "placeholder" } ],
+      "map_object": "mairie", "sim_hook": "L'acceptabilité conditionne la faisabilité des travaux", "status": "SHELL", "note": "Marge à arbitrer avec les budgets programmes existants (PAPI)", "source_id": "s-atlas" },
+    { "id": "a-gemapi", "name": "Convention GEMAPI agglo / SMBT", "module": "societe",
+      "cost": "—", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": [],
+      "effects": [ { "indicator": "conformite", "delta": 8, "basis": "placeholder" }, { "indicator": "preparation", "delta": 3, "basis": "placeholder" } ],
+      "map_object": "commune-limite", "sim_hook": "Clarifier qui fait quoi — condition des gros investissements", "status": "SHELL", "note": "GEMAPI : gestion des milieux aquatiques et prévention des inondations", "source_id": "s-papi" }
+  ],
+
+  "indicators": [
+    { "id": "risque", "icon": "⚠️", "name": "Risque inondation", "unit": "indice 0–100", "direction": "lower", "status": "SHELL", "baseline": 68, "baseline_basis": "placeholder", "note": "Indice composite de démonstration — pas une modélisation de l'aléa" },
+    { "id": "perf", "icon": "🚰", "name": "Performance pluviale", "unit": "%", "direction": "higher", "status": "EMPTY", "baseline": null, "baseline_basis": "à établir", "note": "Dépend du plan des réseaux (Phase 1)" },
+    { "id": "preparation", "icon": "🚨", "name": "Préparation de crise", "unit": "%", "direction": "higher", "status": "SHELL", "baseline": 55, "baseline_basis": "placeholder", "note": "Le PCS 2025 existe (réel) ; la valeur chiffrée reste un placeholder" },
+    { "id": "nature", "icon": "🌳", "name": "Nature & biodiversité", "unit": "indice 0–100", "direction": "higher", "status": "EMPTY", "baseline": null, "baseline_basis": "à établir", "note": "À construire sur la TVB et les inventaires" },
+    { "id": "icu", "icon": "🌡️", "name": "Îlots de chaleur", "unit": "indice 0–100", "direction": "lower", "status": "EMPTY", "baseline": null, "baseline_basis": "à établir", "note": "Cartographie ICU à produire" },
+    { "id": "budget", "icon": "💰", "name": "Budget mobilisable", "unit": "M€", "direction": "higher", "status": "DATA", "baseline": 6.8, "baseline_basis": "documenté — PAPI de Thau 2026–2031 (46 actions, 25 communes)", "note": "Seule valeur documentée du tableau : le PAPI labellisé avril 2026" },
+    { "id": "acceptabilite", "icon": "🤝", "name": "Acceptabilité sociale", "unit": "indice 0–100", "direction": "higher", "status": "EMPTY", "baseline": null, "baseline_basis": "à établir", "note": "Enjeu fort : saisonnalité, usages, vignoble, littoral" },
+    { "id": "zan", "icon": "🏙️", "name": "Trajectoire ZAN", "unit": "indice 0–100", "direction": "higher", "status": "SHELL", "baseline": null, "baseline_basis": "à établir", "note": "Qualité de la trajectoire d'artificialisation nette" },
+    { "id": "conformite", "icon": "✅", "name": "Conformité réglementaire", "unit": "%", "direction": "higher", "status": "SHELL", "baseline": 60, "baseline_basis": "placeholder", "note": "PPRI/PCS/DICRIM existent (réel) ; la valeur chiffrée reste un placeholder" }
+  ],
+
+  "units": [
+    { "id": "zone", "name": "Zones", "status": "SHELL", "desc": "Territoires délimités : quartiers, massif, étang, zones réglementaires, bassins versants", "examples": "centre-ville · Gardiole · étang de Thau · PPRI" },
+    { "id": "reseau", "name": "Réseaux", "status": "SHELL", "desc": "Linéaires structurants : collecteurs, talwegs, axes, corridors, canal", "examples": "collecteur principal · talwegs · axes de secours · TVB" },
+    { "id": "ouvrage", "name": "Ouvrages", "status": "SHELL", "desc": "Objets techniques ponctuels : exutoires, avaloirs, bassins, stations", "examples": "exutoires Thau · points noirs · bassins (à recenser)" },
+    { "id": "batiment", "name": "Bâtiments enjeux", "status": "SHELL", "desc": "Équipements critiques ou sensibles : mairie, CSI, écoles, campings, gare, port", "examples": "mairie · centre de secours · campings (saisonnalité)" },
+    { "id": "equipe", "name": "Équipes mobiles", "status": "SHELL", "desc": "« Unités » du territoire : équipes de sauvetage, curage, intervention — visibles en mode secours", "examples": "équipe sauvetage · équipe curage" },
+    { "id": "projet", "name": "Projets « fantômes »", "status": "SHELL", "desc": "Actions envisagées dans le scénario, dessinées en pointillés sur la carte", "examples": "noues · bassin amont · capteurs (si ajoutés au scénario)" }
+  ],
+
+  "overlays": [
+    { "id": "meteo", "icon": "🌦️", "name": "Météo", "status": "SHELL", "note": "Vigilance épisode — branchement Météo-France en Phase 1" },
+    { "id": "alertes", "icon": "📢", "name": "Alertes", "status": "SHELL", "note": "Alertes & consignes PCS (simulation décorative)" },
+    { "id": "chantiers", "icon": "🚧", "name": "Chantiers", "status": "SHELL", "note": "Travaux en cours impactant réseaux & axes" },
+    { "id": "annotations", "icon": "📌", "name": "Annotations", "status": "SHELL", "note": "Notes utilisateur (stockage local)" }
+  ],
+
+  "map": {
+    "note": "Carte stylisée indicative (ni étude hydraulique ni géodésie). Les 6 zones cévenols utilisent les coordonnées indicatives du dataset frontignan-cevenols-2026 ; les watchpoints climat ceux du dataset el-nino-godzilla-2026.",
+    "projection": { "lon_min": 3.62, "lon_max": 3.88, "lat_min": 43.38, "lat_max": 43.53, "width": 1000, "height": 700, "type": "équirectangulaire stylisée" },
+    "objects": [
+      { "id": "etang-thau", "kind": "zone", "name": "Étang de Thau", "modes": ["*"], "status": "SHELL", "desc": "Lagune — exutoire du bassin, enjeu conchylicole et écologique majeur." },
+      { "id": "mer", "kind": "zone", "name": "Mer Méditerranée", "modes": ["*"], "status": "SHELL", "desc": "Littoral ouvert — golfe du Lion." },
+      { "id": "lido", "kind": "zone", "name": "Lido Frontignan–Sète", "modes": ["*"], "status": "SHELL", "desc": "Cordon littoral entre mer et étang — enjeu submersion marine et fréquentation estivale." },
+      { "id": "commune-limite", "kind": "zone", "name": "Frontignan (limites communales)", "modes": ["territoire", "gouvernance"], "status": "SHELL", "desc": "Périmètre stylisé — limites officielles IGN à brancher en Phase 1.", "data_link": null },
+      { "id": "gardiole", "kind": "zone", "name": "Massif de la Gardiole", "modes": ["territoire", "relief", "nature", "pluvial", "inondation"], "status": "DATA", "desc": "Amont des ruissellements : désordres majeurs documentés vers le centre-ville (SMBT).", "data_link": { "dataset": "frontignan-cevenols-2026", "watchpoint": "gardiole-amont" } },
+      { "id": "centre-ville", "kind": "zone", "name": "Centre-ville — points bas", "modes": ["territoire", "inondation", "pluvial", "secours", "economie"], "status": "DATA", "desc": "Réceptacle des écoulements de la Gardiole ; points bas et saturation réseaux documentés.", "data_link": { "dataset": "frontignan-cevenols-2026", "watchpoint": "centre-ville-frontignan" } },
+      { "id": "zi-peyrade", "kind": "zone", "name": "ZA/ZI La Peyrade", "modes": ["territoire", "economie", "inondation", "secours"], "status": "DATA", "desc": "Enjeux industriels & risque de pollutions secondaires en cas d'inondation.", "data_link": { "dataset": "frontignan-cevenols-2026", "watchpoint": "zi-peyrade" } },
+      { "id": "plage", "kind": "zone", "name": "Frontignan-plage — littoral bas", "modes": ["territoire", "economie", "inondation", "secours"], "status": "DATA", "desc": "Littoral bas : submersion marine, isolement possible, saisonnalité extrême.", "data_link": { "dataset": "frontignan-cevenols-2026", "watchpoint": "frontignan-plage" } },
+      { "id": "quartiers-nord", "kind": "zone", "name": "Quartiers nord", "modes": ["territoire", "urbanisme", "pluvial"], "status": "SHELL", "desc": "Extension résidentielle nord (stylisée) — à documenter (PLU)." },
+      { "id": "vignobles-muscat", "kind": "zone", "name": "Vignoble AOC Muscat", "modes": ["territoire", "economie", "nature"], "status": "SHELL", "desc": "Territoire viticole AOC Muscat de Frontignan — identité économique et paysagère." },
+      { "id": "aresquiers", "kind": "zone", "name": "Les Aresquiers & zones humides", "modes": ["nature", "eau", "territoire"], "status": "SHELL", "desc": "Zone humide littorale entre Gardiole et étang — milieux, lagunage naturel." },
+      { "id": "bassin-versant-nord", "kind": "zone", "name": "Bassin versant nord (versant Gardiole)", "modes": ["relief", "pluvial"], "status": "SHELL", "desc": "Le bassin qui alimente la ville en écoulements — périmètre indicatif." },
+      { "id": "ppri", "kind": "zone", "name": "PPRI (périmètre indicatif)", "modes": ["inondation", "urbanisme"], "status": "SHELL", "desc": "Plan de prévention du risque inondation — zone stylisée, données réglementaires à intégrer (Géorisques/DDTM)." },
+      { "id": "submersion-lido", "kind": "zone", "name": "Aléa submersion marine (lido)", "modes": ["inondation", "climat"], "status": "SHELL", "desc": "Bande littorale exposée aux surcotes — épisode de référence à documenter." },
+      { "id": "icpe", "kind": "zone", "name": "Enjeux industriels (ICPE)", "modes": ["inondation", "economie"], "status": "SHELL", "desc": "Installations classées de La Peyrade : pollutions secondaires redoutées (PCS 2025)." },
+      { "id": "plu-zones", "kind": "zone", "name": "Zonage PLU (stylisé)", "modes": ["urbanisme"], "status": "SHELL", "desc": "Grands ensembles de zonage — document PLU à intégrer (Phase 2)." },
+      { "id": "nappes", "kind": "zone", "name": "Nappes", "modes": ["eau"], "status": "EMPTY", "desc": "Déclaré vide : ressources souterraines à documenter (Sandre/ARS)." },
+      { "id": "icu", "kind": "zone", "name": "Îlots de chaleur", "modes": ["climat", "nature"], "status": "EMPTY", "desc": "Déclaré vide : cartographie ICU à produire." },
+      { "id": "talwegs", "kind": "reseau", "name": "Talwegs — écoulements préférentiels", "modes": ["relief", "pluvial", "inondation"], "status": "SHELL", "desc": "Chemins de l'eau du massif vers la ville (indicatif) — le fil rouge pentes → ville." },
+      { "id": "collecteur-principal", "kind": "reseau", "name": "Collecteur principal", "modes": ["pluvial", "inondation"], "status": "SHELL", "desc": "Tronçon principal vers les exutoires — tracé indicatif, plan des réseaux (mairie) requis." },
+      { "id": "collecteurs-secondaires", "kind": "reseau", "name": "Collecteurs secondaires", "modes": ["pluvial"], "status": "SHELL", "desc": "Maille fine urbaine (stylisée) — à recenser." },
+      { "id": "axes-secours", "kind": "reseau", "name": "Axes & itinéraires de secours", "modes": ["secours", "mobilites"], "status": "DATA", "desc": "Itinéraires de secours & d'évacuation (commune) — délais d'alerte courts (PCS 2025).", "data_link": { "dataset": "frontignan-cevenols-2026", "watchpoint": "axes-secours" } },
+      { "id": "d600", "kind": "reseau", "name": "D600 (Montpellier–Sète)", "modes": ["mobilites", "secours", "territoire"], "status": "SHELL", "desc": "Axe principal nord — accès et évacuation." },
+      { "id": "voie-ferree", "kind": "reseau", "name": "Voie ferrée Montpellier–Sète", "modes": ["mobilites", "territoire"], "status": "SHELL", "desc": "Ligne voyageurs — gare de Frontignan." },
+      { "id": "route-plage", "kind": "reseau", "name": "Route de la plage", "modes": ["mobilites", "secours"], "status": "SHELL", "desc": "Accès lido & campings — saturation estivale." },
+      { "id": "canal-rhone-sete", "kind": "reseau", "name": "Canal du Rhône à Sète", "modes": ["territoire", "eau", "mobilites", "economie"], "status": "SHELL", "desc": "Canal de navigation longeant la rive nord de Thau." },
+      { "id": "tvb", "kind": "reseau", "name": "TVB — corridor écologique", "modes": ["nature"], "status": "SHELL", "desc": "Trame verte & bleue : Gardiole → Aresquiers → Thau (indicatif)." },
+      { "id": "aep", "kind": "reseau", "name": "AEP (eau potable)", "modes": ["reseaux"], "status": "EMPTY", "desc": "Déclaré vide : réseau à documenter." },
+      { "id": "assainissement", "kind": "reseau", "name": "Assainissement", "modes": ["reseaux"], "status": "EMPTY", "desc": "Déclaré vide : réseau & STEP à documenter." },
+      { "id": "elec", "kind": "reseau", "name": "Électricité", "modes": ["reseaux"], "status": "EMPTY", "desc": "Déclaré vide : réseau à documenter." },
+      { "id": "exutoires", "kind": "ouvrage", "name": "Exutoires vers l'étang de Thau", "modes": ["pluvial", "eau", "inondation"], "status": "DATA", "lat": 43.433, "lon": 3.69, "desc": "Sorties des réseaux vers Thau — forte sollicitation documentée début 2026 (SMBT).", "data_link": { "dataset": "frontignan-cevenols-2026", "watchpoint": "exutoires-thau" } },
+      { "id": "points-noirs", "kind": "ouvrage", "name": "Points noirs / avaloirs", "modes": ["pluvial", "inondation"], "status": "SHELL", "lat": 43.4462, "lon": 3.7105, "desc": "Points de débordement connus (PCS/SMBT, épisode 2019) — localisation indicative." },
+      { "id": "bassins-existants", "kind": "ouvrage", "name": "Bassins existants", "modes": ["pluvial"], "status": "EMPTY", "lat": 43.4400, "lon": 3.7200, "desc": "À recenser via le plan des réseaux." },
+      { "id": "mairie", "kind": "batiment", "name": "Mairie", "modes": ["territoire", "gouvernance", "secours"], "status": "SHELL", "lat": 43.4483, "lon": 3.7057, "desc": "Hôtel de ville — poste de commandement en crise (PCS)." },
+      { "id": "csi", "kind": "batiment", "name": "Centre de secours", "modes": ["secours"], "status": "SHELL", "lat": 43.447, "lon": 3.711, "desc": "Centre de secours & intervention (indicatif)." },
+      { "id": "ecoles", "kind": "batiment", "name": "Écoles & équipements", "modes": ["secours", "urbanisme", "climat"], "status": "SHELL", "lat": 43.452, "lon": 3.709, "desc": "Établissements scolaires — cibles de désimperméabilisation et de mise à l'abri." },
+      { "id": "camping", "kind": "batiment", "name": "Campings (saisonnalité)", "modes": ["secours", "economie", "inondation"], "status": "SHELL", "lat": 43.428, "lon": 3.715, "desc": "Hébergements touristiques — population ×N en été, évacuation délicate." },
+      { "id": "gare", "kind": "batiment", "name": "Gare", "modes": ["mobilites"], "status": "SHELL", "lat": 43.451, "lon": 3.703, "desc": "Gare SNCF — accès ferroviaire." },
+      { "id": "port", "kind": "batiment", "name": "Port & escale", "modes": ["economie", "mobilites"], "status": "SHELL", "lat": 43.432, "lon": 3.708, "desc": "Port de plaisance / escale du canal — économie locale." },
+      { "id": "step", "kind": "batiment", "name": "STEP (assainissement)", "modes": ["reseaux", "eau"], "status": "EMPTY", "lat": 43.434, "lon": 3.723, "desc": "Station d'épuration — à documenter." },
+      { "id": "equipe-secours", "kind": "equipe", "name": "Équipe sauvetage (unité)", "modes": ["secours"], "status": "SHELL", "lat": 43.4462, "lon": 3.7118, "desc": "Unité mobile stylisée — position de démonstration." },
+      { "id": "equipe-curage", "kind": "equipe", "name": "Équipe curage / voirie (unité)", "modes": ["secours"], "status": "SHELL", "lat": 43.4412, "lon": 3.7186, "desc": "Unité mobile stylisée — position de démonstration." },
+      { "id": "equipe-peyrade", "kind": "equipe", "name": "Équipe industrielle (unité)", "modes": ["secours"], "status": "SHELL", "lat": 43.4368, "lon": 3.7277, "desc": "Unité mobile stylisée — position de démonstration." }
+    ]
+  },
+
+  "phases": [
+    { "id": "phase-0", "name": "Phase 0 — Coquille jouable", "state": "livré", "goal": "Tout le produit dessiné et navigable : modes, modules, objets, actions, indicateurs — avec statuts visibles et placeholders assumés", "deliverables": ["14 modes (dont scénario)", "7 modules / 33 sous-modules", "15 actions (arbre)", "9 indicateurs", "6 zones cévenols & watchpoints climat branchés en DATA", "comparateur avant/après (placeholders)"] },
+    { "id": "phase-1", "name": "Phase 1 — Données urgentes", "state": "prévu", "goal": "Remplacer les coquilles critiques par des données réelles", "deliverables": ["Limites & bâti (IGN)", "MNT / pentes (RGE ALTI)", "PPRI & AZI (Géorisques, DDTM)", "Plan des réseaux pluviaux (mairie)", "PCS & moyens de secours"] },
+    { "id": "phase-2", "name": "Phase 2 — Modules environnementaux", "state": "prévu", "goal": "Étoffer pluvial, côte, perméabilité, nature", "deliverables": ["Pluvial complet (capacités, entretien)", "Perméabilité / OCS GE", "Littoral & milieux", "Trajectoire ZAN"] },
+    { "id": "phase-3", "name": "Phase 3 — Vraie simulation", "state": "prévu", "goal": "Simulations fondées et vérifiables + comparateur sérieux", "deliverables": ["Moteur d'écoulement (piste open source : LISEM — audit à faire)", "Carte réelle (MapLibre + deck.gl)", "Comparateur avant/après calculé", "Export « élu »"] },
+    { "id": "phase-4", "name": "Phase 4 — Élargissement", "state": "prévu", "goal": "Nature, économie, agglo, crise live", "deliverables": ["Modules nature/économie détaillés", "Périmètre agglo (Sète Agglopôle)", "Cellule de crise temps réel (LIVE)", "RETEX intégrés"] }
+  ],
+
+  "data_sources": [
+    { "id": "ign-rge-alti", "name": "IGN RGE ALTI (MNT)", "scope": "relief, pentes, talwegs", "access": "data.gouv / IGN", "phase": "phase-1", "status": "EMPTY" },
+    { "id": "ign-bd-topo", "name": "IGN BD Topo / Ortho", "scope": "bâti, limites, réseaux", "access": "IGN", "phase": "phase-1", "status": "EMPTY" },
+    { "id": "georisques", "name": "Géorisques", "scope": "PPRI, AZI, argiles, ICPE, CatNat", "access": "georisques.gouv.fr", "phase": "phase-1", "status": "EMPTY" },
+    { "id": "mairie-pcs", "name": "PCS Frontignan 2025", "scope": "organisation de crise, alerte", "access": "mairie (via dataset cévenols)", "phase": "phase-0", "status": "DATA" },
+    { "id": "mairie-reseaux", "name": "Plan des réseaux pluviaux", "scope": "collecteurs, exutoires, bassins", "access": "mairie / agglo", "phase": "phase-1", "status": "EMPTY" },
+    { "id": "smbt", "name": "SMBT — études & PAPI de Thau 2026–2031", "scope": "diagnostic, programme d'actions", "access": "via dataset cévenols", "phase": "phase-0", "status": "DATA" },
+    { "id": "meteo-france", "name": "Météo-France", "scope": "vigilance, alertes (overlay météo)", "access": "API publiques", "phase": "phase-1", "status": "EMPTY" },
+    { "id": "vigithau", "name": "VigiThau", "scope": "observatoire local (référence capteurs)", "access": "via dataset cévenols", "phase": "phase-1", "status": "DATA" },
+    { "id": "thau-alabri", "name": "THAU ALABRI", "scope": "protection habitations", "access": "via dataset cévenols", "phase": "phase-1", "status": "DATA" },
+    { "id": "agglo", "name": "Sète Agglopôle (PLU/SCoT, voirie)", "scope": "urbanisme, voirie", "access": "agglo", "phase": "phase-2", "status": "EMPTY" },
+    { "id": "ocs-ge", "name": "OCS GE (artificialisation)", "scope": "ZAN, perméabilité", "access": "IGN", "phase": "phase-2", "status": "EMPTY" },
+    { "id": "sandre-nappes", "name": "Sandre / ARS (nappes, qualité)", "scope": "eau", "access": "sandre", "phase": "phase-2", "status": "EMPTY" }
+  ],
+
+  "links": [
+    { "label": "Module climat « Atlas Frontignan » (9 onglets, dont ⛈ cévenols)", "url": "el-nino-thau.html", "hash": "#cevenols", "note": "onglet ⛈ Épisodes cévenols — diagnostic complet" },
+    { "label": "Simulation pluie/ruissellement (pédagogique)", "url": "el-nino-thau.html", "hash": "#sim", "note": "onglet 🌧 Simulation" },
+    { "label": "Dataset cévenols (JSON canonique)", "path": "data/climat/frontignan-episodes-cevenols/frontignan-cevenols-2026.json", "note": "5 blocages, 7 solutions, PAPI, pilote — alimente les zones DATA de cette carte" },
+    { "label": "Dataset El Niño (JSON canonique)", "path": "data/climat/el-nino-2026/el-nino-godzilla-2026.json", "note": "watchpoints climat Thau (mode Climat)" },
+    { "label": "GeoJSON watchpoints cévenols (watchtower)", "path": "projects/watchtower/public/data/frontignan-cevenols-watchpoints.geojson", "note": "glisser-déposer sur le globe" },
+    { "label": "GeoJSON watchpoints El Niño (watchtower)", "path": "projects/watchtower/public/data/enso-thau-watchpoints.geojson", "note": "glisser-déposer sur le globe" },
+    { "label": "Deck territorial Frontignan 2026–2040", "url": "index.html", "note": "présentation (19 slides)" },
+    { "label": "Parcours pédagogique El Niño (COGNITORIUM)", "url": "../COGNITORIUM/learning/el-nino-poc.html", "note": "PoC learning engine" },
+    { "label": "API datasets", "url": "/api/climat/datasets", "note": "GET /api/climat/{dataset}/{section}" }
+  ],
+
+  "sources": [
+    { "id": "s-synth-gpt", "title": "Synthèse de discussion « gpt-6-sol-search-max »", "date": "2026-10-11", "note": "aucune source externe citée — sources/syntheses-discussion-2026-10-11.md" },
+    { "id": "s-synth-grok", "title": "Synthèse de discussion « grok-4.5-search »", "date": "2026-10-11", "note": "aucune source externe citée — sources/syntheses-discussion-2026-10-11.md" },
+    { "id": "s-cevenols", "title": "Dataset canonique « Frontignan face aux épisodes cévenols » v1.0.0", "date": "2026-10-11", "note": "blocages, solutions, PAPI, pilote" },
+    { "id": "s-elnino", "title": "Dataset canonique « El Niño 2026–2027 Godzilla × Thau » v1.0.0", "date": "2026-10-11", "note": "watchpoints climat Thau" },
+    { "id": "s-pcs", "title": "PCS Frontignan 2025 (via dataset cévenols)", "date": "2025", "note": "délais d'alerte courts, isolement, enjeux industriels" },
+    { "id": "s-smbt", "title": "Programme d'études SMBT (via dataset cévenols)", "date": "2026", "note": "désordres Gardiole→centre-ville, sollicitation réseaux" },
+    { "id": "s-papi", "title": "PAPI de Thau 2026–2031 (via dataset cévenols)", "date": "2026-04", "note": "46 actions, 25 communes, ≈6,8 M€, labellisé avril 2026" },
+    { "id": "s-vigithau", "title": "VigiThau (via dataset cévenols)", "date": "2026", "note": "référence observatoire/capteurs" },
+    { "id": "s-atlas", "title": "Équipe Atlas (proposition)", "date": "2026-10-11", "note": "actions sans source documentaire — placeholders assumés" }
+  ]
+}

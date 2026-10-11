@@ -300,6 +300,7 @@ footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:v
         <li>Globe watchtower : glisser-déposer <code>projects/watchtower/public/data/enso-thau-watchpoints.geojson</code> sur la carte (import GeoJSON natif)</li>
         <li>Globe watchtower (blocages cévenols) : <code>projects/watchtower/public/data/frontignan-cevenols-watchpoints.geojson</code></li>
         <li>Parcours pédagogique : <code>/preview/COGNITORIUM/learning/el-nino-poc.html</code></li>
+        <li>Console territoriale Atlas : <code>/preview/frontignan/atlas.html</code> (Phase 0 — 14 lentilles de vue, arbre d'actions, scénarios avant/après ; ce module y est une source)</li>
         <li>Ce module est généré : <code>python3 scripts/build_climat_assets.py</code> (template + JSON canoniques)</li>
       </ul>
     </div>
@@ -755,6 +756,9 @@ $('#foot-meta').textContent=`${D.meta.title} — v${D.meta.version}, situation a
 
 /* démarrage de la simulation en dernier : un échec canvas ne doit jamais casser le reste de l'onglet */
 renderSimButtons(); resizeSim(); simTick();
+
+/* navigation par ancre (#cevenols, #sim…) — liens croisés depuis la console Atlas */
+(function(){var h=location.hash.replace('#','');if(h&&TABS.some(t=>t[0]===h))goTab(h);})();
 </script>
 </body>
 </html>

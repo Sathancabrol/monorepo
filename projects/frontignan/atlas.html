@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas Frontignan — console territoriale (Phase 0)</title>
+<style>
+:root{
+  --bg:#0d1420; --panel:#121b2b; --panel2:#0f1725; --line:#22304a; --line2:#2c3d5c;
+  --tx:#dce7f5; --tx2:#8fa3bd; --oc:#1B7F8C; --oc2:#37b2c3;
+  --st-EMPTY:#8a8f98; --st-SHELL:#4a90d9; --st-DATA:#2e9e5b; --st-LIVE:#0fb5b5; --st-SIM:#e08a2e;
+  --warn:#e08a2e; --danger:#d9534f;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{background:var(--bg); color:var(--tx); font:14px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; display:flex; flex-direction:column; overflow:hidden}
+button{font:inherit; color:inherit; background:none; border:none; cursor:pointer}
+a{color:var(--oc2)}
+.small{font-size:12px; color:var(--tx2)}
+b{color:#fff}
+
+/* ───────────────────── header ───────────────────── */
+header{display:flex; align-items:center; gap:14px; padding:8px 14px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap}
+.brand{font-weight:800; letter-spacing:.5px; font-size:16px; white-space:nowrap}
+.brand span{color:var(--oc2); font-weight:600; font-size:12px; margin-left:8px}
+.phase-badge{background:linear-gradient(90deg,#1a4a55,#14313d); border:1px solid var(--oc); color:var(--oc2); font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap}
+.loop{display:flex; gap:2px; align-items:center; font-size:11px; color:var(--tx2); flex-wrap:wrap}
+.loop i{font-style:normal; color:#3d527a}
+.loop b{color:var(--tx); background:var(--panel2); border:1px solid var(--line); padding:2px 8px; border-radius:12px}
+#status-legend{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
+#status-legend .st{font-size:10px; padding:2px 8px; border-radius:10px; border:1px solid; white-space:nowrap}
+#tour-btn{background:var(--oc); color:#04141a; font-weight:700; padding:5px 12px; border-radius:6px; font-size:12px}
+#tour-btn:hover{background:var(--oc2)}
+
+/* ───────────────────── layout ───────────────────── */
+main{flex:1; display:flex; min-height:0}
+#rail{width:198px; background:var(--panel); border-right:1px solid var(--line); overflow-y:auto; padding:8px; flex-shrink:0}
+#mapwrap{flex:1; position:relative; min-width:0; background:#0a111c}
+#map{width:100%; height:100%; display:block}
+#side{width:352px; background:var(--panel); border-left:1px solid var(--line); display:flex; flex-direction:column; flex-shrink:0}
+#drawer{height:242px; background:var(--panel); border-top:1px solid var(--line); display:flex; flex-direction:column; flex-shrink:0}
+
+/* ───────────────────── rail (modes + overlays) ───────────────────── */
+.rail-h{font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--tx2); margin:8px 4px 6px}
+.mode-btn{display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:7px 9px; border-radius:7px; border:1px solid transparent; color:var(--tx2); margin-bottom:2px}
+.mode-btn:hover{background:var(--panel2); color:var(--tx)}
+.mode-btn.on{background:#16303f; border-color:var(--oc); color:#fff}
+.mode-btn .ic{font-size:16px; width:20px; text-align:center}
+.mode-btn .nm{flex:1; font-size:12.5px; line-height:1.2}
+.mode-btn .key{font-size:9px; color:#41557a; border:1px solid var(--line); border-radius:4px; padding:0 4px}
+.mode-btn .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0}
+.ovl-btn{display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:5px 9px; border-radius:7px; color:var(--tx2); font-size:12px}
+.ovl-btn:hover{background:var(--panel2)}
+.ovl-btn.on{background:#33270f; color:#f2c078; border:1px solid #6b5320}
+
+/* ───────────────────── map overlays (UI) ───────────────────── */
+#mode-q{position:absolute; top:10px; left:10px; max-width:340px; background:rgba(13,20,32,.88); border:1px solid var(--line2); border-left:3px solid var(--oc); border-radius:8px; padding:8px 12px; backdrop-filter:blur(2px)}
+#mode-q h2{font-size:14px; margin-bottom:2px}
+#mode-q .q{font-size:12px; color:var(--oc2); font-style:italic}
+#mode-q .n{font-size:11px; color:var(--tx2); margin-top:4px}
+#legend{position:absolute; top:10px; right:10px; width:250px; max-height:70%; overflow-y:auto; background:rgba(13,20,32,.88); border:1px solid var(--line2); border-radius:8px; padding:8px 10px; backdrop-filter:blur(2px)}
+#legend h3{font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--tx2); margin-bottom:6px}
+#legend .ly{display:flex; justify-content:space-between; gap:8px; font-size:11.5px; padding:2.5px 0; border-bottom:1px dashed #1b2а44; border-bottom:1px dashed #1b2944}
+#legend .ly:last-child{border:none}
+#map-disc{position:absolute; bottom:8px; right:10px; font-size:10px; color:#5b6f92; background:rgba(13,20,32,.7); padding:3px 8px; border-radius:6px}
+#tour-box{position:absolute; bottom:26px; left:50%; transform:translateX(-50%); width:min(560px, 92%); background:rgba(15,26,40,.96); border:1px solid var(--oc); border-radius:10px; padding:12px 16px; box-shadow:0 8px 30px rgba(0,0,0,.5)}
+#tour-box h3{color:var(--oc2); font-size:13px; margin-bottom:4px}
+#tour-box p{font-size:12.5px}
+#tour-box .tb-nav{display:flex; gap:8px; justify-content:flex-end; margin-top:8px}
+#tour-box .tb-nav button{background:var(--panel2); border:1px solid var(--line2); border-radius:6px; padding:4px 12px; font-size:12px}
+#tour-box .tb-nav button.p{background:var(--oc); color:#04141a; font-weight:700}
+
+/* ───────────────────── side panel ───────────────────── */
+.tabs{display:flex; border-bottom:1px solid var(--line); flex-shrink:0}
+.tabs button{flex:1; padding:9px 4px; font-size:12px; color:var(--tx2); border-bottom:2px solid transparent}
+.tabs button.on{color:#fff; border-bottom-color:var(--oc)}
+#side-in, #dr-in{flex:1; overflow-y:auto; padding:12px}
+.card{background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:10px}
+.card h3{font-size:13px; margin-bottom:6px; color:#fff}
+.card h4{font-size:12px; margin:8px 0 4px; color:var(--oc2)}
+.st{font-size:10px; padding:1.5px 8px; border-radius:10px; border:1px solid; white-space:nowrap; display:inline-block; vertical-align:middle}
+.st-EMPTY{color:var(--st-EMPTY); border-color:var(--st-EMPTY)}
+.st-SHELL{color:var(--st-SHELL); border-color:var(--st-SHELL)}
+.st-DATA{color:var(--st-DATA); border-color:var(--st-DATA)}
+.st-LIVE{color:var(--st-LIVE); border-color:var(--st-LIVE)}
+.st-SIM{color:var(--st-SIM); border-color:var(--st-SIM)}
+.st-ph{font-size:9px; color:var(--warn); border:1px dashed var(--warn); border-radius:8px; padding:1px 6px; white-space:nowrap}
+.chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:6px}
+.mchip{font-size:10.5px; padding:2px 8px; border-radius:12px; background:var(--panel); border:1px solid var(--line2); color:var(--tx2)}
+.mchip:hover{border-color:var(--oc); color:#fff}
+.kv{font-size:12px; margin:3px 0; color:var(--tx2)}
+.kv b{color:var(--tx)}
+.btn2{display:inline-block; background:#1d3a4a; border:1px solid var(--oc); color:var(--oc2); border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:600; text-decoration:none}
+.btn2:hover{background:#255064; color:#fff}
+.btn-warn{background:#3a2a10; border-color:var(--warn); color:#f2c078}
+.blk{border-left:3px solid var(--st-DATA); background:#0f1f18; border-radius:6px; padding:8px 10px; margin-top:8px; font-size:12px}
+.warnbox{border:1px dashed var(--warn); background:#2a1f0e; color:#f2c078; border-radius:8px; padding:10px 12px; font-size:12px; margin:10px 0}
+
+/* modules */
+.mod-card{border-left:3px solid; border-radius:8px}
+.mod-card .sm{display:flex; justify-content:space-between; gap:6px; font-size:12px; padding:3px 0; border-bottom:1px dashed #1b2944}
+.mod-card .sm:last-child{border:none}
+
+/* indicators */
+.ind{display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px dashed #1b2944}
+.ind:last-child{border:none}
+.ind .ic{font-size:16px; width:22px; text-align:center}
+.ind .body{flex:1; min-width:0}
+.ind .nm{font-size:12.5px; color:#fff}
+.ind .val{font-size:12px; font-weight:700}
+.ind .val.delta{color:var(--warn)}
+.bar{height:5px; background:#1a2537; border-radius:3px; overflow:hidden; margin-top:3px}
+.bar i{display:block; height:100%; border-radius:3px}
+
+/* ───────────────────── drawer ───────────────────── */
+#tree{display:flex; gap:10px; height:100%}
+#tree .cols{display:flex; gap:8px; overflow-x:auto; flex:1; padding-bottom:6px}
+.tcol{min-width:172px; width:172px; flex-shrink:0}
+.tcol>h4{font-size:11px; margin-bottom:6px; padding-bottom:4px; border-bottom:2px solid}
+.act{background:var(--panel2); border:1px solid var(--line); border-radius:7px; padding:6px 8px; margin-bottom:6px; cursor:pointer}
+.act:hover{border-color:var(--line2); background:#152134}
+.act.sel{border-color:var(--oc); background:#16303f}
+.act.insc{border-color:var(--st-DATA); box-shadow:0 0 0 1px var(--st-DATA) inset}
+.act .nm{font-size:11.5px; color:#fff; line-height:1.25}
+.act .meta{font-size:10px; color:var(--tx2); margin-top:3px; display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.act .pr-missing{color:var(--danger); font-size:9.5px}
+#scen{display:flex; gap:12px; height:100%}
+#scen .col{flex:1; overflow-y:auto; min-width:0}
+.scen-act{display:flex; justify-content:space-between; align-items:center; gap:6px; background:var(--panel2); border:1px solid var(--line); border-radius:7px; padding:6px 9px; margin-bottom:6px; font-size:12px}
+.scen-act .rm{color:var(--danger); font-weight:800; padding:0 6px}
+.dtab{font-variant-numeric:tabular-nums}
+.delta-tbl{width:100%; border-collapse:collapse; font-size:12px}
+.delta-tbl td{padding:4px 6px; border-bottom:1px dashed #1b2944}
+.delta-tbl .aft{color:var(--warn); font-weight:700}
+#phases{display:flex; gap:10px; overflow-x:auto; height:100%}
+.ph-card{min-width:225px; width:225px; flex-shrink:0; align-self:flex-start}
+.ph-card .state{font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px}
+.ph-card .state.livré{background:#12331f; color:var(--st-DATA); border:1px solid var(--st-DATA)}
+.ph-card .state.prévu{background:#1c2740; color:var(--st-SHELL); border:1px solid var(--st-SHELL)}
+.ph-card ul{margin-left:14px; font-size:11.5px; color:var(--tx2)}
+#method{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; height:100%; overflow-y:auto}
+#method .card{align-self:start}
+#method ol{margin-left:16px; font-size:12px; color:var(--tx2)}
+#method li{margin:3px 0}
+#method table{width:100%; border-collapse:collapse; font-size:11px}
+#method td{padding:3px 4px; border-bottom:1px dashed #1b2944; vertical-align:top}
+
+/* ───────────────────── SVG map ───────────────────── */
+#map .land{fill:#141d2e}
+#map .obj{cursor:pointer}
+#map .obj:hover{filter:brightness(1.35)}
+#map text{font-family:"Segoe UI",system-ui,sans-serif; pointer-events:none}
+.mlbl{fill:#7d93b5; font-size:13px; font-weight:600; letter-spacing:.5px}
+.mlbl.big{font-size:15px}
+.mlbl.water{fill:#4d7ea8; font-style:italic}
+.slbl{fill:#9db3d4; font-size:10.5px}
+.zone-base{stroke:#33486b; stroke-width:1}
+.ghost{fill:none; stroke:var(--warn); stroke-dasharray:5 4; stroke-width:1.6}
+.mk{cursor:pointer}
+.mk circle{stroke:#0d1420; stroke-width:1.5}
+.mk text{fill:#cfe0f5; font-size:10.5px; paint-order:stroke; stroke:#0d1420; stroke-width:3px; font-weight:600}
+.mk:hover circle{filter:brightness(1.4)}
+.mk.data circle{animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.mk.ghostm circle{stroke-dasharray:3 2}
+.ovl-anim{animation:pulse 1.6s infinite}
+::-webkit-scrollbar{width:9px;height:9px} ::-webkit-scrollbar-thumb{background:#26354f;border-radius:5px} ::-webkit-scrollbar-track{background:transparent}
+
+@media (max-width:1100px){
+  #side{width:290px} #rail{width:170px}
+  #method{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">ATLAS FRONTIGNAN<span>console territoriale</span></div>
+  <div class="phase-badge">Phase 0 · coquille jouable</div>
+  <div class="loop" id="loop"></div>
+  <div id="status-legend"></div>
+  <button id="tour-btn">▶ Fil rouge : pentes → secours</button>
+</header>
+
+<main>
+  <!-- ═══════════ lentilles (modes) + overlays ═══════════ -->
+  <nav id="rail">
+    <div class="rail-h">Lentilles de vue</div>
+    <div id="rail-modes"></div>
+    <div class="rail-h">Overlays</div>
+    <div id="rail-overlays"></div>
+    <div class="rail-h">Clavier</div>
+    <div class="small" style="padding:0 6px 10px">Touches <b>1–9</b> : changer de lentille. Clic sur un objet : inspecteur.</div>
+  </nav>
+
+  <!-- ═══════════ carte ═══════════ -->
+  <section id="mapwrap">
+    <svg id="map" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet" aria-label="Carte stylisée du territoire de Frontignan">
+      <defs>
+        <linearGradient id="g-gardiole" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3d5a48"/><stop offset=".55" stop-color="#2c4437"/><stop offset="1" stop-color="#1e3129"/>
+        </linearGradient>
+        <radialGradient id="g-etang" cx=".42" cy=".45" r=".75">
+          <stop offset="0" stop-color="#1d4d66"/><stop offset="1" stop-color="#123447"/>
+        </radialGradient>
+      </defs>
+
+      <!-- base géographique (toujours visible) -->
+      <g id="base">
+        <rect class="land" width="1000" height="700"/>
+        <path id="o-mer" class="obj" data-obj="mer" fill="#0e2740" d="M 0,700 L 0,640 C 90,628 170,612 250,590 L 330,558 L 383,525 L 500,560 L 700,600 L 1000,630 L 1000,700 Z"/>
+        <path id="o-etang-thau" class="obj" data-obj="etang-thau" fill="url(#g-etang)" stroke="#2e6a8a" stroke-width="1.2"
+          d="M 280,465 C 340,447 400,440 460,444 C 520,448 540,458 560,468 C 620,470 660,500 700,520 C 740,522 780,505 830,495 C 890,487 950,482 1000,480 L 1000,630 L 700,600 L 500,560 L 383,525 L 330,558 L 250,590 C 240,560 238,530 244,505 C 250,485 262,472 280,465 Z"/>
+        <path id="o-lido" class="obj" data-obj="lido" fill="none" stroke="#c8b083" stroke-width="15" stroke-linecap="round" opacity=".85"
+          d="M 252,588 L 330,556 L 383,524 L 500,559 L 700,599 L 1000,629"/>
+        <path id="o-commune-limite" class="obj" data-obj="commune-limite" fill="none" stroke="#8fa3bd" stroke-width="1.4" stroke-dasharray="7 5" opacity=".7"
+          d="M 248,260 C 340,190 500,178 650,210 C 800,242 920,290 996,333 C 996,357 900,382 800,408 C 720,428 640,452 560,462 C 490,470 425,455 385,470 C 352,486 348,522 362,550 C 374,572 396,580 412,572 C 392,552 384,534 392,522 C 344,515 298,532 270,562 C 254,535 247,490 253,448 C 245,420 243,380 248,340 C 243,305 244,280 248,260 Z"/>
+        <g id="map-labels">
+          <text class="mlbl big" x="150" y="628" text-anchor="middle">SÈTE ↘</text>
+          <text class="mlbl" x="905" y="180" text-anchor="middle">VIC-LA-GARDIOLE →</text>
+          <text class="mlbl" x="120" y="240" text-anchor="middle">POUSSAN</text>
+          <text class="mlbl" x="150" y="150" text-anchor="middle">MIREVAL</text>
+          <text class="mlbl water big" x="520" y="530">ÉTANG DE THAU</text>
+          <text class="mlbl water" x="560" y="672">MER MÉDITERRANÉE</text>
+          <text class="mlbl" x="700" y="205" text-anchor="middle" transform="rotate(-8 700 205)">MASSIF DE LA GARDIOLE</text>
+          <text class="slbl" x="430" y="243" text-anchor="middle" transform="rotate(-4 430 243)">vignoble AOC Muscat</text>
+          <text class="slbl" x="330" y="392" text-anchor="middle">centre-ville</text>
+          <text class="slbl" x="425" y="432" text-anchor="middle">La Peyrade</text>
+          <text class="slbl" x="388" y="510" text-anchor="middle">plage · lido</text>
+          <text class="slbl" x="620" y="490" text-anchor="middle">Les Aresquiers</text>
+          <text class="slbl" x="298" y="316" text-anchor="middle">quartiers nord</text>
+          <text class="slbl" x="908" y="330">D600 · gare →</text>
+        </g>
+      </g>
+
+      <!-- couches thématiques (visibilité pilotée par JS) -->
+      <g id="zones">
+        <path id="o-gardiole" class="obj" data-obj="gardiole" fill="url(#g-gardiole)" stroke="#4e7360" stroke-width="1.4" opacity=".92"
+          d="M 480,255 C 515,120 690,35 870,85 C 950,110 985,195 1000,255 L 1000,380 C 900,330 800,318 705,328 C 585,340 505,305 480,255 Z"/>
+        <path id="o-vignobles-muscat" class="obj" data-obj="vignobles-muscat" fill="#4a5d3a" stroke="#6d8551" stroke-width="1" opacity=".55"
+          d="M 335,205 C 400,180 480,195 545,225 C 565,238 562,262 540,270 C 470,285 395,278 348,262 C 325,252 325,218 335,205 Z"/>
+        <path id="o-quartiers-nord" class="obj" data-obj="quartiers-nord" fill="#2b3a55" stroke="#48608c" stroke-width="1"
+          d="M 295,295 L 388,292 L 392,342 L 298,348 Z"/>
+        <path id="o-centre-ville" class="obj" data-obj="centre-ville" fill="#3a3550" stroke="#7d6fae" stroke-width="1.3"
+          d="M 300,352 L 372,348 L 382,418 L 302,428 Z"/>
+        <path id="o-zi-peyrade" class="obj" data-obj="zi-peyrade" fill="#4a3b2d" stroke="#a08055" stroke-width="1.3"
+          d="M 390,405 L 455,398 L 462,452 L 396,460 Z"/>
+        <path id="o-plage" class="obj" data-obj="plage" fill="#8a744e" stroke="#d9c08a" stroke-width="1.2" opacity=".8"
+          d="M 355,540 L 375,522 L 405,512 L 420,524 L 392,544 Z"/>
+        <path id="o-aresquiers" class="obj" data-obj="aresquiers" fill="#2b5245" stroke="#4d8a72" stroke-width="1" opacity=".6"
+          d="M 520,458 C 580,440 660,462 715,500 C 665,528 585,520 545,498 C 528,482 512,468 520,458 Z"/>
+        <path id="o-zones-humides" class="obj" data-obj="aresquiers" fill="#1f4a52" stroke="#3f8a96" stroke-width="1" stroke-dasharray="4 3" opacity=".55"
+          d="M 500,462 C 570,445 670,468 730,505 C 700,535 600,538 545,515 C 518,495 495,478 500,462 Z"/>
+        <path id="o-bassin-versant-nord" class="obj ghost" data-obj="bassin-versant-nord" fill="rgba(74,144,217,.05)" stroke="#4a90d9"
+          d="M 290,340 C 380,255 540,225 700,270 C 830,305 940,330 995,355 C 900,395 780,405 660,395 C 540,385 440,398 385,425 C 335,425 295,390 290,340 Z"/>
+        <path id="o-ppri" class="obj" data-obj="ppri" fill="rgba(46,158,150,.14)" stroke="#2e9e9e" stroke-width="1.3" stroke-dasharray="8 4"
+          d="M 255,420 C 320,398 400,405 470,418 C 540,432 570,455 555,478 C 500,505 430,495 370,515 C 315,532 285,528 262,508 C 248,478 246,445 255,420 Z"/>
+        <path id="o-submersion-lido" class="obj" data-obj="submersion-lido" fill="none" stroke="rgba(46,158,150,.5)" stroke-width="26" stroke-linecap="round"
+          d="M 300,560 L 383,524 L 470,555 L 560,582"/>
+        <path id="o-icpe" class="obj" data-obj="icpe" fill="none" stroke="#d9822b" stroke-width="1.6" stroke-dasharray="3 3"
+          d="M 395,412 L 452,406 L 458,444 L 400,450 Z"/>
+        <g id="o-plu-zones" class="obj" data-obj="plu-zones">
+          <path d="M 290,290 L 395,285 L 400,345 L 300,350 Z" fill="rgba(155,89,182,.16)" stroke="#9b59b6" stroke-dasharray="5 3"/>
+          <path d="M 340,300 L 392,296 L 396,318 L 344,322 Z" fill="none" stroke="#9b59b6" stroke-dasharray="2 2" opacity=".7"/>
+        </g>
+      </g>
+
+      <g id="reseaux">
+        <g id="o-talwegs" class="obj" data-obj="talwegs" fill="none" stroke="#67c4e0" stroke-width="2" stroke-dasharray="7 4" opacity=".8">
+          <path d="M 520,285 C 480,320 445,350 405,372 C 372,390 352,408 342,425"/>
+          <path d="M 575,305 C 525,335 475,362 425,388 C 385,405 362,422 352,440"/>
+          <path d="M 470,262 C 448,300 420,330 392,356 C 368,376 356,396 350,415"/>
+        </g>
+        <path id="o-collecteur-principal" class="obj" data-obj="collecteur-principal" fill="none" stroke="#4aa3e0" stroke-width="4" stroke-linecap="round"
+          d="M 360,398 C 330,415 305,428 285,442 L 272,451"/>
+        <g id="o-collecteurs-secondaires" class="obj" data-obj="collecteurs-secondaires" fill="none" stroke="#3d7ab5" stroke-width="1.6" opacity=".8">
+          <path d="M 310,360 L 335,395"/><path d="M 350,355 L 352,395"/>
+          <path d="M 372,358 L 365,398"/><path d="M 392,392 L 372,414"/><path d="M 382,415 L 412,434"/>
+        </g>
+        <g id="o-axes-secours" class="obj" data-obj="axes-secours" fill="none" stroke="#e08a2e" stroke-width="2.6" stroke-dasharray="12 5">
+          <path d="M 305,388 C 283,362 278,335 288,308"/>
+          <path d="M 355,372 C 420,357 480,344 545,338"/>
+        </g>
+        <path id="o-d600" class="obj" data-obj="d600" fill="none" stroke="#7d93b5" stroke-width="2.4"
+          d="M 998,338 C 800,348 600,355 430,365 C 370,372 335,380 305,390 C 272,405 262,470 264,560"/>
+        <path id="o-voie-ferree" class="obj" data-obj="voie-ferree" fill="none" stroke="#5b6f92" stroke-width="2" stroke-dasharray="10 4"
+          d="M 998,300 C 800,312 620,320 450,332 C 385,338 335,344 298,354 C 276,368 270,430 272,556"/>
+        <path id="o-route-plage" class="obj" data-obj="route-plage" fill="none" stroke="#a89a7c" stroke-width="2"
+          d="M 350,415 C 360,440 370,470 378,498 L 382,514"/>
+        <path id="o-canal-rhone-sete" class="obj" data-obj="canal-rhone-sete" fill="none" stroke="#3f8a96" stroke-width="2.2"
+          d="M 998,475 C 840,488 700,522 600,522 C 520,515 470,480 420,452 C 380,438 330,440 300,455 C 282,482 278,530 280,570"/>
+        <path id="o-tvb" class="obj" data-obj="tvb" fill="none" stroke="#5bbf7a" stroke-width="2.2" stroke-dasharray="4 4"
+          d="M 620,320 C 600,360 580,400 562,438 L 548,464"/>
+      </g>
+
+      <g id="markers"></g>
+      <g id="ghosts"></g>
+      <g id="overlays-g"></g>
+    </svg>
+
+    <div id="mode-q"></div>
+    <div id="legend"></div>
+    <div id="map-disc">carte stylisée indicative — ni étude hydraulique ni géodésie · statuts des couches → légende</div>
+    <div id="tour-box" hidden></div>
+  </section>
+
+  <!-- ═══════════ panneau latéral ═══════════ -->
+  <aside id="side">
+    <div class="tabs" id="side-tabs">
+      <button data-t="insp" class="on">🔍 Inspecteur</button>
+      <button data-t="mods">🧩 Modules</button>
+      <button data-t="inds">📊 Indicateurs</button>
+    </div>
+    <div id="side-in"></div>
+  </aside>
+</main>
+
+<!-- ═══════════ tiroir bas ═══════════ -->
+<section id="drawer">
+  <div class="tabs" id="dr-tabs">
+    <button data-t="tree" class="on">🌳 Arbre d'actions</button>
+    <button data-t="scen">⚖️ Scénario <span id="scen-n" class="st-ph" style="display:none">0</span></button>
+    <button data-t="phases">🚧 Phases</button>
+    <button data-t="method">📐 Méthode</button>
+  </div>
+  <div id="dr-in"></div>
+</section>
+
+<script type="application/json" id="spec-data">{"meta": {"id": "atlas-frontignan-2026", "title": "Atlas Frontignan \u2014 console territoriale (sp\u00e9cification Phase 0)", "version": "1.0.0", "as_of": "2026-10-11", "schema": "atlas-frontignan-v1", "phase": "phase-0", "product": {"metaphor": "Console de d\u00e9cision territoriale inspir\u00e9e des interfaces 4X (lentilles, arbre d'actions, yields) branch\u00e9e sur le territoire r\u00e9el de Frontignan-la Peyrade", "audience": "D\u00e9cideurs (\u00e9lus, techniciens, acteurs locaux) \u2014 pas seulement les analystes SIG", "loop": ["Observer", "Diagnostiquer", "Simuler", "D\u00e9cider", "Suivre"], "not_a": "Ni un logiciel d'inondation, ni un SIG expert, ni un outil op\u00e9rationnel de crise"}, "origin": {"method": "Placeholder complet d'abord, remplissage progressif par urgence \u2014 tout d\u00e9clarer (modes, modules, objets, actions), puis enrichir", "documents": ["Synth\u00e8ses de discussion \u00d72 (11/10/2026) \u2014 sources/syntheses-discussion-2026-10-11.md", "PCS Frontignan 2025 (via dataset c\u00e9venols)", "Programme d'\u00e9tudes SMBT (via dataset c\u00e9venols)", "PAPI de Thau 2026-2031 (via dataset c\u00e9venols)"], "inspiration": ["FastFlood Global (Fast Hazard, nov. 2025) \u2014 r\u00e9f\u00e9rence UX/perf cit\u00e9e en discussion, non v\u00e9rifi\u00e9e en ligne", "LISEM, LISFLOOD-FP \u2014 moteurs open source, pistes Phase 3", "Interfaces 4X (Civilization\u2026) \u2014 lentilles de vue, arbre technologique, indicateurs"]}, "related_datasets": ["frontignan-cevenols-2026", "el-nino-godzilla-2026"], "disclaimer": "Phase 0 = coquille. La carte est stylis\u00e9e et indicative (ce n'est pas une \u00e9tude hydraulique) ; tout chiffre marqu\u00e9 \u00ab placeholder \u00bb est un chiffre de d\u00e9monstration, pas une estimation fiable ; les contenus DATA proviennent des datasets canoniques climat (PCS 2025, SMBT, PAPI Thau 2026-2031). Pour toute d\u00e9cision : les bulletins officiels et les donn\u00e9es techniques des services comp\u00e9tents priment.", "usage": "Artefacts g\u00e9n\u00e9r\u00e9s depuis cette spec : projects/frontignan/atlas.html (coquille jouable) \u2014 ne pas \u00e9diter \u00e0 la main ; relancer scripts/build_atlas_assets.py."}, "key_message": {"headline": "Atlas n'est pas un logiciel d'inondation : c'est une console de d\u00e9cision territoriale multi-th\u00e9matiques dont l'inondation n'est qu'une branche.", "one_liner": "Une carte strat\u00e9gique jouable du territoire r\u00e9el, extensible par modules, o\u00f9 l'on explore des vues, leurs interactions et des d\u00e9cisions.", "fil_rouge": "pentes \u2192 \u00e9coulement \u2192 r\u00e9seau pluvial \u2192 risque d'inondation \u2192 moyens de sauvetage (l'exemple prioritaire, pas le projet entier)", "method_steps": ["Rendre l'interface et les modes utilisables", "Int\u00e9grer les donn\u00e9es territoriales jug\u00e9es urgentes", "Approfondir les modules et leurs liens", "Ajouter des simulations seulement lorsqu'elles sont fond\u00e9es et v\u00e9rifiables"], "vigilance": "Un placeholder, une donn\u00e9e r\u00e9elle, une pr\u00e9vision officielle et un r\u00e9sultat simul\u00e9 doivent rester clairement distingu\u00e9s. Un chiffre ou un \u00ab effet avant/apr\u00e8s \u00bb invent\u00e9 pour la d\u00e9monstration ne doit jamais ressembler \u00e0 une estimation fiable."}, "statuses": [{"id": "EMPTY", "label": "Vide", "color": "#8a8f98", "meaning": "D\u00e9clar\u00e9 dans la structure, aucun contenu ni g\u00e9om\u00e9trie"}, {"id": "SHELL", "label": "Coquille", "color": "#4a90d9", "meaning": "Structure navigable, contenu/g\u00e9om\u00e9trie indicatifs (placeholder assum\u00e9)"}, {"id": "DATA", "label": "Donn\u00e9e", "color": "#2e9e5b", "meaning": "Aliment\u00e9 par un dataset canonique ou une source documentaire"}, {"id": "LIVE", "label": "Temps r\u00e9el", "color": "#0fb5b5", "meaning": "Flux ou suivi en continu (cible, rien n'est live en Phase 0)"}, {"id": "SIM", "label": "Simulation", "color": "#e08a2e", "meaning": "R\u00e9sultat calcul\u00e9 par un moteur v\u00e9rifiable \u2014 les deltas actuels sont des placeholders, pas des simulations"}], "modes": [{"id": "territoire", "icon": "\ud83d\uddfa\ufe0f", "name": "Territoire", "status": "SHELL", "question": "Qu'y a-t-il, o\u00f9, et sous quelle gouvernance ?", "note": "Limites stylis\u00e9es ; b\u00e2ti/quartiers indicatifs \u2192 donn\u00e9es IGN Phase 1", "layers": [{"name": "Limites communales", "status": "SHELL"}, {"name": "B\u00e2ti & quartiers", "status": "SHELL"}, {"name": "Voisins (S\u00e8te, Vic, Poussan, Mireval)", "status": "SHELL"}, {"name": "Voie ferr\u00e9e & grands axes", "status": "SHELL"}]}, {"id": "relief", "icon": "\u26f0\ufe0f", "name": "Relief & pentes", "status": "SHELL", "question": "O\u00f9 l'eau va-t-elle quand il pleut ?", "note": "Ombrage stylis\u00e9 de la Gardiole ; talwegs & bassins versants indicatifs \u2192 MNT RGE ALTI Phase 1", "layers": [{"name": "Massif de la Gardiole (ombrage)", "status": "SHELL"}, {"name": "Talwegs \u2014 \u00e9coulements pr\u00e9f\u00e9rentiels", "status": "SHELL"}, {"name": "Bassin versant nord", "status": "SHELL"}, {"name": "MNT / pentes fines", "status": "EMPTY"}]}, {"id": "eau", "icon": "\ud83d\udca7", "name": "Cycle de l'eau", "status": "SHELL", "question": "Comment vivent Thau, les nappes et les zones humides ?", "note": "Thau & exutoires aliment\u00e9s par le dataset c\u00e9venols ; nappes \u00e0 documenter", "layers": [{"name": "\u00c9tang de Thau", "status": "DATA"}, {"name": "Exutoires vers Thau", "status": "DATA"}, {"name": "Canal du Rh\u00f4ne \u00e0 S\u00e8te", "status": "SHELL"}, {"name": "Zones humides (Aresquiers)", "status": "SHELL"}, {"name": "Nappes", "status": "EMPTY"}]}, {"id": "pluvial", "icon": "\ud83d\udeb0", "name": "R\u00e9seaux pluviaux", "status": "SHELL", "question": "Le r\u00e9seau absorbe-t-il la pluie normale\u2026 et l'exceptionnelle ?", "note": "Trac\u00e9s indicatifs ; plan des r\u00e9seaux (mairie) = priorit\u00e9 Phase 1 ; d\u00e9sordres SMBT & \u00e9pisode 2019 en DATA", "layers": [{"name": "Collecteur principal", "status": "SHELL"}, {"name": "Collecteurs secondaires", "status": "SHELL"}, {"name": "Avantoirs / points noirs", "status": "SHELL"}, {"name": "Exutoires (sollicitation d\u00e9but 2026, SMBT)", "status": "DATA"}, {"name": "Bassins existants (recensement)", "status": "EMPTY"}]}, {"id": "inondation", "icon": "\ud83c\udf0a", "name": "Inondation", "status": "DATA", "question": "Que se passe-t-il quand la capacit\u00e9 est d\u00e9pass\u00e9e ?", "note": "Zones de blocage aliment\u00e9es par le dataset c\u00e9venols (PCS 2025, SMBT, PPRI) ; al\u00e9as r\u00e9glementaires (PPRI/AZI) en coquille \u2192 G\u00e9orisques Phase 1", "layers": [{"name": "Zones de blocage c\u00e9venols (5)", "status": "DATA"}, {"name": "PPRI (p\u00e9rim\u00e8tre indicatif)", "status": "SHELL"}, {"name": "Submersion marine (lido)", "status": "SHELL"}, {"name": "AZI \u2014 atlas des zones inondables", "status": "EMPTY"}, {"name": "Enjeux industriels / ICPE (pollutions secondaires)", "status": "SHELL"}]}, {"id": "secours", "icon": "\ud83d\udea8", "name": "Urgence & secours", "status": "DATA", "question": "Qui agit, par o\u00f9, et en combien de temps ?", "note": "PCS 2025 & axes de secours via dataset c\u00e9venols ; \u00e9quipes mobiles = unit\u00e9s stylis\u00e9es", "layers": [{"name": "PCS 2025 (organisation, alerte)", "status": "DATA"}, {"name": "Axes & itin\u00e9raires de secours", "status": "DATA"}, {"name": "\u00c9quipes mobiles (unit\u00e9s)", "status": "SHELL"}, {"name": "B\u00e2timents enjeux (mairie, CSI, \u00e9coles, campings)", "status": "SHELL"}, {"name": "Points de regroupement / refuges", "status": "EMPTY"}]}, {"id": "reseaux", "icon": "\ud83d\udd0c", "name": "R\u00e9seaux techniques", "status": "EMPTY", "question": "Quels autres r\u00e9seaux soutiennent le territoire ?", "note": "D\u00e9clar\u00e9 vide volontairement : AEP, assainissement, \u00e9lectricit\u00e9 \u00e0 int\u00e9grer plus tard", "layers": [{"name": "AEP (eau potable)", "status": "EMPTY"}, {"name": "Assainissement / STEP", "status": "EMPTY"}, {"name": "\u00c9lectricit\u00e9 / \u00e9clairage", "status": "EMPTY"}]}, {"id": "urbanisme", "icon": "\ud83c\udfd9\ufe0f", "name": "Urbanisme & foncier", "status": "SHELL", "question": "O\u00f9 construit-on, o\u00f9 d\u00e9simperm\u00e9abilise-t-on ?", "note": "Zonage stylis\u00e9 ; PLU/SCoT & foncier \u2192 agglo/DGFIP Phase 2", "layers": [{"name": "Zones PLU (stylis\u00e9es)", "status": "SHELL"}, {"name": "Trajectoire ZAN", "status": "SHELL"}, {"name": "Foncier mobilisable", "status": "EMPTY"}]}, {"id": "nature", "icon": "\ud83c\udf33", "name": "Nature & milieux", "status": "SHELL", "question": "Quelles trames et milieux prot\u00e8gent et rafra\u00eechissent ?", "note": "Gardiole (Natura 2000), Aresquiers, TVB ; vignoble AOC Muscat", "layers": [{"name": "Massif de la Gardiole (espaces naturels)", "status": "SHELL"}, {"name": "Zones humides & Aresquiers", "status": "SHELL"}, {"name": "TVB \u2014 corridor \u00e9cologique", "status": "SHELL"}, {"name": "Vignoble AOC Muscat", "status": "SHELL"}]}, {"id": "climat", "icon": "\ud83c\udf21\ufe0f", "name": "Climat", "status": "DATA", "question": "Quel climat se pr\u00e9pare, de Thau au Pacifique ?", "note": "Watchpoints climat du bassin de Thau aliment\u00e9s par le dataset El Ni\u00f1o 2026 ; ICU \u00e0 documenter", "layers": [{"name": "Watchpoints climat Thau (dataset El Ni\u00f1o)", "status": "DATA"}, {"name": "Littoral & lagune", "status": "SHELL"}, {"name": "\u00celots de chaleur urbains (ICU)", "status": "EMPTY"}]}, {"id": "mobilites", "icon": "\ud83d\ude8c", "name": "Mobilit\u00e9s", "status": "SHELL", "question": "Comment entre-t-on, sort-on, se d\u00e9place-t-on ?", "note": "Axes principaux stylis\u00e9s (D600, voie ferr\u00e9e, route de la plage) ; TC & modes doux \u00e0 int\u00e9grer", "layers": [{"name": "Axes routiers & ferroviaires", "status": "SHELL"}, {"name": "Gare & p\u00f4les", "status": "SHELL"}, {"name": "Transports collectifs", "status": "EMPTY"}, {"name": "Modes doux", "status": "EMPTY"}]}, {"id": "economie", "icon": "\ud83d\udcbc", "name": "\u00c9conomie & soci\u00e9t\u00e9", "status": "SHELL", "question": "Quelles activit\u00e9s, quelle saisonnalit\u00e9, quels enjeux ?", "note": "Port, ZI La Peyrade, vignoble AOC, tourisme & saisonnalit\u00e9 (campings)", "layers": [{"name": "Port & activit\u00e9s maritimes", "status": "SHELL"}, {"name": "ZI La Peyrade (emplois, ICPE)", "status": "SHELL"}, {"name": "Vignoble AOC Muscat", "status": "SHELL"}, {"name": "Tourisme & saisonnalit\u00e9 (campings)", "status": "SHELL"}]}, {"id": "gouvernance", "icon": "\ud83c\udfdb\ufe0f", "name": "Gouvernance", "status": "DATA", "question": "Qui d\u00e9cide, avec quels budgets et comp\u00e9tences ?", "note": "PAPI de Thau 2026-2031 (46 actions, 25 communes, \u22486,8 M\u20ac) via dataset c\u00e9venols ; acteurs & comp\u00e9tences \u00e0 documenter", "layers": [{"name": "Budgets & programmes (PAPI Thau)", "status": "DATA"}, {"name": "Acteurs & comp\u00e9tences (commune, agglo, SMBT)", "status": "SHELL"}, {"name": "Intercommunalit\u00e9 (S\u00e8te Agglop\u00f4le)", "status": "SHELL"}]}, {"id": "scenario", "icon": "\u2696\ufe0f", "name": "Sc\u00e9nario", "status": "SIM", "question": "Que changerait telle ou telle action ?", "note": "Comparateur avant/apr\u00e8s sur la base des actions choisies dans l'arbre \u2014 deltas 100 % placeholders jusqu'aux simulations Phase 3", "layers": [{"name": "Projets \u00ab fant\u00f4mes \u00bb (actions sur la carte)", "status": "SHELL"}, {"name": "Deltas indicateurs avant/apr\u00e8s", "status": "SIM"}]}], "modules": [{"id": "risques", "icon": "\ud83d\udee1\ufe0f", "name": "Risques & r\u00e9silience", "color": "#d9534f", "status": "DATA", "modes": ["inondation"], "submodules": [{"id": "inondation-ruissellement", "name": "Inondation \u2014 ruissellement Gardiole\u2192ville", "status": "DATA"}, {"id": "submersion-marine", "name": "Submersion marine (lido, littoral bas)", "status": "SHELL"}, {"id": "risque-industriel", "name": "Risque industriel / ICPE (La Peyrade)", "status": "SHELL"}, {"id": "incendie", "name": "Incendie de v\u00e9g\u00e9tation (Gardiole)", "status": "EMPTY"}, {"id": "argiles", "name": "Retrait-gonflement des argiles", "status": "EMPTY"}, {"id": "multi-risques", "name": "Multi-risques & effets en cha\u00eene", "status": "EMPTY"}]}, {"id": "pluvial", "icon": "\ud83d\udeb0", "name": "Pluvial & drainage", "color": "#4a90d9", "status": "SHELL", "modes": ["pluvial"], "submodules": [{"id": "plan-reseaux", "name": "Plan des r\u00e9seaux (collecteurs, exutoires)", "status": "SHELL"}, {"id": "pentes-ecoulements", "name": "Pentes & \u00e9coulements (talwegs)", "status": "SHELL"}, {"id": "capacites", "name": "Capacit\u00e9s & dimensionnement", "status": "EMPTY"}, {"id": "entretien", "name": "Entretien (curage, d\u00e9bris)", "status": "EMPTY"}, {"id": "alternatives", "name": "Noues, bassins, d\u00e9simperm\u00e9abilisation", "status": "SHELL"}]}, {"id": "secours", "icon": "\ud83d\udea8", "name": "Secours & crise", "color": "#e08a2e", "status": "DATA", "modes": ["secours"], "submodules": [{"id": "pcs", "name": "PCS 2025 (plan communal de sauvegarde)", "status": "DATA"}, {"id": "equipes", "name": "\u00c9quipes mobiles (sauvetage, curage)", "status": "SHELL"}, {"id": "evacuation", "name": "Axes & itin\u00e9raires d'\u00e9vacuation", "status": "DATA"}, {"id": "materiel", "name": "Mat\u00e9riel & moyens", "status": "EMPTY"}, {"id": "temps-reel", "name": "Cellule de crise temps r\u00e9el (cible LIVE)", "status": "EMPTY"}, {"id": "retex", "name": "RETEX (retours d'exp\u00e9rience)", "status": "SHELL"}]}, {"id": "eau", "icon": "\ud83c\udf0a", "name": "Eau & milieux", "color": "#0fb5b5", "status": "DATA", "modes": ["eau"], "submodules": [{"id": "thau", "name": "\u00c9tang de Thau (lagune, exutoires)", "status": "DATA"}, {"id": "qualite", "name": "Qualit\u00e9 des eaux", "status": "SHELL"}, {"id": "usages", "name": "Usages (conchyliculture, p\u00eache, loisirs)", "status": "SHELL"}, {"id": "nappes", "name": "Nappes & ressources", "status": "EMPTY"}]}, {"id": "amenagement", "icon": "\ud83c\udfd9\ufe0f", "name": "Am\u00e9nagement & urbanisme", "color": "#9b59b6", "status": "SHELL", "modes": ["urbanisme"], "submodules": [{"id": "plu", "name": "PLU / zonage", "status": "SHELL"}, {"id": "zan", "name": "ZAN \u2014 trajectoire d'artificialisation", "status": "SHELL"}, {"id": "renaturation", "name": "Renaturation & d\u00e9simperm\u00e9abilisation", "status": "SHELL"}, {"id": "habitat", "name": "Habitat & foncier", "status": "EMPTY"}]}, {"id": "nature", "icon": "\ud83c\udf33", "name": "Nature & climat", "color": "#2e9e5b", "status": "DATA", "modes": ["nature", "climat"], "submodules": [{"id": "tvb", "name": "TVB \u2014 trame verte et bleue", "status": "SHELL"}, {"id": "milieux", "name": "Milieux (Gardiole, Aresquiers, zones humides)", "status": "SHELL"}, {"id": "icu", "name": "\u00celots de chaleur urbains", "status": "EMPTY"}, {"id": "scenarios-climat", "name": "Sc\u00e9narios climat (dataset El Ni\u00f1o 2026)", "status": "DATA"}, {"id": "littoral", "name": "Littoral & trait de c\u00f4te", "status": "SHELL"}]}, {"id": "societe", "icon": "\ud83c\udfdb\ufe0f", "name": "Soci\u00e9t\u00e9, \u00e9conomie & gouvernance", "color": "#c9a227", "status": "DATA", "modes": ["economie", "gouvernance"], "submodules": [{"id": "demographie-saison", "name": "D\u00e9mographie & saisonnalit\u00e9 (campings, tourisme)", "status": "SHELL"}, {"id": "economie-locale", "name": "\u00c9conomie locale (port, ZI, AOC Muscat)", "status": "SHELL"}, {"id": "competences", "name": "Comp\u00e9tences & acteurs (commune, agglo, SMBT, GEMAPI)", "status": "SHELL"}, {"id": "budgets", "name": "Budgets & programmes (PAPI Thau 2026-2031)", "status": "DATA"}, {"id": "participation", "name": "Participation citoyenne", "status": "EMPTY"}]}], "actions": [{"id": "a-carto", "name": "Cartographie fine du ruissellement (AZI+)", "module": "risques", "cost": "150\u2013250 k\u20ac", "cost_basis": "placeholder", "delay": "12\u201318 mois", "prereqs": [], "effects": [{"indicator": "risque", "delta": -5, "basis": "placeholder"}, {"indicator": "perf", "delta": 3, "basis": "placeholder"}], "map_object": "talwegs", "sim_hook": "Alimenterait le mode Relief et la future simulation d'\u00e9coulement", "status": "SHELL", "note": "\u00c9tude pr\u00e9alable : d\u00e9sordres majeurs Gardiole\u2192centre-ville document\u00e9s par le SMBT", "source_id": "s-smbt"}, {"id": "a-capteurs", "name": "Capteurs & observatoire amont (type VigiThau)", "module": "risques", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "6\u201312 mois", "prereqs": ["a-carto"], "effects": [{"indicator": "preparation", "delta": 10, "basis": "placeholder"}, {"indicator": "risque", "delta": -3, "basis": "placeholder"}], "map_object": "gardiole", "map_preview": {"lat": 43.495, "lon": 3.795, "label": "Capteurs amont"}, "sim_hook": "Pr\u00e9requis de la cellule temps r\u00e9el (cible LIVE)", "status": "SHELL", "note": "Conna\u00eetre avant d'agir \u2014 priorit\u00e9 P1 du diagnostic c\u00e9venols", "source_id": "s-cevenols"}, {"id": "a-noues", "name": "Noues v\u00e9g\u00e9talis\u00e9es le long des talwegs", "module": "pluvial", "cost": "80\u2013150 \u20ac/m\u00b2", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": [], "effects": [{"indicator": "perf", "delta": 8, "basis": "placeholder"}, {"indicator": "nature", "delta": 3, "basis": "placeholder"}, {"indicator": "icu", "delta": -2, "basis": "placeholder"}, {"indicator": "acceptabilite", "delta": 2, "basis": "placeholder"}], "map_object": "talwegs", "map_preview": {"lat": 43.462, "lon": 3.735, "label": "Noues"}, "sim_hook": "Ralentir l'eau avant la ville \u2014 effet \u00e0 simuler (Phase 3)", "status": "SHELL", "note": "Solution P2 \u00ab retenir / ralentir \u00bb du diagnostic c\u00e9venols", "source_id": "s-cevenols"}, {"id": "a-bassin", "name": "Bassin de r\u00e9tention amont (pied de Gardiole)", "module": "pluvial", "cost": "1,5\u20133 M\u20ac", "cost_basis": "placeholder", "delay": "24 mois", "prereqs": ["a-carto"], "effects": [{"indicator": "perf", "delta": 12, "basis": "placeholder"}, {"indicator": "risque", "delta": -10, "basis": "placeholder"}], "map_object": "gardiole", "map_preview": {"lat": 43.478, "lon": 3.752, "label": "Bassin amont"}, "sim_hook": "\u00c9cr\u00eater le pic \u2014 dimensionnement \u00e0 \u00e9tudier (pas une estimation)", "status": "SHELL", "note": "Dimension : placeholder ; site exact \u00e0 d\u00e9finir par \u00e9tude", "source_id": "s-papi"}, {"id": "a-collecteur", "name": "Reprise du collecteur principal", "module": "pluvial", "cost": "2\u20134 M\u20ac", "cost_basis": "placeholder", "delay": "36 mois", "prereqs": [], "effects": [{"indicator": "perf", "delta": 15, "basis": "placeholder"}, {"indicator": "risque", "delta": -8, "basis": "placeholder"}], "map_object": "collecteur-principal", "sim_hook": "D\u00e9boucher le goulot \u2014 capacit\u00e9 r\u00e9elle inconnue (plan des r\u00e9seaux requis)", "status": "SHELL", "note": "Chantier lourd : activer l'overlay \u00ab chantiers \u00bb pendant les travaux", "source_id": "s-smbt"}, {"id": "a-desimperm", "name": "D\u00e9simperm\u00e9abilisation (\u00e9coles, stationnements)", "module": "amenagement", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "6\u201312 mois", "prereqs": [], "effects": [{"indicator": "perf", "delta": 2, "basis": "placeholder"}, {"indicator": "icu", "delta": -1, "basis": "placeholder"}, {"indicator": "acceptabilite", "delta": 3, "basis": "placeholder"}], "map_object": "ecoles", "map_preview": {"lat": 43.452, "lon": 3.709, "label": "D\u00e9simperm\u00e9abilisation"}, "sim_hook": "Gagner sur tous les tableaux, \u00e0 petite \u00e9chelle", "status": "SHELL", "note": "Cibles : cours d'\u00e9coles, parkings, voiries basses", "source_id": "s-cevenols"}, {"id": "a-pcs", "name": "Renforcement du PCS (formation + exercice annuel)", "module": "secours", "cost": "50\u2013100 k\u20ac/an", "cost_basis": "placeholder", "delay": "6 mois", "prereqs": [], "effects": [{"indicator": "preparation", "delta": 12, "basis": "placeholder"}, {"indicator": "conformite", "delta": 5, "basis": "placeholder"}], "map_object": "mairie", "sim_hook": "D\u00e9lais d'alerte courts document\u00e9s par le PCS 2025 \u2014 l'exercice est le vrai test", "status": "SHELL", "note": "Le PCS 2025 existe d\u00e9j\u00e0 : il s'agit de l'entretenir et de l'exercer", "source_id": "s-pcs"}, {"id": "a-axes", "name": "Axe d'\u00e9vacuation alternatif (vers le nord)", "module": "secours", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": ["a-carto"], "effects": [{"indicator": "preparation", "delta": 6, "basis": "placeholder"}, {"indicator": "risque", "delta": -2, "basis": "placeholder"}], "map_object": "axes-secours", "sim_hook": "Isolement de quartiers document\u00e9 (PCS) \u2014 tester les itin\u00e9raires en crue", "status": "SHELL", "note": "R\u00e9pond au blocage \u00ab d\u00e9placements & secours \u00bb du diagnostic c\u00e9venols", "source_id": "s-cevenols"}, {"id": "a-cellule", "name": "Cellule de crise temps r\u00e9el (capteurs + main courante)", "module": "secours", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "18 mois", "prereqs": ["a-capteurs", "a-pcs"], "effects": [{"indicator": "preparation", "delta": 15, "basis": "placeholder"}], "map_object": "csi", "sim_hook": "Cible le statut LIVE : rien n'est temps r\u00e9el en Phase 0", "status": "SHELL", "note": "N\u00e9cessite capteurs (a-capteurs) ET exercice PCS (a-pcs)", "source_id": "s-vigithau"}, {"id": "a-restauration", "name": "Restauration des \u00e9coulements Gardiole\u2192centre (PAPI)", "module": "eau", "cost": "programme PAPI 2026\u20132031 (\u00e0 confirmer)", "cost_basis": "placeholder", "delay": "2026\u20132031", "prereqs": ["a-carto"], "effects": [{"indicator": "perf", "delta": 10, "basis": "placeholder"}, {"indicator": "nature", "delta": 4, "basis": "placeholder"}], "map_object": "talwegs", "map_preview": {"lat": 43.465, "lon": 3.742, "label": "Restauration \u00e9coulements"}, "sim_hook": "Programme r\u00e9el (PAPI) \u2014 l'ampleur des effets reste \u00e0 \u00e9valuer", "status": "SHELL", "note": "Action inscrite au PAPI de Thau (46 actions, 25 communes, \u22486,8 M\u20ac)", "source_id": "s-papi"}, {"id": "a-renaturation", "name": "Renaturation d'un talweg urbain", "module": "nature", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "18 mois", "prereqs": ["a-noues"], "effects": [{"indicator": "nature", "delta": 6, "basis": "placeholder"}, {"indicator": "icu", "delta": -2, "basis": "placeholder"}, {"indicator": "acceptabilite", "delta": 2, "basis": "placeholder"}], "map_object": "talwegs", "map_preview": {"lat": 43.458, "lon": 3.728, "label": "Renaturation"}, "sim_hook": "Cumul avec les noues \u2014 interactions \u00e0 mod\u00e9liser", "status": "SHELL", "note": "S'appuie sur les noues (a-noues)", "source_id": "s-cevenols"}, {"id": "a-tvb", "name": "Corridor \u00e9cologique Gardiole\u2013\u00e9tang", "module": "nature", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "36 mois", "prereqs": [], "effects": [{"indicator": "nature", "delta": 8, "basis": "placeholder"}], "map_object": "tvb", "sim_hook": "Reconnecter les milieux \u2014 b\u00e9n\u00e9fices diffusoires", "status": "SHELL", "note": "Trame verte & bleue : Gardiole \u2192 Aresquiers \u2192 Thau", "source_id": "s-atlas"}, {"id": "a-zan", "name": "Trajectoire ZAN inscrite au PLU", "module": "amenagement", "cost": "\u00e9tude", "cost_basis": "placeholder", "delay": "24 mois", "prereqs": [], "effects": [{"indicator": "zan", "delta": 10, "basis": "placeholder"}, {"indicator": "conformite", "delta": 3, "basis": "placeholder"}], "map_object": "plu-zones", "sim_hook": "Cadre r\u00e9glementaire : effet lent et structurel", "status": "SHELL", "note": "ZAN = z\u00e9ro artificialisation nette (trajectoire)", "source_id": "s-atlas"}, {"id": "a-budget", "name": "Enveloppe r\u00e9silience (budget participatif)", "module": "societe", "cost": "\u00e0 documenter", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": [], "effects": [{"indicator": "acceptabilite", "delta": 8, "basis": "placeholder"}, {"indicator": "budget", "delta": -0.5, "basis": "placeholder"}], "map_object": "mairie", "sim_hook": "L'acceptabilit\u00e9 conditionne la faisabilit\u00e9 des travaux", "status": "SHELL", "note": "Marge \u00e0 arbitrer avec les budgets programmes existants (PAPI)", "source_id": "s-atlas"}, {"id": "a-gemapi", "name": "Convention GEMAPI agglo / SMBT", "module": "societe", "cost": "\u2014", "cost_basis": "placeholder", "delay": "12 mois", "prereqs": [], "effects": [{"indicator": "conformite", "delta": 8, "basis": "placeholder"}, {"indicator": "preparation", "delta": 3, "basis": "placeholder"}], "map_object": "commune-limite", "sim_hook": "Clarifier qui fait quoi \u2014 condition des gros investissements", "status": "SHELL", "note": "GEMAPI : gestion des milieux aquatiques et pr\u00e9vention des inondations", "source_id": "s-papi"}], "indicators": [{"id": "risque", "icon": "\u26a0\ufe0f", "name": "Risque inondation", "unit": "indice 0\u2013100", "direction": "lower", "status": "SHELL", "baseline": 68, "baseline_basis": "placeholder", "note": "Indice composite de d\u00e9monstration \u2014 pas une mod\u00e9lisation de l'al\u00e9a"}, {"id": "perf", "icon": "\ud83d\udeb0", "name": "Performance pluviale", "unit": "%", "direction": "higher", "status": "EMPTY", "baseline": null, "baseline_basis": "\u00e0 \u00e9tablir", "note": "D\u00e9pend du plan des r\u00e9seaux (Phase 1)"}, {"id": "preparation", "icon": "\ud83d\udea8", "name": "Pr\u00e9paration de crise", "unit": "%", "direction": "higher", "status": "SHELL", "baseline": 55, "baseline_basis": "placeholder", "note": "Le PCS 2025 existe (r\u00e9el) ; la valeur chiffr\u00e9e reste un placeholder"}, {"id": "nature", "icon": "\ud83c\udf33", "name": "Nature & biodiversit\u00e9", "unit": "indice 0\u2013100", "direction": "higher", "status": "EMPTY", "baseline": null, "baseline_basis": "\u00e0 \u00e9tablir", "note": "\u00c0 construire sur la TVB et les inventaires"}, {"id": "icu", "icon": "\ud83c\udf21\ufe0f", "name": "\u00celots de chaleur", "unit": "indice 0\u2013100", "direction": "lower", "status": "EMPTY", "baseline": null, "baseline_basis": "\u00e0 \u00e9tablir", "note": "Cartographie ICU \u00e0 produire"}, {"id": "budget", "icon": "\ud83d\udcb0", "name": "Budget mobilisable", "unit": "M\u20ac", "direction": "higher", "status": "DATA", "baseline": 6.8, "baseline_basis": "document\u00e9 \u2014 PAPI de Thau 2026\u20132031 (46 actions, 25 communes)", "note": "Seule valeur document\u00e9e du tableau : le PAPI labellis\u00e9 avril 2026"}, {"id": "acceptabilite", "icon": "\ud83e\udd1d", "name": "Acceptabilit\u00e9 sociale", "unit": "indice 0\u2013100", "direction": "higher", "status": "EMPTY", "baseline": null, "baseline_basis": "\u00e0 \u00e9tablir", "note": "Enjeu fort : saisonnalit\u00e9, usages, vignoble, littoral"}, {"id": "zan", "icon": "\ud83c\udfd9\ufe0f", "name": "Trajectoire ZAN", "unit": "indice 0\u2013100", "direction": "higher", "status": "SHELL", "baseline": null, "baseline_basis": "\u00e0 \u00e9tablir", "note": "Qualit\u00e9 de la trajectoire d'artificialisation nette"}, {"id": "conformite", "icon": "\u2705", "name": "Conformit\u00e9 r\u00e9glementaire", "unit": "%", "direction": "higher", "status": "SHELL", "baseline": 60, "baseline_basis": "placeholder", "note": "PPRI/PCS/DICRIM existent (r\u00e9el) ; la valeur chiffr\u00e9e reste un placeholder"}], "units": [{"id": "zone", "name": "Zones", "status": "SHELL", "desc": "Territoires d\u00e9limit\u00e9s : quartiers, massif, \u00e9tang, zones r\u00e9glementaires, bassins versants", "examples": "centre-ville \u00b7 Gardiole \u00b7 \u00e9tang de Thau \u00b7 PPRI"}, {"id": "reseau", "name": "R\u00e9seaux", "status": "SHELL", "desc": "Lin\u00e9aires structurants : collecteurs, talwegs, axes, corridors, canal", "examples": "collecteur principal \u00b7 talwegs \u00b7 axes de secours \u00b7 TVB"}, {"id": "ouvrage", "name": "Ouvrages", "status": "SHELL", "desc": "Objets techniques ponctuels : exutoires, avaloirs, bassins, stations", "examples": "exutoires Thau \u00b7 points noirs \u00b7 bassins (\u00e0 recenser)"}, {"id": "batiment", "name": "B\u00e2timents enjeux", "status": "SHELL", "desc": "\u00c9quipements critiques ou sensibles : mairie, CSI, \u00e9coles, campings, gare, port", "examples": "mairie \u00b7 centre de secours \u00b7 campings (saisonnalit\u00e9)"}, {"id": "equipe", "name": "\u00c9quipes mobiles", "status": "SHELL", "desc": "\u00ab Unit\u00e9s \u00bb du territoire : \u00e9quipes de sauvetage, curage, intervention \u2014 visibles en mode secours", "examples": "\u00e9quipe sauvetage \u00b7 \u00e9quipe curage"}, {"id": "projet", "name": "Projets \u00ab fant\u00f4mes \u00bb", "status": "SHELL", "desc": "Actions envisag\u00e9es dans le sc\u00e9nario, dessin\u00e9es en pointill\u00e9s sur la carte", "examples": "noues \u00b7 bassin amont \u00b7 capteurs (si ajout\u00e9s au sc\u00e9nario)"}], "overlays": [{"id": "meteo", "icon": "\ud83c\udf26\ufe0f", "name": "M\u00e9t\u00e9o", "status": "SHELL", "note": "Vigilance \u00e9pisode \u2014 branchement M\u00e9t\u00e9o-France en Phase 1"}, {"id": "alertes", "icon": "\ud83d\udce2", "name": "Alertes", "status": "SHELL", "note": "Alertes & consignes PCS (simulation d\u00e9corative)"}, {"id": "chantiers", "icon": "\ud83d\udea7", "name": "Chantiers", "status": "SHELL", "note": "Travaux en cours impactant r\u00e9seaux & axes"}, {"id": "annotations", "icon": "\ud83d\udccc", "name": "Annotations", "status": "SHELL", "note": "Notes utilisateur (stockage local)"}], "map": {"note": "Carte stylis\u00e9e indicative (ni \u00e9tude hydraulique ni g\u00e9od\u00e9sie). Les 6 zones c\u00e9venols utilisent les coordonn\u00e9es indicatives du dataset frontignan-cevenols-2026 ; les watchpoints climat ceux du dataset el-nino-godzilla-2026.", "projection": {"lon_min": 3.62, "lon_max": 3.88, "lat_min": 43.38, "lat_max": 43.53, "width": 1000, "height": 700, "type": "\u00e9quirectangulaire stylis\u00e9e"}, "objects": [{"id": "etang-thau", "kind": "zone", "name": "\u00c9tang de Thau", "modes": ["*"], "status": "SHELL", "desc": "Lagune \u2014 exutoire du bassin, enjeu conchylicole et \u00e9cologique majeur."}, {"id": "mer", "kind": "zone", "name": "Mer M\u00e9diterran\u00e9e", "modes": ["*"], "status": "SHELL", "desc": "Littoral ouvert \u2014 golfe du Lion."}, {"id": "lido", "kind": "zone", "name": "Lido Frontignan\u2013S\u00e8te", "modes": ["*"], "status": "SHELL", "desc": "Cordon littoral entre mer et \u00e9tang \u2014 enjeu submersion marine et fr\u00e9quentation estivale."}, {"id": "commune-limite", "kind": "zone", "name": "Frontignan (limites communales)", "modes": ["territoire", "gouvernance"], "status": "SHELL", "desc": "P\u00e9rim\u00e8tre stylis\u00e9 \u2014 limites officielles IGN \u00e0 brancher en Phase 1.", "data_link": null}, {"id": "gardiole", "kind": "zone", "name": "Massif de la Gardiole", "modes": ["territoire", "relief", "nature", "pluvial", "inondation"], "status": "DATA", "desc": "Amont des ruissellements : d\u00e9sordres majeurs document\u00e9s vers le centre-ville (SMBT).", "data_link": {"dataset": "frontignan-cevenols-2026", "watchpoint": "gardiole-amont"}}, {"id": "centre-ville", "kind": "zone", "name": "Centre-ville \u2014 points bas", "modes": ["territoire", "inondation", "pluvial", "secours", "economie"], "status": "DATA", "desc": "R\u00e9ceptacle des \u00e9coulements de la Gardiole ; points bas et saturation r\u00e9seaux document\u00e9s.", "data_link": {"dataset": "frontignan-cevenols-2026", "watchpoint": "centre-ville-frontignan"}}, {"id": "zi-peyrade", "kind": "zone", "name": "ZA/ZI La Peyrade", "modes": ["territoire", "economie", "inondation", "secours"], "status": "DATA", "desc": "Enjeux industriels & risque de pollutions secondaires en cas d'inondation.", "data_link": {"dataset": "frontignan-cevenols-2026", "watchpoint": "zi-peyrade"}}, {"id": "plage", "kind": "zone", "name": "Frontignan-plage \u2014 littoral bas", "modes": ["territoire", "economie", "inondation", "secours"], "status": "DATA", "desc": "Littoral bas : submersion marine, isolement possible, saisonnalit\u00e9 extr\u00eame.", "data_link": {"dataset": "frontignan-cevenols-2026", "watchpoint": "frontignan-plage"}}, {"id": "quartiers-nord", "kind": "zone", "name": "Quartiers nord", "modes": ["territoire", "urbanisme", "pluvial"], "status": "SHELL", "desc": "Extension r\u00e9sidentielle nord (stylis\u00e9e) \u2014 \u00e0 documenter (PLU)."}, {"id": "vignobles-muscat", "kind": "zone", "name": "Vignoble AOC Muscat", "modes": ["territoire", "economie", "nature"], "status": "SHELL", "desc": "Territoire viticole AOC Muscat de Frontignan \u2014 identit\u00e9 \u00e9conomique et paysag\u00e8re."}, {"id": "aresquiers", "kind": "zone", "name": "Les Aresquiers & zones humides", "modes": ["nature", "eau", "territoire"], "status": "SHELL", "desc": "Zone humide littorale entre Gardiole et \u00e9tang \u2014 milieux, lagunage naturel."}, {"id": "bassin-versant-nord", "kind": "zone", "name": "Bassin versant nord (versant Gardiole)", "modes": ["relief", "pluvial"], "status": "SHELL", "desc": "Le bassin qui alimente la ville en \u00e9coulements \u2014 p\u00e9rim\u00e8tre indicatif."}, {"id": "ppri", "kind": "zone", "name": "PPRI (p\u00e9rim\u00e8tre indicatif)", "modes": ["inondation", "urbanisme"], "status": "SHELL", "desc": "Plan de pr\u00e9vention du risque inondation \u2014 zone stylis\u00e9e, donn\u00e9es r\u00e9glementaires \u00e0 int\u00e9grer (G\u00e9orisques/DDTM)."}, {"id": "submersion-lido", "kind": "zone", "name": "Al\u00e9a submersion marine (lido)", "modes": ["inondation", "climat"], "status": "SHELL", "desc": "Bande littorale expos\u00e9e aux surcotes \u2014 \u00e9pisode de r\u00e9f\u00e9rence \u00e0 documenter."}, {"id": "icpe", "kind": "zone", "name": "Enjeux industriels (ICPE)", "modes": ["inondation", "economie"], "status": "SHELL", "desc": "Installations class\u00e9es de La Peyrade : pollutions secondaires redout\u00e9es (PCS 2025)."}, {"id": "plu-zones", "kind": "zone", "name": "Zonage PLU (stylis\u00e9)", "modes": ["urbanisme"], "status": "SHELL", "desc": "Grands ensembles de zonage \u2014 document PLU \u00e0 int\u00e9grer (Phase 2)."}, {"id": "nappes", "kind": "zone", "name": "Nappes", "modes": ["eau"], "status": "EMPTY", "desc": "D\u00e9clar\u00e9 vide : ressources souterraines \u00e0 documenter (Sandre/ARS)."}, {"id": "icu", "kind": "zone", "name": "\u00celots de chaleur", "modes": ["climat", "nature"], "status": "EMPTY", "desc": "D\u00e9clar\u00e9 vide : cartographie ICU \u00e0 produire."}, {"id": "talwegs", "kind": "reseau", "name": "Talwegs \u2014 \u00e9coulements pr\u00e9f\u00e9rentiels", "modes": ["relief", "pluvial", "inondation"], "status": "SHELL", "desc": "Chemins de l'eau du massif vers la ville (indicatif) \u2014 le fil rouge pentes \u2192 ville."}, {"id": "collecteur-principal", "kind": "reseau", "name": "Collecteur principal", "modes": ["pluvial", "inondation"], "status": "SHELL", "desc": "Tron\u00e7on principal vers les exutoires \u2014 trac\u00e9 indicatif, plan des r\u00e9seaux (mairie) requis."}, {"id": "collecteurs-secondaires", "kind": "reseau", "name": "Collecteurs secondaires", "modes": ["pluvial"], "status": "SHELL", "desc": "Maille fine urbaine (stylis\u00e9e) \u2014 \u00e0 recenser."}, {"id": "axes-secours", "kind": "reseau", "name": "Axes & itin\u00e9raires de secours", "modes": ["secours", "mobilites"], "status": "DATA", "desc": "Itin\u00e9raires de secours & d'\u00e9vacuation (commune) \u2014 d\u00e9lais d'alerte courts (PCS 2025).", "data_link": {"dataset": "frontignan-cevenols-2026", "watchpoint": "axes-secours"}}, {"id": "d600", "kind": "reseau", "name": "D600 (Montpellier\u2013S\u00e8te)", "modes": ["mobilites", "secours", "territoire"], "status": "SHELL", "desc": "Axe principal nord \u2014 acc\u00e8s et \u00e9vacuation."}, {"id": "voie-ferree", "kind": "reseau", "name": "Voie ferr\u00e9e Montpellier\u2013S\u00e8te", "modes": ["mobilites", "territoire"], "status": "SHELL", "desc": "Ligne voyageurs \u2014 gare de Frontignan."}, {"id": "route-plage", "kind": "reseau", "name": "Route de la plage", "modes": ["mobilites", "secours"], "status": "SHELL", "desc": "Acc\u00e8s lido & campings \u2014 saturation estivale."}, {"id": "canal-rhone-sete", "kind": "reseau", "name": "Canal du Rh\u00f4ne \u00e0 S\u00e8te", "modes": ["territoire", "eau", "mobilites", "economie"], "status": "SHELL", "desc": "Canal de navigation longeant la rive nord de Thau."}, {"id": "tvb", "kind": "reseau", "name": "TVB \u2014 corridor \u00e9cologique", "modes": ["nature"], "status": "SHELL", "desc": "Trame verte & bleue : Gardiole \u2192 Aresquiers \u2192 Thau (indicatif)."}, {"id": "aep", "kind": "reseau", "name": "AEP (eau potable)", "modes": ["reseaux"], "status": "EMPTY", "desc": "D\u00e9clar\u00e9 vide : r\u00e9seau \u00e0 documenter."}, {"id": "assainissement", "kind": "reseau", "name": "Assainissement", "modes": ["reseaux"], "status": "EMPTY", "desc": "D\u00e9clar\u00e9 vide : r\u00e9seau & STEP \u00e0 documenter."}, {"id": "elec", "kind": "reseau", "name": "\u00c9lectricit\u00e9", "modes": ["reseaux"], "status": "EMPTY", "desc": "D\u00e9clar\u00e9 vide : r\u00e9seau \u00e0 documenter."}, {"id": "exutoires", "kind": "ouvrage", "name": "Exutoires vers l'\u00e9tang de Thau", "modes": ["pluvial", "eau", "inondation"], "status": "DATA", "lat": 43.433, "lon": 3.69, "desc": "Sorties des r\u00e9seaux vers Thau \u2014 forte sollicitation document\u00e9e d\u00e9but 2026 (SMBT).", "data_link": {"dataset": "frontignan-cevenols-2026", "watchpoint": "exutoires-thau"}}, {"id": "points-noirs", "kind": "ouvrage", "name": "Points noirs / avaloirs", "modes": ["pluvial", "inondation"], "status": "SHELL", "lat": 43.4462, "lon": 3.7105, "desc": "Points de d\u00e9bordement connus (PCS/SMBT, \u00e9pisode 2019) \u2014 localisation indicative."}, {"id": "bassins-existants", "kind": "ouvrage", "name": "Bassins existants", "modes": ["pluvial"], "status": "EMPTY", "lat": 43.44, "lon": 3.72, "desc": "\u00c0 recenser via le plan des r\u00e9seaux."}, {"id": "mairie", "kind": "batiment", "name": "Mairie", "modes": ["territoire", "gouvernance", "secours"], "status": "SHELL", "lat": 43.4483, "lon": 3.7057, "desc": "H\u00f4tel de ville \u2014 poste de commandement en crise (PCS)."}, {"id": "csi", "kind": "batiment", "name": "Centre de secours", "modes": ["secours"], "status": "SHELL", "lat": 43.447, "lon": 3.711, "desc": "Centre de secours & intervention (indicatif)."}, {"id": "ecoles", "kind": "batiment", "name": "\u00c9coles & \u00e9quipements", "modes": ["secours", "urbanisme", "climat"], "status": "SHELL", "lat": 43.452, "lon": 3.709, "desc": "\u00c9tablissements scolaires \u2014 cibles de d\u00e9simperm\u00e9abilisation et de mise \u00e0 l'abri."}, {"id": "camping", "kind": "batiment", "name": "Campings (saisonnalit\u00e9)", "modes": ["secours", "economie", "inondation"], "status": "SHELL", "lat": 43.428, "lon": 3.715, "desc": "H\u00e9bergements touristiques \u2014 population \u00d7N en \u00e9t\u00e9, \u00e9vacuation d\u00e9licate."}, {"id": "gare", "kind": "batiment", "name": "Gare", "modes": ["mobilites"], "status": "SHELL", "lat": 43.451, "lon": 3.703, "desc": "Gare SNCF \u2014 acc\u00e8s ferroviaire."}, {"id": "port", "kind": "batiment", "name": "Port & escale", "modes": ["economie", "mobilites"], "status": "SHELL", "lat": 43.432, "lon": 3.708, "desc": "Port de plaisance / escale du canal \u2014 \u00e9conomie locale."}, {"id": "step", "kind": "batiment", "name": "STEP (assainissement)", "modes": ["reseaux", "eau"], "status": "EMPTY", "lat": 43.434, "lon": 3.723, "desc": "Station d'\u00e9puration \u2014 \u00e0 documenter."}, {"id": "equipe-secours", "kind": "equipe", "name": "\u00c9quipe sauvetage (unit\u00e9)", "modes": ["secours"], "status": "SHELL", "lat": 43.4462, "lon": 3.7118, "desc": "Unit\u00e9 mobile stylis\u00e9e \u2014 position de d\u00e9monstration."}, {"id": "equipe-curage", "kind": "equipe", "name": "\u00c9quipe curage / voirie (unit\u00e9)", "modes": ["secours"], "status": "SHELL", "lat": 43.4412, "lon": 3.7186, "desc": "Unit\u00e9 mobile stylis\u00e9e \u2014 position de d\u00e9monstration."}, {"id": "equipe-peyrade", "kind": "equipe", "name": "\u00c9quipe industrielle (unit\u00e9)", "modes": ["secours"], "status": "SHELL", "lat": 43.4368, "lon": 3.7277, "desc": "Unit\u00e9 mobile stylis\u00e9e \u2014 position de d\u00e9monstration."}]}, "phases": [{"id": "phase-0", "name": "Phase 0 \u2014 Coquille jouable", "state": "livr\u00e9", "goal": "Tout le produit dessin\u00e9 et navigable : modes, modules, objets, actions, indicateurs \u2014 avec statuts visibles et placeholders assum\u00e9s", "deliverables": ["14 modes (dont sc\u00e9nario)", "7 modules / 33 sous-modules", "15 actions (arbre)", "9 indicateurs", "6 zones c\u00e9venols & watchpoints climat branch\u00e9s en DATA", "comparateur avant/apr\u00e8s (placeholders)"]}, {"id": "phase-1", "name": "Phase 1 \u2014 Donn\u00e9es urgentes", "state": "pr\u00e9vu", "goal": "Remplacer les coquilles critiques par des donn\u00e9es r\u00e9elles", "deliverables": ["Limites & b\u00e2ti (IGN)", "MNT / pentes (RGE ALTI)", "PPRI & AZI (G\u00e9orisques, DDTM)", "Plan des r\u00e9seaux pluviaux (mairie)", "PCS & moyens de secours"]}, {"id": "phase-2", "name": "Phase 2 \u2014 Modules environnementaux", "state": "pr\u00e9vu", "goal": "\u00c9toffer pluvial, c\u00f4te, perm\u00e9abilit\u00e9, nature", "deliverables": ["Pluvial complet (capacit\u00e9s, entretien)", "Perm\u00e9abilit\u00e9 / OCS GE", "Littoral & milieux", "Trajectoire ZAN"]}, {"id": "phase-3", "name": "Phase 3 \u2014 Vraie simulation", "state": "pr\u00e9vu", "goal": "Simulations fond\u00e9es et v\u00e9rifiables + comparateur s\u00e9rieux", "deliverables": ["Moteur d'\u00e9coulement (piste open source : LISEM \u2014 audit \u00e0 faire)", "Carte r\u00e9elle (MapLibre + deck.gl)", "Comparateur avant/apr\u00e8s calcul\u00e9", "Export \u00ab \u00e9lu \u00bb"]}, {"id": "phase-4", "name": "Phase 4 \u2014 \u00c9largissement", "state": "pr\u00e9vu", "goal": "Nature, \u00e9conomie, agglo, crise live", "deliverables": ["Modules nature/\u00e9conomie d\u00e9taill\u00e9s", "P\u00e9rim\u00e8tre agglo (S\u00e8te Agglop\u00f4le)", "Cellule de crise temps r\u00e9el (LIVE)", "RETEX int\u00e9gr\u00e9s"]}], "data_sources": [{"id": "ign-rge-alti", "name": "IGN RGE ALTI (MNT)", "scope": "relief, pentes, talwegs", "access": "data.gouv / IGN", "phase": "phase-1", "status": "EMPTY"}, {"id": "ign-bd-topo", "name": "IGN BD Topo / Ortho", "scope": "b\u00e2ti, limites, r\u00e9seaux", "access": "IGN", "phase": "phase-1", "status": "EMPTY"}, {"id": "georisques", "name": "G\u00e9orisques", "scope": "PPRI, AZI, argiles, ICPE, CatNat", "access": "georisques.gouv.fr", "phase": "phase-1", "status": "EMPTY"}, {"id": "mairie-pcs", "name": "PCS Frontignan 2025", "scope": "organisation de crise, alerte", "access": "mairie (via dataset c\u00e9venols)", "phase": "phase-0", "status": "DATA"}, {"id": "mairie-reseaux", "name": "Plan des r\u00e9seaux pluviaux", "scope": "collecteurs, exutoires, bassins", "access": "mairie / agglo", "phase": "phase-1", "status": "EMPTY"}, {"id": "smbt", "name": "SMBT \u2014 \u00e9tudes & PAPI de Thau 2026\u20132031", "scope": "diagnostic, programme d'actions", "access": "via dataset c\u00e9venols", "phase": "phase-0", "status": "DATA"}, {"id": "meteo-france", "name": "M\u00e9t\u00e9o-France", "scope": "vigilance, alertes (overlay m\u00e9t\u00e9o)", "access": "API publiques", "phase": "phase-1", "status": "EMPTY"}, {"id": "vigithau", "name": "VigiThau", "scope": "observatoire local (r\u00e9f\u00e9rence capteurs)", "access": "via dataset c\u00e9venols", "phase": "phase-1", "status": "DATA"}, {"id": "thau-alabri", "name": "THAU ALABRI", "scope": "protection habitations", "access": "via dataset c\u00e9venols", "phase": "phase-1", "status": "DATA"}, {"id": "agglo", "name": "S\u00e8te Agglop\u00f4le (PLU/SCoT, voirie)", "scope": "urbanisme, voirie", "access": "agglo", "phase": "phase-2", "status": "EMPTY"}, {"id": "ocs-ge", "name": "OCS GE (artificialisation)", "scope": "ZAN, perm\u00e9abilit\u00e9", "access": "IGN", "phase": "phase-2", "status": "EMPTY"}, {"id": "sandre-nappes", "name": "Sandre / ARS (nappes, qualit\u00e9)", "scope": "eau", "access": "sandre", "phase": "phase-2", "status": "EMPTY"}], "links": [{"label": "Module climat \u00ab Atlas Frontignan \u00bb (9 onglets, dont \u26c8 c\u00e9venols)", "url": "el-nino-thau.html", "hash": "#cevenols", "note": "onglet \u26c8 \u00c9pisodes c\u00e9venols \u2014 diagnostic complet"}, {"label": "Simulation pluie/ruissellement (p\u00e9dagogique)", "url": "el-nino-thau.html", "hash": "#sim", "note": "onglet \ud83c\udf27 Simulation"}, {"label": "Dataset c\u00e9venols (JSON canonique)", "path": "data/climat/frontignan-episodes-cevenols/frontignan-cevenols-2026.json", "note": "5 blocages, 7 solutions, PAPI, pilote \u2014 alimente les zones DATA de cette carte"}, {"label": "Dataset El Ni\u00f1o (JSON canonique)", "path": "data/climat/el-nino-2026/el-nino-godzilla-2026.json", "note": "watchpoints climat Thau (mode Climat)"}, {"label": "GeoJSON watchpoints c\u00e9venols (watchtower)", "path": "projects/watchtower/public/data/frontignan-cevenols-watchpoints.geojson", "note": "glisser-d\u00e9poser sur le globe"}, {"label": "GeoJSON watchpoints El Ni\u00f1o (watchtower)", "path": "projects/watchtower/public/data/enso-thau-watchpoints.geojson", "note": "glisser-d\u00e9poser sur le globe"}, {"label": "Deck territorial Frontignan 2026\u20132040", "url": "index.html", "note": "pr\u00e9sentation (19 slides)"}, {"label": "Parcours p\u00e9dagogique El Ni\u00f1o (COGNITORIUM)", "url": "../COGNITORIUM/learning/el-nino-poc.html", "note": "PoC learning engine"}, {"label": "API datasets", "url": "/api/climat/datasets", "note": "GET /api/climat/{dataset}/{section}"}], "sources": [{"id": "s-synth-gpt", "title": "Synth\u00e8se de discussion \u00ab gpt-6-sol-search-max \u00bb", "date": "2026-10-11", "note": "aucune source externe cit\u00e9e \u2014 sources/syntheses-discussion-2026-10-11.md"}, {"id": "s-synth-grok", "title": "Synth\u00e8se de discussion \u00ab grok-4.5-search \u00bb", "date": "2026-10-11", "note": "aucune source externe cit\u00e9e \u2014 sources/syntheses-discussion-2026-10-11.md"}, {"id": "s-cevenols", "title": "Dataset canonique \u00ab Frontignan face aux \u00e9pisodes c\u00e9venols \u00bb v1.0.0", "date": "2026-10-11", "note": "blocages, solutions, PAPI, pilote"}, {"id": "s-elnino", "title": "Dataset canonique \u00ab El Ni\u00f1o 2026\u20132027 Godzilla \u00d7 Thau \u00bb v1.0.0", "date": "2026-10-11", "note": "watchpoints climat Thau"}, {"id": "s-pcs", "title": "PCS Frontignan 2025 (via dataset c\u00e9venols)", "date": "2025", "note": "d\u00e9lais d'alerte courts, isolement, enjeux industriels"}, {"id": "s-smbt", "title": "Programme d'\u00e9tudes SMBT (via dataset c\u00e9venols)", "date": "2026", "note": "d\u00e9sordres Gardiole\u2192centre-ville, sollicitation r\u00e9seaux"}, {"id": "s-papi", "title": "PAPI de Thau 2026\u20132031 (via dataset c\u00e9venols)", "date": "2026-04", "note": "46 actions, 25 communes, \u22486,8 M\u20ac, labellis\u00e9 avril 2026"}, {"id": "s-vigithau", "title": "VigiThau (via dataset c\u00e9venols)", "date": "2026", "note": "r\u00e9f\u00e9rence observatoire/capteurs"}, {"id": "s-atlas", "title": "\u00c9quipe Atlas (proposition)", "date": "2026-10-11", "note": "actions sans source documentaire \u2014 placeholders assum\u00e9s"}]}</script>
+<script type="application/json" id="cevenols-data">{"meta": {"id": "frontignan-cevenols-2026", "schema": "territorial-risk-v1", "title": "Frontignan face aux \u00e9pisodes c\u00e9venols \u2014 points bloquants & solutions", "short_title": "\u00c9pisodes c\u00e9venols \u00d7 Frontignan", "version": "1.0.0", "created_at": "2026-10-11", "as_of": "2026-10-11", "language": "fr", "scope": "Commune de Frontignan-la Peyrade (H\u00e9rault, S\u00e8te Agglop\u00f4le M\u00e9diterran\u00e9e) face aux \u00e9pisodes c\u00e9venols / m\u00e9diterran\u00e9ens : m\u00e9canismes d'inondation par ruissellement, saturation des r\u00e9seaux, contraintes littorales et organisation de crise. Compl\u00e9ment territorial du dataset el-nino-godzilla-2026 (frise Thau, simulation, pr\u00e9vention).", "origin": {"analysis": "\u00ab Frontignan face aux \u00e9pisodes c\u00e9venols : blocages et solutions possibles \u00bb \u2014 diagnostic transmis le 11 octobre 2026, suite au module Atlas Frontignan \u00ab El Ni\u00f1o \u00d7 Thau \u00bb.", "documents": ["Plan communal de sauvegarde (PCS) de Frontignan-la Peyrade (2025)", "PPRI de Frontignan \u2014 zonage et r\u00e8glement", "Programme d'\u00e9tudes du Syndicat mixte du bassin de Thau (SMBT) \u2014 ruissellements de la Gardiole, sollicitation des r\u00e9seaux", "SMBT \u2014 inondations par ruissellement urbain \u00e0 Frontignan lors de l'\u00e9pisode de 2019", "PAPI de Thau 2026\u20132031 (labellis\u00e9 avril 2026)", "THAU ALABRI \u2014 diagnostics de vuln\u00e9rabilit\u00e9 des b\u00e2timents", "\u00c9tude pr\u00e9alable au PAPI \u2014 diagnostic territorial", "VigiThau \u2014 dispositif de surveillance"], "transmitted_by": "Utilisateur du monorepo (Sathancabrol), 11 octobre 2026", "raw_sources": ["data/climat/frontignan-episodes-cevenols/sources/analyse-blocages-solutions-2026-10-11.md"]}, "related_datasets": ["el-nino-godzilla-2026"], "disclaimer": "Diagnostic documentaire construit \u00e0 partir de l'analyse transmise (11/10/2026), elle-m\u00eame fond\u00e9e sur les documents communaux et intercommunaux (PCS 2025, PPRI, SMBT, PAPI). Ce n'est pas une \u00e9tude hydraulique : les localisations du bloc geo sont indicatives, les sc\u00e9narios du module Atlas restent p\u00e9dagogiques et qualitatifs. Toute d\u00e9cision d'am\u00e9nagement doit s'appuyer sur les donn\u00e9es techniques officielles et une validation par les services comp\u00e9tents (Ville de Frontignan, S\u00e8te Agglop\u00f4le M\u00e9diterran\u00e9e, SMBT)."}, "key_message": {"headline": "Le probl\u00e8me n'est pas seulement la quantit\u00e9 de pluie.", "diagnosis": "C'est la combinaison entre les ruissellements venant de la Gardiole, les r\u00e9seaux urbains qui peuvent saturer, les zones basses du littoral et de l'\u00e9tang, et la difficult\u00e9 d'\u00e9vacuer rapidement les personnes et l'eau.", "context": "La commune reconna\u00eet son exposition aux ruissellements du massif de la Gardiole et dispose d'un PPRI. Le SMBT identifie \u00e9galement des inondations par ruissellement urbain \u00e0 Frontignan lors de l'\u00e9pisode de 2019.", "conclusion": "L'opportunit\u00e9 n'est pas de chercher un ouvrage miracle, mais de construire un diagnostic partag\u00e9 des flux d'eau et des vuln\u00e9rabilit\u00e9s, puis de comparer des interventions cibl\u00e9es. Atlas Frontignan peut servir de support de d\u00e9cision et de p\u00e9dagogie pour cette d\u00e9marche, \u00e0 condition de s'appuyer sur les donn\u00e9es techniques officielles et de faire valider les sc\u00e9narios par les sp\u00e9cialistes comp\u00e9tents."}, "sources": [{"id": "pcs-frontignan-2025", "type": "document", "title": "Plan communal de sauvegarde \u2014 Frontignan-la Peyrade (2025)", "date": "2025", "note": "D\u00e9crit les dangers li\u00e9s aux d\u00e9lais d'alerte courts, \u00e0 l'isolement et aux difficult\u00e9s de circulation ; signale des enjeux industriels et des terrains potentiellement pollu\u00e9s dans des secteurs expos\u00e9s."}, {"id": "ppri-frontignan", "type": "document", "title": "PPRI de Frontignan \u2014 zonage et r\u00e8glement", "date": "2026", "note": "Commune expos\u00e9e aux ruissellements du massif de la Gardiole et \u00e0 la submersion marine ; base r\u00e9glementaire du zonage."}, {"id": "smbt-programme-etudes", "type": "etude", "title": "Programme d'\u00e9tudes du SMBT (smbt.fr)", "date": "2026", "note": "Signale explicitement des d\u00e9sordres majeurs li\u00e9s aux ruissellements de la Gardiole sur le centre-ville ; restaurations de cours d'eau pr\u00e9vues au PAPI."}, {"id": "smbt-reseaux-2026", "type": "etude", "title": "SMBT \u2014 sollicitation des r\u00e9seaux par \u00e9pisodes successifs", "date": "2026", "note": "Forte sollicitation des r\u00e9seaux pluviaux par des \u00e9pisodes pluvieux successifs, document\u00e9e d\u00e9but 2026."}, {"id": "smbt-episode-2019", "type": "evenement", "title": "SMBT \u2014 inondations par ruissellement urbain \u00e0 Frontignan (\u00e9pisode de 2019)", "date": "2019", "note": "Pr\u00e9c\u00e9dent local document\u00e9 de ruissellement urbain."}, {"id": "papi-thau-2026", "type": "programme", "title": "PAPI de Thau 2026\u20132031 (Syndicat mixte du bassin de Thau)", "date": "2026-04", "note": "Labellis\u00e9 avril 2026 : 46 actions, 25 communes, \u2248 6,8 M\u20ac \u2014 surveillance, alerte, vuln\u00e9rabilit\u00e9 des b\u00e2timents, \u00e9coulements, ouvrages de protection ; restaurations de cours d'eau."}, {"id": "thau-alabri", "type": "dispositif", "title": "THAU ALABRI \u2014 diagnostics de vuln\u00e9rabilit\u00e9 des b\u00e2timents", "date": "2026", "note": "Diagnostics \u00e0 d\u00e9ployer avant travaux cibl\u00e9s : batardeaux, \u00e9quipements \u00e9lectriques rehauss\u00e9s, protection des ouvertures, mise en s\u00e9curit\u00e9."}, {"id": "etude-prealable-papi", "type": "etude", "title": "\u00c9tude pr\u00e9alable au PAPI \u2014 diagnostic territorial", "date": "2026", "note": "Diagnostic territorial de r\u00e9f\u00e9rence \u00e0 exploiter en premier."}, {"id": "vigithau", "type": "dispositif", "title": "VigiThau \u2014 dispositif de surveillance existant", "date": "2026", "note": "Base existante pour relier pluie, niveaux d'eau, seuils de vigilance, signalements terrain et consignes aux habitants."}, {"id": "ville-frontignan", "type": "institution", "title": "Ville de Frontignan-la Peyrade \u2014 reconnaissance de l'exposition", "date": "2026", "note": "Exposition aux ruissellements du massif de la Gardiole ; PPRI en vigueur."}], "blocking_points": [{"id": "gardiole-ruissellement", "n": 1, "zone": "Amont \u2192 centre-ville", "title": "L'eau descend de la Gardiole vers la ville", "basis": "SMBT \u2014 programme d'\u00e9tudes", "mechanism": "Les pentes concentrent l'eau vers les points bas. Lorsque les sols sont satur\u00e9s, le ruissellement augmente et peut provoquer des accumulations rapides.", "evidence": "Le programme d'\u00e9tudes du SMBT signale explicitement des d\u00e9sordres majeurs li\u00e9s aux ruissellements de la Gardiole sur le centre-ville. Pr\u00e9c\u00e9dent document\u00e9 : inondations par ruissellement urbain \u00e0 Frontignan lors de l'\u00e9pisode de 2019.", "blockage": "Conna\u00eetre pr\u00e9cis\u00e9ment les trajectoires de l'eau, les points d'accumulation et les obstacles \u00e0 son \u00e9coulement.", "simulable": true, "source_ids": ["smbt-programme-etudes", "smbt-episode-2019", "ville-frontignan"]}, {"id": "reseaux-saturation", "n": 2, "zone": "R\u00e9seaux pluviaux urbains", "title": "Les r\u00e9seaux pluviaux peuvent atteindre leurs limites", "basis": "SMBT \u2014 d\u00e9but 2026", "mechanism": "Des pluies tr\u00e8s intenses ou successives sollicitent les r\u00e9seaux, les avaloirs et les exutoires au m\u00eame moment. Quand les sols sont d\u00e9j\u00e0 gorg\u00e9s d'eau, l'infiltration diminue.", "evidence": "Le SMBT a document\u00e9 d\u00e9but 2026 une forte sollicitation des r\u00e9seaux par des \u00e9pisodes pluvieux successifs.", "blockage": "Capacit\u00e9 r\u00e9elle des conduites, entretien, exutoires, reflux et manque \u00e9ventuel de stockage temporaire \u00e0 v\u00e9rifier secteur par secteur.", "simulable": true, "source_ids": ["smbt-reseaux-2026"]}, {"id": "littoral-etang", "n": 3, "zone": "Littoral & \u00e9tang de Thau", "title": "Le littoral et l'\u00e9tang compliquent l'\u00e9vacuation", "basis": "PPRI / submersion marine", "mechanism": "Frontignan est expos\u00e9e \u00e0 la submersion marine. En cas de mer haute ou de conditions marines d\u00e9favorables, l'\u00e9vacuation de l'eau vers les milieux r\u00e9cepteurs peut devenir plus difficile.", "evidence": "Exposition reconnue par la commune (PPRI) ; point hydraulique \u00e0 \u00e9tudier, et non une situation syst\u00e9matique.", "blockage": "G\u00e9rer ensemble pluie, niveaux de l'\u00e9tang, mer, exutoires et ouvrages de protection.", "simulable": true, "source_ids": ["ppri-frontignan", "ville-frontignan"]}, {"id": "deplacements-secours", "n": 4, "zone": "Circulation & secours", "title": "Les d\u00e9placements et les secours peuvent \u00eatre entrav\u00e9s", "basis": "PCS communal", "mechanism": "Une rue submerg\u00e9e peut isoler des quartiers, rendre certains itin\u00e9raires impraticables et retarder l'intervention des secours.", "evidence": "Le PCS communal d\u00e9crit les dangers li\u00e9s aux d\u00e9lais d'alerte courts, \u00e0 l'isolement et aux difficult\u00e9s de circulation.", "blockage": "Les itin\u00e9raires s\u00fbrs, les points de coupure et les personnes vuln\u00e9rables doivent \u00eatre connus avant la crise.", "simulable": false, "source_ids": ["pcs-frontignan-2025"]}, {"id": "pollutions-secondaires", "n": 5, "zone": "Enjeux industriels & terrains pollu\u00e9s", "title": "Les d\u00e9g\u00e2ts peuvent entra\u00eener des pollutions secondaires", "basis": "PCS communal (2025)", "mechanism": "Une inondation peut d\u00e9passer le simple dommage aux b\u00e2timents : elle peut aussi soulever des risques de pollution ou d'accident technologique.", "evidence": "Le PCS de Frontignan signale des enjeux industriels et des terrains potentiellement pollu\u00e9s dans des secteurs expos\u00e9s.", "blockage": "Localiser les installations sensibles, s\u00e9curiser les stockages et coordonner les plans de crise.", "simulable": false, "source_ids": ["pcs-frontignan-2025"]}], "solutions": {"principle": "Les solutions les plus utiles sont compl\u00e9mentaires : retenir une partie de l'eau en amont, ralentir les \u00e9coulements, donner de la capacit\u00e9 au syst\u00e8me urbain, prot\u00e9ger les b\u00e2timents et am\u00e9liorer l'alerte.", "matrix": [{"priority": "P1", "verb": "Conna\u00eetre", "solution": "Cartographie hydraulique fine", "application": "Croiser topographie, pentes, r\u00e9seaux, sols, zones basses et retours des habitants pour rep\u00e9rer les trajectoires de ruissellement.", "source_id": null}, {"priority": "P1", "verb": "Alerter", "solution": "Capteurs et pr\u00e9vision locale", "application": "Relier pluie, niveaux d'eau, seuils de vigilance, signalements terrain et consignes aux habitants. Le dispositif VigiThau constitue une base existante.", "source_id": "vigithau"}, {"priority": "P1", "verb": "Prot\u00e9ger", "solution": "Diagnostics et adaptation des b\u00e2timents", "application": "D\u00e9ployer les diagnostics THAU ALABRI, puis cibler les travaux adapt\u00e9s : batardeaux, \u00e9quipements \u00e9lectriques rehauss\u00e9s, protection des ouvertures et mise en s\u00e9curit\u00e9.", "source_id": "thau-alabri"}, {"priority": "P2", "verb": "Retenir", "solution": "D\u00e9simperm\u00e9abilisation et infiltration", "application": "Noues, jardins de pluie, sols perm\u00e9ables, espaces verts en creux et bassins de r\u00e9tention l\u00e0 o\u00f9 les \u00e9tudes de sol et les contraintes locales le permettent.", "source_id": null}, {"priority": "P2", "verb": "Ralentir", "solution": "Restaurer les \u00e9coulements naturels", "application": "\u00c9tudier les foss\u00e9s, cours d'eau, passages hydrauliques et zones d'expansion des crues ; \u00e9viter que les am\u00e9nagements en amont aggravent les d\u00e9bits en aval. Le PAPI pr\u00e9voit notamment des restaurations de cours d'eau.", "source_id": "papi-thau-2026"}, {"priority": "P2", "verb": "\u00c9vacuer", "solution": "R\u00e9nover les r\u00e9seaux et les exutoires", "application": "Mesurer les capacit\u00e9s, localiser les \u00e9tranglements, v\u00e9rifier les clapets et les risques de reflux, puis dimensionner les travaux selon plusieurs sc\u00e9narios de pluie et de niveau marin.", "source_id": null}, {"priority": "P3", "verb": "Organiser", "solution": "Plan de circulation de crise", "application": "Cartographier les routes \u00e0 fermer, itin\u00e9raires de secours, lieux d'accueil et besoins des personnes \u00e0 mobilit\u00e9 r\u00e9duite ; simuler les d\u00e9cisions avant l'\u00e9v\u00e9nement.", "source_id": null}], "papi": {"name": "PAPI de Thau 2026\u20132031", "actions": 46, "communes": 25, "budget_millions": 6.8, "labellise": "avril 2026", "porte": "Surveillance, alerte, vuln\u00e9rabilit\u00e9 des b\u00e2timents, \u00e9coulements et ouvrages de protection", "point_a_verifier": "L'affectation pr\u00e9cise des actions, budgets et calendriers \u00e0 chaque secteur de Frontignan.", "source_id": "papi-thau-2026"}}, "atlas_opportunities": {"intro": "Le module territorial peut devenir utile au-del\u00e0 d'une carte des zones inondables : aider \u00e0 comprendre o\u00f9 l'eau va, ce qui bloque, qui doit intervenir et quelle solution tester.", "modules": [{"id": "A", "name": "Carte des m\u00e9canismes d'inondation", "status": "proposition", "description": "Superposer relief, axes de ruissellement, r\u00e9seaux pluviaux, zones basses, routes, b\u00e2timents sensibles et zonage PPRI.", "rule": "Chaque couche doit indiquer sa source, sa date et sa pr\u00e9cision.", "existing": null}, {"id": "B", "name": "Simulateur de sc\u00e9narios", "status": "premi\u00e8re version disponible", "description": "Comparer une pluie intense, des pluies r\u00e9p\u00e9t\u00e9es apr\u00e8s saturation des sols, ou une pluie accompagn\u00e9e de conditions marines d\u00e9favorables. Montrer les zones potentiellement affect\u00e9es et les itin\u00e9raires susceptibles d'\u00eatre coup\u00e9s.", "rule": "Simulation p\u00e9dagogique et qualitative au d\u00e9part. Des r\u00e9sultats quantitatifs fiables exigeraient des donn\u00e9es et un mod\u00e8le hydraulique valid\u00e9.", "existing": "Onglet \u00ab Simulation \u00bb du module El Ni\u00f1o \u00d7 Thau (el-nino-thau.html) : coupe Gardiole \u2192 ville \u2192 \u00e9tang \u2192 mer, curseurs pluie/mer/sols.", "existing_action": "goTab('sim')"}, {"id": "C", "name": "Comparateur de solutions", "status": "proposition", "description": "Pour chaque point bloquant, comparer plusieurs options : bassin de stockage, noue, d\u00e9simperm\u00e9abilisation, entretien, renforcement du r\u00e9seau, protection d'un b\u00e2timent.", "rule": "Afficher co\u00fbt estimatif \u00e0 confirmer, b\u00e9n\u00e9fices attendus, contraintes fonci\u00e8res, entretien et effets possibles en aval.", "existing": null}, {"id": "D", "name": "Tableau de bord op\u00e9rationnel", "status": "proposition", "description": "Relier les informations disponibles sur les pluies, les niveaux d'eau, les signalements, les travaux et les d\u00e9cisions de crise.", "rule": "Distinguer clairement les observations r\u00e9elles, les alertes officielles et les simulations.", "existing": "\u00c9bauche : onglet \u00ab Frise Thau \u00bb (tableau de bord de surveillance 8 indicateurs) du m\u00eame module.", "existing_action": "goTab('timeline')"}]}, "pilot": {"recommendation": "Commencer par une \u00e9tude pilote sur le ruissellement de la Gardiole vers le centre-ville \u2014 ce m\u00e9canisme est explicitement signal\u00e9 dans les documents du SMBT. Ensuite, \u00e9tendre l'analyse aux points bas, aux r\u00e9seaux et aux secteurs littoraux.", "progress_label": "4/5", "steps": [{"done": true, "title": "R\u00e9cup\u00e9rer les donn\u00e9es de r\u00e9f\u00e9rence", "detail": "PPRI, PCS, cartes de ruissellement du SMBT, topographie et donn\u00e9es de r\u00e9seaux disponibles."}, {"done": true, "title": "Localiser les points de blocage", "detail": "Croiser \u00e9tudes, signalements d'habitants, photos dat\u00e9es, traces de crues et observations des services."}, {"done": true, "title": "Faire valider le diagnostic", "detail": "Comparer la carte avec les services techniques de la Ville, S\u00e8te Agglop\u00f4le et le SMBT."}, {"done": true, "title": "Comparer les sc\u00e9narios de travaux", "detail": "\u00c9valuer r\u00e9duction du risque, co\u00fbts, foncier, entretien, d\u00e9lais et effets sur les quartiers voisins."}, {"done": false, "title": "Tester une d\u00e9monstration Atlas", "detail": "Cr\u00e9er une carte interactive document\u00e9e avec sc\u00e9narios et fiches d'action, sans pr\u00e9senter les hypoth\u00e8ses comme des pr\u00e9visions."}], "sources_to_exploit": ["PPRI de Frontignan \u2014 zonage et r\u00e8glement", "Plan communal de sauvegarde \u2014 Frontignan", "PAPI de Thau 2026\u20132031 \u2014 actions et financement", "THAU ALABRI \u2014 diagnostics de vuln\u00e9rabilit\u00e9", "\u00c9tude pr\u00e9alable au PAPI \u2014 diagnostic territorial"]}, "geo": {"description": "Zones de blocage indicatives (diagnostic documentaire, pas une \u00e9tude hydraulique) \u2014 export\u00e9es en GeoJSON pour watchtower (projects/watchtower/public/data/frontignan-cevenols-watchpoints.geojson).", "watchpoints": [{"id": "gardiole-amont", "name": "Massif de la Gardiole \u2014 amont des ruissellements", "lat": 43.5069, "lon": 3.8167, "category": "local", "blocking_point_ids": ["gardiole-ruissellement"], "description": "Origine des \u00e9coulements concentr\u00e9s vers les points bas du centre-ville ; d\u00e9sordres majeurs document\u00e9s par le programme d'\u00e9tudes du SMBT."}, {"id": "centre-ville-frontignan", "name": "Centre-ville de Frontignan \u2014 points bas", "lat": 43.4495, "lon": 3.706, "category": "local", "blocking_point_ids": ["gardiole-ruissellement", "reseaux-saturation"], "description": "Points bas r\u00e9cepteurs des ruissellements de la Gardiole ; ruissellement urbain document\u00e9 lors de l'\u00e9pisode de 2019 (SMBT)."}, {"id": "exutoires-thau", "name": "Exutoires vers l'\u00e9tang de Thau", "lat": 43.433, "lon": 3.69, "category": "local", "blocking_point_ids": ["reseaux-saturation", "littoral-etang"], "description": "Clapets, risques de reflux et niveaux du milieu r\u00e9cepteur : l'\u00e9vacuation devient difficile quand l'\u00e9tang est haut (point hydraulique \u00e0 \u00e9tudier)."}, {"id": "frontignan-plage", "name": "Frontignan-plage \u2014 littoral bas", "lat": 43.4196, "lon": 3.7196, "category": "local", "blocking_point_ids": ["littoral-etang"], "description": "Secteur littoral bas expos\u00e9 \u00e0 la submersion marine (PPRI) ; \u00e9vacuation difficile vers les milieux r\u00e9cepteurs en conditions marines d\u00e9favorables."}, {"id": "zi-peyrade", "name": "ZA/ZI La Peyrade \u2014 enjeux industriels", "lat": 43.4372, "lon": 3.729, "category": "local", "blocking_point_ids": ["pollutions-secondaires"], "description": "Enjeux industriels et terrains potentiellement pollu\u00e9s signal\u00e9s par le PCS dans des secteurs expos\u00e9s : risque de pollution secondaire en cas d'inondation."}, {"id": "axes-secours", "name": "Axes & itin\u00e9raires de secours (commune)", "lat": 43.443, "lon": 3.713, "category": "local", "blocking_point_ids": ["deplacements-secours"], "description": "Rues submerg\u00e9es possibles \u2192 isolement de quartiers, itin\u00e9raires impraticables, retards des secours (PCS : d\u00e9lais d'alerte courts, isolement, difficult\u00e9s de circulation)."}]}}</script>
+<script type="application/json" id="elnino-data">{"meta": {"id": "el-nino-godzilla-2026", "version": "1.0.0", "as_of": "2026-10-11"}, "geo": {"watchpoints": [{"id": "thau-lagune", "name": "\u00c9tang de Thau", "lat": 43.4, "lon": 3.62, "category": "local", "scope": "thau", "status": "observe", "description": "Lagune m\u00e9diterran\u00e9enne \u2014 indicateur vital du territoire (conchyliculture, qualit\u00e9 de l'eau, tourisme). Expos\u00e9e aux \u00e9pisodes m\u00e9diterran\u00e9ens, au ruissellement et aux vagues-submersion."}, {"id": "frontignan", "name": "Frontignan-la Peyrade", "lat": 43.4467, "lon": 3.7053, "category": "local", "scope": "thau", "status": "observe", "description": "Commune littorale basse (24 136 hab.) : ruissellement de la Gardiole, risque littoral, PCS/PPRI/DICRIM. PHE centennale \u2248 2,00 m (PPRI)."}, {"id": "sete", "name": "S\u00e8te", "lat": 43.4063, "lon": 3.7005, "category": "local", "scope": "thau", "status": "observe", "description": "Ville portuaire entre mer et lagune \u2014 si\u00e8ge de S\u00e8te Agglop\u00f4le M\u00e9diterran\u00e9e. Ne pas confondre les cumuls de l'arri\u00e8re-pays avec ceux de S\u00e8te."}, {"id": "marseillan", "name": "Marseillan", "lat": 43.3564, "lon": 3.5287, "category": "local", "scope": "thau", "status": "observe", "description": "Rive ouest de Thau \u2014 secteurs littoraux bas sensibles aux vagues-submersion."}, {"id": "gardiole", "name": "Massif de la Gardiole", "lat": 43.5069, "lon": 3.8167, "category": "local", "scope": "thau", "status": "observe", "description": "Relief au nord de Frontignan : origine des ruissellements vers la plaine littorale lors des pluies intenses ; interface habitat/nature expos\u00e9e aux incendies."}, {"id": "golfe-lion", "name": "Golfe du Lion (mer)", "lat": 42.75, "lon": 3.9, "category": "local", "scope": "thau", "status": "prevu", "description": "Mer chaude en automne : carburant des \u00e9pisodes m\u00e9diterran\u00e9ens (remont\u00e9es d'air humide + configuration atmosph\u00e9rique favorable)."}]}, "note": "projection all\u00e9g\u00e9e du dataset el-nino-godzilla-2026 (watchpoints locaux au bassin de Thau) \u2014 construite par scripts/build_atlas_assets.py"}</script>
+<script>
+'use strict';
+/* ═══════════ Atlas Frontignan — coquille Phase 0 ═══════════
+   Généré par scripts/build_atlas_assets.py depuis :
+   - data/atlas-frontignan/atlas-frontignan-2026.json (spec canonique)
+   - data/climat/frontignan-episodes-cevenols/... (zones DATA inondation/secours)
+   - data/climat/el-nino-2026/... (watchpoints climat, mode Climat)
+   Ne pas éditer à la main. */
+const SPEC = JSON.parse(document.getElementById('spec-data').textContent);
+const C    = JSON.parse(document.getElementById('cevenols-data').textContent);
+const E    = JSON.parse(document.getElementById('elnino-data').textContent);
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const MODES = SPEC.modes, OBJ = SPEC.map.objects, ACTS = SPEC.actions, INDS = SPEC.indicators, MODS = SPEC.modules, UNITS = SPEC.units;
+const objById = Object.fromEntries(OBJ.map(o => [o.id, o]));
+const actById = Object.fromEntries(ACTS.map(a => [a.id, a]));
+const indById = Object.fromEntries(INDS.map(i => [i.id, i]));
+const modById = Object.fromEntries(MODS.map(m => [m.id, m]));
+const P = SPEC.map.projection;
+const project = (lat, lon) => [ (lon - P.lon_min) / (P.lon_max - P.lon_min) * P.width,
+                                (P.lat_max - lat) / (P.lat_max - P.lat_min) * P.height ];
+const STC = Object.fromEntries(SPEC.statuses.map(s => [s.id, s.color]));
+const chip = st => `<span class="st st-${esc(st)}" title="${esc((SPEC.statuses.find(x=>x.id===st)||{}).meaning||'')}">${esc(st)}</span>`;
+const store = { get(k, d){ try{ const v = localStorage.getItem('atlas-'+k); return v==null?d:JSON.parse(v);}catch(e){ return d; } },
+                set(k, v){ try{ localStorage.setItem('atlas-'+k, JSON.stringify(v)); }catch(e){} } };
+
+let mode  = store.get('mode', 'territoire');
+if (!MODES.some(m => m.id === mode)) mode = 'territoire';
+let scen  = store.get('scen', []).filter(id => actById[id]);
+let ovl   = new Set(store.get('ovl', []));
+let sideTab = 'insp', drTab = 'tree', selAct = null, tourI = -1;
+
+/* ── deltas scénario ── */
+function deltas(){
+  const d = {};
+  scen.forEach(id => actById[id].effects.forEach(e => { d[e.indicator] = (d[e.indicator]||0) + e.delta; }));
+  return d;
+}
+function fmtVal(ind, v){
+  if (v == null) return '—';
+  return ind.unit === 'M€' ? v.toFixed(1).replace('.',',')+' M€' : String(Math.round(v));
+}
+
+/* ═══════════ header ═══════════ */
+$('#loop').innerHTML = SPEC.meta.product.loop.map((s,i) => `<b>${esc(s)}</b>${i<4?'<i>→</i>':''}`).join('');
+$('#status-legend').innerHTML = SPEC.statuses.map(s =>
+  `<span class="st st-${esc(s.id)}" title="${esc(s.meaning)}">${esc(s.id)}</span>`).join('');
+
+/* ═══════════ rail : modes + overlays ═══════════ */
+function buildRail(){
+  $('#rail-modes').innerHTML = '';
+  MODES.forEach((m, i) => {
+    const b = document.createElement('button');
+    b.className = 'mode-btn' + (m.id===mode?' on':'');
+    b.innerHTML = `<span class="ic">${m.icon}</span><span class="nm">${esc(m.name)}</span>` +
+      (i<10?`<span class="key">${i===9?'0':i+1}</span>`:'') +
+      `<span class="dot" style="background:${STC[m.status]}" title="${esc(m.status)}"></span>`;
+    b.onclick = () => setMode(m.id);
+    b.dataset.mode = m.id;
+    $('#rail-modes').appendChild(b);
+  });
+  $('#rail-overlays').innerHTML = '';
+  SPEC.overlays.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'ovl-btn' + (ovl.has(o.id)?' on':'');
+    b.innerHTML = `<span>${o.icon}</span><span style="flex:1">${esc(o.name)}</span>${chip(o.status)}`;
+    b.title = o.note;
+    b.onclick = () => { ovl.has(o.id) ? ovl.delete(o.id) : ovl.add(o.id); store.set('ovl',[...ovl]); buildRail(); renderOverlays(); };
+    $('#rail-overlays').appendChild(b);
+  });
+}
+
+/* ═══════════ changement de lentille ═══════════ */
+function setMode(id){
+  mode = id; store.set('mode', id); tourSync();
+  buildRail();
+  $$('.mode-btn').forEach(b => b.classList.toggle('on', b.dataset.mode === id));
+  const m = MODES.find(x => x.id === id);
+  $('#map').setAttribute('data-mode', id);
+  $$('#map .obj').forEach(el => {
+    const o = objById[el.getAttribute('data-obj')];
+    if (!o) return;
+    el.style.display = (o.modes.includes('*') || o.modes.includes(id)) ? '' : 'none';
+  });
+  $$('#markers .mk').forEach(el => {
+    const ms = (el.getAttribute('data-modes')||'').split(',');
+    el.style.display = (ms.includes('*') || ms.includes(id)) ? '' : 'none';
+  });
+  $$('#ghosts .mk').forEach(el => { el.style.display = id === 'scenario' ? '' : 'none'; });
+  $('#mode-q').innerHTML = `<h2>${m.icon} ${esc(m.name)} ${chip(m.status)}</h2>` +
+    `<div class="q">« ${esc(m.question)} »</div><div class="n">${esc(m.note)}</div>`;
+  $('#legend').innerHTML = `<h3>Lentille · couches</h3>` + m.layers.map(l =>
+    `<div class="ly"><span>${esc(l.name)}</span>${chip(l.status)}</div>`).join('') +
+    `<div class="ly" style="margin-top:6px;border-top:1px solid var(--line);padding-top:6px"><span class="small">scénario actif</span><span class="small">${scen.length} action(s)</span></div>`;
+  renderOverlays();
+  if (sideTab === 'insp' && !$('#side-in').dataset.pinned) renderInspDefault();
+}
+
+/* ═══════════ marqueurs (points) ═══════════ */
+const NS = 'http://www.w3.org/2000/svg';
+function mk(x, y, color, label, cls, modes, data){
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'mk ' + (cls||'')); g.setAttribute('transform', `translate(${x},${y})`);
+  if (modes) g.setAttribute('data-modes', modes);
+  const c = document.createElementNS(NS, 'circle');
+  c.setAttribute('r', data ? 7 : 5); c.setAttribute('fill', color);
+  g.appendChild(c);
+  if (label){
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', 10); t.setAttribute('y', 3.5); t.textContent = label;
+    g.appendChild(t);
+  }
+  if (data){ g.setAttribute('data-obj', data); g.setAttribute('class', (g.getAttribute('class')||'') + ' obj'); }
+  return g;
+}
+function buildMarkers(){
+  const g = $('#markers'); g.innerHTML = '';
+  OBJ.filter(o => o.lat != null).forEach(o => {
+    const [x, y] = project(o.lat, o.lon);
+    const isData = o.status === 'DATA';
+    const m = mk(x, y, STC[o.status], o.name, isData?'data':'', o.modes.join(','), o.id);
+    g.appendChild(m);
+  });
+  /* watchpoints climat (dataset El Niño — locaux au bassin de Thau) */
+  E.geo.watchpoints.filter(w => w.category === 'local').forEach(w => {
+    let [x, y] = project(w.lat, w.lon);
+    const inside = x > 8 && x < 992 && y > 8 && y < 692;
+    if (!inside){ x = Math.max(12, Math.min(988, x)); y = Math.max(12, Math.min(688, y)); }
+    const m = mk(x, y, STC.DATA, w.name + (inside?'':' (hors cadre)'), 'data', 'climat', null);
+    m.title = (w.description||'') + ' — statut : ' + (w.status||'');
+    m.addEventListener('click', ev => { ev.stopPropagation(); inspectE(w); });
+    g.appendChild(m);
+  });
+  /* projets fantômes du scénario */
+  renderGhosts();
+}
+function renderGhosts(){
+  const g = $('#ghosts'); g.innerHTML = '';
+  scen.forEach(id => {
+    const a = actById[id]; if (!a.map_preview) return;
+    const [x, y] = project(a.map_preview.lat, a.map_preview.lon);
+    const m = mk(x, y, 'rgba(224,138,46,.85)', a.map_preview.label, 'ghostm', 'scenario', null);
+    m.title = a.name + ' — projet du scénario (placeholder)';
+    g.appendChild(m);
+  });
+}
+
+/* ═══════════ overlays décoratifs ═══════════ */
+function renderOverlays(){
+  const g = $('#overlays-g'); g.innerHTML = '';
+  const T = (x, y, s, cls) => { const t = document.createElementNS(NS,'text');
+    t.setAttribute('x',x); t.setAttribute('y',y); t.setAttribute('font-size','30'); t.textContent = s;
+    if (cls) t.setAttribute('class', cls); g.appendChild(t); return t; };
+  if (ovl.has('meteo')){
+    T(600, 150, '🌧️', 'ovl-anim');
+    const t = T(600, 175, 'épisode cévenol (décoratif — branchement Météo-France Phase 1)');
+    t.setAttribute('font-size','10'); t.setAttribute('fill','#8fa3bd');
+  }
+  if (ovl.has('alertes')){
+    [[348,390],[269,453],[366,475],[383,516]].forEach(([x,y]) => {
+      const m = mk(x, y, '#d9534f', null, 'ovl-anim data', '*', null); g.appendChild(m);
+    });
+    const t = T(20, 40, '📢 alertes PCS (démo)'); t.setAttribute('font-size','11'); t.setAttribute('fill','#e08080');
+  }
+  if (ovl.has('chantiers')){
+    T(300, 445, '🚧');
+    const t = T(300, 463, 'reprise collecteur (si action choisie)'); t.setAttribute('font-size','10'); t.setAttribute('fill','#c9a15b');
+  }
+  if (ovl.has('annotations')){
+    T(322, 375, '📌');
+    const t = T(322, 393, 'notes locales (démo)'); t.setAttribute('font-size','10'); t.setAttribute('fill','#9db3d4');
+  }
+}
+
+/* ═══════════ inspecteur ═══════════ */
+function renderInspDefault(){
+  $('#side-in').dataset.pinned = '';
+  $('#side-in').innerHTML = `
+    <div class="card"><h3>🔍 Inspecteur</h3>
+      <p class="small">Cliquez un objet de la carte, un marqueur, ou une action de l'arbre pour l'inspecter.</p>
+      <p class="small" style="margin-top:8px">Les objets <span class="st st-DATA">DATA</span> sont alimentés par les datasets canoniques (cévenols, El Niño) ; les autres sont des coquilles assumées.</p></div>
+    <div class="card"><h3>${esc(SPEC.meta.product.metaphor.split(',')[0])}</h3>
+      <p class="small">${esc(SPEC.key_message.one_liner)}</p>
+      <div class="chips">${MODES.map(m=>`<button class="mchip" data-go="${m.id}">${m.icon} ${esc(m.name)}</button>`).join('')}</div></div>`;
+  wireGoChips();
+}
+function wireGoChips(){
+  $$('#side-in [data-go]').forEach(b => b.onclick = () => setMode(b.dataset.go));
+}
+function relatedActions(objId){ return ACTS.filter(a => a.map_object === objId); }
+function bpCards(w){
+  const bps = (w.blocking_point_ids||[]).map(id => C.blocking_points.find(b => b.id === id)).filter(Boolean);
+  if (!bps.length) return '';
+  return bps.map(bp => `
+    <div class="blk"><b>⛔ Blocage documenté — ${esc(bp.title)}</b>
+      <div class="kv"><b>Mécanisme :</b> ${esc(bp.mechanism)}</div>
+      <div class="kv"><b>Preuve :</b> ${esc(bp.evidence)}</div>
+      <div class="kv"><b>Verrou :</b> ${esc(bp.blockage)}</div>
+      <div class="kv">${bp.simulable ? `<a class="btn2" href="el-nino-thau.html#sim">→ Simuler ce mécanisme (module climat)</a>` : '<span class="small">non simulable simplement</span>'}</div>
+    </div>`).join('');
+}
+function inspect(obj){
+  const dl = obj.data_link;
+  const w = dl ? (C.geo.watchpoints.find(x => x.id === dl.watchpoint) || null) : null;
+  const unit = UNITS.find(u => u.id === obj.kind);
+  const rel = relatedActions(obj.id);
+  $('#side-in').dataset.pinned = '1';
+  $('#side-in').innerHTML = `
+    <div class="card"><h3>${esc(obj.name)}</h3>
+      <div class="chips" style="margin:2px 0 8px">${chip(obj.status)} <span class="mchip">${esc(unit?unit.name:obj.kind)}</span></div>
+      <p class="small" style="color:var(--tx)">${esc(obj.desc)}</p>
+      ${w ? `<div class="blk"><b>📍 ${esc(w.name)}</b> <span class="small">(zone du dataset cévenols)</span></div>${bpCards(w)}` : ''}
+      <h4>Où le voir</h4>
+      <div class="chips">${obj.modes.map(mid => { const m = MODES.find(x=>x.id===mid);
+        return mid==='*' ? `<button class="mchip" data-go="territoire">🗺️ toutes les lentilles</button>` :
+        `<button class="mchip" data-go="${m.id}">${m.icon} ${esc(m.name)}</button>`; }).join('')}</div>
+      ${rel.length ? `<h4>Actions liées (${rel.length})</h4>` + rel.map(a => actRow(a)).join('') : ''}
+    </div>`;
+  wireGoChips(); wireActRows();
+}
+function inspectE(w){
+  $('#side-in').dataset.pinned = '1';
+  $('#side-in').innerHTML = `
+    <div class="card"><h3>🌡️ ${esc(w.name)}</h3>
+      <div class="chips" style="margin:2px 0 8px">${chip('DATA')} <span class="mchip">watchpoint climat</span></div>
+      <p class="small" style="color:var(--tx)">${esc(w.description)}</p>
+      <div class="kv" style="margin-top:6px"><b>Statut :</b> ${esc(w.status)}</div>
+      <div style="margin-top:8px"><a class="btn2" href="el-nino-thau.html">→ Module climat « Atlas Frontignan » (9 onglets)</a></div>
+    </div>`;
+}
+function actRow(a){
+  const inScen = scen.includes(a.id);
+  const missing = a.prereqs.filter(p => !scen.includes(p));
+  return `<div class="kv" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+    <span>${esc(a.name)}</span>
+    ${missing.length?`<span class="pr-missing">prérequis : ${esc(missing.join(', '))}</span>`:''}
+    <button class="btn2 ${inScen?'':'btn-warn'}" data-act="${a.id}">${inScen?'✓ dans le scénario':'+ scénario'}</button></div>`;
+}
+function wireActRows(){
+  $$('#side-in [data-act]').forEach(b => b.onclick = () => toggleAct(b.dataset.act));
+}
+
+/* ═══════════ panneau modules ═══════════ */
+function renderMods(){
+  const papi = C.solutions && C.solutions.papi;
+  $('#side-in').innerHTML = MODS.map(m => `
+    <div class="card mod-card" style="border-left-color:${esc(m.color)}">
+      <h3>${m.icon} ${esc(m.name)} ${chip(m.status)}</h3>
+      ${m.submodules.map(sm => {
+        let extra = '';
+        if (sm.id === 'budgets' && papi) extra = `<div class="blk" style="margin-top:4px"><b>💰 ${esc(papi.name)}</b>
+          <div class="kv">${esc(papi.actions)} actions · ${esc(papi.communes)} communes · ≈${esc(String(papi.budget_millions)).replace('.',',')} M€ <span class="small">(${esc(papi.status||'labellisé avril 2026')})</span></div>
+          <div class="kv small">${esc(papi.point_a_verifier||'')}</div></div>`;
+        if (sm.id === 'inondation-ruissellement') extra = `<div style="margin-top:4px"><button class="btn2" data-go="inondation">→ voir les zones de blocage</button></div>`;
+        return `<div class="sm"><span>${esc(sm.name)}</span>${chip(sm.status)}</div>${extra}`;
+      }).join('')}
+      <div class="chips">${(m.modes||[]).map(mid => { const mm = MODES.find(x=>x.id===mid);
+        return `<button class="mchip" data-go="${mid}">${mm.icon} ${esc(mm.name)}</button>`; }).join('')}</div>
+    </div>`).join('');
+  wireGoChips();
+}
+
+/* ═══════════ panneau indicateurs ═══════════ */
+function renderInds(){
+  const d = deltas();
+  $('#side-in').innerHTML = `<div class="card"><h3>📊 Indicateurs (yields)</h3>
+    <p class="small">Valeurs de départ marquées « placeholder » = démonstration, pas des estimations. Seul le budget PAPI est documenté.</p></div>` +
+    INDS.map(ind => {
+      const dl = d[ind.id] || 0;
+      const cur = ind.baseline == null ? null : ind.baseline + dl;
+      const pct = ind.baseline == null ? 0 : Math.max(4, Math.min(100, ind.baseline));
+      const pct2 = cur == null ? 0 : Math.max(4, Math.min(100, cur));
+      return `<div class="ind">
+        <span class="ic">${ind.icon}</span>
+        <div class="body">
+          <div class="nm">${esc(ind.name)} <span class="small">(${esc(ind.unit)} · ${ind.direction==='lower'?'↓ mieux':'↑ mieux'})</span></div>
+          <div class="small">${esc(ind.note)}</div>
+          <div class="bar"><i style="width:${pct}%;background:${STC[ind.status]}"></i></div>
+          ${dl ? `<div class="bar"><i style="width:${pct2}%;background:${STC.SIM}"></i></div>` : ''}
+        </div>
+        <div style="text-align:right">
+          <div class="val ${dl?'delta':''}">${fmtVal(ind, ind.baseline)}${dl ? ' → ' + fmtVal(ind, cur) : ''}</div>
+          ${chip(ind.status)}${dl ? `<div class="st-ph" style="margin-top:4px">placeholder</div>` : ''}
+        </div></div>`;
+    }).join('') +
+    `<div class="warnbox"><b>Vigilance :</b> ${esc(SPEC.key_message.vigilance)}</div>`;
+}
+
+/* ═══════════ tiroir : arbre d'actions ═══════════ */
+function renderTree(){
+  const sel = selAct ? actById[selAct] : null;
+  const detail = sel ? `
+    <div style="width:330px;flex-shrink:0;overflow-y:auto">
+      <div class="card"><h3>${esc(sel.name)}</h3>
+        <div class="chips" style="margin:2px 0 8px">${chip(sel.status)} <span class="mchip">${esc((modById[sel.module]||{}).name||'')}</span></div>
+        <div class="kv"><b>Coût :</b> ${esc(sel.cost)} <span class="st-ph">placeholder</span></div>
+        <div class="kv"><b>Délai :</b> ${esc(sel.delay)}</div>
+        ${sel.prereqs.length ? `<div class="kv"><b>Prérequis :</b> ${sel.prereqs.map(p => actById[p] ? esc(actById[p].name) : esc(p)).join(' · ')}</div>` : ''}
+        <h4>Effets (multi-modules)</h4>
+        ${sel.effects.map(e => { const i = indById[e.indicator];
+          return `<div class="kv">${i.icon} ${esc(i.name)} : <b style="color:${e.delta>0===(i.direction==='higher')?'#2e9e5b':'#d9534f'}">${e.delta>0?'+':''}${e.delta}</b> <span class="st-ph">${esc(e.basis)}</span></div>`; }).join('')}
+        ${sel.sim_hook ? `<div class="kv"><b>Hook simulation :</b> <span class="small">${esc(sel.sim_hook)}</span></div>` : ''}
+        ${sel.note ? `<div class="kv"><b>Note :</b> <span class="small">${esc(sel.note)}</span></div>` : ''}
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn2 ${scen.includes(sel.id)?'':'btn-warn'}" data-act="${sel.id}">${scen.includes(sel.id)?'✓ retirer du scénario':'+ ajouter au scénario'}</button>
+          ${sel.prereqs.filter(p=>!scen.includes(p)).length ? `<span class="pr-missing">prérequis manquant : ${esc(sel.prereqs.filter(p=>!scen.includes(p)).join(', '))}</span>` : ''}
+        </div>
+      </div>
+    </div>` : `
+    <div style="width:330px;flex-shrink:0"><div class="card"><h3>🌳 Arbre d'actions</h3>
+      <p class="small">Chaque action = coût, délai, prérequis, effets multi-modules, preview carte, hook de simulation.</p>
+      <p class="small" style="margin-top:6px">Coûts et effets sont des <span class="st-ph">placeholders</span> — cliquez une action pour le détail.</p>
+      <div class="kv" style="margin-top:8px"><b>${ACTS.length}</b> actions · <b>${MODS.length}</b> branches</div>
+      <div class="kv"><b>Fil d'actualité :</b> <span class="small">l'onglet Scénario cumule les effets et dessine les projets « fantômes » sur la carte.</span></div>
+    </div></div>`;
+  $('#dr-in').innerHTML = `<div id="tree">${detail}
+    <div class="cols">${MODS.map(m => `
+      <div class="tcol"><h4 style="border-color:${esc(m.color)}">${m.icon} ${esc(m.name)} ${chip(m.status)}</h4>
+        ${ACTS.filter(a => a.module === m.id).map(a => {
+          const missing = a.prereqs.filter(p => !scen.includes(p));
+          return `<div class="act ${selAct===a.id?'sel':''} ${scen.includes(a.id)?'insc':''}" data-sel="${a.id}">
+            <div class="nm">${scen.includes(a.id)?'✓ ':''}${esc(a.name)}</div>
+            <div class="meta"><span>${esc(a.cost)}</span><span>·</span><span>${esc(a.delay)}</span>
+              ${missing.length?`<span class="pr-missing">⚠ préreq.</span>`:''}</div>
+          </div>`; }).join('')}
+      </div>`).join('')}</div></div>`;
+  $$('#tree .act').forEach(el => el.onclick = () => { selAct = el.dataset.sel; renderTree();
+    const a = actById[selAct]; const o = a.map_object && objById[a.map_object];
+    if (o) inspect(o); });
+  $$('#tree [data-act]').forEach(b => b.onclick = ev => { ev.stopPropagation(); toggleAct(b.dataset.act); });
+}
+
+/* ═══════════ tiroir : scénario ═══════════ */
+function renderScen(){
+  const d = deltas();
+  const n = scen.length;
+  $('#scen-n').style.display = n ? '' : 'none';
+  $('#scen-n').textContent = n;
+  $('#dr-in').innerHTML = `<div id="scen">
+    <div class="col">
+      <div class="card"><h3>⚖️ Actions choisies (${n})</h3>
+        ${n ? scen.map(id => `<div class="scen-act"><span>${esc(actById[id].name)}</span><button class="rm" data-rm="${id}" title="retirer">✕</button></div>`).join('')
+             : '<p class="small">Aucune action. Choisissez dans l\'arbre → elles s\'ajoutent ici, dessinent des projets « fantômes » sur la carte (lentille Scénario) et font bouger les indicateurs.</p>'}
+        ${n ? `<div style="margin-top:8px;display:flex;gap:8px"><button class="btn2" data-go="scenario">→ voir sur la carte</button><button class="btn2 btn-warn" data-reset>vider le scénario</button></div>` : ''}
+      </div>
+      <div class="card"><h4>Prérequis non satisfaits</h4>
+        ${(() => { const miss = [];
+          scen.forEach(id => actById[id].prereqs.filter(p => !scen.includes(p)).forEach(p => miss.push(actById[p].name + ' ← ' + actById[id].name)));
+          return miss.length ? miss.map(m2 => `<div class="kv">⚠ ${esc(m2)}</div>`).join('') : '<p class="small">aucun</p>'; })()}
+      </div>
+    </div>
+    <div class="col">
+      <div class="card"><h3>Avant / après (indicateurs)</h3>
+        <table class="delta-tbl dtab"><tr><th style="text-align:left">Indicateur</th><th>avant</th><th>après</th><th>Δ</th></tr>
+        ${INDS.filter(i => d[i.id]).map(i => `<tr><td>${i.icon} ${esc(i.name)}</td>
+          <td class="dtab">${fmtVal(i, i.baseline)}</td><td class="aft dtab">${fmtVal(i, i.baseline==null?null:i.baseline+d[i.id])}</td>
+          <td class="dtab">${d[i.id]>0?'+':''}${Math.round(d[i.id]*10)/10}</td></tr>`).join('')}
+        ${Object.keys(d).length ? '' : '<tr><td colspan="4" class="small">choisissez des actions pour voir les deltas</td></tr>'}
+        </table>
+      </div>
+      <div class="warnbox"><b>⚠️ Tous ces chiffres sont des placeholders de démonstration.</b><br>
+        Aucun n'est une estimation fiable : ni les coûts, ni les effets, ni les « avant/après ».
+        Les simulations vérifiables arrivent en Phase 3 (moteurs fondés, ex. piste open source LISEM).
+        ${esc(SPEC.meta.disclaimer.split('.')[1]||'')}</div>
+    </div></div>`;
+  $$('#scen [data-rm]').forEach(b => b.onclick = () => toggleAct(b.dataset.rm));
+  $$('#scen [data-go]').forEach(b => b.onclick = () => setMode(b.dataset.go));
+  const rs = $('#scen [data-reset]'); if (rs) rs.onclick = () => { scen = []; store.set('scen', scen); refreshScen(); };
+}
+function toggleAct(id){
+  if (scen.includes(id)) scen = scen.filter(x => x !== id); else scen.push(id);
+  store.set('scen', scen);
+  refreshScen();
+}
+function refreshScen(){
+  renderGhosts(); renderScen(); renderTree(); renderInds();
+  const m = MODES.find(x => x.id === mode);
+  $('#legend').innerHTML = `<h3>Lentille · couches</h3>` + m.layers.map(l =>
+    `<div class="ly"><span>${esc(l.name)}</span>${chip(l.status)}</div>`).join('') +
+    `<div class="ly" style="margin-top:6px;border-top:1px solid var(--line);padding-top:6px"><span class="small">scénario actif</span><span class="small">${scen.length} action(s)</span></div>`;
+}
+
+/* ═══════════ tiroir : phases ═══════════ */
+function renderPhases(){
+  $('#dr-in').innerHTML = `<div id="phases">` + SPEC.phases.map(p => `
+    <div class="card ph-card"><h3>${esc(p.name)}</h3>
+      <div style="margin:4px 0 6px"><span class="state ${esc(p.state)}">${esc(p.state.toUpperCase())}</span></div>
+      <p class="small" style="color:var(--tx)">${esc(p.goal)}</p>
+      <ul style="margin-top:6px">${p.deliverables.map(d2 => `<li>${esc(d2)}</li>`).join('')}</ul>
+    </div>`).join('') + `</div>`;
+}
+
+/* ═══════════ tiroir : méthode ═══════════ */
+function renderMethod(){
+  const nObjD = OBJ.filter(o => o.status === 'DATA').length;
+  $('#dr-in').innerHTML = `<div id="method">
+    <div class="card"><h3>📐 Méthode de construction</h3>
+      <ol>${SPEC.key_message.method_steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+      <h4>Boucle de jeu</h4>
+      <div class="chips">${SPEC.meta.product.loop.map(l => `<span class="mchip">${esc(l)}</span>`).join('')}</div>
+      <h4>Fil rouge (l'exemple prioritaire, pas le projet)</h4>
+      <p class="small">${esc(SPEC.key_message.fil_rouge)}</p>
+      <h4>Ce qu'Atlas n'est pas</h4>
+      <p class="small">${esc(SPEC.meta.product.not_a)}</p>
+      <h4>Public</h4>
+      <p class="small">${esc(SPEC.meta.product.audience)}</p>
+    </div>
+    <div class="card"><h3>🚦 Statuts — la règle du jeu</h3>
+      <table>${SPEC.statuses.map(s => `<tr><td><span class="st st-${esc(s.id)}">${esc(s.id)}</span></td><td class="small">${esc(s.meaning)}</td></tr>`).join('')}</table>
+      <div class="warnbox"><b>Point de vigilance essentiel</b><br>${esc(SPEC.key_message.vigilance)}</div>
+      <h4>Unités cartographiées</h4>
+      <table>${UNITS.map(u => `<tr><td><b>${esc(u.name)}</b></td><td class="small">${esc(u.desc)}</td></tr>`).join('')}</table>
+    </div>
+    <div class="card"><h3>🔌 Données & réutilisation (monorepo)</h3>
+      <div class="kv"><b>Spec canonique :</b> <span class="small">data/atlas-frontignan/atlas-frontignan-2026.json (${esc(SPEC.meta.version)}, as_of ${esc(SPEC.meta.as_of)})</span></div>
+      <div class="kv"><b>Objets carte :</b> <span class="small">${OBJ.length} (${nObjD} DATA via datasets climat)</span></div>
+      <div class="kv"><b>Contenu :</b> <span class="small">${MODES.length} modes · ${MODS.length} modules (${MODS.reduce((a,m)=>a+m.submodules.length,0)} sous-modules) · ${ACTS.length} actions · ${INDS.length} indicateurs</span></div>
+      ${SPEC.links.map(l => `<div class="kv">→ ${l.url ? `<a href="${esc(l.url)}${l.hash?esc(l.hash):''}">${esc(l.label)}</a>` : `<b>${esc(l.label)}</b>`} <span class="small">${esc(l.note||'')} ${l.path?esc(l.path):''}</span></div>`).join('')}
+      <div class="kv"><b>Artefact généré</b> <span class="small">— ne pas éditer à la main : python3 scripts/build_atlas_assets.py</span></div>
+      <h4>Sources de données (remplissage)</h4>
+      ${SPEC.data_sources.map(s => `<div class="kv"><span class="st st-${esc(s.status)}">${esc(s.status)}</span> <b>${esc(s.name)}</b> <span class="small">— ${esc(s.scope)} · ${esc(s.phase)}</span></div>`).join('')}
+      <h4>Synthèses fondatrices</h4>
+      ${SPEC.sources.filter(s => s.id.startsWith('s-synth')).map(s => `<div class="kv small">• ${esc(s.title)} (${esc(s.date)}) — ${esc(s.note)}</div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ═══════════ fil rouge (visite guidée) ═══════════ */
+const TOUR = [
+  { mode:'relief',     t:'1/5 · D\'où vient l\'eau ?',        p:'Le massif de la Gardiole domine la ville : ses pentes concentrent les écoulements vers les points bas (talwegs en pointillés bleus).' },
+  { mode:'pluvial',    t:'2/5 · Où passe-t-elle ?',           p:'Talwegs et collecteurs canalisent la pluie vers les exutoires de l\'étang de Thau. Le réseau est dimensionné pour la pluie normale — pas pour l\'épisode cévenol (désordres SMBT, sollicitation des réseaux début 2026).' },
+  { mode:'inondation', t:'3/5 · Quand ça déborde ?',           p:'Cinq blocages documentés (dataset cévenols, statut DATA) : Gardiole→centre-ville, saturation des réseaux, littoral/étang, déplacements & secours, pollutions secondaires. Cliquez les zones vertes.' },
+  { mode:'secours',    t:'4/5 · Qui agit ?',                   p:'PCS 2025, équipes mobiles, axes d\'évacuation : délais d\'alerte courts, quartiers isolables, saisonnalité (campings). Le nerf de la crise.' },
+  { mode:'scenario',   t:'5/5 · Et si on agissait ?',          p:'Choisissez des actions dans l\'arbre (en bas) et comparez avant/après. ⚠ Placeholders assumés jusqu\'aux simulations fondées de la Phase 3.' }
+];
+function tourGo(i){
+  tourI = i;
+  const box = $('#tour-box');
+  if (i < 0 || i >= TOUR.length){ box.hidden = true; return; }
+  box.hidden = false;
+  const s = TOUR[i];
+  setMode(s.mode);
+  box.innerHTML = `<h3>${esc(s.t)}</h3><p>${esc(s.p)}</p>
+    <div class="tb-nav"><button data-ti="-1">✕ quitter</button>
+    <button data-ti="${i-1}" ${i===0?'disabled':''}>← précédent</button>
+    <button class="p" data-ti="${i+1}">${i===TOUR.length-1?'finir ✕':'suivant →'}</button></div>`;
+  $$('#tour-box [data-ti]').forEach(b => b.onclick = () => tourGo(+b.dataset.ti >= TOUR.length || +b.dataset.ti < 0 ? -1 : +b.dataset.ti));
+}
+function tourSync(){ /* le fil rouge pilote la lentille : rien à faire d'autre */ }
+$('#tour-btn').onclick = () => tourGo(0);
+
+/* ═══════════ onglets latéraux & tiroir ═══════════ */
+function setSideTab(t){
+  sideTab = t;
+  $$('#side-tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  if (t === 'insp') renderInspDefault();
+  if (t === 'mods') renderMods();
+  if (t === 'inds') renderInds();
+}
+$$('#side-tabs button').forEach(b => b.onclick = () => setSideTab(b.dataset.t));
+function setDrTab(t){
+  drTab = t;
+  $$('#dr-tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  if (t === 'tree') renderTree();
+  if (t === 'scen') renderScen();
+  if (t === 'phases') renderPhases();
+  if (t === 'method') renderMethod();
+}
+$$('#dr-tabs button').forEach(b => b.onclick = () => setDrTab(b.dataset.t));
+
+/* ═══════════ interactions carte ═══════════ */
+$('#map').addEventListener('click', e => {
+  const el = e.target.closest('[data-obj]');
+  if (!el) return;
+  const o = objById[el.getAttribute('data-obj')];
+  if (o){ setSideTab('insp'); inspect(o); }
+});
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key >= '1' && e.key <= '9'){ const i = +e.key - 1; if (i < MODES.length) setMode(MODES[i].id); }
+  else if (e.key === '0'){ if (MODES.length > 9) setMode(MODES[9].id); }
+});
+
+/* ═══════════ démarrage ═══════════ */
+buildRail();
+buildMarkers();
+setMode(mode);
+setSideTab('insp');
+setDrTab('tree');
+</script>
+</body>
+</html>

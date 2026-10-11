@@ -15,13 +15,15 @@ monorepo/
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
-│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html) + module climat el-nino-thau.html
+│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck) + module climat el-nino-thau.html + console territoriale atlas.html
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
 ├─ data/climat/                 🌊 Datasets climat canoniques : el-nino-2026 (El Niño × Thau) + frontignan-episodes-cevenols (blocages cévenols)
+├─ data/atlas-frontignan/       🗺 Spec canonique de la console territoriale Atlas (Phase 0, schéma atlas-frontignan-v1)
 ├─ scripts/github_inventory.py  Inventaire GitHub (stdlib, 62 appels max, snapshot JSON)
 ├─ scripts/validate_climat_data.py + build_climat_assets.py   Validation & génération des modules climat
+├─ scripts/validate_atlas_spec.py + build_atlas_assets.py     Validation & génération de la console Atlas
 ├─ data/github_inventory.json   Snapshot (cache serveur, refresh via POST)
 ├─ MANIFEST.json                Provenance (URL, branche, SHA)
 └─ requirements.txt             fastapi, uvicorn, jinja2
@@ -60,7 +62,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
   - `COGNITORIUM` → `learning/index.html` (+ PoC `el-nino-poc.html`) + `watchtower-mods/`
   - `ETAT-…` → `output/visual/index.html` + `d3_interactive.html` + `taxonomy_graph.html`
   - `HCSM` / `reaserch-engine` / `Language-decoder` → code seul + README
-  - `frontignan` → `index.html` (deck 19 slides) + **module climat `el-nino-thau.html`**
+  - `frontignan` → `index.html` (deck 19 slides) + **module climat `el-nino-thau.html`** + **console territoriale `atlas.html`**
 
 ## 🌊 Données climat — El Niño 2026–2027 « Godzilla » × bassin de Thau
 
@@ -76,6 +78,19 @@ Le dataset complémentaire **`data/climat/frontignan-episodes-cevenols/`** (sch�
 | **API** | endpoints climat | `GET /api/climat/datasets` · `GET /api/climat/el-nino-godzilla-2026` · `GET /api/climat/frontignan-cevenols-2026` · `GET /api/climat/{dataset}/{section}` (`thau`, `blocking_points`, `solutions`, `geo`…) |
 
 Gouvernance : le JSON canonique est la seule source de vérité ; les artefacts modules sont **générés** (`python3 scripts/build_climat_assets.py`) et validés (`python3 scripts/validate_climat_data.py`). Les sources brutes (script de tournage, synthèse, frise) sont archivées dans `data/climat/el-nino-2026/sources/`.
+
+## 🗺 Atlas Frontignan — console territoriale (Phase 0 : coquille jouable)
+
+**Atlas n'est pas un logiciel d'inondation** : c'est une console de décision territoriale multi-thématiques, inspirée des interfaces 4X (Civilization : lentilles de vue, arbre technologique, yields), branchée sur le territoire réel. L'inondation n'y est qu'une branche — le fil rouge prioritaire relie pentes → écoulement → réseau pluvial → risque → moyens de sauvetage. Méthode : **tout déclarer d'abord en placeholder navigable** (statuts `EMPTY → SHELL → DATA → LIVE → SIM`), puis remplir par urgence (Phase 1 : IGN/PPRI/plan des réseaux ; Phase 3 : vraies simulations).
+
+La spec canonique `data/atlas-frontignan/atlas-frontignan-2026.json` (schéma `atlas-frontignan-v1`) déclare : **14 lentilles**, **7 modules / 35 sous-modules**, **15 actions**, **9 indicateurs**, **43 objets carte** — dont 6 zones branchées en **DATA** sur le dataset cévenols et les watchpoints climat Thau (El Niño), mêmes sources de vérité que le module climat.
+
+| Élément | Contenu |
+|---|---|
+| **Console** `projects/frontignan/atlas.html` (généré) | carte stylisée + lentilles + inspecteur (fiches & blocages DATA) + modules + arbre d'actions + scénario avant/après (placeholders assumés, jamais présentés comme estimations) + phases + méthode | 
+| **Accès** | `/preview/frontignan/atlas.html` — fil rouge guidé « ▶ pentes → secours », touches 1–9, overlays météo/alertes/chantiers |
+| **Liens croisés** | console → module climat (`el-nino-thau.html#cevenols`, `#sim`) ; module climat → console (carte « Réutilisation ») |
+| **Gouvernance** | `python3 scripts/validate_atlas_spec.py` · `python3 scripts/build_atlas_assets.py` — artefact généré, ne pas éditer à la main |
   - Servie via `GET /preview/{project}/{path}` (FileResponse, pas de `X-Frame-Options` côté monorepo ; `watchtower` buildée sans en-têtes DENY).
 
 ## 🛠 Rebuild des previews Vite
