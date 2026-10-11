@@ -13,6 +13,9 @@ on:
       - ".github/workflows/project-audit.yml"
       - "docs/AUDIT_AUTOMATION.md"
       - "docs/AUDIT_GAP_DRIVEN_PROTOCOL.md"
+      - "docs/CROSS_PROJECT_AUTOMATION_STANDARD.md"
+      - "AGENTS.md"
+      - "AGENT_HANDOFF.md"
 
 permissions:
   contents: write
@@ -35,6 +38,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Validate audit scripts and portfolio config
+        run: |
+          python -m py_compile scripts/project_audit/audit_portfolio.py scripts/project_audit/audit_gaps.py
+          python -m json.tool data/audit/portfolio.json > /dev/null
 
       - name: Run read-only portfolio audit
         env:
