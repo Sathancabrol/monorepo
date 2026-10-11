@@ -24,6 +24,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [ ] Examiner les branches non prioritaires restantes avec le protocole gap-driven et consigner pourquoi chaque branche est ignorée ou retenue.
 - [x] Lire les scripts `audit_gaps.py` et `audit_portfolio.py` ainsi que le workflow ; consigner le budget de 15 arbres par exécution, la limite de 100 branches du rapport portefeuille et l'absence de revue sémantique automatique dans l'addendum.
 - [ ] Ajouter/valider des tests du scanner sur fixtures et un déclencheur de validation PR, sans publier automatiquement depuis une PR vers `main`.
+- [x] Lire les sondes d'audit de `proto-cognitorium:arena/01a08342-proto-cognitorium` : le README signale l'absence d'assertions runtime ; le script de sonde force un code de sortie 0, donc il faut corriger ce faux-vert potentiel avant de compter sur la CI.
 - [x] Retrouver les modules Nexus OS, BTP, Atlas/Watchtower INTEL et Language-decoder dans les branches, sans les déclarer intégrés ou validés.
 - [x] Définir une gouvernance provisoire : Watchtower comme application canonique, OSINT Workbench comme prototype à porter sélectivement, copies monorepo comme archive.
 
