@@ -10,6 +10,7 @@ Maintain one repeatable audit workflow across the project ecosystem so each audi
 - Default-branch signals: scripts/project_audit/audit_portfolio.py
 - Gap-driven branch discovery and instruction-file discovery: scripts/project_audit/audit_gaps.py
 - Cross-project rules and session protocol: docs/CROSS_PROJECT_AUTOMATION_STANDARD.md and AGENTS.md
+- Initial rules inventory with source SHAs and explicit gaps: docs/PROJECT_RULES_INVENTORY.md
 - Workflow: .github/workflows/project-audit.yml
 - Reports: reports/project-audit/latest.json, latest.md, index.html, history.jsonl, branch-index.json, gaps.json, gaps.md
 - Trigger: daily at 06:17 UTC, manual dispatch, or relevant audit-code/config changes on main.
@@ -74,8 +75,10 @@ These are review prompts, not automatic deletion, merges, or code changes.
 - [x] Queue new, changed and previously uninspected branch trees.
 - [x] Inspect branch trees in bounded batches and preserve relevant evidence paths.
 - [x] Expand path discovery to agent instructions, policies, standards, handoffs and decision records.
+- [x] Create an initial, source-linked rules inventory for the currently inspected default-branch documents.
 - [ ] Audit the contents and scope of discovered rule files across every relevant repository and branch.
 - [ ] Read queued file contents and record semantic findings.
+- [ ] Resolve the configured repository paths that returned 404 for proto-cognitorium and animation-chronos.
 - [ ] Detect rule conflicts and produce a repository-scoped rules registry with source SHA and freshness.
 - [ ] Compare each relevant branch against its default branch and other candidate branches.
 - [ ] Identify duplicate modules using manifest/path signatures and hashes where practical.
