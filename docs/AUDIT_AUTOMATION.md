@@ -68,6 +68,16 @@ These are prompts for review, not automatic deletion, merges or code changes.
 - Detect regressions and stale evidence, and highlight blocked work.
 - Expose the dashboard in the monorepo's existing interface skeleton.
 
+### Phase 5 — Agent de continuité et recherche de fond
+- [x] Documenter l'architecture cible et les garde-fous dans `docs/AGENT_CONTINUITY.md`.
+- [ ] Auditer Nexus OS, Research Engine et HCSM au niveau code/tests avant de réutiliser leurs composants.
+- [ ] Implémenter une file persistante de tâches avec IDs stables, dépendances, état de reprise et journal append-only.
+- [ ] Connecter les issues, PR, commits et résultats CI à la mémoire de travail.
+- [ ] Ajouter la recherche de fond liée aux besoins, avec déduplication, provenance, fraîcheur et quotas.
+- [ ] Ajouter un runner isolé pour tests et modifications sur branche dédiée.
+- [ ] Ajouter l'interface de pilotage et les KPI de qualité de l'agent.
+- [ ] Garder fusion, suppression, déploiement et actions coûteuses sous approbation humaine.
+
 ## Operational notes
 
 - Public repositories can be inspected using the unauthenticated GitHub API, but rate limits apply.
