@@ -92,3 +92,12 @@ Si push 403 → vérifier dans GitHub → Settings → Applications → Installe
 ## 📚 Fusion réelle (option b)
 
 Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.
+
+
+## 📱 AR mobile / HUD personnalisable — dossier archivé
+
+- Dossier et backlog : [`docs/research/AR-MOBILE-HUD-QUICKSTART-2026-10-11.md`](docs/research/AR-MOBILE-HUD-QUICKSTART-2026-10-11.md).
+- Priorité P0 : tester xTech5x/AR-HUD et la démo géolocalisée GPS.csutil sur le téléphone avant de développer notre propre moteur AR.
+- Couches visées : carte, GPS/orientation, lieux, notes, territoire, chantier, cognition et agent/chat ; chaque couche doit être activable et afficher sa provenance.
+- Connecteurs à préparer : Watchtower, Atlas Frontignan, BTP, Cognitorium et Nexus.
+- Ressources tierces archivées avec risques/licences à vérifier ; aucun code tiers n'est importé dans l'application.
