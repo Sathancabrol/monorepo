@@ -1,0 +1,158 @@
+{
+ "type": "FeatureCollection",
+ "name": "frontignan-cevenols-2026 watchpoints (v1.0.0, as_of 2026-10-11)",
+ "metadata": {
+  "title": "Frontignan face aux épisodes cévenols — zones de blocage (indicatives)",
+  "generated_by": "scripts/build_climat_assets.py",
+  "source_dataset": "data/climat/frontignan-episodes-cevenols/frontignan-cevenols-2026.json",
+  "origin": {
+   "analysis": "« Frontignan face aux épisodes cévenols : blocages et solutions possibles » — diagnostic transmis le 11 octobre 2026, suite au module Atlas Frontignan « El Niño × Thau ».",
+   "documents": [
+    "Plan communal de sauvegarde (PCS) de Frontignan-la Peyrade (2025)",
+    "PPRI de Frontignan — zonage et règlement",
+    "Programme d'études du Syndicat mixte du bassin de Thau (SMBT) — ruissellements de la Gardiole, sollicitation des réseaux",
+    "SMBT — inondations par ruissellement urbain à Frontignan lors de l'épisode de 2019",
+    "PAPI de Thau 2026–2031 (labellisé avril 2026)",
+    "THAU ALABRI — diagnostics de vulnérabilité des bâtiments",
+    "Étude préalable au PAPI — diagnostic territorial",
+    "VigiThau — dispositif de surveillance"
+   ],
+   "transmitted_by": "Utilisateur du monorepo (Sathancabrol), 11 octobre 2026",
+   "raw_sources": [
+    "data/climat/frontignan-episodes-cevenols/sources/analyse-blocages-solutions-2026-10-11.md"
+   ]
+  },
+  "disclaimer": "Diagnostic documentaire construit à partir de l'analyse transmise (11/10/2026), elle-même fondée sur les documents communaux et intercommunaux (PCS 2025, PPRI, SMBT, PAPI). Ce n'est pas une étude hydraulique : les localisations du bloc geo sont indicatives, les scénarios du module Atlas restent pédagogiques et qualitatifs. Toute décision d'aménagement doit s'appuyer sur les données techniques officielles et une validation par les services compétents (Ville de Frontignan, Sète Agglopôle Méditerranée, SMBT).",
+  "usage": "Glisser-déposer ce fichier sur le globe watchtower (import GeoJSON natif du fork). Localisations indicatives issues d'un diagnostic documentaire (PCS 2025, PPRI, SMBT, PAPI) — ce n'est pas une étude hydraulique."
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     3.8167,
+     43.5069
+    ]
+   },
+   "properties": {
+    "name": "Massif de la Gardiole — amont des ruissellements",
+    "category": "local",
+    "description": "Origine des écoulements concentrés vers les points bas du centre-ville ; désordres majeurs documentés par le programme d'études du SMBT.",
+    "dataset": "frontignan-cevenols-2026",
+    "dataset_version": "1.0.0",
+    "as_of": "2026-10-11",
+    "blocking_point_ids": [
+     "gardiole-ruissellement"
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     3.706,
+     43.4495
+    ]
+   },
+   "properties": {
+    "name": "Centre-ville de Frontignan — points bas",
+    "category": "local",
+    "description": "Points bas récepteurs des ruissellements de la Gardiole ; ruissellement urbain documenté lors de l'épisode de 2019 (SMBT).",
+    "dataset": "frontignan-cevenols-2026",
+    "dataset_version": "1.0.0",
+    "as_of": "2026-10-11",
+    "blocking_point_ids": [
+     "gardiole-ruissellement",
+     "reseaux-saturation"
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     3.69,
+     43.433
+    ]
+   },
+   "properties": {
+    "name": "Exutoires vers l'étang de Thau",
+    "category": "local",
+    "description": "Clapets, risques de reflux et niveaux du milieu récepteur : l'évacuation devient difficile quand l'étang est haut (point hydraulique à étudier).",
+    "dataset": "frontignan-cevenols-2026",
+    "dataset_version": "1.0.0",
+    "as_of": "2026-10-11",
+    "blocking_point_ids": [
+     "reseaux-saturation",
+     "littoral-etang"
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     3.7196,
+     43.4196
+    ]
+   },
+   "properties": {
+    "name": "Frontignan-plage — littoral bas",
+    "category": "local",
+    "description": "Secteur littoral bas exposé à la submersion marine (PPRI) ; évacuation difficile vers les milieux récepteurs en conditions marines défavorables.",
+    "dataset": "frontignan-cevenols-2026",
+    "dataset_version": "1.0.0",
+    "as_of": "2026-10-11",
+    "blocking_point_ids": [
+     "littoral-etang"
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     3.729,
+     43.4372
+    ]
+   },
+   "properties": {
+    "name": "ZA/ZI La Peyrade — enjeux industriels",
+    "category": "local",
+    "description": "Enjeux industriels et terrains potentiellement pollués signalés par le PCS dans des secteurs exposés : risque de pollution secondaire en cas d'inondation.",
+    "dataset": "frontignan-cevenols-2026",
+    "dataset_version": "1.0.0",
+    "as_of": "2026-10-11",
+    "blocking_point_ids": [
+     "pollutions-secondaires"
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     3.713,
+     43.443
+    ]
+   },
+   "properties": {
+    "name": "Axes & itinéraires de secours (commune)",
+    "category": "local",
+    "description": "Rues submergées possibles → isolement de quartiers, itinéraires impraticables, retards des secours (PCS : délais d'alerte courts, isolement, difficultés de circulation).",
+    "dataset": "frontignan-cevenols-2026",
+    "dataset_version": "1.0.0",
+    "as_of": "2026-10-11",
+    "blocking_point_ids": [
+     "deplacements-secours"
+    ]
+   }
+  }
+ ]
+}

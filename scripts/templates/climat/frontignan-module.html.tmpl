@@ -125,6 +125,8 @@ footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:v
 .gloss dd{color:var(--mut);font-size:13.5px;margin-left:0}
 .maplegend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin-top:8px}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.btn2{border:1px solid var(--line);background:#0e1a34;color:var(--txt);border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer;margin-top:8px}
+.btn2:hover{border-color:var(--oc2)}
 @media (max-width:640px){nav.tabs{justify-content:flex-start}.wrap{padding:0 12px 60px}}
 </style>
 </head>
@@ -213,6 +215,28 @@ footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:v
     </div>
   </section>
 
+  <!-- ══════════ 4bis. ÉPISODES CEVENOLS ══════════ -->
+  <section class="tab" id="tab-cevenols">
+    <h2>Épisodes cévenols à Frontignan — blocages &amp; solutions <span class="tag">diagnostic territorial</span></h2>
+    <p class="lead" id="cv-lead"></p>
+    <div class="grid g2" id="cv-blocks"></div>
+    <div class="card" style="margin-top:14px">
+      <h3>🧩 Solutions complémentaires — connaître · alerter · protéger · retenir · ralentir · évacuer · organiser</h3>
+      <table id="cv-solutions"></table>
+      <div class="note" id="cv-papi"></div>
+    </div>
+    <h3 style="margin-top:22px">🛠 Atlas Frontignan — les 4 modules opportuns</h3>
+    <p class="lead" id="cv-atlas-intro"></p>
+    <div class="grid g2" id="cv-atlas"></div>
+    <div class="card" style="margin-top:14px">
+      <h3>🧭 Feuille de route — étude pilote Gardiole → centre-ville</h3>
+      <div id="cv-pilot"></div>
+      <div class="note" id="cv-pilot-reco"></div>
+      <div class="small" id="cv-sources-exploit" style="margin-top:8px"></div>
+      <div class="note" id="cv-conclusion" style="margin-top:10px"></div>
+    </div>
+  </section>
+
   <!-- ══════════ 5. SIMULATION ══════════ -->
   <section class="tab" id="tab-sim">
     <h2>Mini-simulation pédagogique — pluie, ruissellement &amp; lagune <span class="tag">Frontignan · Sète · Thau</span></h2>
@@ -230,7 +254,7 @@ footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:v
       <div class="card"><h3>⛈ Épisode méditerranéen</h3><p class="small">Intensités horaires très fortes (jusqu'à >250 mm observés fin septembre 2026 dans l'Hérault) : le ruissellement dépasse la capacité des réseaux, l'eau descend de la Gardiole vers les points bas.</p></div>
       <div class="card"><h3>🌊 Pluie + mer agitée</h3><p class="small">Le pire combo du littoral bas : les exutoires ne peuvent plus évacuer vers la lagune/la mer (vagues-submersion), l'eau stagne dans les quartiers bas et les parkings.</p></div>
     </div>
-    <div class="note">⚠️ <b>Simulation pédagogique</b> : schéma de principe, pas un calcul de risque réel à la parcelle. Pour toute décision : vigilances Météo-France, Vigicrues, arrêtés préfectoraux, PPRI/PCS de la commune.</div>
+    <div class="note">⚠️ <b>Simulation pédagogique</b> : schéma de principe, pas un calcul de risque réel à la parcelle. Pour toute décision : vigilances Météo-France, Vigicrues, arrêtés préfectoraux, PPRI/PCS de la commune. <button class="btn2" style="margin-top:6px" onclick="goTab('cevenols')">→ Voir les blocages territoriaux (épisodes cévenols)</button></div>
   </section>
 
   <!-- ══════════ 6. QUIZ ══════════ -->
@@ -271,22 +295,25 @@ footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);color:v
     <div class="card" style="margin-top:14px"><h3>🔌 Réutilisation dans le monorepo</h3>
       <ul class="clean">
         <li>Dataset canonique : <code>data/climat/el-nino-2026/el-nino-godzilla-2026.json</code></li>
-        <li>API : <code>/api/climat/el-nino</code> et <code>/api/climat/el-nino/{section}</code> (ex. <code>thau</code>, <code>quiz</code>, <code>geo</code>)</li>
+        <li>Dataset cévenols : <code>data/climat/frontignan-episodes-cevenols/frontignan-cevenols-2026.json</code> (alimente l'onglet « Épisodes cévenols »)</li>
+        <li>API : <code>/api/climat/datasets</code> et <code>/api/climat/{dataset}/{section}</code> (ex. <code>thau</code>, <code>quiz</code>, <code>geo</code>)</li>
         <li>Globe watchtower : glisser-déposer <code>projects/watchtower/public/data/enso-thau-watchpoints.geojson</code> sur la carte (import GeoJSON natif)</li>
+        <li>Globe watchtower (blocages cévenols) : <code>projects/watchtower/public/data/frontignan-cevenols-watchpoints.geojson</code></li>
         <li>Parcours pédagogique : <code>/preview/COGNITORIUM/learning/el-nino-poc.html</code></li>
-        <li>Ce module est généré : <code>python3 scripts/build_climat_assets.py</code> (template + JSON canonique)</li>
+        <li>Ce module est généré : <code>python3 scripts/build_climat_assets.py</code> (template + JSON canoniques)</li>
       </ul>
     </div>
   </section>
 
   <footer>
     <div id="foot-meta"></div>
-    <div style="margin-top:6px">Module Atlas Frontignan — El Niño &amp; risques climatiques · généré depuis <code>data/climat/el-nino-2026/</code> ·
-    vidéo source : LIMIT « EL NIÑO : GODZILLA » (11/10/2026, Vinz × Xavier Fettweis) · errata 24/09/2026 intégré.</div>
+    <div style="margin-top:6px">Module Atlas Frontignan — El Niño &amp; risques climatiques · généré depuis <code>data/climat/</code> (el-nino-2026 + frontignan-episodes-cevenols) ·
+    vidéo source : LIMIT « EL NIÑO : GODZILLA » (11/10/2026, Vinz × Xavier Fettweis) · errata 24/09/2026 intégré · diagnostic cévenols : PCS 2025, PPRI, SMBT, PAPI de Thau.</div>
   </footer>
 </div>
 
 <script type="application/json" id="elnino-data">__ELNINO_DATA__</script>
+<script type="application/json" id="cevenols-data">__CEVENOLS_DATA__</script>
 
 <script>
 "use strict";
@@ -305,24 +332,25 @@ $('#h-badges').innerHTML =
   `<span class="badge">dataset <b>v${D.meta.version}</b></span>`+
   `<span class="badge">situation au <b>${D.meta.as_of}</b></span>`+
   `<span class="badge obs">● observé</span><span class="badge prev">● prévu</span><span class="badge inc">● incertain</span>`+
-  `<span class="badge">périmètre local : <b>Frontignan · Sète · Thau</b></span>`;
+  `<span class="badge">périmètre local : <b>Frontignan · Sète · Thau</b></span>`+
+  `<span class="badge">+ diagnostic <b>épisodes cévenols</b> (blocages &amp; solutions)</span>`;
 
 /* ── tabs ── */
 const TABS = [
   ['overview','🌍 Vue d’ensemble'],['timeline','🗓 Frise Thau'],['facts','📰 Faits globaux'],
-  ['risks','⚠️ Risques & scénarios'],['sim','🌧 Simulation'],['quiz','🎯 Quiz'],
+  ['risks','⚠️ Risques & scénarios'],['cevenols','⛈ Épisodes cévenols'],['sim','🌧 Simulation'],['quiz','🎯 Quiz'],
   ['prev','🛡 Prévention'],['sources','📚 Sources']
 ];
 const tabsEl = $('#tabs');
+function goTab(id){
+  document.querySelectorAll('nav.tabs button').forEach((x,xi)=>x.classList.toggle('on', TABS[xi][0]===id));
+  document.querySelectorAll('section.tab').forEach(x=>x.classList.toggle('on', x.id==='tab-'+id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='sim') resizeSim();
+}
 TABS.forEach(([id,label],i)=>{
   const b = el('button',i===0?'on':'',label);
-  b.onclick = ()=>{
-    document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.remove('on'));
-    document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on'); $('#tab-'+id).classList.add('on');
-    window.scrollTo({top:0,behavior:'smooth'});
-    if(id==='sim') resizeSim();
-  };
+  b.onclick = ()=>goTab(id);
   tabsEl.appendChild(b);
 });
 
@@ -463,6 +491,53 @@ $('#cascade-chain').innerHTML=`<b style="width:100%;color:var(--gold);font-size:
   casc.chain.map((c,i)=>`<div class="step">${i+1}. ${esc(c)}</div>`+(i<casc.chain.length-1?'<div class="arrow">→</div>':'')).join('');
 $('#cascade-cards').innerHTML=D.second_order_risks.cascades.map(c=>`<div class="note" style="margin:6px 0"><b>${esc(c.domain)}</b> — ${esc(c.description)}</div>`).join('');
 $('#cascade-1877').innerHTML=`<b>Leçon historique (1877, citée par LIMIT) :</b> ${esc(D.second_order_risks.history_1877.replace('Le cas historique de 1877 évoqué par LIMIT : ',''))}`;
+
+/* ══════════ 4bis. ÉPISODES CEVENOLS — blocages & solutions ══════════ */
+const C=JSON.parse(document.getElementById('cevenols-data').textContent);
+const cById={}; C.sources.forEach(s=>cById[s.id]=s);
+$('#cv-lead').innerHTML=`<b>${esc(C.key_message.headline)}</b> ${esc(C.key_message.diagnosis)} <span class="small">${esc(C.key_message.context)}</span>`;
+(function(){
+  const box=$('#cv-blocks');
+  C.blocking_points.forEach(bp=>{
+    const c=el('div','card');
+    c.innerHTML=`<div class="fact-region">Blocage ${bp.n} · ${esc(bp.zone)}</div>
+      <div class="fact-head"><h3>${esc(bp.title)}</h3><span class="pill attr">${esc(bp.basis)}</span></div>
+      <p class="small" style="margin-top:6px">⚙️ ${esc(bp.mechanism)}</p>
+      ${bp.evidence?`<p class="small">📎 ${esc(bp.evidence)}</p>`:''}
+      <div class="note"><b>Le blocage :</b> ${esc(bp.blockage)}</div>
+      ${bp.simulable?`<button class="btn2" onclick="goTab('sim')">→ Simuler ce mécanisme</button>`:''}
+      <div class="small" style="margin-top:8px">Sources : ${(bp.source_ids||[]).map(id=>cById[id]?esc(cById[id].title):esc(id)).join(' · ')}</div>`;
+    box.appendChild(c);
+  });
+})();
+$('#cv-solutions').innerHTML=`<tr><th>Priorité</th><th>Verbe</th><th>Solution</th><th>Application possible à Frontignan</th></tr>`+
+  C.solutions.matrix.map(s=>`<tr><td><span class="pill attr">${esc(s.priority)}</span></td><td><b>${esc(s.verb)}</b></td><td>${esc(s.solution)}</td><td class="small">${esc(s.application)}${s.source_id&&cById[s.source_id]?` <span class="small">(${esc(cById[s.source_id].title)})</span>`:''}</td></tr>`).join('');
+(function(){
+  const P=C.solutions.papi;
+  $('#cv-papi').innerHTML=`<b>${esc(P.name)} :</b> ${P.actions} actions · ${P.communes} communes · ≈ ${P.budget_millions} M€ (labellisé ${esc(P.labellise)}) — ${esc(P.porte)}.<br><b>Point à vérifier :</b> ${esc(P.point_a_verifier)}`;
+})();
+$('#cv-atlas-intro').textContent=C.atlas_opportunities.intro;
+(function(){
+  const box=$('#cv-atlas');
+  C.atlas_opportunities.modules.forEach(m=>{
+    const c=el('div','card');
+    c.innerHTML=`<span class="pill attr">Module ${m.id} · ${esc(m.status)}</span>
+      <h3 style="color:#fff;margin-top:10px">${esc(m.name)}</h3>
+      <p class="small">${esc(m.description)}</p>
+      <div class="note">⚠️ ${esc(m.rule)}</div>
+      ${m.existing?`<p class="small" style="margin-top:6px">📍 <b>Existant :</b> ${esc(m.existing)}</p>${m.existing_action?`<button class="btn2" onclick="${esc(m.existing_action)}">→ Y accéder</button>`:''}`:''}`;
+    box.appendChild(c);
+  });
+})();
+(function(){
+  const pil=C.pilot, doneN=pil.steps.filter(s=>s.done).length;
+  $('#cv-pilot').innerHTML=`<div class="progressbar"><div style="width:${Math.round(doneN/pil.steps.length*100)}%"></div></div>
+    <div class="small" style="margin-bottom:10px">${doneN}/${pil.steps.length} étapes franchies (${esc(pil.progress_label||'')})</div>`+
+    pil.steps.map(s=>`<div class="chk" style="cursor:default"><span style="font-size:15px">${s.done?'✅':'⬜'}</span><label style="margin-left:8px"><b>${esc(s.title)}</b><br><span class="small">${esc(s.detail)}</span></label></div>`).join('');
+  $('#cv-pilot-reco').innerHTML=`<b>Par où commencer :</b> ${esc(pil.recommendation)}`;
+  $('#cv-sources-exploit').innerHTML=`<b>Sources locales à exploiter en premier :</b><br>`+pil.sources_to_exploit.map(s=>`• ${esc(s)}`).join('<br>');
+  $('#cv-conclusion').innerHTML=`<b>Conclusion :</b> ${esc(C.key_message.conclusion)}`;
+})();
 
 /* ══════════ 5. SIMULATION ══════════ */
 const cv=$('#simcanvas');
@@ -670,7 +745,10 @@ $('#ep-plaus').innerHTML=D.epistemics.plausible_data_dependent.map(x=>`<li>${esc
 $('#ep-caution').innerHTML=D.epistemics.present_with_caution.map(x=>`<li>${esc(x)}</li>`).join('');
 $('#ep-notattr').innerHTML=D.epistemics.not_auto_attributable.map(x=>`<li>${esc(x)}</li>`).join('');
 $('#conclusions').innerHTML=D.conclusions.map((c,i)=>`<li><b>${i+1}.</b> ${esc(c)}</li>`).join('');
-$('#src-list').innerHTML=D.sources.map(s=>`<li><b>${esc(s.title)}</b>${s.url?` — <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>`:''} <span class="small">(${esc(s.date||'')}${s.note?' · '+esc(s.note):''})</span></li>`).join('');
+$('#src-list').innerHTML=`<li style="border-bottom:2px solid var(--line)"><b style="color:var(--oc)">Datasets climat — sources El Niño × Thau</b></li>`+
+  D.sources.map(s=>`<li><b>${esc(s.title)}</b>${s.url?` — <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>`:''} <span class="small">(${esc(s.date||'')}${s.note?' · '+esc(s.note):''})</span></li>`).join('')+
+  `<li style="border-bottom:2px solid var(--line);margin-top:10px"><b style="color:var(--oc)">Diagnostic épisodes cévenols — Frontignan</b></li>`+
+  C.sources.map(s=>`<li><b>${esc(s.title)}</b> <span class="small">(${esc(s.date||'')}${s.note?' · '+esc(s.note):''})</span></li>`).join('');
 $('#src-disclaimer').textContent=D.meta.disclaimer;
 $('#glossary').innerHTML=D.glossary.map(g=>`<dt>${esc(g.term)}</dt><dd>${esc(g.definition)}</dd>`).join('');
 $('#foot-meta').textContent=`${D.meta.title} — v${D.meta.version}, situation au ${D.meta.as_of} · ${D.sources.length} sources · ${D.global_facts.length} faits · ${D.geo.watchpoints.length} watchpoints géo`;

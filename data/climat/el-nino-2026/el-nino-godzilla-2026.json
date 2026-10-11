@@ -1,12 +1,14 @@
 {
   "meta": {
     "id": "el-nino-godzilla-2026",
+    "schema": "el-nino-thau-v1",
     "title": "El Niño 2026–2027 « Godzilla » — dataset stratégique & territorial",
     "short_title": "El Niño 2026 — Godzilla × Thau",
     "version": "1.0.0",
     "created_at": "2026-10-11",
     "as_of": "2026-10-11",
     "language": "fr",
+    "related_datasets": ["frontignan-cevenols-2026"],
     "scope": {
       "global": "Épisode El Niño 2026–2027 : observations, prévisions, impacts et projections rapportés par la vidéo LIMIT « EL NIÑO : GODZILLA » (11 octobre 2026) et sa synthèse avec errata.",
       "local": "Golfe du Lion, littoral de l'Hérault, Frontignan, Sète, lagune de Thau et communes de Sète Agglopôle Méditerranée (frise opérationnelle octobre 2026 → décembre 2027)."

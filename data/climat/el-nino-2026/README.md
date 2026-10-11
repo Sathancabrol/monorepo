@@ -51,17 +51,19 @@ data/climat/el-nino-2026/
 | Module | Artefact | Accès |
 |---|---|---|
 | **API monorepo** (`app/main.py`) | endpoints JSON | `GET /api/climat/datasets` · `GET /api/climat/el-nino` · `GET /api/climat/el-nino/{section}` (ex. `thau`, `quiz`, `geo`) |
-| **frontignan** (Atlas) | `projects/frontignan/el-nino-thau.html` — module interactif autonome (frise filtrable, faits globaux, risques & scénarios, mini-simulation pluie/mer, quiz, checklist prévention, sources) | preview `/preview/frontignan/el-nino-thau.html` ou ouverture directe du fichier ; slide dédiée dans le deck `index.html` |
+| **frontignan** (Atlas) | `projects/frontignan/el-nino-thau.html` — module interactif autonome 9 onglets (frise filtrable, faits globaux, risques & scénarios, épisodes cévenols, mini-simulation pluie/mer, quiz, checklist prévention, sources) | preview `/preview/frontignan/el-nino-thau.html` ou ouverture directe du fichier ; slide dédiée dans le deck `index.html` |
 | **COGNITORIUM** (learning) | `projects/COGNITORIUM/learning/el-nino-poc.html` + `el-nino-poc.js` (généré) — PoC « Comprendre El Niño » sur le modèle du PoC argent | preview `/preview/COGNITORIUM/learning/el-nino-poc.html`, lié depuis `learning/index.html` |
 | **watchtower** (globe) | `projects/watchtower/public/data/enso-thau-watchpoints.geojson` (généré) — 15 watchpoints + boîte Niño 3.4 | glisser-déposer le fichier sur le globe (import GeoJSON natif du fork), ou servir via le preview |
 
 Les artefacts marqués **(généré)** sont produits par `scripts/build_climat_assets.py` à partir du JSON canonique — ne pas les éditer à la main.
 
+> 🔗 **Dataset lié** : [`../frontignan-episodes-cevenols/`](../frontignan-episodes-cevenols/) — diagnostic territorial complémentaire « Frontignan face aux épisodes cévenols » (5 blocages, 7 solutions, pilote Gardiole→centre-ville), servi par le même onglet Atlas (onglet ⛈), la même API et un 2ᵉ GeoJSON watchtower (`frontignan-cevenols-watchpoints.geojson`).
+
 ## 🛠 Régénérer & valider
 
 ```bash
-python3 scripts/validate_climat_data.py     # valide le schéma du dataset (stdlib)
-python3 scripts/build_climat_assets.py      # régénère les 3 artefacts modules
+python3 scripts/validate_climat_data.py     # valide TOUS les datasets data/climat/* (dispatch par meta.schema)
+python3 scripts/build_climat_assets.py      # régénère les 4 artefacts (module 9 onglets + PoC + 2 GeoJSON)
 ```
 
 ## ⚠️ Règles d'usage

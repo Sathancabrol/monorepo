@@ -7,7 +7,7 @@ Dossier d'appui pour l'accompagnement de la municipalité de Frontignan (Héraul
 | Fichier | Contenu |
 |---|---|
 | **`index.html`** | 🎞️ **Deck de présentation** « Frontignan 2026→2040, focale 2030 » — 19 slides (dont une slide climat El Niño × Thau), autonome (images intégrées), scroll vertical, ← → au clavier, Ctrl+P → export PDF paysage |
-| **`el-nino-thau.html`** | 🌊 **Module climat interactif** « El Niño 2026–2027 × bassin de Thau » — 8 onglets : vue d'ensemble (indicateurs Niño 3.4/RONI, citations Xavier Fettweis), frise opérationnelle filtrable (horizon × risque), faits globaux (statut + attribution), risques & scénarios, mini-simulation canvas (pluie/ruissellement/lagune/mer), quiz 10 questions, checklist prévention (progression localStorage), sources & glossaire. **Généré** depuis `data/climat/el-nino-2026/` — ne pas éditer à la main |
+| **`el-nino-thau.html`** | 🌊 **Module climat interactif** « Atlas Frontignan — El Niño 2026–2027 × bassin de Thau » — 9 onglets : vue d'ensemble (indicateurs Niño 3.4/RONI, citations Xavier Fettweis), frise opérationnelle filtrable (horizon × risque), faits globaux (statut + attribution), risques & scénarios, **épisodes cévenols (5 blocages → solutions + pilote)**, mini-simulation canvas (pluie/ruissellement/lagune/mer), quiz 10 questions, checklist prévention (progression localStorage), sources & glossaire. **Généré** depuis `data/climat/el-nino-2026/` + `data/climat/frontignan-episodes-cevenols/` — ne pas éditer à la main |
 | `vision-frontignan-2026-2040.md` | 🔮 **Vision prospective** macro/micro 2026→2040 (focale 2030) — source éditable |
 | `vision-frontignan-2026-2040.html` | Même document, version consultation autonome (images base64) |
 | `rapport-frontignan-analyse-territoriale.md` | 📊 **Rapport d'analyse territoriale** complet — entonnoir France→ville, 11 sections, 13 fiches projets, 249 sources |
@@ -31,7 +31,7 @@ Le **module climat** `el-nino-thau.html` s'ouvre de la même manière (autonome,
 
 ```bash
 python3 scripts/validate_climat_data.py    # contrôle du dataset
-python3 scripts/build_climat_assets.py     # régénère el-nino-thau.html + PoC COGNITORIUM + GeoJSON watchtower
+python3 scripts/build_climat_assets.py     # régénère el-nino-thau.html + PoC COGNITORIUM + les 2 GeoJSON watchtower
 ```
 
 ## 🛠 Régénérer

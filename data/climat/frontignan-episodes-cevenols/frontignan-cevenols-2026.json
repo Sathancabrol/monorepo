@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "id": "frontignan-cevenols-2026",
+    "schema": "territorial-risk-v1",
+    "title": "Frontignan face aux épisodes cévenols — points bloquants & solutions",
+    "short_title": "Épisodes cévenols × Frontignan",
+    "version": "1.0.0",
+    "created_at": "2026-10-11",
+    "as_of": "2026-10-11",
+    "language": "fr",
+    "scope": "Commune de Frontignan-la Peyrade (Hérault, Sète Agglopôle Méditerranée) face aux épisodes cévenols / méditerranéens : mécanismes d'inondation par ruissellement, saturation des réseaux, contraintes littorales et organisation de crise. Complément territorial du dataset el-nino-godzilla-2026 (frise Thau, simulation, prévention).",
+    "origin": {
+      "analysis": "« Frontignan face aux épisodes cévenols : blocages et solutions possibles » — diagnostic transmis le 11 octobre 2026, suite au module Atlas Frontignan « El Niño × Thau ».",
+      "documents": [
+        "Plan communal de sauvegarde (PCS) de Frontignan-la Peyrade (2025)",
+        "PPRI de Frontignan — zonage et règlement",
+        "Programme d'études du Syndicat mixte du bassin de Thau (SMBT) — ruissellements de la Gardiole, sollicitation des réseaux",
+        "SMBT — inondations par ruissellement urbain à Frontignan lors de l'épisode de 2019",
+        "PAPI de Thau 2026–2031 (labellisé avril 2026)",
+        "THAU ALABRI — diagnostics de vulnérabilité des bâtiments",
+        "Étude préalable au PAPI — diagnostic territorial",
+        "VigiThau — dispositif de surveillance"
+      ],
+      "transmitted_by": "Utilisateur du monorepo (Sathancabrol), 11 octobre 2026",
+      "raw_sources": [
+        "data/climat/frontignan-episodes-cevenols/sources/analyse-blocages-solutions-2026-10-11.md"
+      ]
+    },
+    "related_datasets": ["el-nino-godzilla-2026"],
+    "disclaimer": "Diagnostic documentaire construit à partir de l'analyse transmise (11/10/2026), elle-même fondée sur les documents communaux et intercommunaux (PCS 2025, PPRI, SMBT, PAPI). Ce n'est pas une étude hydraulique : les localisations du bloc geo sont indicatives, les scénarios du module Atlas restent pédagogiques et qualitatifs. Toute décision d'aménagement doit s'appuyer sur les données techniques officielles et une validation par les services compétents (Ville de Frontignan, Sète Agglopôle Méditerranée, SMBT)."
+  },
+
+  "key_message": {
+    "headline": "Le problème n'est pas seulement la quantité de pluie.",
+    "diagnosis": "C'est la combinaison entre les ruissellements venant de la Gardiole, les réseaux urbains qui peuvent saturer, les zones basses du littoral et de l'étang, et la difficulté d'évacuer rapidement les personnes et l'eau.",
+    "context": "La commune reconnaît son exposition aux ruissellements du massif de la Gardiole et dispose d'un PPRI. Le SMBT identifie également des inondations par ruissellement urbain à Frontignan lors de l'épisode de 2019.",
+    "conclusion": "L'opportunité n'est pas de chercher un ouvrage miracle, mais de construire un diagnostic partagé des flux d'eau et des vulnérabilités, puis de comparer des interventions ciblées. Atlas Frontignan peut servir de support de décision et de pédagogie pour cette démarche, à condition de s'appuyer sur les données techniques officielles et de faire valider les scénarios par les spécialistes compétents."
+  },
+
+  "sources": [
+    { "id": "pcs-frontignan-2025", "type": "document", "title": "Plan communal de sauvegarde — Frontignan-la Peyrade (2025)", "date": "2025", "note": "Décrit les dangers liés aux délais d'alerte courts, à l'isolement et aux difficultés de circulation ; signale des enjeux industriels et des terrains potentiellement pollués dans des secteurs exposés." },
+    { "id": "ppri-frontignan", "type": "document", "title": "PPRI de Frontignan — zonage et règlement", "date": "2026", "note": "Commune exposée aux ruissellements du massif de la Gardiole et à la submersion marine ; base réglementaire du zonage." },
+    { "id": "smbt-programme-etudes", "type": "etude", "title": "Programme d'études du SMBT (smbt.fr)", "date": "2026", "note": "Signale explicitement des désordres majeurs liés aux ruissellements de la Gardiole sur le centre-ville ; restaurations de cours d'eau prévues au PAPI." },
+    { "id": "smbt-reseaux-2026", "type": "etude", "title": "SMBT — sollicitation des réseaux par épisodes successifs", "date": "2026", "note": "Forte sollicitation des réseaux pluviaux par des épisodes pluvieux successifs, documentée début 2026." },
+    { "id": "smbt-episode-2019", "type": "evenement", "title": "SMBT — inondations par ruissellement urbain à Frontignan (épisode de 2019)", "date": "2019", "note": "Précédent local documenté de ruissellement urbain." },
+    { "id": "papi-thau-2026", "type": "programme", "title": "PAPI de Thau 2026–2031 (Syndicat mixte du bassin de Thau)", "date": "2026-04", "note": "Labellisé avril 2026 : 46 actions, 25 communes, ≈ 6,8 M€ — surveillance, alerte, vulnérabilité des bâtiments, écoulements, ouvrages de protection ; restaurations de cours d'eau." },
+    { "id": "thau-alabri", "type": "dispositif", "title": "THAU ALABRI — diagnostics de vulnérabilité des bâtiments", "date": "2026", "note": "Diagnostics à déployer avant travaux ciblés : batardeaux, équipements électriques rehaussés, protection des ouvertures, mise en sécurité." },
+    { "id": "etude-prealable-papi", "type": "etude", "title": "Étude préalable au PAPI — diagnostic territorial", "date": "2026", "note": "Diagnostic territorial de référence à exploiter en premier." },
+    { "id": "vigithau", "type": "dispositif", "title": "VigiThau — dispositif de surveillance existant", "date": "2026", "note": "Base existante pour relier pluie, niveaux d'eau, seuils de vigilance, signalements terrain et consignes aux habitants." },
+    { "id": "ville-frontignan", "type": "institution", "title": "Ville de Frontignan-la Peyrade — reconnaissance de l'exposition", "date": "2026", "note": "Exposition aux ruissellements du massif de la Gardiole ; PPRI en vigueur." }
+  ],
+
+  "blocking_points": [
+    {
+      "id": "gardiole-ruissellement",
+      "n": 1,
+      "zone": "Amont → centre-ville",
+      "title": "L'eau descend de la Gardiole vers la ville",
+      "basis": "SMBT — programme d'études",
+      "mechanism": "Les pentes concentrent l'eau vers les points bas. Lorsque les sols sont saturés, le ruissellement augmente et peut provoquer des accumulations rapides.",
+      "evidence": "Le programme d'études du SMBT signale explicitement des désordres majeurs liés aux ruissellements de la Gardiole sur le centre-ville. Précédent documenté : inondations par ruissellement urbain à Frontignan lors de l'épisode de 2019.",
+      "blockage": "Connaître précisément les trajectoires de l'eau, les points d'accumulation et les obstacles à son écoulement.",
+      "simulable": true,
+      "source_ids": ["smbt-programme-etudes", "smbt-episode-2019", "ville-frontignan"]
+    },
+    {
+      "id": "reseaux-saturation",
+      "n": 2,
+      "zone": "Réseaux pluviaux urbains",
+      "title": "Les réseaux pluviaux peuvent atteindre leurs limites",
+      "basis": "SMBT — début 2026",
+      "mechanism": "Des pluies très intenses ou successives sollicitent les réseaux, les avaloirs et les exutoires au même moment. Quand les sols sont déjà gorgés d'eau, l'infiltration diminue.",
+      "evidence": "Le SMBT a documenté début 2026 une forte sollicitation des réseaux par des épisodes pluvieux successifs.",
+      "blockage": "Capacité réelle des conduites, entretien, exutoires, reflux et manque éventuel de stockage temporaire à vérifier secteur par secteur.",
+      "simulable": true,
+      "source_ids": ["smbt-reseaux-2026"]
+    },
+    {
+      "id": "littoral-etang",
+      "n": 3,
+      "zone": "Littoral & étang de Thau",
+      "title": "Le littoral et l'étang compliquent l'évacuation",
+      "basis": "PPRI / submersion marine",
+      "mechanism": "Frontignan est exposée à la submersion marine. En cas de mer haute ou de conditions marines défavorables, l'évacuation de l'eau vers les milieux récepteurs peut devenir plus difficile.",
+      "evidence": "Exposition reconnue par la commune (PPRI) ; point hydraulique à étudier, et non une situation systématique.",
+      "blockage": "Gérer ensemble pluie, niveaux de l'étang, mer, exutoires et ouvrages de protection.",
+      "simulable": true,
+      "source_ids": ["ppri-frontignan", "ville-frontignan"]
+    },
+    {
+      "id": "deplacements-secours",
+      "n": 4,
+      "zone": "Circulation & secours",
+      "title": "Les déplacements et les secours peuvent être entravés",
+      "basis": "PCS communal",
+      "mechanism": "Une rue submergée peut isoler des quartiers, rendre certains itinéraires impraticables et retarder l'intervention des secours.",
+      "evidence": "Le PCS communal décrit les dangers liés aux délais d'alerte courts, à l'isolement et aux difficultés de circulation.",
+      "blockage": "Les itinéraires sûrs, les points de coupure et les personnes vulnérables doivent être connus avant la crise.",
+      "simulable": false,
+      "source_ids": ["pcs-frontignan-2025"]
+    },
+    {
+      "id": "pollutions-secondaires",
+      "n": 5,
+      "zone": "Enjeux industriels & terrains pollués",
+      "title": "Les dégâts peuvent entraîner des pollutions secondaires",
+      "basis": "PCS communal (2025)",
+      "mechanism": "Une inondation peut dépasser le simple dommage aux bâtiments : elle peut aussi soulever des risques de pollution ou d'accident technologique.",
+      "evidence": "Le PCS de Frontignan signale des enjeux industriels et des terrains potentiellement pollués dans des secteurs exposés.",
+      "blockage": "Localiser les installations sensibles, sécuriser les stockages et coordonner les plans de crise.",
+      "simulable": false,
+      "source_ids": ["pcs-frontignan-2025"]
+    }
+  ],
+
+  "solutions": {
+    "principle": "Les solutions les plus utiles sont complémentaires : retenir une partie de l'eau en amont, ralentir les écoulements, donner de la capacité au système urbain, protéger les bâtiments et améliorer l'alerte.",
+    "matrix": [
+      { "priority": "P1", "verb": "Connaître", "solution": "Cartographie hydraulique fine", "application": "Croiser topographie, pentes, réseaux, sols, zones basses et retours des habitants pour repérer les trajectoires de ruissellement.", "source_id": null },
+      { "priority": "P1", "verb": "Alerter", "solution": "Capteurs et prévision locale", "application": "Relier pluie, niveaux d'eau, seuils de vigilance, signalements terrain et consignes aux habitants. Le dispositif VigiThau constitue une base existante.", "source_id": "vigithau" },
+      { "priority": "P1", "verb": "Protéger", "solution": "Diagnostics et adaptation des bâtiments", "application": "Déployer les diagnostics THAU ALABRI, puis cibler les travaux adaptés : batardeaux, équipements électriques rehaussés, protection des ouvertures et mise en sécurité.", "source_id": "thau-alabri" },
+      { "priority": "P2", "verb": "Retenir", "solution": "Désimperméabilisation et infiltration", "application": "Noues, jardins de pluie, sols perméables, espaces verts en creux et bassins de rétention là où les études de sol et les contraintes locales le permettent.", "source_id": null },
+      { "priority": "P2", "verb": "Ralentir", "solution": "Restaurer les écoulements naturels", "application": "Étudier les fossés, cours d'eau, passages hydrauliques et zones d'expansion des crues ; éviter que les aménagements en amont aggravent les débits en aval. Le PAPI prévoit notamment des restaurations de cours d'eau.", "source_id": "papi-thau-2026" },
+      { "priority": "P2", "verb": "Évacuer", "solution": "Rénover les réseaux et les exutoires", "application": "Mesurer les capacités, localiser les étranglements, vérifier les clapets et les risques de reflux, puis dimensionner les travaux selon plusieurs scénarios de pluie et de niveau marin.", "source_id": null },
+      { "priority": "P3", "verb": "Organiser", "solution": "Plan de circulation de crise", "application": "Cartographier les routes à fermer, itinéraires de secours, lieux d'accueil et besoins des personnes à mobilité réduite ; simuler les décisions avant l'événement.", "source_id": null }
+    ],
+    "papi": {
+      "name": "PAPI de Thau 2026–2031",
+      "actions": 46,
+      "communes": 25,
+      "budget_millions": 6.8,
+      "labellise": "avril 2026",
+      "porte": "Surveillance, alerte, vulnérabilité des bâtiments, écoulements et ouvrages de protection",
+      "point_a_verifier": "L'affectation précise des actions, budgets et calendriers à chaque secteur de Frontignan.",
+      "source_id": "papi-thau-2026"
+    }
+  },
+
+  "atlas_opportunities": {
+    "intro": "Le module territorial peut devenir utile au-delà d'une carte des zones inondables : aider à comprendre où l'eau va, ce qui bloque, qui doit intervenir et quelle solution tester.",
+    "modules": [
+      {
+        "id": "A",
+        "name": "Carte des mécanismes d'inondation",
+        "status": "proposition",
+        "description": "Superposer relief, axes de ruissellement, réseaux pluviaux, zones basses, routes, bâtiments sensibles et zonage PPRI.",
+        "rule": "Chaque couche doit indiquer sa source, sa date et sa précision.",
+        "existing": null
+      },
+      {
+        "id": "B",
+        "name": "Simulateur de scénarios",
+        "status": "première version disponible",
+        "description": "Comparer une pluie intense, des pluies répétées après saturation des sols, ou une pluie accompagnée de conditions marines défavorables. Montrer les zones potentiellement affectées et les itinéraires susceptibles d'être coupés.",
+        "rule": "Simulation pédagogique et qualitative au départ. Des résultats quantitatifs fiables exigeraient des données et un modèle hydraulique validé.",
+        "existing": "Onglet « Simulation » du module El Niño × Thau (el-nino-thau.html) : coupe Gardiole → ville → étang → mer, curseurs pluie/mer/sols.",
+        "existing_action": "goTab('sim')"
+      },
+      {
+        "id": "C",
+        "name": "Comparateur de solutions",
+        "status": "proposition",
+        "description": "Pour chaque point bloquant, comparer plusieurs options : bassin de stockage, noue, désimperméabilisation, entretien, renforcement du réseau, protection d'un bâtiment.",
+        "rule": "Afficher coût estimatif à confirmer, bénéfices attendus, contraintes foncières, entretien et effets possibles en aval.",
+        "existing": null
+      },
+      {
+        "id": "D",
+        "name": "Tableau de bord opérationnel",
+        "status": "proposition",
+        "description": "Relier les informations disponibles sur les pluies, les niveaux d'eau, les signalements, les travaux et les décisions de crise.",
+        "rule": "Distinguer clairement les observations réelles, les alertes officielles et les simulations.",
+        "existing": "Ébauche : onglet « Frise Thau » (tableau de bord de surveillance 8 indicateurs) du même module.",
+        "existing_action": "goTab('timeline')"
+      }
+    ]
+  },
+
+  "pilot": {
+    "recommendation": "Commencer par une étude pilote sur le ruissellement de la Gardiole vers le centre-ville — ce mécanisme est explicitement signalé dans les documents du SMBT. Ensuite, étendre l'analyse aux points bas, aux réseaux et aux secteurs littoraux.",
+    "progress_label": "4/5",
+    "steps": [
+      { "done": true, "title": "Récupérer les données de référence", "detail": "PPRI, PCS, cartes de ruissellement du SMBT, topographie et données de réseaux disponibles." },
+      { "done": true, "title": "Localiser les points de blocage", "detail": "Croiser études, signalements d'habitants, photos datées, traces de crues et observations des services." },
+      { "done": true, "title": "Faire valider le diagnostic", "detail": "Comparer la carte avec les services techniques de la Ville, Sète Agglopôle et le SMBT." },
+      { "done": true, "title": "Comparer les scénarios de travaux", "detail": "Évaluer réduction du risque, coûts, foncier, entretien, délais et effets sur les quartiers voisins." },
+      { "done": false, "title": "Tester une démonstration Atlas", "detail": "Créer une carte interactive documentée avec scénarios et fiches d'action, sans présenter les hypothèses comme des prévisions." }
+    ],
+    "sources_to_exploit": [
+      "PPRI de Frontignan — zonage et règlement",
+      "Plan communal de sauvegarde — Frontignan",
+      "PAPI de Thau 2026–2031 — actions et financement",
+      "THAU ALABRI — diagnostics de vulnérabilité",
+      "Étude préalable au PAPI — diagnostic territorial"
+    ]
+  },
+
+  "geo": {
+    "description": "Zones de blocage indicatives (diagnostic documentaire, pas une étude hydraulique) — exportées en GeoJSON pour watchtower (projects/watchtower/public/data/frontignan-cevenols-watchpoints.geojson).",
+    "watchpoints": [
+      { "id": "gardiole-amont", "name": "Massif de la Gardiole — amont des ruissellements", "lat": 43.5069, "lon": 3.8167, "category": "local", "blocking_point_ids": ["gardiole-ruissellement"], "description": "Origine des écoulements concentrés vers les points bas du centre-ville ; désordres majeurs documentés par le programme d'études du SMBT." },
+      { "id": "centre-ville-frontignan", "name": "Centre-ville de Frontignan — points bas", "lat": 43.4495, "lon": 3.7060, "category": "local", "blocking_point_ids": ["gardiole-ruissellement", "reseaux-saturation"], "description": "Points bas récepteurs des ruissellements de la Gardiole ; ruissellement urbain documenté lors de l'épisode de 2019 (SMBT)." },
+      { "id": "exutoires-thau", "name": "Exutoires vers l'étang de Thau", "lat": 43.4330, "lon": 3.6900, "category": "local", "blocking_point_ids": ["reseaux-saturation", "littoral-etang"], "description": "Clapets, risques de reflux et niveaux du milieu récepteur : l'évacuation devient difficile quand l'étang est haut (point hydraulique à étudier)." },
+      { "id": "frontignan-plage", "name": "Frontignan-plage — littoral bas", "lat": 43.4196, "lon": 3.7196, "category": "local", "blocking_point_ids": ["littoral-etang"], "description": "Secteur littoral bas exposé à la submersion marine (PPRI) ; évacuation difficile vers les milieux récepteurs en conditions marines défavorables." },
+      { "id": "zi-peyrade", "name": "ZA/ZI La Peyrade — enjeux industriels", "lat": 43.4372, "lon": 3.7290, "category": "local", "blocking_point_ids": ["pollutions-secondaires"], "description": "Enjeux industriels et terrains potentiellement pollués signalés par le PCS dans des secteurs exposés : risque de pollution secondaire en cas d'inondation." },
+      { "id": "axes-secours", "name": "Axes & itinéraires de secours (commune)", "lat": 43.4430, "lon": 3.7130, "category": "local", "blocking_point_ids": ["deplacements-secours"], "description": "Rues submergées possibles → isolement de quartiers, itinéraires impraticables, retards des secours (PCS : délais d'alerte courts, isolement, difficultés de circulation)." }
+    ]
+  }
+}

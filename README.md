@@ -19,7 +19,7 @@ monorepo/
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)
-├─ data/climat/el-nino-2026/    🌊 Dataset climat « El Niño Godzilla × Thau » (JSON canonique + sources)
+├─ data/climat/                 🌊 Datasets climat canoniques : el-nino-2026 (El Niño × Thau) + frontignan-episodes-cevenols (blocages cévenols)
 ├─ scripts/github_inventory.py  Inventaire GitHub (stdlib, 62 appels max, snapshot JSON)
 ├─ scripts/validate_climat_data.py + build_climat_assets.py   Validation & génération des modules climat
 ├─ data/github_inventory.json   Snapshot (cache serveur, refresh via POST)
@@ -66,12 +66,14 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
 
 Un **dataset canonique** (`data/climat/el-nino-2026/`) enrichit les modules pertinents du monorepo : observations & projections de l'épisode (vidéo LIMIT « EL NIÑO : GODZILLA » du 11/10/2026 avec Xavier Fettweis, errata 24/09 intégré) + frise opérationnelle golfe du Lion / Thau Agglo (oct. 2026 → déc. 2027). Chaque élément porte un **statut** (`observe` / `prevu` / `incertain`) et une **attribution** — El Niño n'est pas coupable de tout.
 
+Le dataset complémentaire **`data/climat/frontignan-episodes-cevenols/`** (schéma `territorial-risk-v1`) capture le diagnostic « Frontignan face aux épisodes cévenols » : 5 points bloquants (Gardiole→centre-ville, saturation des réseaux, littoral/étang, déplacements & secours, pollutions secondaires), 7 solutions P1/P2/P3 (PAPI Thau 2026–2031 : 46 actions, 25 communes, ≈ 6,8 M€), 4 modules Atlas opportuns et la feuille de route de l'étude pilote Gardiole → centre-ville (4/5).
+
 | Consommateur | Artefact | Accès |
 |---|---|---|
-| **frontignan** (Atlas) | `projects/frontignan/el-nino-thau.html` — module interactif 8 onglets : vue d'ensemble, frise filtrable (horizon × risque), faits globaux, risques & scénarios, simulation canvas, quiz, checklist, sources | `/preview/frontignan/el-nino-thau.html` (aussi lié depuis la slide 18 du deck) |
+| **frontignan** (Atlas) | `projects/frontignan/el-nino-thau.html` — module interactif 9 onglets : vue d'ensemble, frise filtrable (horizon × risque), faits globaux, risques & scénarios, **épisodes cévenols (blocages & solutions)**, simulation canvas, quiz, checklist, sources | `/preview/frontignan/el-nino-thau.html` (aussi lié depuis la slide 18 du deck) |
 | **COGNITORIUM** (learning) | `projects/COGNITORIUM/learning/el-nino-poc.html` — PoC « Comprendre El Niño » (10 niveaux, concept graph, transfert) | `/preview/COGNITORIUM/learning/el-nino-poc.html` |
-| **watchtower** (globe) | `projects/watchtower/public/data/enso-thau-watchpoints.geojson` — 15 watchpoints (6 Thau + 9 mondiaux) + boîte Niño 3.4 | glisser-déposer sur le globe (import GeoJSON natif) |
-| **API** | endpoints climat | `GET /api/climat/datasets` · `GET /api/climat/el-nino-godzilla-2026` · `GET /api/climat/el-nino-godzilla-2026/{section}` (`thau`, `geo`, `quiz`, `learning`, `indicators`…) |
+| **watchtower** (globe) | `projects/watchtower/public/data/enso-thau-watchpoints.geojson` — 15 watchpoints (6 Thau + 9 mondiaux) + boîte Niño 3.4 ; `frontignan-cevenols-watchpoints.geojson` — 6 zones de blocage cévenols | glisser-déposer sur le globe (import GeoJSON natif) |
+| **API** | endpoints climat | `GET /api/climat/datasets` · `GET /api/climat/el-nino-godzilla-2026` · `GET /api/climat/frontignan-cevenols-2026` · `GET /api/climat/{dataset}/{section}` (`thau`, `blocking_points`, `solutions`, `geo`…) |
 
 Gouvernance : le JSON canonique est la seule source de vérité ; les artefacts modules sont **générés** (`python3 scripts/build_climat_assets.py`) et validés (`python3 scripts/validate_climat_data.py`). Les sources brutes (script de tournage, synthèse, frise) sont archivées dans `data/climat/el-nino-2026/sources/`.
   - Servie via `GET /preview/{project}/{path}` (FileResponse, pas de `X-Frame-Options` côté monorepo ; `watchtower` buildée sans en-têtes DENY).

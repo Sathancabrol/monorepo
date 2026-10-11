@@ -1,11 +1,32 @@
 {
  "type": "FeatureCollection",
- "name": "enso-thau-watchpoints (dataset el-nino-godzilla-2026 v1.0.0, as_of 2026-10-11)",
+ "name": "el-nino-godzilla-2026 watchpoints (v1.0.0, as_of 2026-10-11)",
  "metadata": {
-  "title": "El Niño 2026–2027 « Godzilla » — points de surveillance × bassin de Thau",
+  "title": "El Niño 2026–2027 « Godzilla » — dataset stratégique & territorial",
   "generated_by": "scripts/build_climat_assets.py",
   "source_dataset": "data/climat/el-nino-2026/el-nino-godzilla-2026.json",
-  "origin": "Vidéo LIMIT « EL NIÑO : GODZILLA » (11/10/2026, Vinz × Xavier Fettweis — ULiège) + synthèse stratégique avec errata du 24/09/2026",
+  "origin": {
+   "video": {
+    "title": "EL NIÑO : GODZILLA",
+    "channel": "LIMIT (limit.media)",
+    "presenter": "Vinz",
+    "expert": "Xavier Fettweis, climatologue (ULiège)",
+    "url": "https://youtu.be/Uv39BroUx-Q",
+    "online_date": "2026-10-11T15:00:00+02:00",
+    "script_version": "2026-09-24"
+   },
+   "analysis": {
+    "title": "EL NIÑO 2026–2027 : synthèse stratégique complète",
+    "note": "Analyse du texte de LIMIT et de son errata du 24 septembre 2026 — situation rapportée au 11 octobre 2026.",
+    "errata_included": true
+   },
+   "transmitted_by": "Utilisateur du monorepo (Sathancabrol), 11 octobre 2026",
+   "raw_sources": [
+    "data/climat/el-nino-2026/sources/limit-script-tournage-2026-09-24.md",
+    "data/climat/el-nino-2026/sources/synthese-strategique-2026-10-11.md",
+    "data/climat/el-nino-2026/sources/frise-thau-golfe-lion-2026-2027.md"
+   ]
+  },
   "disclaimer": "Dataset documentaire construit à partir des sources transmises (vidéo LIMIT + synthèse + errata). Il ne constitue pas une vérification indépendante de chaque chiffre. Les valeurs doivent être lues avec leur indice, leur période, leur statut et leur source. Pour les décisions opérationnelles locales, les bulletins officiels (Météo-France, Vigicrues, préfecture) priment toujours sur les tendances saisonnières.",
   "usage": "Glisser-déposer ce fichier sur le globe watchtower (import GeoJSON natif du fork), ou le servir via /preview/watchtower/public/data/."
  },
@@ -22,13 +43,13 @@
    "properties": {
     "name": "Étang de Thau",
     "category": "local",
-    "scope": "thau",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Lagune méditerranéenne — indicateur vital du territoire (conchyliculture, qualité de l'eau, tourisme). Exposée aux épisodes méditerranéens, au ruissellement et aux vagues-submersion.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "thau",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -43,13 +64,13 @@
    "properties": {
     "name": "Frontignan-la Peyrade",
     "category": "local",
-    "scope": "thau",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Commune littorale basse (24 136 hab.) : ruissellement de la Gardiole, risque littoral, PCS/PPRI/DICRIM. PHE centennale ≈ 2,00 m (PPRI).",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "thau",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -64,13 +85,13 @@
    "properties": {
     "name": "Sète",
     "category": "local",
-    "scope": "thau",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Ville portuaire entre mer et lagune — siège de Sète Agglopôle Méditerranée. Ne pas confondre les cumuls de l'arrière-pays avec ceux de Sète.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "thau",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -85,13 +106,13 @@
    "properties": {
     "name": "Marseillan",
     "category": "local",
-    "scope": "thau",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Rive ouest de Thau — secteurs littoraux bas sensibles aux vagues-submersion.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "thau",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -106,13 +127,13 @@
    "properties": {
     "name": "Massif de la Gardiole",
     "category": "local",
-    "scope": "thau",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Relief au nord de Frontignan : origine des ruissellements vers la plaine littorale lors des pluies intenses ; interface habitat/nature exposée aux incendies.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "thau",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -127,13 +148,13 @@
    "properties": {
     "name": "Golfe du Lion (mer)",
     "category": "local",
-    "scope": "thau",
-    "status": "prevu",
-    "status_label": "prévu / projection",
     "description": "Mer chaude en automne : carburant des épisodes méditerranéens (remontées d'air humide + configuration atmosphérique favorable).",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "thau",
+    "status": "prevu",
+    "status_label": "prévu / projection"
    }
   },
   {
@@ -148,13 +169,13 @@
    "properties": {
     "name": "Zone Niño 3.4",
     "category": "global",
-    "scope": "pacifique",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Rectangle de mesure (5°N–5°S, 120°–170°W) : +3,07 °C le 22 septembre 2026 — record 2015 égalé avec ~2 mois d'avance. RONI été 2026 : +1,4 °C.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "pacifique",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -169,13 +190,13 @@
    "properties": {
     "name": "Côtes du Pérou (upwelling)",
     "category": "global",
-    "scope": "perou",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Remontée d'eau froide coupée : anchois disparus, saison de pêche suspendue le 12 mai à 23 % du quota, état d'urgence le 23 août.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "perou",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -190,13 +211,13 @@
    "properties": {
     "name": "Plateau de Chajnantor (Atacama)",
     "category": "global",
-    "scope": "chili",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "5 000 m — jusqu'à 1 m de neige le 14 août 2026 dans le désert le plus sec de la planète. Attribution mixte : goutte froide (déclencheur) + El Niño (probabilités).",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "chili",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -211,13 +232,13 @@
    "properties": {
     "name": "Canal de Panama (lac Gatún)",
     "category": "global",
-    "scope": "panama",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "5 % du commerce mondial — pluies du bassin −34 % (mai–août), transits réduits à 34/jour (4 sept.) puis 32/jour (15 sept.).",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "panama",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -232,13 +253,13 @@
    "properties": {
     "name": "Corredor Seco",
     "category": "global",
-    "scope": "amerique-centrale",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Guatemala/Honduras/Salvador — 7 millions de personnes exposées ; 70 342 foyers en perte de récolte (Oxfam), −62 % d'intention de semer.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "amerique-centrale",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -253,13 +274,13 @@
    "properties": {
     "name": "Nagoya (Japon)",
     "category": "global",
-    "scope": "japon",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "10,4 cm de pluie en 1 h le 8 septembre 2026 — record depuis 1890. Errata : front stationnaire alimenté par la tempête Krovanh (météo locale, pas El Niño direct).",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "japon",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -274,13 +295,13 @@
    "properties": {
     "name": "Indonésie (feux)",
     "category": "global",
-    "scope": "indonesie",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "≈ 202 000 ha brûlés janvier–juillet 2026 — sécheresse El Niño, tourbières, qualité de l'air.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "indonesie",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -295,13 +316,13 @@
    "properties": {
     "name": "Inde (mousson)",
     "category": "global",
-    "scope": "inde",
-    "status": "observe",
-    "status_label": "observé / rapporté",
     "description": "Bilan errata : déficit de mousson −13 % au national, −24 % dans le sud.",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "inde",
+    "status": "observe",
+    "status_label": "observé / rapporté"
    }
   },
   {
@@ -316,13 +337,13 @@
    "properties": {
     "name": "Méditerranée occidentale",
     "category": "global",
-    "scope": "mediterranee",
-    "status": "prevu",
-    "status_label": "prévu / projection",
     "description": "Automne 2026 : mer chaude + risque élevé de pluies intenses (signal de vigilance probabiliste, pas une date ni une commune précises).",
     "dataset": "el-nino-godzilla-2026",
     "dataset_version": "1.0.0",
-    "as_of": "2026-10-11"
+    "as_of": "2026-10-11",
+    "scope": "mediterranee",
+    "status": "prevu",
+    "status_label": "prévu / projection"
    }
   },
   {
