@@ -115,3 +115,38 @@ La branche `proto-cognitorium:arena/01a08342-proto-cognitorium` contient un kit 
 - Les résultats « 143 rendus, 0 crash, 0 erreur console » figurent dans le README ; ils sont **déclarés par la documentation de cette branche**, pas réexécutés ni confirmés dans cette session.
 
 **Action prioritaire :** porter ou adapter ce harnais à la branche canonique de proto-Cognitorium, ajouter des assertions et codes de sortie non nuls en cas d'échec, distinguer tests hors-ligne et tests d'intégration API, puis exécuter les sondes dans CI. Ne pas importer les résultats historiques comme preuve de l'état actuel sans relancer le kit sur le SHA choisi.
+
+
+## Quatrième lot — branches supplémentaires, Frontignan et outils de recherche
+
+### Comparaisons supplémentaires
+
+| Dépôt / branche | Relation avec `main` | Éléments distinctifs vus dans le diff | Décision provisoire |
+|---|---|---|---|
+| `monorepo:arena/0d411b29-monorepo` | Divergente, 7 en avance, 2 en retard | Projet `bone` avec persona, LLM, permissions, scripts de lancement/packaging, interface et tests dédiés. | Actif potentiel d'interface/persona ; audit de permissions et du comportement du bot avant toute réutilisation. |
+| `monorepo:arena/00f44a26-monorepo` | Divergente, 1 en avance, 2 en retard | Projet `laplace`, agent et politique d'exécution, documentation Carré d'As, confidentialité, sources et tests de mémoire/politique/configuration. | À comparer à Nexus OS/Carré d'As comme troisième candidat ; ne pas le laisser devenir un runtime concurrent par défaut. |
+| `monorepo:arena/01a08203-monorepo` | Divergente, 1 en avance, 27 en retard | Atlas Frontignan : interface, données Atlas JSON, CSV des communes de Thau, graphe, génération d'atlas et deck. | Réutiliser comme archive de données/visuel ; vérifier date, sources, géométrie, licence et différences avec Watchtower INTEL. |
+| `monorepo:arena/1bad5f9b-monorepo` | En avance de 1 commit | Delta limité à `projects/proto-cognitorium/server.ts` et `src/App.tsx`. | Vérifier le delta exact avant de le porter ; il s'agit d'un changement d'application, pas d'une preuve de convergence globale. |
+| `monorepo:arena/15c77b59-monorepo` | Divergente, 1 en avance, 2 en retard | Grande archive documentaire Carré d'As : roadmaps, traces de sessions d'agents, plans et documentation d'implémentation. | Indexer comme archive de décisions et provenance ; ne pas ingérer sans filtre les discussions brutes dans la mémoire active. |
+| `monorepo:arena/171a1f38-monorepo` | Divergente, 8 en avance, 2 en retard | Historique d'audit avec inventaires de branches, drift, graphes, mémoire, journal et notes projet. | Source d'historique ; les snapshots doivent être rafraîchis et les alertes revérifiées. |
+| `monorepo:feat/creative-toolchain-registry` | Divergente, 10 en avance, 2 en retard | Registre d'outils créatifs, doc d'architecture, benchmark vidéo IA, validateur et tests du registre. | Réutiliser le motif de registre validé par schéma ; rapprocher du catalogue outil existant au lieu de créer deux catalogues incompatibles. |
+| `monorepo:feat/mobile-ar-fastpath-2026-10-11` | En avance de 18 commits | Registre portfolio, audit gap-driven, mémoire adaptative et dossier HUD mobile/AR. | Branche de travail la plus avancée pour l'automatisation d'audit ; elle ne prouve pas l'exécution CI ni la validation du HUD sur appareil. |
+| `watchtower:arena/01a072e1-watchtower` | Divergente, 43 en avance, 10 en retard | Audit Watchtower, architecture modulaire, charge mentale, vue Intel territoire, carte 2D, volant UI, parité des sources et tests JS. | Branche à haute priorité de revue ; elle contient à la fois documentation d'audit et tests de composants, à confronter au canonique. |
+| `ETAT-DE-LART-PSYCHOLOGIE:arena/01a04f7b` | Divergente, 38 en avance, 1 en retard | Agent chercheur « Uranus », 11 compétences de recherche, fixtures hors-ligne, pipeline de sources, PRISMA, trust scoring, visualisations, SOL/Vénus et suites de tests. | Actif de grande valeur pour Research Engine/Cognitorium ; inspecter le code, les métriques de confiance et les preuves de validation avant fusion. |
+| `ETAT-DE-LART-PSYCHOLOGIE:arena/01a03aac` | Divergente, 2 en avance, 1 en retard | Application Python/SQLite avec données de concepts, laboratoire et statistiques. | Candidat à comparer au simulateur cognitif ; vérifier si les modèles et données sont compatibles ou duplicatifs. |
+| `ETAT-DE-LART-PSYCHOLOGIE:arena/01a045a1` | Divergente, 1 en avance, 1 en retard | Agent de recherche avec pipeline, modèle, confiance, rapport, outils et données de démonstration. | Comparer avec Uranus avant de retenir l'une des variantes. |
+| `ETAT-DE-LART-PSYCHOLOGIE:arena/01a07d32` | En avance de 5 commits | Application d'inventaire GitHub et monorepo, documentation, script d'inventaire et requirements. | Fonction utilitaire ; comparer avec le scanner gap-driven et éviter les inventaires parallèles. |
+
+### Détails sur l'agent de recherche « Uranus »
+
+Le README de la branche `arena/01a04f7b` décrit un agent hybride à règles déterministes par défaut, LLM optionnel, fixtures hors-ligne, traces de run et compétences dédiées (recherche multi-bases, DOI, déduplication, validation de champs, estimation de confiance, dépistage de biais, PRISMA, synthèse et veille). Les répertoires `agent/core`, `agent/skills` et `tests` existent effectivement dans cette branche.
+
+Ces éléments en font un candidat de réutilisation plus concret qu'une simple spécification. Toutefois, les nombres de tests et les affirmations de couverture figurant dans le README restent **déclaratifs** tant que la suite n'est pas exécutée sur le SHA candidat. Le score « trust » ne doit pas être traité comme une probabilité calibrée de vérité sans validation empirique et documentation de la méthode.
+
+### Décisions de convergence mises à jour
+
+1. **Runtime d'agents :** ne pas choisir entre Nexus OS, Carré d'As et Laplace sur le seul nombre de fonctionnalités. Construire une matrice comparative : permissions, isolation, persistance, reprise, appels outils, observabilité, coût, tests et exécution locale.
+2. **Recherche scientifique :** comparer Uranus (branche EDL) à `reaserch-engine` et aux outils de recherche existants ; identifier les briques manquantes, réutiliser les compétences testées et garder un seul graphe de preuves canonique.
+3. **Territoire :** Watchtower INTEL et Atlas Frontignan partagent un domaine, mais pas nécessairement les mêmes sources ni les mêmes versions. Centraliser les sources/identifiants et exposer des adaptateurs plutôt que dupliquer les jeux de données.
+4. **Mémoire :** garder les logs bruts et historiques accessibles, mais ne pas les injecter systématiquement dans le contexte actif ; les résumer avec provenance et liens vers les traces originales.
+5. **Tests :** réutiliser les tests existants comme base, mais exiger des assertions bloquantes, des codes de sortie corrects et des runs CI observables avant de déclarer un module validé.
