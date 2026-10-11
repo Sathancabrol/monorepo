@@ -73,3 +73,14 @@ Le connecteur GitHub accessible ici permet de lire les statuts et les exécution
 5. Clarifier si le seuil de 100 branches du rapport portefeuille est acceptable ou si lui aussi doit paginer.
 
 **Conclusion :** le scanner gap-driven est une bonne base pour éviter de perdre les branches oubliées. Il automatise la découverte et l'indexation, pas l'analyse sémantique ni les tests. Il faut l'utiliser et tester ses limites, pas lui attribuer des capacités qu'il n'a pas.
+
+
+## Deuxième lot de comparaisons — interface et audit de convergence
+
+| Branche | Relation avec `main` | Contenu du delta observé | Décision provisoire |
+|---|---|---|---|
+| `feat/final-interface-skeleton-2026-10-07` | Divergente, 7 commits en avance, 2 en retard | `app/templates/interface.html`, CSS/JS d'interface, `data/interface_registry.json`, audit de l'interface finale et adaptations de l'application FastAPI. | Comparer le registre des slots avec Carré d'As avant de choisir un shell. Conserver la séparation interface / registre de modules / runtime. |
+| `audit/convergence-2026-10-10` | Divergente, 10 commits en avance, 2 en retard | Dossiers d'audit, taxonomie, journal, mémoire, inventaire et graphes de branches/drift, notes par projet. | Utiliser comme mémoire historique d'audit et source de pistes ; rafraîchir les SHA et revalider les alertes avant de les considérer actuelles. |
+| `arena/93b54a79-monorepo` | Divergente, 45 commits en avance, 2 en retard | Office UI, inventaire de fonctionnalités, Atlas Thau, agent d'entreprise/OS, prospective, matériel, benchmarks, docs de sessions et modules. | Source d'archives à haute valeur. Indexer les actifs par chemin/SHA et porter sélectivement ; ne pas fusionner la branche en bloc. |
+
+Ce lot confirme que l'archive contient plusieurs systèmes de documentation et d'interface qui se recoupent. La prochaine décision doit s'appuyer sur un inventaire dédupliqué des fonctions et sur les responsabilités réelles des composants, plutôt que sur la quantité de fichiers ou la fraîcheur apparente d'une branche.
