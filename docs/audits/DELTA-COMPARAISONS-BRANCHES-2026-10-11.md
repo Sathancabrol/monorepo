@@ -84,3 +84,19 @@ Le connecteur GitHub accessible ici permet de lire les statuts et les exécution
 | `arena/93b54a79-monorepo` | Divergente, 45 commits en avance, 2 en retard | Office UI, inventaire de fonctionnalités, Atlas Thau, agent d'entreprise/OS, prospective, matériel, benchmarks, docs de sessions et modules. | Source d'archives à haute valeur. Indexer les actifs par chemin/SHA et porter sélectivement ; ne pas fusionner la branche en bloc. |
 
 Ce lot confirme que l'archive contient plusieurs systèmes de documentation et d'interface qui se recoupent. La prochaine décision doit s'appuyer sur un inventaire dédupliqué des fonctions et sur les responsabilités réelles des composants, plutôt que sur la quantité de fichiers ou la fraîcheur apparente d'une branche.
+
+
+## Troisième lot — branches historiques Cognitorium / HCSM
+
+Comparaisons des branches `arena/*` découvertes dans les dépôts avec leurs `main` respectifs :
+
+| Dépôt | Références examinées | Résultat |
+|---|---|---|
+| `proto-cognitorium` | `arena/01a033e8`, `01a034f2`, `01a035a5`, `01a0369e`, `01a03436`, `01a03899` | Toutes sont des ancêtres de `main` selon le comparateur GitHub : 5 à 54 commits de retard, aucun commit unique en avance et aucun fichier dans le delta. |
+| `proto-cognitorium` | `arena/01a08342-proto-cognitorium` | Divergente : 5 commits en avance et 2 en retard. Le delta comprend des audits datés, une roadmap, une traceabilité CSV et des scripts d'audit (contenu, données, simulation, interaction, diagnostic ROME, runtime probe). |
+| `HCSM` | `arena/01a03a6b-hcsm`, `arena/01a03a93-hcsm` | Ancêtres de `main`, respectivement 3 et 1 commits de retard, sans delta unique en avance. |
+| `COGNITORIUM` | `arena/01a05ef8-cognitorium`, `arena/01a06876-cognitorium` | Ancêtres de `main`, respectivement 3 et 1 commits de retard, sans delta unique en avance. |
+
+### Conséquence
+
+Pour ces références précises, le risque immédiat n'est pas une fonctionnalité cachée unique dans chaque branche, mais le maintien de branches historiques. Il reste important de distinguer ce résultat du cas `arena/01a08342-proto-cognitorium`, qui contient des outils d'audit additionnels à examiner. Les scripts présents dans cette branche ne sont pas considérés comme exécutés ni fiables avant lecture et tests.
