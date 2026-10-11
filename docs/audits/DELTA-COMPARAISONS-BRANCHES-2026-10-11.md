@@ -150,3 +150,35 @@ Ces éléments en font un candidat de réutilisation plus concret qu'une simple 
 3. **Territoire :** Watchtower INTEL et Atlas Frontignan partagent un domaine, mais pas nécessairement les mêmes sources ni les mêmes versions. Centraliser les sources/identifiants et exposer des adaptateurs plutôt que dupliquer les jeux de données.
 4. **Mémoire :** garder les logs bruts et historiques accessibles, mais ne pas les injecter systématiquement dans le contexte actif ; les résumer avec provenance et liens vers les traces originales.
 5. **Tests :** réutiliser les tests existants comme base, mais exiger des assertions bloquantes, des codes de sortie corrects et des runs CI observables avant de déclarer un module validé.
+
+
+## Cinquième lot — revue statique des risques et de la qualité de preuve
+
+### Uranus / ETAT-DE-LART-PSYCHOLOGIE
+
+Fichiers lus sur `arena/01a04f7b-etat-de-lart-psychologie` : `agent/skills/trust_scoring.py`, `agent/skills/search_literature.py`, `tests/test_agent.py` et le README.
+
+- **Réutilisable :** architecture par compétences enregistrées, normalisation Crossref/OpenAlex/PubMed, fixtures hors-ligne, export JSON/CSV et tests de bout en bout décrits dans le dépôt.
+- **Limite du Trust Factor :** le score est explicitement heuristique, ce qui est sain, mais certains signaux sont des proxys discutables : la taille d'échantillon contribue à une composante nommée « réplication », tandis que le repérage d'un design randomisé ne modifie pas réellement le score. Il faut séparer méthodologie, puissance/précision, reproductibilité, transparence et confiance dans la source. Ne pas présenter le score global comme une probabilité de vérité.
+- **Limite de la recherche :** le dédoublonnage visible privilégie DOI ou un préfixe du titre ; il faut tester les DOI absents, variantes de titre, métadonnées incomplètes et collisions. Les résultats Crossref/OpenAlex/PubMed doivent conserver leur provenance et le statut en ligne/hors-ligne.
+- **Limite des tests :** plusieurs tests créent des runs et artefacts sous le répertoire `output/agent_runs` du projet ; prévoir un répertoire temporaire isolé et une remise à zéro contrôlée pour rendre les tests répétables sans salir l'arbre source.
+- **Licence :** aucun fichier `LICENSE` n'apparaît à la racine de la référence interrogée. Cela ne prouve pas qu'aucune licence n'existe ailleurs, mais les droits de portage ne sont pas établis par la liste des fichiers consultée.
+
+### Laplace / monorepo
+
+Le `pyproject.toml` de `monorepo:arena/00f44a26-monorepo/projects/laplace` déclare Python >=3.11, dépendances `aiosqlite`, `discord.py`, `openai`, `python-dotenv`, et extras de test/qualité. Le champ de licence est `UNLICENSED`. **Bloquer le portage ou la redistribution jusqu'à clarification écrite des droits**. L'existence de tests de politique, configuration et mémoire est confirmée par les noms de fichiers, pas par leur exécution.
+
+### Bone / monorepo
+
+Le projet `bone` déclare `discord.py==2.4.0` et `python-dotenv==1.0.1`, avec tests pour LLM, permissions et persona. Le fichier `perms.py` expose des packs d'autorisations incluant modération, gestion de salons/rôles, webhooks et un pack administrateur. Les noms de packs ne prouvent pas la sécurité de l'implémentation : l'intégration devra exiger le moindre privilège, un consentement explicite à chaque capacité, une journalisation et des tests des URL d'invitation. Aucun fichier `LICENSE` n'apparaît à la racine de la référence interrogée ; droits à clarifier.
+
+### Impacts sur la matrice de réutilisation
+
+| Actif | Statut technique actuel | Statut licence actuel | Prochaine étape |
+|---|---|---|---|
+| Uranus / agent chercheur | Architecture et tests déclarés ; revue statique partielle | Licence racine non établie par la liste consultée | Exécuter les tests, corriger les métriques de confiance, isoler les artefacts, clarifier les droits |
+| Laplace | Code Python/Discord/SQLite et tests présents | `UNLICENSED` dans `pyproject.toml` | Ne pas redistribuer/porter avant autorisation ; audit sécurité et tests |
+| Bone | Bot Discord, packs de permissions et tests présents | Licence racine non établie par la liste consultée | Audit moindre privilège, tests, clarification des droits |
+| Watchtower INTEL | Branche fortement divergente avec tests de composants visibles | À vérifier pour code et données séparément | Comparaison fonctionnelle, exécution CI et provenance des données |
+
+**Règle de décision :** « code visible » ≠ « licence claire » ≠ « tests réussis » ≠ « intégration validée ». Ces quatre statuts restent distincts dans le registre.
