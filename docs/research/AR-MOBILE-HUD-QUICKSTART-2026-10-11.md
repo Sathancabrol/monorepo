@@ -101,3 +101,11 @@ Utiliser la caméra et les capteurs du smartphone pour afficher une interface co
 - [ ] Comparer une démo HUD GPS avec une démo de placement 3D : ce sont deux catégories d'AR différentes.
 - [ ] Connecter le PC via USB pour scrcpy d'abord ; activer le débogage USB uniquement si nécessaire et depuis une source officielle.
 - [ ] Tester ensuite le partage Wi-Fi local ; ne pas ouvrir ADB sur un réseau public.
+
+
+### Pont PC ↔ Redmi : recommandation pratique
+- **KDE Connect** (gratuit, open source) : meilleur premier essai pour un pont quotidien téléphone-PC — presse-papiers, notifications, fichiers/liens, télécommande/touchpad, sur Wi-Fi avec chiffrement TLS. Installe-le sur Windows et Android, puis associe les deux appareils sur le même réseau. Sources officielles : https://kdeconnect.kde.org/download.html et https://github.com/KDE/kdeconnect-android.
+- **scrcpy** : meilleur pour voir et piloter l'écran du Redmi depuis Windows pendant les tests ; connexion USB recommandée au départ, sans app Android dédiée. Source canonique : https://github.com/Genymobile/scrcpy.
+- **LocalSend** : meilleur pour transférer simplement des fichiers sans compte ni Internet : https://localsend.org/fr/download.
+- **Pont Cognitorium/Nexus à terme** : la PWA s'ouvre sur le téléphone et consomme une API hébergée sur le PC, sur le réseau local. KDE Connect/scrcpy ne remplacent pas cette API métier ; ils sont des utilitaires de liaison et de test.
+- **Précaution** : ne pas activer des commandes distantes générales sur le PC sans nécessité. Avec KDE Connect, n'autoriser que les fonctions nécessaires ; avec scrcpy, n'activer le débogage USB que depuis le PC de confiance et déconnecter le mode TCP/IP après usage.
