@@ -15,7 +15,8 @@ INDEX = OUT / "branch-index.json"
 API = "https://api.github.com"
 BATCH = max(1, int(os.getenv("AUDIT_MAX_BRANCH_TREES", "15")))
 KEYWORDS = ("carre", "carré", "nexus", "btp", "interface", "audit", "agent", "watchtower",
-            "cognitorium", "research", "frontignan", "atlas", "tool", "memory", "preview")
+            "cognitorium", "research", "frontignan", "atlas", "tool", "memory", "preview",
+            "rule", "policy", "instruction", "agent_handoff", "contributing", "decision", "standard")
 
 def get_json(url):
     headers = {"Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28",
@@ -121,7 +122,9 @@ def main():
         paths = sorted(x.get("path","") for x in tree.get("tree",[]) if x.get("type") == "blob")
         relevant = [p for p in paths if any(w in p.lower() for w in
                     ("readme","audit","roadmap","agent","nexus","interface","carre","btp","module",
-                     "manifest","test","workflow","architecture","memory","preview","registry","inventory"))
+                     "manifest","test","workflow","architecture","memory","preview","registry","inventory",
+                     "agents.md","claude.md","gemini.md","copilot_instructions","contributing","policy",
+                     "rules","standard","handoff","decision","adr/","instructions","security"))
                     and p.lower().endswith((".md",".rst",".toml",".json",".yml",".yaml",".py",".ts",".tsx",".js",".jsx"))]
         rec.update({
             "status":"tree_inspected","last_inspected_sha":rec["sha"],
