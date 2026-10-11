@@ -46,3 +46,30 @@ Une vérification ciblée des répertoires GitHub confirme que la branche `COGNI
 **Interprétation limitée :** ce workbench n'est pas présent à ces chemins sur les références `main` vérifiées. Cela ne prouve pas son absence de toutes les branches, ni l'absence de fonctions équivalentes dans d'autres modules Watchtower. Il faut encore examiner les autres branches et chercher les concepts/fonctions équivalents avant de conclure à un vrai manque fonctionnel.
 
 **Décision :** conserver le prototype COGNITORIUM comme source de portage potentielle ; avant portage, définir la destination canonique, vérifier les imports/contrats et ajouter des tests d'intégration. Ne pas recopier le dossier dans le monorepo en supposant que cela l'intègre à Watchtower.
+
+
+## Audit du mécanisme d'audit automatisé existant
+
+Lecture statique de `scripts/project_audit/audit_gaps.py`, `scripts/project_audit/audit_portfolio.py` et `.github/workflows/project-audit.yml` dans `feat/gap-driven-audit-2026-10-11`.
+
+### Ce que le mécanisme fait réellement
+
+- `audit_gaps.py` pagine la liste des branches par lots API de 100 jusqu'à épuisement, compare les SHA aux index précédents, et sélectionne les branches à inspecter par priorité.
+- Il inspecte au maximum `AUDIT_MAX_BRANCH_TREES` arbres récursifs par exécution (15 par défaut dans le workflow) et consigne les chemins jugés pertinents.
+- Il sépare explicitement inspection de l'arbre, revue du contenu et vérification runtime. Le script indique `runtime_verified: false` et `semantic_content_review_automated: false`.
+- `audit_portfolio.py` calcule des signaux de documentation/tests/CI depuis les noms de fichiers, mais n'exécute aucun test. Sa lecture de branches est limitée à la première page de 100 et expose un indicateur `branches_truncated_possible` lorsque la page est pleine.
+- Le workflow `project-audit.yml` se déclenche par planification quotidienne, `workflow_dispatch` ou push sur `main` seulement pour certains chemins. Il checkout explicitement `main` et publie les rapports sur `main`.
+
+### Limite d'exécution constatée pendant cette session
+
+Le connecteur GitHub accessible ici permet de lire les statuts et les exécutions, mais ne propose pas d'action pour déclencher `workflow_dispatch`. Le dernier commit de cette branche d'audit n'a retourné aucun workflow associé ni statut combiné. Il est donc impossible d'affirmer que les scripts ont été exécutés pendant cette session.
+
+### Améliorations recommandées
+
+1. Ajouter un déclencheur de validation PR qui exécute au minimum les tests du scanner sur fixtures locales, sans publier automatiquement de rapport sur `main`.
+2. Ajouter des tests unitaires sur la pagination, le changement de SHA, les branches supprimées, les erreurs API, les arbres tronqués et le budget de 15 arbres.
+3. Garder l'exécution de production qui écrit sur `main` séparée de la validation d'une branche ou PR.
+4. Ajouter une file explicite de revue humaine par branche/fichier et une clôture justifiée ; un arbre inspecté ne doit pas être assimilé à un contenu audité.
+5. Clarifier si le seuil de 100 branches du rapport portefeuille est acceptable ou si lui aussi doit paginer.
+
+**Conclusion :** le scanner gap-driven est une bonne base pour éviter de perdre les branches oubliées. Il automatise la découverte et l'indexation, pas l'analyse sémantique ni les tests. Il faut l'utiliser et tester ses limites, pas lui attribuer des capacités qu'il n'a pas.
