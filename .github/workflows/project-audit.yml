@@ -14,6 +14,7 @@ on:
       - "docs/AUDIT_AUTOMATION.md"
       - "docs/AUDIT_GAP_DRIVEN_PROTOCOL.md"
       - "docs/CROSS_PROJECT_AUTOMATION_STANDARD.md"
+      - "docs/PROJECT_RULES_INVENTORY.md"
       - "AGENTS.md"
       - "AGENT_HANDOFF.md"
 
