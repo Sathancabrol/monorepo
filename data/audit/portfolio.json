@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "portfolio_name": "Sathan project ecosystem",
+  "owner": "Sathancabrol",
+  "repositories": [
+    {
+      "name": "monorepo",
+      "role": "Portfolio hub, integration skeleton and project archive",
+      "priority": "P0",
+      "focus_branches": ["feat/final-interface-skeleton-2026-10-07", "arena/01a08449-monorepo", "arena/01a08385-monorepo"],
+      "signals": ["app/", "scripts/", "projects/", "nexus_os/", "docs/"]
+    },
+    {
+      "name": "watchtower",
+      "role": "OSINT, God Eye View and territorial intelligence",
+      "priority": "P0",
+      "focus_branches": ["arena/dec9cd88-watchtower", "arena/01a072e1-watchtower"],
+      "signals": ["docs/INTEL-BASE.md", "docs/TRI-OUTILS-2026.md"]
+    },
+    {
+      "name": "proto-cognitorium",
+      "role": "Cognitorium application prototype",
+      "priority": "P1",
+      "focus_branches": [],
+      "signals": ["README.md", "docs/"]
+    },
+    {
+      "name": "COGNITORIUM",
+      "role": "Cognitive learning engine and knowledge graph",
+      "priority": "P1",
+      "focus_branches": [],
+      "signals": ["learning/ARCHITECTURE.md", "learning/"]
+    },
+    {
+      "name": "HCSM",
+      "role": "Human Cognitive State Model",
+      "priority": "P1",
+      "focus_branches": [],
+      "signals": ["README.md", "docs/"]
+    },
+    {
+      "name": "ETAT-DE-LART-PSYCHOLOGIE",
+      "role": "Scientific state-of-the-art and evidence mapping",
+      "priority": "P1",
+      "focus_branches": [],
+      "signals": ["docs/ETAT_ART_CRITIQUE_PSYCHOLOGIE_2020_2026_CORRIGE.md", "data/"]
+    },
+    {
+      "name": "reaserch-engine",
+      "role": "Evidence-based research orchestration",
+      "priority": "P0",
+      "focus_branches": [],
+      "signals": ["README.md", "docs/"]
+    }
+  ],
+  "kpi_rules": {
+    "documentation_signal_target": 1.0,
+    "test_signal_target": 1.0,
+    "ci_signal_target": 1.0,
+    "audit_coverage_target": 1.0,
+    "stale_commit_days": 30,
+    "large_branch_count_warning": 10
+  }
+}
