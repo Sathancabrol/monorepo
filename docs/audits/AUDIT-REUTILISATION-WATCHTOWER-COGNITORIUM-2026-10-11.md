@@ -165,3 +165,48 @@ Ne pas implémenter un second moteur complet avant d'avoir relié les briques ex
 - [Research Engine — README](https://github.com/Sathancabrol/reaserch-engine/blob/main/README.md)
 - [Research Engine — persistence.py](https://github.com/Sathancabrol/reaserch-engine/blob/main/engine/persistence.py)
 - [Cognitorium — historical global audit](https://github.com/Sathancabrol/COGNITORIUM/blob/main/docs/audits/internal/001-audit-global.md) (historical claims must be revalidated against current trees)
+
+
+## 10. Autres dépôts et modules de l'écosystème (« + etc. »)
+
+| Dépôt / dossier | Contenu repéré | Décision provisoire |
+|---|---|---|
+| `ETAT-DE-LART-PSYCHOLOGIE` | Cartographie critique 2020–2026, stratégies de recherche, protocole PRISMA, taxonomie, modèles CSV, scripts d'ajout/validation, vues HTML de taxonomie | **Réutiliser comme corpus et pipeline documentaire**, mais auditer la qualité et la traçabilité de chaque entrée. L'arbre consulté contient 37 fichiers et aucun fichier de test nommé comme tel ; ce n'est pas une preuve d'absence de tests manuels, mais la validation automatisée doit être vérifiée. |
+| `animation-chronos` | Application React/Vite, étapes d'animation et composants de révélation progressive, drawer monographique, contrôles d'observation | **Réutiliser les patterns UX** de découverte graduelle pour CLE/Cognitorium ; pas un moteur mémoire. Le manifeste contient aussi `@google/genai`, donc ne pas le considérer local-first sans adaptation. |
+| `Language-decoder` | README seul dans l'arbre actuel consulté | **Classer en attente / à définir**. Ne pas lui attribuer une capacité d'exécution avant de trouver du code ou une autre branche pertinente. |
+| `monorepo/projects/frontignan` | Analyse territoriale, vision 2026–2040, deck HTML, rapport Markdown/HTML, figures et scripts de génération | **Réutiliser comme contenu et démonstrateur Atlas**, pas comme moteur cartographique autonome. Connecter ensuite les scénarios et indicateurs aux couches de Watchtower via un contrat explicite. |
+| `monorepo/projects/proto-cognitorium/raw/` | Sources brutes, référentiels et documents de chantier (PDF/XLSM notamment) | **Conserver comme sources**, indexer les métadonnées et produire des fiches dérivées avec pointeurs vers les originaux ; ne pas recopier les documents dans chaque module. |
+| Modules chantier de Watchtower | `src/chantier.js` et modules géospatiaux/lieux, ainsi que les documents de chantier présents dans l'archive | **Réutiliser après audit métier**. Vérifier que les workflows, formulaires, données de terrain et contrôles réglementaires ne sont pas seulement des écrans ou prototypes. |
+| Nexus OS / BTP en dépôt autonome | Aucun dépôt portant exactement ces noms n'est présent dans la liste des dépôts accessibles consultée ; des éléments peuvent néanmoins exister sous d'autres noms ou dans des branches/fichiers d'archive | **Non conclu** : rechercher les noms et manifests dans l'ensemble des branches et de l'arborescence du monorepo avant de déclarer ces modules absents. |
+
+### Inventaire quantitatif initial des dépôts (arbre `main` consulté)
+
+| Dépôt | Fichiers suivis repérés | Fichiers dont le nom correspond à test/spec | Lecture |
+|---|---:|---:|---|
+| `watchtower` | 583 | nombreux fichiers `.test.mjs` et scripts QA | Base applicative la plus substantielle du périmètre géospatial ; compter les tests exécutables au prochain passage |
+| `proto-cognitorium` | 184 | plusieurs composants et scripts ; tests non encore quantifiés dans ce passage | Prototype fonctionnel étendu, avec serveur et dépendances cloud |
+| `COGNITORIUM` | 131 | surtout documentation, CLE et archive Watchtower | Agrégateur, gouvernance, apprentissage et archive de modules |
+| `HCSM` | 87 | validateur Python et tests présents | Contrat scientifique et garde-fous, non moteur d'inférence complet |
+| `reaserch-engine` | 61 | suite de tests Python visible | Moteur de recherche/reprise de run |
+| `ETAT-DE-LART-PSYCHOLOGIE` | 37 | aucun nom de test repéré | Corpus et outils de recherche documentaire |
+| `animation-chronos` | 30 | un chemin de test/spec repéré | Démonstrateur d'UX progressive |
+| `Language-decoder` | 1 | aucun | README uniquement dans `main` |
+| `monorepo` | 1 806 | inventaire, previews, projets copiés et nombreux documents | Archive/agrégateur ; ses copies ne prouvent pas que les versions sont synchronisées |
+
+Ces nombres décrivent les fichiers suivis dans les arbres consultés sur la branche `main`, pas les lignes de code, la maturité produit ou l'état de toutes les branches.
+
+## 11. Licence, provenance et risque d'intégration
+
+Le dépôt Watchtower affiche une licence MIT pour le code, mais son fichier `LICENSE` exclut explicitement les données tierces du périmètre de cette licence. Il signale notamment des données de câbles sous-marins TeleGeography sous CC BY-NC-SA 3.0 (non-commercial, partage à l'identique), ainsi que des données OSM/ Open Infrastructure Map sous ODbL et des flux soumis aux conditions de chaque fournisseur.
+
+**Conséquence :** on peut envisager de réutiliser le code sous MIT en respectant ses conditions, mais il faut créer un registre séparé des données/actifs, avec licence, attribution, restrictions commerciales, conditions API, date de vérification et procédure de retrait. Le statut open source du dépôt ne rend pas automatiquement tous les jeux de données utilisables commercialement.
+
+## 12. Prochaine tranche d'audit automatisé
+
+Ordre de travail recommandé :
+
+1. **Réconcilier les branches et les copies** : lister branches actives de chaque dépôt, comparer les versions de `watchtower-mods` entre `watchtower`, `COGNITORIUM` et `monorepo`, puis désigner une source canonique par module.
+2. **Chercher les modules cachés** : scanner tous les manifests et dossiers de toutes les branches pertinentes, en particulier Nexus OS, BTP, Atlas et simulateur cognitif ; produire une matrice de chemins, pas une liste de noms supposés.
+3. **Tester les moteurs existants** : build/tests Watchtower, tests Research Engine, validateur HCSM, lint/build proto-Cognitorium, puis conserver les logs et les versions.
+4. **Tracer le cycle de recherche** : vérifier si une recherche peut réellement être reprise depuis `JsonRunStore`, exporter une fiche Markdown, indexer la fiche, la retrouver avec une formulation différente et suivre chaque conclusion jusqu'à sa preuve.
+5. **Ne choisir aucune nouvelle base de mémoire avant le benchmark** : comparer d'abord la solution légère existante (JSON + Markdown + recherche lexicale + EvidenceGraph) à un éventuel moteur externe sur un jeu de tâches représentatif.
