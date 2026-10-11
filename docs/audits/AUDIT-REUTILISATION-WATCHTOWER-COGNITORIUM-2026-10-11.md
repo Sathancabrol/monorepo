@@ -210,3 +210,48 @@ Ordre de travail recommandé :
 3. **Tester les moteurs existants** : build/tests Watchtower, tests Research Engine, validateur HCSM, lint/build proto-Cognitorium, puis conserver les logs et les versions.
 4. **Tracer le cycle de recherche** : vérifier si une recherche peut réellement être reprise depuis `JsonRunStore`, exporter une fiche Markdown, indexer la fiche, la retrouver avec une formulation différente et suivre chaque conclusion jusqu'à sa preuve.
 5. **Ne choisir aucune nouvelle base de mémoire avant le benchmark** : comparer d'abord la solution légère existante (JSON + Markdown + recherche lexicale + EvidenceGraph) à un éventuel moteur externe sur un jeu de tâches représentatif.
+
+
+## 13. Découvertes majeures dans les branches — correctif de l'inventaire
+
+La lecture des rapports déjà présents dans `audit/convergence-2026-10-10`, puis les comparaisons de branches ciblées, révèlent que certains modules importants ne sont pas dans `main`. Il faut donc **traiter les branches comme du stock réel à examiner**, pas comme du bruit.
+
+| Élément découvert | Branche / chemin | Éléments observés | Décision |
+|---|---|---|---|
+| **NEXUS·OS** | `monorepo:arena/01a08385-monorepo/nexus_os/` | Runtime d'agents, registre de 22 agents, routage de modèles, tools, MCP, contexte/compression, mémoire JSON de faits/décisions/leçons, tâches, évaluations, UI FastAPI | **Candidat majeur à réutiliser pour Nexus et l'orchestration.** La présence du code ne prouve pas encore sa sûreté ni son fonctionnement ; auditer permissions, sandbox, secrets, tests et persistance. |
+| **Carré d'As / moteur d'agents** | `monorepo:arena/0034230e-monorepo/carredas/` | Contrat canonique, validation d'admissibilité, générateur de documents, cycle plan → recherche → production → revue → vérification → mémoire ; fiches d'agents Markdown | **Candidat à comparer à Nexus OS avant toute fusion.** Éviter deux orchestrateurs parallèles : choisir un runtime canonique et garder l'autre comme adaptateur, interface ou prototype si ses fonctions sont distinctes. |
+| **BTP — conduite de travaux** | `monorepo:arena/01a08449-monorepo/projects/btp-conduite-travaux/` | Dashboard, corpus de 154 documents décrit dans le README, inventaire avec empreintes, matrice de traçabilité, rapports, études de prix, DCE, sécurité et réception | **Module substantiel en branche, non présent dans la version actuelle de main au même niveau.** Préserver cette branche et vérifier le delta complet avant intégration ; ne pas reconstituer le module depuis les documents bruts. |
+| **Watchtower INTEL / Atlas Thau** | `watchtower:arena/dec9cd88-watchtower` | Dossiers Frontignan/Thau, import CSV, veille officielle, imprévus TP, attributs territoriaux, sources, tests dédiés et données territoriales | **Branche à examiner avant de construire Atlas.** Elle contient déjà une couche territoriale et chantier plus spécifique que le seul globe général. |
+| **Watchtower OSINT Workbench** | `COGNITORIUM:watchtower/osint-workbench-v0.1/watchtower-mods/src/osint/` | Registre de sources, observations, cas d'enquête, relations, export JSON, distinctions FACT/INFERENCE/HYPOTHESIS/UNKNOWN et validation humaine dans la spécification | **Réutiliser comme modèle OSINT et de cas d'enquête**, après comparaison avec les modules du dépôt Watchtower et le contrat canonique Carré d'As. Certains éléments sont encore une démo/spécification, pas une intégration prouvée au runtime principal. |
+| **Language-decoder — moteur humain** | `Language-decoder:arena/01a05471-language-decoder/` | 12 modules Python, schéma JSON, UI, CLI/serveur et `tests/test_engine.py` ; licence CC-BY-4.0 déclarée dans `pyproject.toml` de cette branche | **Candidat central pour le pont HCSM ↔ Cognitorium.** Le dépôt `main` ne contient qu'un README ; ne pas déclarer le projet vide sans inspecter ces branches. La licence et la provenance doivent suivre la branche intégrée. |
+| **Language-decoder — maquettes et mémoire** | `Language-decoder:arena/01a05429-language-decoder/` | Dashboard, ontologie, données de mémoire, session simulée, monde 2040 et documentation de minimisation/incertitude | **Conserver comme matériaux de conception**, puis réconcilier avec le moteur Python de l'autre branche. |
+| **Inventaire des fonctionnalités** | `monorepo:arena/93b54a79-monorepo/docs/FEATURES-INVENTORY.md` | Inventaire fonctionnel des modules et apps, portail/office et outils auxiliaires | **Réutiliser comme source d'indexation**, en recalculant les statuts à partir des SHA courants. |
+| **Catalogue outils/données** | `monorepo:feat/tool-data-catalog-2026-10` | `data/tool_registry.json`, `data/module_registry.json`, schémas canoniques et graphe d'intégration | **Réutiliser le modèle de registre** au lieu de créer un troisième catalogue parallèle. |
+| **Squelette d'interface unifiée** | `monorepo:feat/final-interface-skeleton-2026-10-07` | Registre d'interface, slots et preview dans FastAPI/Jinja | **Comparer avec le shell Carré d'As** et l'interface actuelle avant de choisir une UI canonique. |
+| **Audit automatique des lacunes** | `monorepo:feat/gap-driven-audit-2026-10-11` | `audit_gaps.py`, inventaire de branches paginé, index de branches, file de preuves à examiner, distinction découverte de fichiers / lecture sémantique / tests runtime | **Réutiliser en priorité** pour la suite de l'audit. C'est déjà l'implémentation du protocole « chercher les branches non auditées » ; ne pas recréer ce scanner dans une autre branche. |
+| **Audit de convergence précédent** | `monorepo:audit/convergence-2026-10-10` | Plan, taxonomie, état, journal, rapports par projet, graphe, script de mémoire, tableau transversal et historique des branches | **Réutiliser comme mémoire d'audit antérieure**, en revérifiant les SHA : le document mentionne déjà des écarts, dont deux tests rouges dans Research Engine et un drift de fichiers proto-Cognitorium, à recontrôler avant d'en tirer une conclusion actuelle. |
+
+### 13.1 Conséquence architecturale
+
+Le stock de mémoire est plus riche que la première passe ne le laissait penser :
+
+- `nexus_os/memory.py` : mémoire JSON persistante `fact / decision / lesson`, rappel lexical et horodatage ;
+- `carredas` : fiches Markdown d'agents et cycle de travail qui se termine par la consignation en mémoire ;
+- `reaserch-engine` : checkpoints de run et graphe de preuves ;
+- `Language-decoder` : dynamique temporelle, rétention/réactivation/transfert et objets avec provenance ;
+- `proto-cognitorium` : décroissance heuristique des compétences et journal métacognitif ;
+- `HCSM` : contrat de contexte, temporalité, provenance et incertitude ;
+- `watchtower` : contexte de session, événements, observations et dossiers d'enquête ;
+- `feat/gap-driven-audit` : index persistant des branches, statuts d'audit et file de lacunes.
+
+**Conclusion mise à jour :** il ne faut pas démarrer un moteur de mémoire neuf. Il faut comparer et connecter ces implémentations. La priorité devient la convergence des contrats, la sélection d'un runtime d'agents canonique, l'indexation Markdown et la preuve de rappel/reprise par tests.
+
+### 13.2 Attention aux divergences
+
+Les branches `audit/convergence-2026-10-10`, `feat/tool-data-catalog-2026-10`, `feat/final-interface-skeleton-2026-10-07`, `arena/93b54a79-monorepo`, `arena/0034230e-monorepo`, `arena/01a08385-monorepo` et `arena/01a08449-monorepo` sont divergentes par rapport à `main`. Ne pas les fusionner en bloc : comparer les deltas fichier par fichier et relancer les vérifications après résolution des conflits.
+
+### 13.3 Statut de validation
+
+- **Vérifié statiquement :** présence des chemins, contenu de fichiers ciblés, différences de branches retournées par l'API GitHub.
+- **Déclaré par la documentation de branche :** nombres de modules/agents, résultats de tests antérieurs et fonctions présentées comme prêtes.
+- **Non vérifié ici :** exécution de builds/tests, sécurité réelle du sandbox, qualité de l'inférence humaine, fonctionnement complet des interfaces et compatibilité de fusion.
