@@ -90,3 +90,10 @@ Un agent qui reprend une recherche doit retrouver la bonne question, son état v
 2. Lire et comparer les consignes effectives sur les dépôts/branches prioritaires et produire un registre avec source, SHA, portée, conflit et statut de revue.
 3. Auditer Nexus OS, Research Engine et HCSM avant de développer une file de tâches persistante ou un agent de continuité.
 4. Vérifier les permissions et l'exécution GitHub Actions avant toute fusion.
+
+
+### Complément de session — règles de plusieurs projets
+- Ajout de `docs/PROJECT_RULES_INVENTORY.md`, avec sources et SHA pour les premières règles vérifiées de Watchtower, Research Engine, HCSM, État de l'art psychologie, COGNITORIUM et Language-decoder.
+- Découverte importante : `proto-cognitorium` et `animation-chronos` ont `AGENTS.md` et `AGENT_HANDOFF.md` sur `chore/agent-handoff-2026-10-11`, même si `README.md` n'a pas été trouvé sur `main`. Cela confirme qu'il faut examiner les branches non principales avant de conclure qu'une règle ou un projet manque.
+- Ajout de `tests/test_project_audit_gaps.py` : tests prévus pour pagination, erreur API et JSON d'état invalide. Le workflow est configuré pour les exécuter, mais ils n'ont pas encore été exécutés dans cette session.
+- Le workflow inclut maintenant py_compile, validation JSON et tests unitaires avant le scan; aucune exécution CI réussie n'est revendiquée.
