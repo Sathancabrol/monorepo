@@ -1,54 +1,75 @@
-# TODO — Audit transversal Watchtower / proto-Cognitorium / Cognitorium et écosystème
+# TODO — Audit transversal Watchtower / Cognitorium / Nexus OS / Carré d'As / BTP
 
 **Ouvert le :** 2026-10-11  
 **Branche de travail :** `feat/automated-project-audit-2026-10-11`  
-**Objectif :** terminer un audit fondé sur les dépôts, les branches, les preuves de code et les tests accessibles. Ne pas déclarer « terminé » les actions qui nécessitent un clone local ou une exécution qui n'a pas eu lieu.
+**Objectif :** réutiliser le code existant avant toute réécriture, rechercher automatiquement les branches non auditées, documenter les preuves et ne jamais déclarer les tests réussis sans les avoir exécutés.
 
-## Périmètre
+## Périmètre suivi
 
-- Watchtower
-- proto-Cognitorium
-- COGNITORIUM / CLE / watchtower-mods
-- HCSM
-- reaserch-engine
-- ETAT-DE-LART-PSYCHOLOGIE
-- animation-chronos
-- Language-decoder
-- monorepo et ses projets copiés
-- rechercher explicitement Atlas, Nexus OS, BTP, simulateur cognitif et autres prototypes dans les branches et l'archive
+Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-engine, ETAT-DE-LART-PSYCHOLOGIE, animation-chronos, Language-decoder, monorepo, Nexus OS, Carré d'As, BTP, Atlas Frontignan/Thau et simulateur cognitif.
 
 ## Checklist
 
-### A. Inventaire des dépôts et des branches
-- [x] Recenser les arbres de fichiers `main` des dépôts principaux.
-- [x] Faire un premier inventaire des capacités et doublons visibles dans le code.
-- [x] Documenter les restrictions de licence de Watchtower et de ses données.
-- [x] Parcourir les pages de résultats de branches jusqu'à épuisement pour les 9 dépôts accessibles ciblés (pagination terminée).
-- [x] Comparer un premier lot de branches prioritaires : Nexus OS, Carré d'As, BTP, Watchtower INTEL, Language-decoder, OSINT workbench, audit convergence, catalogue outils et squelette d'interface.\n- [ ] Finir l'examen sémantique de toutes les branches pertinentes et relancer les compares avant toute fusion.
-- [x] Retrouver les chemins de Nexus OS, BTP, Atlas/Watchtower INTEL et Language-decoder dans les branches prioritaires et documenter leurs capacités.\n- [ ] Compléter la recherche exhaustive sur toutes les branches et archives qui restent non examinées.
-- [x] Proposer une règle de gouvernance : dépôt Watchtower pour l'application, branche OSINT comme prototype à porter sélectivement, copies monorepo comme archive.\n- [ ] Comparer fichier par fichier les copies `watchtower-mods` et enregistrer les écarts exacts.
+### A. Inventaire et branches
 
-### B. Audit technique de réutilisation
+- [x] Recenser les arbres `main` des dépôts principaux.
+- [x] Inventorier les capacités et doublons visibles dans les fichiers consultés.
+- [x] Terminer la pagination de recherche des branches pour les 9 dépôts ciblés.
+- [x] Faire un premier passage sur les branches prioritaires : Nexus OS, Carré d'As, BTP, Watchtower INTEL, Language-decoder, OSINT Workbench, audit de convergence, catalogue outils et squelette d'interface.
+- [x] Comparer les références de Nexus OS, Carré d'As, gap-driven audit, catalogue d'outils, BTP, Watchtower INTEL et Language-decoder à leurs références `main` ; résultats détaillés dans [l'addendum de comparaisons](DELTA-COMPARAISONS-BRANCHES-2026-10-11.md).
+- [x] Confirmer par diff GitHub que `watchtower/osint-workbench-v0.1` contient une spécification et des modules OSINT additionnels.
+- [ ] Finir l'examen sémantique des branches pertinentes restantes, y compris les autres branches de proto-Cognitorium et des dépôts de recherche.
+- [ ] Comparer fichier par fichier les copies `watchtower-mods` dans Watchtower, COGNITORIUM et le monorepo ; consigner les différences exactes et les SHA.
+- [ ] Examiner les branches non prioritaires restantes avec le protocole gap-driven et consigner pourquoi chaque branche est ignorée ou retenue.
+- [x] Retrouver les modules Nexus OS, BTP, Atlas/Watchtower INTEL et Language-decoder dans les branches, sans les déclarer intégrés ou validés.
+- [x] Définir une gouvernance provisoire : Watchtower comme application canonique, OSINT Workbench comme prototype à porter sélectivement, copies monorepo comme archive.
+
+### B. Architecture, réutilisation et risques
+
 - [x] Rédiger l'audit initial Watchtower / proto-Cognitorium / Cognitorium / HCSM / Research Engine.
-- [x] Étendre l'inventaire à l'état de l'art, animation-chronos, Language-decoder et Frontignan.
-- [x] Inspecter statiquement les principales briques de persistance (Nexus Memory, Research Engine checkpoints, Watchtower context, proto decay, Language-decoder dynamics).\n- [ ] Exécuter les scripts de tests/build de chaque moteur et enregistrer les logs.
-- [x] Repérer les dépendances cloud/API et les options local-first dans les manifestes et README principaux.\n- [ ] Confirmer les dépendances et les comportements en exécution.
-- [x] Créer la matrice EXISTANT / À RÉUTILISER / À ADAPTER / À DIFFÉRER avec chemins et preuves statiques.\n- [ ] Compléter pour chaque entrée les dépendances, licences, statut de tests et estimation de coût d'intégration.
-- [x] Proposer le contrat minimal commun et identifier `carredas/core/canonical.py`, HCSM et Language-decoder comme schémas à comparer.\n- [ ] Valider le schéma par des fixtures et tests d'intégration.
+- [x] Étendre l'inventaire à ETAT-DE-LART-PSYCHOLOGIE, animation-chronos, Language-decoder et Frontignan.
+- [x] Inspecter statiquement les mécanismes de persistance Nexus Memory, Research Engine checkpoints, Watchtower context, proto decay et Language-decoder dynamics.
+- [x] Repérer les options local-first et les dépendances API/cloud dans les principaux manifestes/README.
+- [x] Proposer la convergence via adaptateurs, fiches Markdown et provenance plutôt que créer un nouveau moteur de mémoire.
+- [x] Définir un contrat commun minimal à confronter à Carré d'As, HCSM et Language-decoder.
+- [ ] Compléter une matrice exhaustive dépendances/licences/tests/coût d'intégration par module.
+- [ ] Vérifier les permissions, le traitement des secrets, la sandbox et les appels externes du runtime Nexus OS et de Carré d'As.
+- [ ] Confirmer les licences des codes, dépendances, documents et jeux de données avant portage ; la licence du code ne vaut pas automatiquement pour les données tierces.
+- [ ] Décider du runtime d'agents canonique après comparaison fonctionnelle et tests, sans fusionner Nexus OS et Carré d'As à l'aveugle.
+- [ ] Valider les différences entre les versions des modules et des contrats avant toute fusion.
 
-### C. Mémoire adaptative et fiches de recherche
-- [x] Spécifier le modèle de fiche Markdown et les liens vers sources/preuves/résultats/historique dans `templates/research/RECHERCHE.md` et le rapport d'audit.
-- [x] Proposer les champs d'identité, provenance, validité temporelle, statut épistémique et validation humaine.\n- [ ] Implémenter et tester le schéma commun.
-- [x] Définir les couches de mémoire et le principe de decay sans suppression de la preuve source.
-- [x] Définir la boucle d'amélioration après chaque tâche et le stockage des leçons.
-- [x] Définir les scénarios d'acceptation pour reprise, rappel par paraphrase, contradiction, decay/récupération, provenance, correction humaine et minimisation.
+### C. Mémoire adaptative, decay et recherche
 
-### D. Vérification et compte rendu
-- [ ] Exécuter les suites de tests/build. Les outils GitHub consultés ne montrent aucun workflow associé au commit de l'audit et aucun environnement local n'est disponible dans cette session.
-- [x] Marquer explicitement les tests non exécutés : présence du code ≠ exécution ≠ succès ; l'audit historique rapporte deux tests rouges Research Engine à revérifier.
-- [x] Mettre à jour l'audit avec les découvertes de branches, les contrats de convergence, le benchmark et les limites.
-- [ ] Publier le bilan final après le dernier passage sur les branches et la vérification des tests.
+- [x] Définir le modèle de fiche Markdown et ses liens vers sources, preuves, résultats et historique dans `templates/research/RECHERCHE.md`.
+- [x] Définir les champs communs : identité, provenance, validité temporelle, statut épistémique, validation humaine et références croisées.
+- [x] Définir les couches mémoire : contexte actif, épisodes/runs, fiches de recherche, concepts, index de rappel, consolidation et boucle qualité.
+- [x] Spécifier un decay qui baisse la priorité de rappel sans supprimer la preuve source et qui permet la réactivation.
+- [x] Définir les scénarios d'acceptation : reprise, paraphrase, contradiction, decay/récupération, provenance, correction humaine et minimisation.
+- [ ] Comparer les schémas Carré d'As, HCSM et Language-decoder champ par champ ; choisir un contrat de référence ou documenter les adaptateurs.
+- [ ] Implémenter les fixtures et tests d'intégration du contrat commun.
+- [ ] Mesurer précision@k, rappel@k, affirmations sans preuve, perte de provenance, doublons après reprise, correction et coût de rappel.
+- [ ] Vérifier concrètement la reprise d'un run Research Engine et l'export/indexation/rappel d'une fiche Markdown.
+
+### D. Exécution et validation
+
+- [x] Vérifier la présence des scripts/tests dans les branches ciblées sans confondre présence et exécution.
+- [x] Consigner que les résultats CI disponibles pour le commit de l'audit ne montrent aucun workflow associé.
+- [x] Noter que l'audit de convergence historique rapporte deux tests Research Engine à revérifier ; ce signal est historique et non confirmé actuellement.
+- [ ] Exécuter les tests/builds de Watchtower, Research Engine, HCSM, proto-Cognitorium, Language-decoder, Nexus OS et Carré d'As.
+- [ ] Archiver les commandes, versions d'environnement, logs et résultats (pass/fail/skip).
+- [ ] Exécuter les tests d'intégration et vérifier les interfaces de convergence.
+- [ ] Publier le bilan final séparant : réutilisable maintenant, à adapter, à tester, à différer, bloqué par licence ou par accès.
+
+## État après la passe de comparaison du 2026-10-11
+
+- [x] Comparaisons ciblées documentées : [DELTA-COMPARAISONS-BRANCHES-2026-10-11.md](DELTA-COMPARAISONS-BRANCHES-2026-10-11.md).
+- [x] Confirmé : les branches Carré d'As et Nexus OS sont divergentes par rapport à `main`, avec des responsabilités qui se recoupent ; pas de fusion en bloc.
+- [x] Confirmé : la branche BTP comprend un corpus et des registres de traçabilité ; protéger les documents et vérifier leurs droits/provenance.
+- [x] Confirmé : Watchtower INTEL contient des modules et tests territoriaux additionnels.
+- [x] Confirmé : Language-decoder dispose d'une branche avec code et tests, même si `main` est minimal.
+- [ ] Non terminé : lecture de toutes les branches, comparaison exhaustive des copies, tests d'exécution et intégration.
+- [ ] Aucun test n'est déclaré réussi dans ce rapport sans exécution vérifiable.
 
 ## Critère de fin
 
-Le travail est terminé quand les inventaires/rapports sont commités sur la branche, les décisions sont fondées sur les fichiers/branches examinés, les tests exécutables sont rapportés sans extrapolation, et toute action impossible à exécuter à distance est clairement signalée. « Terminé » ne signifie pas que tous les projets sont fusionnés, réécrits ou validés en production.
+L'audit ne peut être déclaré terminé que lorsque les branches pertinentes sont examinées ou explicitement classées hors périmètre, les décisions sont sourcées, les tests exécutables sont rapportés avec leurs logs, les restrictions de licence sont distinguées, et les actions impossibles à exécuter sont identifiées. L'audit n'implique pas de fusionner tous les projets ni de les déclarer prêts pour la production.
