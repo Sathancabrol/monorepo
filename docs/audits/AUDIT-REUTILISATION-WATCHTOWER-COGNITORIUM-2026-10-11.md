@@ -255,3 +255,64 @@ Les branches `audit/convergence-2026-10-10`, `feat/tool-data-catalog-2026-10`, `
 - **Vérifié statiquement :** présence des chemins, contenu de fichiers ciblés, différences de branches retournées par l'API GitHub.
 - **Déclaré par la documentation de branche :** nombres de modules/agents, résultats de tests antérieurs et fonctions présentées comme prêtes.
 - **Non vérifié ici :** exécution de builds/tests, sécurité réelle du sandbox, qualité de l'inférence humaine, fonctionnement complet des interfaces et compatibilité de fusion.
+
+
+## 14. Décisions proposées pour convergence mémoire et intégration
+
+### 14.1 Ne pas fusionner les mémoires avant de normaliser leur contrat
+
+| Système | Persistance actuelle visible | Rappel visible | Decay / consolidation | Usage cible |
+|---|---|---|---|---|
+| Nexus OS `nexus_os/memory.py` | JSON local, faits/décisions/leçons horodatés | score lexical par mots communs, date en départage | pas de decay/consolidation visibles dans le fichier inspecté | mémoire des agents et leçons d'exécution |
+| Carré d'As `carredas/modules/agents/` | fiches Markdown d'identité/rôle, génération de documents et cycle de travail | registre/routage déterministe ; mémoire de cycle dans le pipeline | pas de moteur universel de decay établi dans les fichiers consultés | runtime déterministe, documents de dossier, mémoire des agents |
+| Research Engine | checkpoints JSON par run et graphe de preuves | reprise du run et récupération des objets de preuve | persistance d'exécution, pas encore mémoire transversale démontrée | mémoire épisodique / recherche |
+| Language-decoder `dynamics.py` | données d'observation et profils structurés ; persistance globale à confirmer | objets de sortie décodés ; index global non établi | rétention, réactivation et transfert modélisés | dynamique temporelle du fonctionnement humain |
+| proto-Cognitorium `decay.ts` | état de prototype, notamment journal navigateur limité | graphe/ressources de l'application | décroissance heuristique des compétences | visualisation et hypothèse de travail sur la réactivation |
+| Watchtower `contextStore.js` | mémoire de session en `window` | entité/contexte actif | pas de consolidation durable visible | mémoire de travail UI |
+| Audit gap-driven | index JSON de branches et queue de preuves prévue | retrouver l'état d'audit et les éléments non examinés | statut d'audit et détection de drift, pas mémoire personnelle | mémoire de travail de l'agent d'audit |
+
+Le futur service de mémoire doit être un **adaptateur commun** au-dessus de ces stockages, pas une copie qui efface les responsabilités spécialisées. Il peut commencer par indexer des fiches Markdown et conserver des pointeurs stables vers les runs, preuves, profils et dossiers d'origine.
+
+### 14.2 Contrat minimal recommandé
+
+Chaque objet qui traverse les modules devrait pouvoir porter, selon son type :
+
+- `id` stable et `kind` explicite (observation, claim, preuve, concept, expérience, décision, leçon, tâche, run, dossier) ;
+- `content` ou référence vers un artefact, sans copier automatiquement les documents sources ;
+- `source_ref`, `provenance`, `created_at`, `observed_at`, `retrieved_at`, et fenêtre de validité si pertinente ;
+- `status` parmi `fact / inference / hypothesis / unknown` (ou correspondance explicitement documentée) ;
+- `confidence` seulement si sa définition et son échelle sont connues ; ne pas confondre confiance, qualité de source et certitude ;
+- `project_ids`, `task_id`, `run_id`, relations et références croisées ;
+- `last_used_at`, `retrieval_count`, `salience` ou équivalent pour prioriser le rappel, sans supprimer la preuve source ;
+- `human_validation` et historique de correction quand une personne a validé/rejeté une inférence.
+
+Le schéma canonique de `carredas/core/canonical.py` est un candidat sérieux à confronter au schéma HCSM et au schéma `decoded-human` de Language-decoder. Ne pas créer un quatrième schéma sans comparer leurs champs et leurs contraintes.
+
+### 14.3 Benchmark d'acceptation minimal
+
+| Test | Procédure | Critère d'acceptation |
+|---|---|---|
+| Reprise de recherche | Lancer un run, l'interrompre après une preuve, relancer depuis son checkpoint | même `run_id`, preuves déjà collectées conservées, reprise sans doublons silencieux |
+| Rappel par paraphrase | Stocker une fiche Markdown avec termes métier ; la demander avec synonymes/contexte différent | retrouver la fiche correcte et montrer le chemin vers les preuves ; mesurer les faux positifs |
+| Contradiction | Ajouter une observation incompatible plus récente | conserver les deux sources, dater le conflit, ne pas écraser l'ancien fait sans trace |
+| Decay et récupération | Rendre une connaissance peu saillante, puis la demander explicitement | baisse de priorité active sans perte de l'artefact ; réactivation accessible |
+| Provenance bout en bout | Suivre une affirmation affichée dans Watchtower/Cognitorium vers sa source | source, date, statut et transformation consultables |
+| Correction humaine | Rejeter une inférence et réexécuter une tâche similaire | la correction est conservée comme leçon, mais ne transforme pas rétroactivement la preuve en fait |
+| Minimisation | Indexer un document local sensible | index sans copie inutile du contenu intégral ; source locale et politique de rétention explicites |
+
+Le seuil de réussite et le jeu de données doivent être fixés avant d'ajouter une base vectorielle ou un service mémoire externe. Mesurer au minimum : précision@k, rappel@k, taux d'affirmations sans preuve, perte de provenance, duplications après reprise, taux de correction et coût de rappel.
+
+### 14.4 Source canonique et copies Watchtower
+
+Décision provisoire par responsabilité :
+
+- `Sathancabrol/watchtower` : source canonique de l'application Watchtower et de ses composants déjà intégrés dans cette application.
+- `Sathancabrol/COGNITORIUM:watchtower/osint-workbench-v0.1` : prototype de workbench OSINT à comparer puis porter sélectivement ; ne pas considérer la branche comme automatiquement intégrée à Watchtower.
+- `monorepo/projects/COGNITORIUM/watchtower-mods` : copie d'archive/agrégateur utile à l'exploration ; ne pas modifier cette copie en espérant que le dépôt Watchtower soit mis à jour automatiquement.
+- `monorepo:arena/93b54a79-monorepo` et `monorepo:arena/01a08385-monorepo` : archives de fonctionnalités et prototypes ; fusionner seulement après comparaison fraîche des deltas.
+
+Ce choix est une règle de gouvernance proposée pour éviter les forks involontaires ; il ne prétend pas que les copies sont identiques.
+
+### 14.5 Blocages honnêtes
+
+Aucun workflow CI associé au commit de cet audit n'a été trouvé dans les résultats consultés. Les tests des dépôts n'ont donc pas été exécutés ni certifiés par ce rapport. L'ancien audit de convergence signale deux tests rouges dans Research Engine ; il faut vérifier si ces échecs sont toujours actuels en lançant la suite sur un clone local ou via un workflow CI autorisé. La branche Language-decoder contient un fichier de tests, mais sa présence ne vaut pas réussite.
