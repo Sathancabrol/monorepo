@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071522">
+<title>Atlas Frontignan — El Niño, risques climatiques & bassin de Thau</title>
+<style>
+:root{color-scheme:dark;--bg:#071522;--panel:#0d2232;--panel2:#102b3e;--line:#214458;--ink:#e9f5fa;--muted:#9db8c8;--cyan:#5be0d0;--blue:#65b9ff;--amber:#ffc56b;--red:#ff7c78;--green:#8ee0a1}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#12344a 0,transparent 42%),var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:var(--cyan)}button,input{font:inherit}button{cursor:pointer}.shell{max-width:1320px;margin:auto;padding:22px}.topline{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase}.brand{display:flex;gap:10px;align-items:center}.brandmark{width:34px;height:34px;border:1px solid var(--cyan);border-radius:10px;display:grid;place-items:center;color:var(--cyan);font-weight:800}.hero{padding:44px 0 28px;display:grid;grid-template-columns:1.25fr .75fr;gap:22px;align-items:end}.eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;font-weight:800}h1{font-size:clamp(2.1rem,5vw,4.6rem);line-height:.99;letter-spacing:-.055em;margin:12px 0 18px;max-width:850px}h1 span{color:var(--cyan)}.lead{font-size:1.08rem;color:#c0d5e0;max-width:740px}.hero-note,.card,.timeline-card,.tab-panel{background:linear-gradient(150deg,rgba(16,43,62,.96),rgba(9,28,42,.96));border:1px solid var(--line);border-radius:18px}.hero-note{padding:22px}.hero-note strong{display:block;font-size:1.1rem;margin:7px 0}.status{display:inline-flex;align-items:center;gap:8px;border:1px solid #3b665f;background:#123d3b;color:#aaf2df;border-radius:999px;padding:5px 10px;font-size:.78rem}.status:before{content:"";width:7px;height:7px;background:var(--cyan);border-radius:50%}.notice{margin:10px 0 24px;padding:14px 18px;border-left:3px solid var(--amber);background:#322817;color:#ffe0a5;border-radius:0 12px 12px 0}.tabs{display:flex;gap:8px;flex-wrap:wrap;padding:8px;background:#091c29;border:1px solid var(--line);border-radius:15px;position:sticky;top:8px;z-index:10;backdrop-filter:blur(12px)}.tab{border:1px solid transparent;background:transparent;color:var(--muted);padding:10px 15px;border-radius:10px;font-weight:700}.tab[aria-selected=true]{background:#183c50;border-color:#2b6070;color:white}.section{padding:32px 0}.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:18px;flex-wrap:wrap}h2{font-size:clamp(1.55rem,3vw,2.3rem);line-height:1.1;letter-spacing:-.03em;margin:0 0 8px}h3{font-size:1.1rem;margin:0 0 8px}.muted{color:var(--muted)}.small{font-size:.86rem}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:var(--muted);font-size:.78rem}.timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.timeline-card{padding:17px;min-height:230px;position:relative;overflow:hidden}.timeline-card:before{content:"";display:block;height:3px;background:var(--accent,var(--cyan));position:absolute;inset:0 0 auto}.timeline-card .date{font-size:.77rem;color:var(--accent,var(--cyan));font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}.timeline-card p{font-size:.91rem;color:#c1d5df}.timeline-card .certainty{font-size:.75rem;border:1px solid var(--line);padding:4px 7px;border-radius:7px;display:inline-block;margin-top:5px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{padding:20px}.icon{font-size:1.45rem;margin-bottom:8px}.card p{color:#bdd0dc;margin:8px 0 0}.accent-cyan{color:var(--cyan)}.accent-amber{color:var(--amber)}.accent-red{color:var(--red)}.accent-green{color:var(--green)}.tab-panel{padding:24px;margin-top:16px}.hidden{display:none!important}.switchrow{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.choice{border:1px solid var(--line);background:#091c29;color:var(--ink);padding:11px 14px;border-radius:11px}.choice[aria-pressed=true]{border-color:var(--cyan);background:#143a43;box-shadow:inset 0 0 0 1px var(--cyan)}.result{margin-top:14px;border:1px solid var(--line);border-radius:13px;padding:17px;background:#091c29}.result h3{color:var(--cyan)}.meter{height:8px;background:#193647;border-radius:999px;overflow:hidden;margin:10px 0}.meter span{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--cyan),var(--amber));border-radius:999px}.quiz-option{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#091c29;color:var(--ink)}.quiz-option:hover{border-color:var(--cyan)}.feedback{padding:12px;border-radius:10px;margin-top:10px}.good{background:#123b2b;color:#b6f4c4}.bad{background:#3a2c17;color:#ffe1a4}.source-list{padding-left:20px}.source-list li{margin:9px 0;color:#c0d5df}.footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--muted);font-size:.83rem}.footer strong{color:var(--ink)}.tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.map-schematic{border:1px solid var(--line);border-radius:16px;padding:15px;background:linear-gradient(135deg,#0b2434,#10354a);overflow:hidden}.map-schematic svg{width:100%;height:auto;display:block;max-height:310px}.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.8rem;margin-top:10px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.btn-link{display:inline-block;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:5px 5px 0 0}.callout{border:1px solid #73532a;background:#2a2419;border-radius:13px;padding:16px;color:#ffe2ad}.source-foot{color:var(--muted);font-size:.8rem}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.timeline{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:1fr 1fr}}@media(max-width:600px){.shell{padding:14px}.timeline,.grid2,.grid3{grid-template-columns:1fr}.timeline-card{min-height:0}.tab{flex:1;padding:10px 7px;font-size:.86rem}.tab-panel{padding:16px}.hero{padding-top:30px}}
+@media print{body{background:white;color:#111}.tabs{position:static}.tab-panel,.card,.timeline-card,.hero-note{background:white;color:#111;border-color:#aaa;break-inside:avoid}.muted,.timeline-card p,.card p,.source-list li{color:#333}.hidden{display:block!important}.tabs{display:none}.hero{padding-top:10px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topline">
+  <div class="brand"><div class="brandmark">AF</div><div><strong>ATLAS FRONTIGNAN</strong><br><span class="small">Territoire · climat · résilience</span></div></div>
+  <div>Module pédagogique · v0.1 · 11 octobre 2026</div>
+</header>
+<section class="hero">
+  <div>
+    <div class="eyebrow">Golfe du Lion / Bassin de Thau</div>
+    <h1>EL NIÑO : <span>GODZILLA</span><br>et notre territoire</h1>
+    <p class="lead">Comprendre ce que l’on sait, ce que l’on peut anticiper et ce qu’il faut surveiller autour de Frontignan, Sète, Marseillan et de l’étang de Thau.</p>
+    <div class="tagrow"><span class="pill">Frise interactive</span><span class="pill">Risques locaux</span><span class="pill">Mini-simulation</span><span class="pill">Gestes utiles</span></div>
+  </div>
+  <aside class="hero-note">
+    <span class="status">État des connaissances au 11/10/2026</span>
+    <strong>Une boussole, pas une boule de cristal.</strong>
+    <p class="muted">El Niño est un phénomène du Pacifique. Il peut influencer le climat mondial, mais ne permet pas de dater une tempête ou une inondation à Frontignan.</p>
+  </aside>
+</section>
+<div class="notice"><strong>À retenir :</strong> septembre 2026 a été très chaud et très sec à l’échelle nationale, puis un épisode méditerranéen intense a touché notamment l’Hérault et le Gard à la fin du mois. Cela ne signifie pas que chaque commune a subi les mêmes cumuls ni qu’un nouvel épisode est certain.</div>
+<nav class="tabs" role="tablist" aria-label="Sections du module">
+  <button class="tab" role="tab" id="t-timeline" aria-selected="true" aria-controls="p-timeline" data-panel="p-timeline">01 · Frise</button>
+  <button class="tab" role="tab" id="t-territoire" aria-selected="false" aria-controls="p-territoire" data-panel="p-territoire">02 · Le territoire</button>
+  <button class="tab" role="tab" id="t-simuler" aria-selected="false" aria-controls="p-simuler" data-panel="p-simuler">03 · Simuler</button>
+  <button class="tab" role="tab" id="t-agir" aria-selected="false" aria-controls="p-agir" data-panel="p-agir">04 · Agir</button>
+  <button class="tab" role="tab" id="t-sources" aria-selected="false" aria-controls="p-sources" data-panel="p-sources">05 · Sources</button>
+</nav>
+
+<section id="p-timeline" class="tab-panel" role="tabpanel" aria-labelledby="t-timeline">
+  <div class="section-head"><div><h2>La frise : faits, tendances, horizons</h2><p class="muted">Sélectionne une période pour afficher sa lecture locale.</p></div><span class="pill">Pas de prévision événementielle</span></div>
+  <div class="timeline">
+    <article class="timeline-card" style="--accent:var(--red)"><div class="date">Sept. – début oct. 2026</div><h3>Ce qui s’est passé</h3><p>Septembre exceptionnellement chaud et déficitaire en pluie à l’échelle française. Fin septembre, un épisode méditerranéen intense a concerné le Languedoc, avec vigilance rouge dans l’Hérault et le Gard le 30 septembre.</p><span class="certainty">OBSERVÉ · sources nationales</span></article>
+    <article class="timeline-card" style="--accent:var(--amber)"><div class="date">Oct. – mi-déc. 2026</div><h3>Fenêtre de vigilance</h3><p>L’automne est une période propice aux épisodes méditerranéens : mer encore chaude, air humide, orages parfois stationnaires. Le risque réel dépend de la situation météo et des bassins versants.</p><span class="certainty">RISQUE SAISONNIER · pas une certitude</span></article>
+    <article class="timeline-card" style="--accent:var(--blue)"><div class="date">Nov. – déc. 2026</div><h3>Pic possible d’El Niño</h3><p>Météo-France indique qu’El Niño pourrait atteindre un niveau très élevé vers novembre ou décembre. Ses effets sur l’Europe occidentale sont indirects et ne donnent pas une prévision locale de pluie.</p><span class="certainty">TENDANCE GLOBALE · incertitude locale</span></article>
+    <article class="timeline-card" style="--accent:var(--amber)"><div class="date">Hiver – été 2027</div><h3>Deux risques à suivre</h3><p>Des pluies intenses peuvent coexister avec une ressource en eau sous tension. Au printemps et en été, surveiller chaleur, sécheresse, végétation, restrictions d’eau et risque incendie selon les conditions observées.</p><span class="certainty">SCÉNARIOS · réévaluer régulièrement</span></article>
+    <article class="timeline-card" style="--accent:var(--green)"><div class="date">2026 – 2031</div><h3>Prévenir sur le temps long</h3><p>Le PAPI du bassin de Thau labellisé pour 2026–2031 prévoit des actions sur la connaissance du risque, l’alerte, l’urbanisme et la réduction de vulnérabilité.</p><span class="certainty">PROGRAMME PUBLIC · SMBT</span></article>
+  </div>
+  <div class="section">
+    <div class="section-head"><div><h2>Comment lire cette frise ?</h2><p class="muted">Les couleurs représentent le statut de l’information, pas la gravité d’un événement futur.</p></div></div>
+    <div class="grid3">
+      <div class="card"><div class="icon accent-red">●</div><h3>Observé</h3><p>Un fait déjà mesuré ou un événement passé, appuyé par une source datée.</p></div>
+      <div class="card"><div class="icon accent-amber">◉</div><h3>À surveiller</h3><p>Une période où un danger est plausible. Seule la vigilance météo actualisée décrit la situation à court terme.</p></div>
+      <div class="card"><div class="icon accent-blue">◇</div><h3>Scénario</h3><p>Une possibilité utile pour préparer le territoire, pas une annonce qu’un événement va se produire.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="p-territoire" class="tab-panel hidden" role="tabpanel" aria-labelledby="t-territoire">
+  <div class="section-head"><div><h2>Pourquoi Thau est un territoire particulier</h2><p class="muted">Littoral, lagune, zones basses et ruissellement se combinent.</p></div><span class="pill">Schéma indicatif · non navigable</span></div>
+  <div class="grid2">
+    <div class="map-schematic">
+      <svg viewBox="0 0 700 330" role="img" aria-label="Schéma simplifié du golfe du Lion, de l'étang de Thau et de communes du territoire">
+        <defs><linearGradient id="sea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c4b70"/><stop offset="1" stop-color="#092e4c"/></linearGradient></defs>
+        <rect width="700" height="330" rx="12" fill="#0b2637"/>
+        <path d="M0 0H700V110Q610 126 560 160T430 195Q365 212 310 198T195 212Q100 232 0 210Z" fill="#173b37" stroke="#477d68" stroke-width="2"/>
+        <path d="M0 210Q100 232 195 212T310 198T430 195Q500 180 560 160T700 110V330H0Z" fill="url(#sea)"/>
+        <path d="M0 210Q100 232 195 212T310 198T430 195Q500 180 560 160T700 110" fill="none" stroke="#d5c58b" stroke-width="4"/>
+        <path d="M160 175Q235 145 310 174Q350 191 390 178Q362 222 293 221Q221 220 160 175Z" fill="#36bdb4" opacity=".8" stroke="#7df3df" stroke-width="2"/>
+        <path d="M80 60Q140 95 185 125T260 167" fill="none" stroke="#ffc56b" stroke-width="3" stroke-dasharray="7 6"/>
+        <path d="M370 40Q400 95 385 148T430 190" fill="none" stroke="#ffc56b" stroke-width="3" stroke-dasharray="7 6"/>
+        <g fill="#eaf6fa" font-family="system-ui" font-size="16" font-weight="700">
+          <text x="28" y="40">ARRIÈRE-PAYS</text><text x="235" y="188">ÉTANG DE THAU</text><text x="55" y="274">GOLFE DU LION</text><text x="455" y="240">LITTORAL / LIDO</text>
+          <text x="65" y="153" font-size="14">Frontignan</text><text x="355" y="155" font-size="14">Sète</text><text x="450" y="145" font-size="14">Marseillan</text>
+        </g>
+        <g fill="#ff7c78" stroke="#fff1ef" stroke-width="2"><circle cx="90" cy="166" r="7"/><circle cx="365" cy="168" r="7"/><circle cx="480" cy="154" r="7"/></g>
+        <g fill="#ffc56b"><path d="M102 70l10 18h-20z"/><path d="M392 57l10 18h-20z"/></g>
+      </svg>
+      <div class="legend"><span><i class="dot" style="background:#ff7c78"></i>Communes repères</span><span><i class="dot" style="background:#ffc56b"></i>Apports d’eau / épisodes pluvieux (schéma)</span><span><i class="dot" style="background:#36bdb4"></i>Lagune</span></div>
+      <p class="source-foot">Ce dessin explique les interactions générales. Il ne représente ni des limites administratives exactes ni des zones réglementaires d’inondation.</p>
+    </div>
+    <div class="card"><h3>Les risques ne sont pas tous identiques</h3>
+      <p><strong class="accent-amber">Pluie intense :</strong> ruissellement rapide en ville, rues et points bas submergés.</p>
+      <p><strong class="accent-red">Cours d’eau et bassins versants :</strong> montée rapide possible, même si la pluie la plus forte tombe en amont.</p>
+      <p><strong class="accent-blue">Littoral :</strong> houle, érosion et submersion marine peuvent compliquer les accès et les évacuations.</p>
+      <p><strong class="accent-green">Lagune :</strong> les apports d’eau et de contaminants après les pluies peuvent dégrader la qualité de l’eau et fragiliser les activités conchylicoles.</p>
+    </div>
+  </div>
+  <div class="section">
+    <h2>Ce que le territoire a déjà engagé</h2>
+    <div class="grid3">
+      <div class="card"><div class="icon">⌁</div><h3>PAPI Thau 2026–2031</h3><p>Programme d’action de prévention des inondations : surveillance, alerte, aménagement et réduction de vulnérabilité. Le SMBT annonce 46 actions et environ 6,8 M€.</p></div>
+      <div class="card"><div class="icon">⌂</div><h3>PPRI & PCS</h3><p>Le PPRI encadre l’urbanisme en zone à risque. Le Plan communal de sauvegarde organise la réponse locale en cas d’événement majeur.</p></div>
+      <div class="card"><div class="icon">◉</div><h3>Vigilance & information</h3><p>La vigilance Météo-France, FR-Alert et les canaux officiels locaux restent prioritaires pour décider quoi faire à court terme.</p></div>
+    </div>
+    <p class="small muted">Les estimations de population ou de logements exposés dépendent du scénario de référence et du périmètre cartographié. Elles ne représentent pas la probabilité qu’une inondation survienne cette saison.</p>
+  </div>
+</section>
+
+<section id="p-simuler" class="tab-panel hidden" role="tabpanel" aria-labelledby="t-simuler">
+  <div class="section-head"><div><h2>Mini-laboratoire : que change la pluie ?</h2><p class="muted">Compare deux situations pour comprendre les mécanismes, sans prédire un événement réel.</p></div><span class="pill">Simulation pédagogique</span></div>
+  <div class="card">
+    <h3>Choisis un scénario d’apprentissage</h3>
+    <div class="switchrow">
+      <button class="choice" data-scenario="progressive" aria-pressed="true">A · Pluie progressive</button>
+      <button class="choice" data-scenario="intense" aria-pressed="false">B · Pluie intense en peu de temps</button>
+      <button class="choice" data-scenario="coastal" aria-pressed="false">C · Pluie + mer agitée</button>
+    </div>
+    <div class="result" aria-live="polite">
+      <h3 id="scenario-title">A · Pluie progressive</h3>
+      <p id="scenario-description">Une partie de l’eau peut s’infiltrer ou être stockée si les sols, les réseaux et les cours d’eau disposent de capacité.</p>
+      <div class="meter"><span id="scenario-meter" style="--w:28%"></span></div>
+      <p><strong>À surveiller :</strong> <span id="scenario-watch">état des sols, niveau des cours d’eau, saturation des réseaux et durée de l’épisode.</span></p>
+      <p><strong>Conséquence possible :</strong> <span id="scenario-impact">recharge utile si les pluies sont modérées et bien réparties, mais résultat dépendant du contexte local.</span></p>
+    </div>
+    <p class="source-foot">La jauge est une illustration qualitative, pas un indice officiel ni un calcul hydraulique. Le modèle ne contient aucune donnée météo en direct.</p>
+  </div>
+  <div class="section">
+    <h2>Quiz express</h2>
+    <div class="card">
+      <p><strong>Question :</strong> si El Niño atteint un pic en novembre ou décembre, peut-on en déduire qu’une inondation touchera Frontignan à une date précise ?</p>
+      <button class="quiz-option" data-answer="wrong">Oui, le pic d’El Niño donne la date des pluies extrêmes locales.</button>
+      <button class="quiz-option" data-answer="right">Non. El Niño agit à l’échelle climatique globale ; les épisodes locaux dépendent de configurations météo et hydrologiques plus précises.</button>
+      <button class="quiz-option" data-answer="wrong">Oui, mais uniquement si la lagune est déjà haute.</button>
+      <div id="quiz-feedback" aria-live="polite" class="feedback hidden"></div>
+    </div>
+  </div>
+</section>
+
+<section id="p-agir" class="tab-panel hidden" role="tabpanel" aria-labelledby="t-agir">
+  <div class="section-head"><div><h2>Passer de l’information à l’action</h2><p class="muted">Une checklist simple, à adapter aux consignes officielles et à la situation réelle.</p></div><span class="pill">Préparation citoyenne</span></div>
+  <div class="grid2">
+    <div class="card"><h3>Avant un épisode annoncé</h3>
+      <label><input type="checkbox"> Vérifier la vigilance Météo-France et les messages officiels locaux.</label><br><br>
+      <label><input type="checkbox"> Charger téléphone et batterie externe ; garder une lampe et les documents importants accessibles.</label><br><br>
+      <label><input type="checkbox"> Identifier les points bas, parkings souterrains et routes susceptibles d’être coupées sur ses trajets habituels.</label><br><br>
+      <label><input type="checkbox"> Si possible sans danger, déplacer les véhicules et objets hors des zones basses exposées.</label>
+    </div>
+    <div class="card"><h3>Pendant de fortes pluies / inondations</h3>
+      <label><input type="checkbox"> Ne jamais traverser une route, un passage submergé ou un cours d’eau en crue.</label><br><br>
+      <label><input type="checkbox"> Éviter le littoral, les berges et les zones basses ; ne pas aller voir les vagues ou la montée de l’eau.</label><br><br>
+      <label><input type="checkbox"> Suivre les consignes des secours ; rejoindre un étage en hauteur si cela est demandé et si le déplacement est sûr.</label><br><br>
+      <label><input type="checkbox"> Ne couper l’électricité que si l’on peut le faire depuis un endroit sec et sans s’exposer.</label>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:14px"><strong>Important :</strong> cette page est pédagogique et ne remplace ni les alertes officielles ni les consignes des autorités. En urgence, appeler les services de secours appropriés.</div>
+  <div class="section">
+    <h2>Liens d’action</h2>
+    <a class="btn-link" href="https://vigilance.meteofrance.fr/fr/herault" target="_blank" rel="noopener">Vigilance Météo-France · Hérault ↗</a>
+    <a class="btn-link" href="https://www.smbt.fr/" target="_blank" rel="noopener">SMBT · Bassin de Thau ↗</a>
+    <a class="btn-link" href="https://www.frontignan.fr/mon-quotidien/risques-majeurs/ppri/" target="_blank" rel="noopener">PPRI Frontignan ↗</a>
+    <a class="btn-link" href="https://www.frontignan.fr/mon-quotidien/risques-majeurs/pcs-plan-communal-de-sauvegarde/" target="_blank" rel="noopener">PCS Frontignan ↗</a>
+  </div>
+</section>
+
+<section id="p-sources" class="tab-panel hidden" role="tabpanel" aria-labelledby="t-sources">
+  <div class="section-head"><div><h2>Sources & niveau de confiance</h2><p class="muted">Les faits sont datés ; les scénarios sont explicitement distingués des prévisions.</p></div></div>
+  <ul class="source-list">
+    <li><strong>Météo-France — El Niño, 2 octobre 2026.</strong> Renforcement observé, pic possible vers novembre-décembre ; impacts mondiaux variables. <a href="https://meteofrance.com/actualites/el-nino-pourrait-atteindre-une-intensite-inedite-depuis-1950-quelles-consequences-a" target="_blank" rel="noopener">Lire la source ↗</a></li>
+    <li><strong>Météo-France — tendances à trois mois, 5 octobre 2026.</strong> Trimestre octobre-décembre plus chaud que la normale privilégié en France ; aucun scénario de précipitations privilégié pour le Sud-Est. <a href="https://meteofrance.fr/actualite/publications/les-tendances-climatiques-trois-mois" target="_blank" rel="noopener">Lire la source ↗</a></li>
+    <li><strong>Météo-France — situation hydrologique, 9 octobre 2026.</strong> Septembre très déficitaire en pluie à l’échelle nationale, puis épisode méditerranéen intense en fin de mois. Les conditions locales peuvent différer fortement. <a href="https://meteofrance.fr/actualite/publications/les-publications-de-meteo-france/le-dernier-bulletin-de-situation-hydrologique" target="_blank" rel="noopener">Lire la source ↗</a></li>
+    <li><strong>Météo-France — épisode méditerranéen, 30 septembre 2026.</strong> Mécanismes, saisonnalité et danger des pluies intenses. <a href="https://education.meteofrance.fr/meteo-a-z/quest-ce-quun-episode-mediterraneen" target="_blank" rel="noopener">Lire la source ↗</a></li>
+    <li><strong>SMBT — PAPI Thau 2026–2031, 22 avril 2026.</strong> Programme local de prévention, actions et financement annoncé. <a href="https://www.smbt.fr/blog/2026/04/22/le-programme-daction-pour-la-prevention-des-inondations-du-territoire-de-thau-officiellement-labellise/" target="_blank" rel="noopener">Lire la source ↗</a></li>
+    <li><strong>Ville de Frontignan — PPRI et PCS.</strong> Références locales de prévention et d’organisation de crise. <a href="https://www.frontignan.fr/mon-quotidien/risques-majeurs/ppri/" target="_blank" rel="noopener">PPRI ↗</a> · <a href="https://www.frontignan.fr/mon-quotidien/risques-majeurs/pcs-plan-communal-de-sauvegarde/" target="_blank" rel="noopener">PCS ↗</a></li>
+  </ul>
+  <div class="callout"><strong>Limite méthodologique :</strong> ce module ne fournit ni météo en direct, ni cartographie réglementaire géolocalisée, ni prévision d’inondation. Les liens officiels doivent être consultés pour la situation actuelle.</div>
+</section>
+<footer class="footer">
+  <strong>ATLAS FRONTIGNAN · Climat & résilience du bassin de Thau</strong><br>
+  Module autonome conçu pour la pédagogie et la présentation territoriale. État des connaissances : 11 octobre 2026. Dernière vérification des données à faire avant toute présentation publique.
+</footer>
+</div>
+<script>
+const tabs=[...document.querySelectorAll('[role="tab"]')];
+function activateTab(tab){
+  tabs.forEach(t=>{const active=t===tab;t.setAttribute('aria-selected',String(active));t.tabIndex=active?0:-1;document.getElementById(t.dataset.panel).classList.toggle('hidden',!active)});
+}
+tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>activateTab(tab));tab.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length;tabs[n].focus();activateTab(tabs[n])}})});
+const scenarios={
+ progressive:{title:'A · Pluie progressive',desc:'Une partie de l’eau peut s’infiltrer ou être stockée si les sols, les réseaux et les cours d’eau disposent de capacité.',watch:'état des sols, niveau des cours d’eau, saturation des réseaux et durée de l’épisode.',impact:'recharge utile si les pluies sont modérées et bien réparties, mais résultat dépendant du contexte local.',meter:'28%'},
+ intense:{title:'B · Pluie intense en peu de temps',desc:'Le débit d’eau peut dépasser la capacité d’infiltration et d’évacuation. L’eau ruisselle rapidement vers les points bas.',watch:'intensité de la pluie, vigilance pluie-inondation, passages bas, réseaux pluviaux et bassins versants.',impact:'ruissellement urbain, routes coupées, crues rapides ou dommages localisés deviennent plus plausibles.',meter:'78%'},
+ coastal:{title:'C · Pluie + mer agitée',desc:'Des pluies fortes peuvent coïncider avec une mer agitée ou des niveaux marins défavorables. Les sorties d’eau peuvent être plus difficiles selon le lieu.',watch:'vigilance pluie-inondation et vagues-submersion, état du littoral, accès au lido et consignes des autorités.',impact:'plusieurs phénomènes peuvent se cumuler ; l’effet précis dépend de la configuration locale et de l’heure.',meter:'92%'}
+};
+document.querySelectorAll('[data-scenario]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-scenario]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));const s=scenarios[btn.dataset.scenario];document.getElementById('scenario-title').textContent=s.title;document.getElementById('scenario-description').textContent=s.desc;document.getElementById('scenario-watch').textContent=s.watch;document.getElementById('scenario-impact').textContent=s.impact;document.getElementById('scenario-meter').style.setProperty('--w',s.meter)}));
+document.querySelectorAll('[data-answer]').forEach(btn=>btn.addEventListener('click',()=>{const f=document.getElementById('quiz-feedback');f.classList.remove('hidden','good','bad');const ok=btn.dataset.answer==='right';f.classList.add(ok?'good':'bad');f.textContent=ok?'Exact. El Niño est un facteur climatique global ; il ne fournit pas une date ou une localisation d’inondation. Il faut suivre les prévisions et vigilances locales.':'Pas tout à fait. Le lien entre El Niño et la météo locale est indirect et incertain. Consulte les prévisions officielles à courte échéance.'}));
+</script>
+</body>
+</html>
