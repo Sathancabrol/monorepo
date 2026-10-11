@@ -33,12 +33,13 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 ### B. Architecture, réutilisation et risques
 
 - [x] Rédiger l'audit initial Watchtower / proto-Cognitorium / Cognitorium / HCSM / Research Engine.
+- [x] Créer une matrice transversale des actifs, fonctions, risques de licence, niveau de preuve, priorités et décisions provisoires : [MATRICE-REUTILISATION-TRANSVERSALE-2026-10-11.md](MATRICE-REUTILISATION-TRANSVERSALE-2026-10-11.md).
 - [x] Étendre l'inventaire à ETAT-DE-LART-PSYCHOLOGIE, animation-chronos, Language-decoder et Frontignan.
 - [x] Inspecter statiquement les mécanismes de persistance Nexus Memory, Research Engine checkpoints, Watchtower context, proto decay et Language-decoder dynamics.
 - [x] Repérer les options local-first et les dépendances API/cloud dans les principaux manifestes/README.
 - [x] Proposer la convergence via adaptateurs, fiches Markdown et provenance plutôt que créer un nouveau moteur de mémoire.
 - [x] Définir un contrat commun minimal à confronter à Carré d'As, HCSM et Language-decoder.
-- [ ] Compléter une matrice exhaustive dépendances/licences/tests/coût d'intégration par module.
+- [ ] Compléter une matrice exhaustive dépendances/licences/tests/coût d'intégration par module. La première matrice de réutilisation existe ; les coûts et résultats d'exécution restent à mesurer.
 - [x] Définir les axes comparatifs nécessaires pour les runtimes Nexus OS / Carré d'As / Laplace et les moteurs de recherche Uranus / Research Engine ; la matrice reste à remplir avec preuves détaillées.
 - [ ] Vérifier les permissions, le traitement des secrets, la sandbox et les appels externes du runtime Nexus OS et de Carré d'As.
 - [ ] Confirmer les licences des codes, dépendances, documents et jeux de données avant portage ; la licence du code ne vaut pas automatiquement pour les données tierces.
@@ -72,6 +73,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [ ] Exécuter les tests d'intégration et vérifier les interfaces de convergence.
 - [ ] Publier le bilan final séparant : réutilisable maintenant, à adapter, à tester, à différer, bloqué par licence ou par accès.
 - [x] Consigner dans l'addendum les nouvelles branches à haute valeur et les décisions de convergence provisoires.
+- [x] Créer la matrice de réutilisation transversale pour éviter de relire les décisions uniquement dans un long rapport.
 
 ## État après les passes de comparaison du 2026-10-11
 
