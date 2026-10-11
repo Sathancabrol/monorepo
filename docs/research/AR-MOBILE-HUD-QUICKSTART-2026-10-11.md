@@ -75,3 +75,29 @@ Utiliser la caméra et les capteurs du smartphone pour afficher une interface co
 - Contenu simulé explicitement étiqueté.
 - Installable depuis le navigateur si la PWA et l'appareil le permettent.
 - Extensible par registre/adaptateur, sans réécrire le moteur pour chaque module.
+
+
+## Appareil cible confirmé et pont PC ↔ téléphone
+- Téléphone déclaré : Xiaomi Redmi Note 13 5G, modèle 2312DRAABG, Android 15, stockage 256 Go, mémoire annoncée 8+4 Go.
+- La FAQ Xiaomi confirme gyroscope, accéléromètre, boussole électronique et capteur de champ magnétique. Cela rend possible un prototype qui lit orientation et champ magnétique via une app native compatible ; la disponibilité exacte dans le navigateur doit être testée. Le modèle n'a pas de baromètre selon la FAQ.
+- PC cible : Windows, environnement de développement local déjà utilisé pour le monorepo. Le pont doit d'abord fonctionner sur le réseau local, sans service cloud obligatoire.
+
+### Trois outils distincts (ne pas les confondre)
+1. **PWA/HUD** : affiche l'interface AR sur le téléphone ; c'est la priorité produit.
+2. **scrcpy** : affiche et contrôle le téléphone depuis Windows par USB ou TCP/IP, sans installer une app dédiée sur Android. Gratuit/open source. Source officielle : https://github.com/Genymobile/scrcpy. Cela aide à tester/présenter la vue mobile sur le PC, mais ne connecte pas à lui seul les modules IA.
+3. **LocalSend** : transfère des fichiers entre Windows et Android via réseau local, sans compte ni Internet ; utile pour échanger captures, JSON de configuration et exports. Ce n'est pas un canal de commandes temps réel. https://localsend.org/fr/download
+
+### Pont logiciel à développer pour les modules
+- Servir la PWA depuis le PC sur le Wi-Fi local ; le téléphone et le PC doivent être sur le même réseau.
+- Le PC expose une API locale avec authentification par jeton court, CORS limité à l'origine de la PWA, schéma JSON validé et journal des actions.
+- Les données vont PC → téléphone en lecture seule au début (couches/notes/points). Ajouter les commandes téléphone → PC plus tard, avec liste d'actions autorisées et confirmation explicite pour les actions sensibles.
+- Ne pas exposer le serveur de développement ou les endpoints d'agents sur Internet ; éviter d'écouter sur toutes les interfaces sans pare-feu et authentification.
+- Pour un premier test sans code : utiliser scrcpy pour refléter le téléphone et LocalSend pour déplacer des fichiers ; ce sont des outils de pont/diagnostic, pas l'intégration finale.
+
+### Checklist appareil
+- [ ] Confirmer dans Paramètres > À propos du téléphone le modèle/Android exacts.
+- [ ] Ouvrir une démo WebAR dans Chrome et autoriser caméra/localisation seulement si nécessaires.
+- [ ] Tester si orientation et boussole sont accessibles et stables dans le navigateur.
+- [ ] Comparer une démo HUD GPS avec une démo de placement 3D : ce sont deux catégories d'AR différentes.
+- [ ] Connecter le PC via USB pour scrcpy d'abord ; activer le débogage USB uniquement si nécessaire et depuis une source officielle.
+- [ ] Tester ensuite le partage Wi-Fi local ; ne pas ouvrir ADB sur un réseau public.
