@@ -73,3 +73,27 @@ Ces documents sont des propositions d'architecture, pas la preuve d'une impléme
 
 ### Critère de réussite
 Un agent qui reprend une recherche doit retrouver la bonne question, son état vérifié, les preuves et la prochaine action depuis le dossier de recherche, sans charger toutes les données historiques ni recommencer l'audit global.
+
+
+## Session 2026-10-11 — Automatisation transversale
+
+- Ajout de `docs/CROSS_PROJECT_AUTOMATION_STANDARD.md` : cycle RECALL → DISCOVER → PLAN → EXECUTE → VERIFY → DELIVER → HANDOFF, règles d'entrée de session, inventaire des consignes, gestion des conflits, niveaux d'autonomie et preuves attendues.
+- Mise à jour de `AGENTS.md` : récupération du contexte et des audits valides, recherche avant question, tests et mise à jour du handoff.
+- Mise à jour de `scripts/project_audit/audit_gaps.py` : découverte prioritaire des fichiers de consignes, politiques, standards, handoffs et décisions.
+- Mise à jour de `.github/workflows/project-audit.yml` : validation syntaxique Python et JSON avant exécution de l'audit.
+- Mise à jour de `docs/AUDIT_AUTOMATION.md` : étapes de revue des règles et de continuité.
+- Statut : changements sur la branche `feat/gap-driven-audit-2026-10-11`, non fusionnés. Le workflow et les tests n'ont pas encore été exécutés; aucune validation d'exécution n'est revendiquée.
+- Recherche GitHub sur les dépôts configurés : aucun résultat identifié pour « JEV ». Le système visé reste à identifier, sans supposer ce que l'acronyme signifie.
+
+### Prochaine action
+1. Exécuter la validation syntaxique et les tests sur la branche, corriger les erreurs éventuelles.
+2. Lire et comparer les consignes effectives sur les dépôts/branches prioritaires et produire un registre avec source, SHA, portée, conflit et statut de revue.
+3. Auditer Nexus OS, Research Engine et HCSM avant de développer une file de tâches persistante ou un agent de continuité.
+4. Vérifier les permissions et l'exécution GitHub Actions avant toute fusion.
+
+
+### Complément de session — règles de plusieurs projets
+- Ajout de `docs/PROJECT_RULES_INVENTORY.md`, avec sources et SHA pour les premières règles vérifiées de Watchtower, Research Engine, HCSM, État de l'art psychologie, COGNITORIUM et Language-decoder.
+- Découverte importante : `proto-cognitorium` et `animation-chronos` ont `AGENTS.md` et `AGENT_HANDOFF.md` sur `chore/agent-handoff-2026-10-11`, même si `README.md` n'a pas été trouvé sur `main`. Cela confirme qu'il faut examiner les branches non principales avant de conclure qu'une règle ou un projet manque.
+- Ajout de `tests/test_project_audit_gaps.py` : tests prévus pour pagination, erreur API et JSON d'état invalide. Le workflow est configuré pour les exécuter, mais ils n'ont pas encore été exécutés dans cette session.
+- Le workflow inclut maintenant py_compile, validation JSON et tests unitaires avant le scan; aucune exécution CI réussie n'est revendiquée.

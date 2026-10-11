@@ -2,87 +2,123 @@
 
 ## Purpose
 
-Maintain one repeatable audit workflow across the project ecosystem so that a new audit updates a shared inventory, KPI snapshot, action list and historical series rather than creating an isolated report.
+Maintain one repeatable audit workflow across the project ecosystem so each audit updates shared inventory, KPIs, a gap queue, roadmap actions and history instead of creating an isolated report.
 
-## Current first iteration
+## Workflow
 
-- Portfolio configuration: `data/audit/portfolio.json`
-- Collector and deterministic rules: `scripts/project_audit/audit_portfolio.py`
-- Scheduled workflow: `.github/workflows/project-audit.yml`
-- Generated outputs: `reports/project-audit/latest.json`, `latest.md`, `index.html`, `history.jsonl`
-- Trigger: daily at 06:17 UTC, manual dispatch, or relevant changes to audit configuration/code on `main`.
-- Scope: GitHub metadata, default branch file tree, selected branch existence/tree, documentation/test/CI/source signals, last repository push, and deterministic next-action suggestions.
-- Safety: read-only inspection of project repositories; only generated reports are committed to this monorepo. No application code is modified by the audit.
+- Portfolio configuration: data/audit/portfolio.json
+- Default-branch signals: scripts/project_audit/audit_portfolio.py
+- Gap-driven branch discovery and instruction-file discovery: scripts/project_audit/audit_gaps.py
+- Cross-project rules and session protocol: docs/CROSS_PROJECT_AUTOMATION_STANDARD.md and AGENTS.md
+- Initial rules inventory with source SHAs and explicit gaps: docs/PROJECT_RULES_INVENTORY.md
+- Workflow: .github/workflows/project-audit.yml
+- Reports: reports/project-audit/latest.json, latest.md, index.html, history.jsonl, branch-index.json, gaps.json, gaps.md
+- Trigger: daily at 06:17 UTC, manual dispatch, or relevant audit-code/config changes on main.
+- Scope: all paginated branches for configured repositories; new, changed, or unreviewed branch trees are prioritized in bounded batches. Relevant paths include agent instructions, handoffs, policies, standards, decisions, roadmaps, tests and workflows.
+- Validation: Python syntax and portfolio JSON are checked before an audit run.
+- Rule inventory: finding a rule file is only discovery. Its contents, scope, SHA, conflicts and downstream applicability still require review.
+- Safety: read-only inspection of source repositories; generated reports only are committed to this monorepo. No source project code is changed by the audit.
+
+## Gap-driven rule
+
+When an answer depends on an unknown fact, the unknown becomes a follow-up audit item. Search prior audit notes and generated reports, enumerate all repositories and branches, inspect relevant file contents, compare candidate branches, and record evidence before declaring a feature missing. If evidence is still incomplete, leave the exact question and relevant paths in the queue. Do not stop at main or a previously inspected branch.
+
+The gap scanner persists branch names and SHAs. New branches, changed SHAs, failed tree reads and content reviews that remain pending are visible in the queue. Tree inspection discovers relevant files; it does not count as semantic review. Closing a content gap requires a dated finding with repository, branch, path, SHA, confidence, and next action.
+
+## Cross-project work-cycle standard
+
+The shared session cycle is RECALL → DISCOVER → PLAN → EXECUTE → VERIFY → DELIVER → HANDOFF. The canonical policy is docs/CROSS_PROJECT_AUTOMATION_STANDARD.md. Root AGENTS.md requires agents to read the handoff, recover valid memory and prior evidence, search before asking the user, run relevant checks, and update the handoff and append-only journal.
+
+Rule discovery must include AGENTS.md, CLAUDE.md, GEMINI.md, CONTRIBUTING.md, nested instructions, workflows, test/build scripts, security/licence policies, project decisions, roadmaps, and generated deliverable conventions. Every finding must be scoped to its repository, branch, path and SHA. Conflicting rules must be recorded rather than silently resolved.
+
+The user should only be interrupted for genuinely missing information, a consequential product decision, an unavailable permission/credential, or an action that requires approval. Research, repository inspection, branch comparison, routine validation and report preparation should be done autonomously when tools and permissions allow. A scheduled GitHub workflow is not proof of a continuously running agent; actual background execution requires a working runner and verified workflow run.
 
 ## KPI definitions
 
 | KPI | Formula | What it means | What it does not mean |
 |---|---|---|---|
-| Audit coverage | Successfully read repository metadata / configured repositories | Portfolio inventory coverage | Functional completeness |
-| Documentation signal coverage | Audited repos with docs/ or Markdown files / repos with readable default tree | Documentation exists | Documentation is correct or current |
-| Test signal coverage | Audited repos with test-like files / repos with readable default tree | Test files may exist | Tests pass or cover important paths |
-| CI signal coverage | Audited repos with GitHub Actions workflow files / repos with readable default tree | CI workflow files exist | CI is enabled or green |
-| Source signal | Count of repos with source-like files | Code is present | The app builds or runs |
-| Audit errors | Count of repos with metadata/tree/branch errors | Data gaps to resolve | Repository is broken |
-| Runtime verification | Always false in this initial implementation | Runtime testing is still outstanding | No runtime verification is claimed |
+| Repository audit coverage | Repositories with readable metadata / configured repositories | Portfolio metadata coverage | Functional completeness |
+| Branch inventory coverage | Current branches indexed / branches returned by GitHub | Branch discovery coverage | File-content review |
+| Branch tree coverage | Current branch SHAs with successful tree reads / current branch SHAs | Tree-inspection coverage | Code correctness |
+| Content review coverage | Current branch SHAs with dated file-level findings / current branch SHAs | Evidence review coverage | Runtime health |
+| Documentation signal coverage | Repos with docs or Markdown / repos with readable trees | Documentation exists | Documentation is correct |
+| Test signal coverage | Repos with test-like files / repos with readable trees | Test files may exist | Tests pass |
+| CI signal coverage | Repos with workflow files / repos with readable trees | Workflow files exist | CI is green |
+| Unresolved evidence gaps | Branches with pending/error review | Remaining audit work | Repository is broken |
+| Runtime verification | Reproducible tests/builds/runs recorded against a SHA | Verified execution evidence | General product readiness |
 
-The initial targets in the portfolio file are governance targets, not current scores. A 100% file-signal KPI must never be interpreted as 100% product readiness.
+Never combine these into a single misleading completion percentage. Targets are governance goals, not current quality scores.
 
-## Auto-generated next actions
+## Automatic next actions
 
-Rules currently create reminders for:
-- stale last push (30+ days);
-- missing documentation signal;
-- missing test-file signal;
-- missing CI workflow signal;
-- 10+ branches;
-- inaccessible metadata, branch listing or tree.
+- stale activity;
+- missing documentation/test/CI signals;
+- large branch inventory;
+- missing or changed branches;
+- tree-read errors or truncated trees;
+- unresolved content reviews;
+- stale evidence whose source SHA has changed.
 
-These are prompts for review, not automatic deletion, merges or code changes.
+These are review prompts, not automatic deletion, merges, or code changes.
 
-## Planned evolution
+## Current phases
 
 ### Phase 1 — Portfolio inventory and KPI snapshot
-- [x] Configure portfolio repositories and focus branches.
+- [x] Configure the repository portfolio and focus branches.
 - [x] Generate JSON, Markdown and HTML dashboard.
 - [x] Record KPI history.
 - [x] Schedule daily/manual audit.
 - [ ] Verify workflow execution on GitHub Actions.
 
 ### Phase 2 — Branch and module reconciliation
-- Compare each configured branch to its default branch.
-- Identify duplicate modules using manifest/path signatures and file hashes where practical.
-- Track branch age, divergence, uncommitted work (where a local runner is available), and merge/archive recommendations.
-- Create roadmap items with stable IDs and evidence links.
+- [x] Enumerate branches with pagination and persist branch SHAs.
+- [x] Queue new, changed and previously uninspected branch trees.
+- [x] Inspect branch trees in bounded batches and preserve relevant evidence paths.
+- [x] Expand path discovery to agent instructions, policies, standards, handoffs and decision records.
+- [x] Create an initial, source-linked rules inventory for the currently inspected default-branch documents.
+- [ ] Audit the contents and scope of discovered rule files across every relevant repository and branch.
+- [ ] Read queued file contents and record semantic findings.
+- [ ] Resolve the configured repository paths that returned 404 for proto-cognitorium and animation-chronos.
+- [ ] Detect rule conflicts and produce a repository-scoped rules registry with source SHA and freshness.
+- [ ] Compare each relevant branch against its default branch and other candidate branches.
+- [ ] Identify duplicate modules using manifest/path signatures and hashes where practical.
+- [ ] Track divergence and create stable roadmap items with evidence links.
 
 ### Phase 3 — Evidence-backed functional audit
-- Run repository-native test commands in isolated CI jobs.
-- Record exact command, commit SHA, environment, exit code, duration and artifact links.
-- Distinguish static presence, tests executed, tests passed, preview/build passed, and human-validated acceptance.
+- [ ] Run repository-native tests/builds in isolated CI jobs.
+- [ ] Record exact command, commit SHA, environment, exit code, duration and artifacts.
+- [ ] Separate static presence, test execution, passing tests, build/preview, and human acceptance.
 - Never infer "working" from README text alone.
 
 ### Phase 4 — Shared roadmap and dashboard
-- Use stable requirement IDs across Watchtower, Atlas, BTP, Cognitorium, Nexus and the monorepo.
-- Link each roadmap item to repository, path, issue/PR, dependencies, priority, KPI, evidence and acceptance test.
-- Calculate progress from verified acceptance criteria, not optimistic labels.
-- Detect regressions and stale evidence, and highlight blocked work.
-- Expose the dashboard in the monorepo's existing interface skeleton.
+- [ ] Use stable requirement IDs across Watchtower, Atlas, BTP, Cognitorium, Nexus and monorepo.
+- [ ] Link requirements to repository, path, branch/SHA, issue/PR, dependencies, priority, KPI, evidence and acceptance test.
+- [ ] Calculate progress from verified acceptance criteria.
+- [ ] Detect regressions, stale evidence and blockers.
+- [ ] Expose the dashboard in the existing monorepo interface.
 
-### Phase 5 — Agent de continuité et recherche de fond
-- [x] Documenter l'architecture cible et les garde-fous dans `docs/AGENT_CONTINUITY.md`.
-- [ ] Auditer Nexus OS, Research Engine et HCSM au niveau code/tests avant de réutiliser leurs composants.
-- [ ] Implémenter une file persistante de tâches avec IDs stables, dépendances, état de reprise et journal append-only.
-- [ ] Connecter les issues, PR, commits et résultats CI à la mémoire de travail.
-- [ ] Ajouter la recherche de fond liée aux besoins, avec déduplication, provenance, fraîcheur et quotas.
-- [ ] Ajouter un runner isolé pour tests et modifications sur branche dédiée.
-- [ ] Ajouter l'interface de pilotage et les KPI de qualité de l'agent.
-- [ ] Garder fusion, suppression, déploiement et actions coûteuses sous approbation humaine.
+### Phase 5 — Continuity agent and research
+- [x] Document continuity-agent architecture and guardrails in docs/AGENT_CONTINUITY.md.
+- [ ] Audit Nexus OS, Research Engine and HCSM code/tests before reusing components.
+- [ ] Implement a persistent task queue with stable IDs, dependencies, resumable state and append-only journal.
+- [ ] Automate session-start context recovery and session-end handoff updates in the agent runner.
+- [ ] Connect issues, PRs, commits and CI results to working memory.
+- [ ] Add background research with deduplication, provenance, freshness and quotas.
+- [ ] Add an isolated runner for tests and branch-based changes.
+- [ ] Add agent-control UI and quality KPIs.
+- [ ] Keep merges, deletion, deployment and costly actions behind human approval.
 
 ## Operational notes
 
-- Public repositories can be inspected using the unauthenticated GitHub API, but rate limits apply.
-- For private repositories, configure a least-privilege repository-scoped secret named `GH_AUDIT_TOKEN`; never commit a token to the portfolio config or reports.
-- The first version caps branch enumeration at 100 per repository.
+- Public GitHub API access is rate-limited; use a least-privilege GH_AUDIT_TOKEN secret when required.
+- The gap scanner paginates branch listing and caps tree inspections per run (default 15); unprocessed branches remain queued.
 - GitHub Actions schedules may start later than the requested minute.
-- Audit reports are committed to `main`; the workflow ignores report paths as push triggers, preventing an infinite run loop.
-- Review the workflow permissions and organization policies before enabling it in a production repository.
+- Reports are committed to main; report paths must not trigger an infinite workflow loop.
+- Workflow execution and local runtime have not yet been verified by this document.
+
+## Verification status after automation-standard update
+
+- Python syntax validation is now part of the workflow definition, but has not yet been executed on this branch.
+- The cross-project standard and expanded rule-path discovery have been committed to the feature branch, not merged into main.
+- JEV has not been identified in the configured repositories by the code searches run so far; confirm the exact name or location before making claims about that system.
+- No semantic all-branch rule audit, full CI run, or local runtime verification is claimed yet.

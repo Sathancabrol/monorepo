@@ -12,6 +12,11 @@ on:
       - "scripts/project_audit/**"
       - ".github/workflows/project-audit.yml"
       - "docs/AUDIT_AUTOMATION.md"
+      - "docs/AUDIT_GAP_DRIVEN_PROTOCOL.md"
+      - "docs/CROSS_PROJECT_AUTOMATION_STANDARD.md"
+      - "docs/PROJECT_RULES_INVENTORY.md"
+      - "AGENTS.md"
+      - "AGENT_HANDOFF.md"
 
 permissions:
   contents: write
@@ -23,7 +28,7 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,20 +40,33 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Validate audit scripts and portfolio config
+        run: |
+          python -m py_compile scripts/project_audit/audit_portfolio.py scripts/project_audit/audit_gaps.py
+          python -m json.tool data/audit/portfolio.json > /dev/null
+          python -m unittest discover -s tests -p "test_project_audit*.py"
+
       - name: Run read-only portfolio audit
         env:
           GH_AUDIT_TOKEN: ${{ secrets.GH_AUDIT_TOKEN }}
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/project_audit/audit_portfolio.py
 
-      - name: Publish updated report
+      - name: Run gap-driven branch discovery
+        env:
+          GH_AUDIT_TOKEN: ${{ secrets.GH_AUDIT_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          AUDIT_MAX_BRANCH_TREES: "15"
+        run: python scripts/project_audit/audit_gaps.py
+
+      - name: Publish updated audit reports
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/project-audit/latest.json reports/project-audit/latest.md reports/project-audit/index.html reports/project-audit/history.jsonl
+          git add reports/project-audit/latest.json reports/project-audit/latest.md reports/project-audit/index.html reports/project-audit/history.jsonl reports/project-audit/branch-index.json reports/project-audit/gaps.json reports/project-audit/gaps.md
           if git diff --cached --quiet; then
             echo "No report changes to publish."
           else
-            git commit -m "chore(audit): refresh project portfolio KPIs"
+            git commit -m "chore(audit): refresh project audit gaps and KPIs"
             git push origin HEAD:main
           fi
