@@ -100,3 +100,18 @@ Comparaisons des branches `arena/*` découvertes dans les dépôts avec leurs `m
 ### Conséquence
 
 Pour ces références précises, le risque immédiat n'est pas une fonctionnalité cachée unique dans chaque branche, mais le maintien de branches historiques. Il reste important de distinguer ce résultat du cas `arena/01a08342-proto-cognitorium`, qui contient des outils d'audit additionnels à examiner. Les scripts présents dans cette branche ne sont pas considérés comme exécutés ni fiables avant lecture et tests.
+
+
+## Lecture ciblée des sondes d'audit proto-Cognitorium
+
+La branche `proto-cognitorium:arena/01a08342-proto-cognitorium` contient un kit de sondes (runtime, interactions, données, ROME, contenu et simulation de correctifs). Le README explique que les sondes chargent les composants réels via Vite et jsdom, avec données réelles. C'est un actif utile pour tester le prototype sans réimplémenter sa logique.
+
+**Réserves techniques relevées dans le code/documentation consultés :**
+
+- Le README précise que le rendu canvas est stubé : le montage et une partie de la logique sont testés, mais pas le dessin réel des graphes.
+- Le README indique que les sondes runtime sont un harnais de non-régression auquel il manque une assertion (référence à la roadmap §G3).
+- `runtime-probe.mjs` journalise les résultats et les erreurs console ; la fin du script force une sortie de processus à code 0. Sans assertions bloquantes, un rendu `CRASH` ou `ERR` peut donc être rapporté sans nécessairement faire échouer le job.
+- Les tests sont documentés comme exécutés sans `GEMINI_API_KEY`, ce qui est pertinent pour le mode de repli hors-ligne, mais ne valide pas les appels externes.
+- Les résultats « 143 rendus, 0 crash, 0 erreur console » figurent dans le README ; ils sont **déclarés par la documentation de cette branche**, pas réexécutés ni confirmés dans cette session.
+
+**Action prioritaire :** porter ou adapter ce harnais à la branche canonique de proto-Cognitorium, ajouter des assertions et codes de sortie non nuls en cas d'échec, distinguer tests hors-ligne et tests d'intégration API, puis exécuter les sondes dans CI. Ne pas importer les résultats historiques comme preuve de l'état actuel sans relancer le kit sur le SHA choisi.
