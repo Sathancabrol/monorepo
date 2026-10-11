@@ -42,6 +42,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [x] Définir les axes comparatifs nécessaires pour les runtimes Nexus OS / Carré d'As / Laplace et les moteurs de recherche Uranus / Research Engine ; la matrice reste à remplir avec preuves détaillées.
 - [ ] Vérifier les permissions, le traitement des secrets, la sandbox et les appels externes du runtime Nexus OS et de Carré d'As.
 - [ ] Confirmer les licences des codes, dépendances, documents et jeux de données avant portage ; la licence du code ne vaut pas automatiquement pour les données tierces.
+- [x] Repérer `UNLICENSED` dans Laplace et l'absence de fichier `LICENSE` à la racine des références consultées pour Bone/Uranus ; bloquer le portage/redistribution de Laplace et clarifier les droits des autres avant réutilisation.
 - [ ] Décider du runtime d'agents canonique après comparaison fonctionnelle et tests, sans fusionner Nexus OS et Carré d'As à l'aveugle.
 - [ ] Valider les différences entre les versions des modules et des contrats avant toute fusion.
 
@@ -55,6 +56,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [ ] Comparer les schémas Carré d'As, HCSM et Language-decoder champ par champ ; choisir un contrat de référence ou documenter les adaptateurs.
 - [ ] Implémenter les fixtures et tests d'intégration du contrat commun.
 - [ ] Mesurer précision@k, rappel@k, affirmations sans preuve, perte de provenance, doublons après reprise, correction et coût de rappel.
+- [x] Revoir statiquement le calcul Trust Factor d'Uranus : garder le score explicitement heuristique, dissocier taille d'échantillon et réplication, et tester les collisions du dédoublonnage DOI/titre.
 - [ ] Vérifier concrètement la reprise d'un run Research Engine et l'export/indexation/rappel d'une fiche Markdown.
 
 ### D. Exécution et validation
@@ -66,6 +68,7 @@ Watchtower, proto-Cognitorium, COGNITORIUM/CLE/watchtower-mods, HCSM, reaserch-e
 - [x] Recontrôler les statuts GitHub du dernier commit d'audit : aucun workflow associé et aucun statut combiné visible ; l'exécution CI n'est pas confirmée.
 - [x] Tenter l'accès Git en lecture seule depuis l'environnement d'exécution : `git ls-remote` échoue car `github.com` n'est pas résolu dans cet environnement ; aucun clone local ni lancement de tests n'est donc possible ici.
 - [ ] Archiver les commandes, versions d'environnement, logs et résultats (pass/fail/skip).
+- [x] Repérer que les tests Uranus écrivent des runs dans `output/agent_runs` ; recommander l'isolation des artefacts de test.
 - [ ] Exécuter les tests d'intégration et vérifier les interfaces de convergence.
 - [ ] Publier le bilan final séparant : réutilisable maintenant, à adapter, à tester, à différer, bloqué par licence ou par accès.
 - [x] Consigner dans l'addendum les nouvelles branches à haute valeur et les décisions de convergence provisoires.
