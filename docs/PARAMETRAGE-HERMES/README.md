@@ -3,262 +3,283 @@
 > **Objectif** : Hermes répond **gratuitement** (OmniRoute + Ollama local), le quota payant
 > (Codex / ChatGPT) est **réservé au travail difficile**, et rien de sensible ne sort de la machine.
 >
-> **Statut** : ce dossier est un **kit d'exécution**. Je n'ai pas accès à ton PC : l'étape 0
-> (5 min) produit l'état réel, les étapes 1→7 sont dans l'ordre de rentabilité.
-> Tout ce qui est écrit ici vient des dépôts **Hermes Agent** (`cli-config.yaml.example`,
-> `website/docs/`) et **OmniRoute** (`README.md`, `docs/`) lus le 2026-10-12 — pas de mémoire.
+> **Réglé pour toi** : machine **Windows native** (`%LOCALAPPDATA%\hermes`), **palier A**
+> (pas de GPU, ≤ 8 Go RAM), **bot Discord** à la fin, purge des dépôts **avant** changement de
+> visibilité. Le plan ci-dessous en tient compte.
+>
+> **Statut** : kit d'exécution. Je n'ai pas accès à ton PC : l'étape 0 (5 min) produit l'état réel.
+> Tout vient des dépôts **Hermes Agent** (`cli-config.yaml.example`, `website/docs/`) et
+> **OmniRoute** (`README.md`, `docs/`) lus le 2026-10-12 — pas de mémoire.
 
 ---
 
-## 🔴 Avant tout le reste : deux dépôts sont publics
+## 🔴 Avant tout le reste : dépôts publics + documents privés
 
-Vérifié avec ton compte le 2026-10-12 : `Sathancabrol/monorepo` (**public**, 335 Mo) contient
-**480 fichiers bureautiques suivis** (DCE, CCAP/CCTP, BPQ, DQE, métrés, devis d'entreprise,
-factures de situation, recours, grilles de salaires) et `Sathancabrol/proto-cognitorium`
-(**public**, 94 Mo) en contient 50, dont des **CV de tiers** et des questionnaires.
-Aucun secret ni `.env` exposé (vérifié), et **0 fork / 0 star** sur `monorepo`.
+Vérifié avec ton compte le 2026-10-12 : `Sathancabrol/monorepo` (**public**, `size-pack` 305 Mo,
+1818 fichiers suivis) contient **268 documents / 276 Mo** et **300 images** suivis, dont
+**210 documents à la racine** (DCE, CCAP/CCTP, BPU, DQE, métrés, devis d'entreprise, factures de
+situation, recours, grilles de salaires) ; `Sathancabrol/proto-cognitorium` (**public**) en contient
+50 dont des **CV de tiers**. Aucun secret ni `.env` exposé (vérifié), **0 fork / 0 star** sur `monorepo`.
 
-→ Détail, preuves reproductibles et plan de remédiation : **`ALERTE-VISIBILITE-DEPOTS.md`**
-(3 commandes pour passer en privé, puis purge d'historique si la suppression réelle est visée,
-puis garde-fou `scripts/garde-fou-donnees.sh` pour ne pas récidiver).
+Tu as choisi l'ordre **purge → visibilité**. C'est le bon ordre sur le fond, avec une nuance :
+mettre en privé est **réversible et n'empêche aucune purge** — tu peux couper l'accès en 2 min
+et réécrire l'historique ensuite sans rien perdre.
 
-C'est cohérent avec le reste de ce kit : ce sont **les mêmes documents** que la règle n°1 de
-`ROUTAGE.md` interdit d'envoyer à un palier gratuit. L'ordre correct est donc :
-**1)** ces documents hors de tout dépôt et hors de tout cloud, **2)** ensuite OmniRoute/Hermes
-sur `public\` seul.
+| Document | Contenu |
+|---|---|
+| `ALERTE-VISIBILITE-DEPOTS.md` | constat, preuves reproductibles, ce qui est exposé, options |
+| `PURGE-HISTORIQUE.md` | procédure mesurée : zones, tailles, publication, re-clone, support GitHub |
+| `scripts/purger-documents-git.sh` | `--inventaire` / `--plan` / `--executer` sur **clone miroir** (testé) |
+| `docs/PURGE-MOTIFS.txt` | motifs actifs (zone A = CV/données de tiers, zone B = documents racine) |
+| `scripts/garde-fou-donnees.sh` | hook `pre-commit` qui refuse les documents dans git (testé) |
+
+Ordre conseillé : **copier** vers `prive\` → `--plan` → `--executer` → publier → **re-cloner** chaque
+machine → support GitHub → installer le hook → décider la visibilité.
 
 ---
 
 ## Fichiers de ce dossier
 
-| Fichier | Rôle | Quand l'utiliser |
+| Fichier | Rôle | Quand |
 |---|---|---|
 | `README.md` | le plan d'action ordonné (ce fichier) | maintenant, puis à chaque reprise |
-| `verifier-hermes.ps1` / `.sh` | état des lieux + `hermes doctor` + ports + quota (exit 0/1) | étape 0, puis avant/après chaque install |
-| `config.hermes.extrait.yaml` | extrait de config à fusionner (OmniRoute, Ollama, fallback, aux) | étape 2 et 4 |
-| `ROUTAGE.md` | la règle de routage manuelle + l'hygiène de requête | en continu |
-| `STRUCTURE-HYBRIDE.md` | arborescence `public\` / `prive\`, sauvegarde, profils | étape 5 |
-| `CARTE.template.md` | carte d'un dépôt (1 fichier par dépôt, lu en début de session) | étape 5 |
-| `CARTE.monorepo.md` | exemple déjà rempli pour **ce** dépôt | tout de suite |
-| `quota-log.csv` | journal de calibration du quota (créé par le script avec `-Log`) | en continu |
-| `ALERTE-VISIBILITE-DEPOTS.md` | 🔴 dépôts publics + documents privés : constat, preuves, remédiation | **maintenant** |
-| `docs/PUBLIC-AUTORISE.txt` | exceptions explicites du garde-fou | à l'installation du hook |
-| `scripts/garde-fou-donnees.sh` | hook `pre-commit` qui refuse les documents dans git | à installer une fois |
+| `verifier-hermes.ps1` | état des lieux + `hermes doctor` + ports + quota (exit 0/1) | étape 0, et avant/après chaque install |
+| `verifier-hermes.sh` | idem pour WSL2/Linux | si tu changes de machine |
+| `config.hermes.extrait.yaml` | extrait de config à fusionner (OmniRoute, Ollama, fallback, aux) | étapes 2 et 4 |
+| `ROUTAGE.md` | règle de routage manuelle + hygiène de requête | en continu |
+| `STRUCTURE-HYBRIDE.md` | `public\` / `prive\`, permissions, sauvegarde, profils | étape 5 |
+| `CARTE.template.md` · `CARTE.monorepo.md` | carte d'un dépôt (exemple déjà rempli : ce dépôt) | étape 5 |
+| `quota-log.csv` | journal de calibration (écrit par `-Log`) | en continu |
+| `ALERTE-VISIBILITE-DEPOTS.md` · `PURGE-HISTORIQUE.md` | 🔴 dépôts publics + purge | **maintenant** |
 
 ---
 
-## Ce qui change par rapport au plan précédent (vérifié dans les dépôts)
+## Ce que change ce kit par rapport au plan précédent (vérifié dans les dépôts)
 
 | Point | Avant | Réel (source) |
 |---|---|---|
-| Fournisseurs sans clé dans OmniRoute | « OpenCode Free / Felo sont pré-configurés en auto » | **Faux** : OpenCode Free et Kiro sont marqués `tos: avoid` et **exclus du routage `auto`** ; « une installation neuve peut n'avoir aucune cible sans clé éligible » (`README.md` OmniRoute) |
-| Modèle `auto` | « marche tout seul » | `auto` **exige** au moins une connexion éligible : il faut d'abord brancher **un** compte/une clé |
-| Route principale Hermes | `model.base_url` + `OPENAI_API_KEY` | la clé va dans `~/.hermes/.env` (600) via `hermes config set OMNIROUTE_API_KEY …` ; un **fournisseur nommé** (`providers.omniroute`) évite d'écraser `OPENAI_API_KEY` |
-| Tâches auxiliaires | « il faut les re-router » | leur défaut est `auto` = **le modèle principal** → déjà gratuit si le principal est OmniRoute. On ne les épingle qu'en cas de besoin (privacy) |
-| Liste `custom_providers:` | présentée comme la forme normale | **héritée** : la forme courante est le dictionnaire `providers:`, migré automatiquement depuis la config v12 |
-| Mesurer le quota Codex | « relève le pourcentage à l'œil » | `hermes usage --provider openai-codex --json` renvoie `windows[].used_percent` + `resets_at` (libellés Session / Weekly) |
-| Casser une session | « change de modèle quand ça rame » | tout changement de modèle **en cours de session** jette le cache de prompt (relecture plein tarif) → décider au début, sinon `/compress` puis switcher |
+| Fournisseurs sans clé dans OmniRoute | « OpenCode Free / Felo sont pré-configurés en auto » | **Faux** : marqués `tos: avoid`, **exclus du routage `auto`** ; « une installation neuve peut n'avoir aucune cible sans clé éligible » |
+| Modèle `auto` | « marche tout seul » | `auto` **exige** au moins une connexion éligible → brancher **un** compte d'abord |
+| Route principale Hermes | `model.base_url` + `OPENAI_API_KEY` | fournisseur **nommé** (`providers.omniroute` + `key_env`) : la clé va dans `.env`, et `OPENAI_API_KEY` n'est pas écrasée |
+| Tâches auxiliaires | « il faut les re-router » | défaut `auto` = **le modèle principal** → déjà gratuit si le principal est OmniRoute |
+| Liste `custom_providers:` | présentée comme la forme normale | **héritée** ; la forme courante est le dictionnaire `providers:` (migration auto depuis la config v12) |
+| Mesurer le quota | « relève le pourcentage à l'œil » | `hermes usage --provider openai-codex --json` → `windows[].used_percent` + `resets_at` |
+| Changer de modèle | « switche quand ça rame » | un switch **en cours de session** jette le cache de prompt (relecture plein tarif) |
+| Palier A local | « un petit modèle suffit » | un modèle 1-3 B n'a pas de tool-calling fiable : il **ne conduit pas l'agent**, il dépanne (voir étape 3) |
 
 ---
 
-## Étape -1 — Stopper l'exposition des documents (2 min)
-
-```bash
-gh repo edit Sathancabrol/monorepo          --visibility private --accept-visibility-change-consequences
-gh repo edit Sathancabrol/proto-cognitorium --visibility private --accept-visibility-change-consequences
-gh api repos/Sathancabrol/monorepo --jq .visibility     # → private
-
-# garde-fou pour ne pas récidiver (une fois par clone)
-cp scripts/garde-fou-donnees.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
-```
-
-Si l'objectif est la **suppression réelle** (données personnelles de tiers) et pas seulement
-l'arrêt de l'accès, il faut en plus purger l'historique : voir `ALERTE-VISIBILITE-DEPOTS.md` § Étape C.
-
----
-
-## Étape 0 — État des lieux (5 min, à faire en premier)
+## Étape 0 — État des lieux (5 min)
 
 ```powershell
-# Windows (PowerShell) — depuis ton clone du monorepo
 powershell -ExecutionPolicy Bypass -File .\docs\PARAMETRAGE-HERMES\verifier-hermes.ps1 -Quota
 ```
 
-```bash
-# Linux / WSL
-bash docs/PARAMETRAGE-HERMES/verifier-hermes.sh --quota
-```
-
-Le script affiche : version de Hermes, chemin de `config.yaml`, provider/modèle courants, `hermes doctor`
-(code de sortie), OmniRoute `127.0.0.1:20128`, Ollama `127.0.0.1:11434` + modèles, présence des variables
-d'environnement **par nom** (jamais leur valeur), et le quota. **Exit 1** si le socle est incomplet
-(aligné sur la règle n°8 de `projects/watchtower/AGENTS.md`).
-
-> Note la sortie : c'est ta ligne de base. Les étapes suivantes la font passer au vert.
+Affiche : version de Hermes, chemins `config.yaml` / `.env`, route provider/modèle, `hermes doctor`
+(code de sortie réel), OmniRoute `127.0.0.1:20128`, Ollama `127.0.0.1:11434` + modèles, présence des
+variables **par nom** (jamais la valeur), et le quota. **Exit 1** si le socle est incomplet
+(règle n°8 de `projects/watchtower/AGENTS.md`).
 
 ---
 
 ## Étape 1 — OmniRoute : un seul point d'accès pour le gratuit (20–30 min)
 
-**1.1 Installer** (au choix — Docker est le plus propre, et il écoute sur `127.0.0.1` par défaut, ce qui
-respecte la règle « aucun binding `0.0.0.0` » du dépôt) :
+**1.1 Installer** — Docker est le plus propre et écoute sur `127.0.0.1` (règle « aucun binding 0.0.0.0 ») :
 
-```bash
-# Docker (recommandé) : dashboard + API sur le même port
-docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 \
+```powershell
+docker run -d --name omniroute --restart unless-stopped --stop-timeout 40 `
   -p 127.0.0.1:20128:20128 -v omniroute-data:/app/data diegosouzapw/omniroute:latest
 
-# ou npm (nécessite Node ≥ 22)
+# ou npm (Node >= 22)
 npm install -g --allow-scripts=omniroute,keytar,onnxruntime-node,@parcel/watcher,@swc/core,protobufjs,esbuild omniroute
 omniroute
 ```
 
-**1.2 Brancher au moins un fournisseur** — Dashboard `http://localhost:20128` → **Providers** → ajoute
-la clé d'un compte que tu as déjà. Choisis dans **ton** registre (`projects/watchtower/audit/REFERENCE.md`),
-pas dans une vidéo : Groq, Google AI Studio, OpenRouter (modèles `:free`), GitHub Models, Mistral…
-Vérifie **les conditions courantes** : limite, usage des données pour l'entraînement, et **exige une carte
-bancaire → non** (règle du dépôt : 0 €/mois).
+**1.2 Brancher au moins un fournisseur** — Dashboard `http://localhost:20128` → **Providers**.
+Prends tes clés dans **ton** registre (`projects/watchtower/audit/REFERENCE.md` : Groq, Google AI
+Studio, OpenRouter `:free`, GitHub Models…), pas dans une vidéo. Vérifie les conditions du moment
+(limite, entraînement sur tes données) et **exige une carte bancaire → non**.
 
-**1.3 Copier la clé** — Dashboard → **Endpoints** → copie la clé OmniRoute (elle n'est **pas** celle du
-fournisseur amont).
+**1.3 Copier la clé OmniRoute** — Dashboard → **Endpoints** (ce n'est pas la clé du fournisseur amont).
 
 **1.4 Vérifier** :
 
-```bash
-curl http://localhost:20128/v1/models -H "Authorization: Bearer TA_CLE_OMNIROUTE"
+```powershell
+curl.exe http://localhost:20128/v1/models -H "Authorization: Bearer TA_CLE_OMNIROUTE"
 ```
 
-**Pièges confirmés** : les fournisseurs marqués `tos: avoid` sont exclus de `auto` même après connexion ;
-le mode « sans clé » n'est pas garanti ; les paliers gratuits bougent (re-vérification à date d'écriture,
-comme la règle n°9 du dépôt).
+**Pièges confirmés** : `tos: avoid` → exclus de `auto` même après connexion ; le mode « sans clé »
+n'est pas garanti ; les paliers gratuits bougent (règle n°9 : re-vérifier à la date d'écriture).
 
 ---
 
 ## Étape 2 — Brancher Hermes sur OmniRoute (10 min)
 
 ```powershell
-# Sauvegarde d'abord (Hermes migre son config.yaml à chaque `hermes update`)
 Copy-Item (hermes config path) ((hermes config path) + ".bak-2026-10-12")
 
-# Route principale = fournisseur nommé "omniroute" (garde OPENAI_API_KEY intacte)
 hermes config set model.provider "custom:omniroute"
 hermes config set model.default  "auto"
 hermes config set providers.omniroute.base_url "http://127.0.0.1:20128/v1"
 hermes config set providers.omniroute.key_env  "OMNIROUTE_API_KEY"
 
-# La clé va dans ~/.hermes/.env (jamais dans config.yaml) — un nom UPPER_SNAKE est écrit dans .env
+# la clé va dans .env (jamais dans config.yaml) — un nom UPPER_SNAKE est écrit dans .env
 hermes config set OMNIROUTE_API_KEY "<clé OmniRoute → Dashboard → Endpoints>"
 
-# Vérifier
-hermes doctor          # doit finir sur 0
+hermes doctor            # doit finir sur exit 0
 hermes status
 hermes config get model.provider
 ```
 
-Si `custom:omniroute` est refusé par ta version, replie-toi sur la forme « documentée Ollama »
-(`model.provider: custom` + `model.base_url`) et vois `config.hermes.extrait.yaml` § Repli A.
-Puis un vrai test : `hermes chat "réponds juste OK"` et, sous OmniRoute, regarde l'en-tête de réponse
-`X-OmniRoute-Decision` (il nomme la stratégie et le fournisseur qui a servi la requête).
+Si `custom:omniroute` est refusé par ta version : repli A dans `config.hermes.extrait.yaml`.
+Test réel : `hermes chat "réponds juste OK"`, puis côté OmniRoute regarde l'en-tête
+`X-OmniRoute-Decision` (stratégie + fournisseur qui ont servi la requête).
 
 ---
 
-## Étape 3 — Filet local gratuit (15–30 min)
+## Étape 3 — Filet local, version **palier A** (30 min)
 
-```bash
-ollama pull qwen3:4b          # adapte : voir paliers A/B/C de audit/REFERENCE.md
-ollama ps                     # combien de couches sur GPU
-curl http://localhost:11434/api/tags
+Sans GPU et avec ≤ 8 Go de RAM, le local **ne peut pas** porter l'agent : les modèles 1-3 B des
+paliers A de ton propre audit (`qwen3:0.6b`, `gemma3:1b`, `llama3.2:3b`) n'ont pas de tool-calling
+fiable et tournent à quelques jetons/seconde. On l'utilise donc pour ce qu'il sait faire :
+**dépannage quand OmniRoute tombe**, et **travail privé simple** (lecture, résumé, classement).
+
+```powershell
+ollama pull qwen3:4b        # ~2,5 Go : le meilleur compromis texte/tool-calling sur 8 Go de RAM
+# alternatives palier A : qwen3:1.7b (~1,2 Go), gemma3:1b (~0,8 Go) — plus rapides, moins capables
+ollama ps                   # vérifie ce qui est chargé (0 = tout CPU, c'est attendu)
 ```
-
-Puis :
 
 ```powershell
 hermes config set providers.ollama-local.base_url "http://127.0.0.1:11434/v1"
+hermes config set model.ollama_num_ctx 16384      # pas 64000 : 64k de contexte sur CPU = inutilisable
 hermes fallback add      # interactif : provider "custom", base_url http://127.0.0.1:11434/v1, modèle local
 hermes fallback list
 ```
 
-Points qui font échouer un montage local (tous documentés côté Hermes) :
+```powershell
+# ~/.hermes/.env  (ou: hermes config set HERMES_API_TIMEOUT 1800)
+HERMES_API_TIMEOUT=1800
+```
+
+```powershell
+# garder le modèle en mémoire (sinon 5 min d'inactivité = rechargement complet avant chaque réponse)
+[Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE","24h","User")
+```
 
 | Symptôme | Cause | Correctif |
 |---|---|---|
 | `provider 'ollama' has no endpoint configured` | aucun `base_url` déclaré | `providers.ollama.base_url` (fait ci-dessus) |
-| Réponses vides / coupées | contexte Ollama 2048 par défaut, Hermes veut ≥ 64 k pour l'agentique | `model.ollama_num_ctx` ou un Modelfile avec `PARAMETER num_ctx 64000` |
-| Le modèle recrache du JSON au lieu d'appeler l'outil | pas de tool-calling | choisir un modèle à tool-calling ; Hermes auto-répare les appels malformés |
-| Il « réfléchit » 3 minutes au 1er tour | prefill sans GPU | `HERMES_API_TIMEOUT=1800` dans `.env`, `OLLAMA_KEEP_ALIVE=24h` |
+| réponses vides / coupées | contexte Ollama 2048 par défaut | `model.ollama_num_ctx` (16 k ici) ou un Modelfile `PARAMETER num_ctx 16384` |
+| le modèle recrache du JSON au lieu d'appeler l'outil | pas de tool-calling | c'est structurel en palier A : garde ce modèle pour le texte, pas pour l'agentique |
+| 2-5 min de silence au 1er tour | prefill CPU du prompt + schémas d'outils | `hermes prompt-size` puis `hermes tools` pour désactiver les outils inutiles |
+| il tourne dans le vide | `max_turns: 500` par défaut | `hermes config set agent.max_turns 30` |
 
-**Ne mets pas Codex/ChatGPT dans la chaîne de fallback automatique** : une route gratuite instable
-brûlerait ton quota payant sans que tu le voies. Le payant reste un `/model` **manuel** (voir `ROUTAGE.md`).
+**Ne mets pas Codex/ChatGPT dans la chaîne de fallback** : une route gratuite instable brûlerait ton
+quota payant sans trace. Le payant reste un choix **manuel** (`/model`, voir `ROUTAGE.md`).
 
 ---
 
-## Étape 4 — Tâches auxiliaires (10 min) — seulement si tu veux du local pour le privé
+## Étape 4 — Tâches auxiliaires (5 min)
 
-Défaut = `auto` = le modèle principal. Donc **rien à faire** pour la gratuité.
+Défaut = `auto` = le modèle principal → **rien à faire pour la gratuité**. En palier A :
 
-À faire seulement pour le **profil privé** (les résumés de compression contiennent tout ton contexte) :
+- **profil par défaut** : laisse `auto` (les auxiliaires passent par OmniRoute, gratuit et rapide) ;
+- **profil `prive`** : épingle-les au local, sinon tes compressions partent dans le cloud :
 
 ```powershell
-hermes config set auxiliary.compression.provider            "custom:ollama-local"
-hermes config set auxiliary.compression.model               "qwen3:4b"
-hermes config set auxiliary.title_generation.provider       "custom:ollama-local"
-hermes config set auxiliary.session_search.provider         "custom:ollama-local"
+hermes -p prive config set auxiliary.compression.provider      "custom:ollama-local"
+hermes -p prive config set auxiliary.compression.model         "qwen3:4b"
+hermes -p prive config set auxiliary.title_generation.provider "custom:ollama-local"
+hermes -p prive config set auxiliary.session_search.provider   "custom:ollama-local"
 ```
 
-⚠️ Documenté comme **expérimental** hors OpenRouter/Nous Portal ; si un side-task casse, remets
-`"auto"` (`hermes config unset auxiliary.compression.provider`). Ne touche pas à **vision** :
-il faut un modèle multimodal, et un petit modèle local rendrait l'analyse d'image inutilisable.
+⚠️ Documenté comme **expérimental** hors OpenRouter/Nous Portal : vérifie par une longue session, et
+remets `"auto"` (`hermes config unset auxiliary.compression.provider`) au premier comportement bizarre.
+Ne touche pas à **vision** : il faut un modèle multimodal.
 
 ---
 
-## Étape 5 — Deux mondes séparés : `public\` et `prive\` (30 min)
+## Étape 5 — Deux mondes séparés : `public\` et `prive\` (30 min, Windows)
 
 ```powershell
-hermes profile create prive --clone                    # copie config/.env/SOUL.md/skills/mémoire
+hermes profile create prive --clone
 hermes -p prive config set terminal.cwd "G:\PERSO\PROJET COGNITORIUM\prive"
-hermes -p prive config set model.provider "custom"     # profil privé = 100 % local
+hermes -p prive config set model.provider "custom"
 hermes -p prive config set model.base_url "http://127.0.0.1:11434/v1"
 hermes -p prive config set model.default  "qwen3:4b"
-hermes -p prive config set auxiliary.compression.provider "custom:ollama-local"
-
-hermes project create cognitorium                      # workspace multi-dossiers (état par profil)
-hermes project add-folder cognitorium "G:\PERSO\PROJET COGNITORIUM\public"
+hermes -p prive config set model.ollama_num_ctx 16384
+hermes -p prive config set agent.max_turns 20
+hermes profile list          # le profil actif est marqué d'une étoile
+hermes -p prive              # session privée, 0 % cloud
 ```
 
-Le détail (arborescence, `.gitignore`, sauvegarde hors-ligne, ce qui ne doit **jamais** être synchronisé)
-est dans `STRUCTURE-HYBRIDE.md`.
+Chemins à connaître (Windows natif) :
+
+| Quoi | Où |
+|---|---|
+| `config.yaml` / `.env` du profil par défaut | `%LOCALAPPDATA%\hermes\` (source de vérité : `hermes config path`, `hermes config env-path`) |
+| profil `prive` | `%LOCALAPPDATA%\hermes\profiles\prive\` |
+| skills / mémoire / sessions | `%LOCALAPPDATA%\hermes\skills|memories|sessions\` |
+| workspace multi-dossiers | `hermes project create cognitorium` puis `add-folder` (état par profil) |
+
+Détail complet (arborescence `public\`/`prive\`, `icacls`, sauvegarde `robocopy`, ce qui ne doit
+jamais être synchronisé) : `STRUCTURE-HYBRIDE.md`.
 
 ---
 
-## Étape 6 — Hygiène des requêtes et budget (en continu, gain immédiat)
+## Étape 6 — Hygiène des requêtes et budget (en continu)
 
-1. **Une tâche = une session**, puis le résultat est **écrit dans le dépôt** (rien ne survit à une fenêtre).
-2. `/compress` à chaque jalon ; `hermes prompt-size` quand un modèle local rame (le prompt fixe = système
-   + schémas d'outils) ; `hermes tools` pour **désactiver les outils inutiles** (gain direct sur chaque
-   requête, surtout en local).
-3. **Mesurer, pas deviner** :
+1. **Une tâche = une session**, puis le résultat **écrit dans le dépôt** (rien ne survit à une fenêtre).
+2. `/compress` à chaque jalon ; `hermes prompt-size` si un modèle local rame ; `hermes tools` pour
+   désactiver les outils inutiles (gain direct sur **chaque** requête).
+3. Mesurer, pas deviner :
 
 ```powershell
-hermes usage --provider openai-codex --json          # windows[].used_percent + resets_at
-.\docs\PARAMETRAGE-HERMES\verifier-hermes.ps1 -Quota -Log   # ajoute une ligne à quota-log.csv
+hermes usage --provider openai-codex --json
+.\docs\PARAMETRAGE-HERMES\verifier-hermes.ps1 -Quota -Log    # ajoute une ligne à quota-log.csv
 ```
 
-4. Répartition du quota restant (69 % jusqu'au 19/10, fenêtre 5 h) : ~35–40 % spécifications,
-  15–20 % bugs difficiles, 15 % tampon, le reste **avant** l'échéance. Une spec qui sort du quota
-   finit en fichier dans le dépôt, jamais dans la conversation.
-5. Ne change pas de modèle au milieu d'une longue session : le cache de prompt est perdu
-   (relecture plein tarif). Décide au début, ou `/compress` d'abord.
+4. Quota restant (69 % jusqu'au 19/10, fenêtre 5 h) : ~35–40 % spécifications, 15–20 % bugs
+   difficiles, 15 % tampon, le reste **avant** l'échéance. Une spec qui sort du quota finit en
+   fichier dans le dépôt, jamais dans la conversation.
+5. Ne change pas de modèle au milieu d'une longue session (cache de prompt jeté = relecture plein tarif).
 
 ---
 
-## Étape 7 — Optionnel (à faire seulement après que 0→6 est vert)
+## Étape 7 — Bot Discord (30–40 min, à faire après 0→6)
 
-| Envie | Commande | Remarque |
+Création côté Discord : **Developer Portal** → nouvelle application → **Bot** → copie le token →
+active les intents nécessaires → **OAuth2 → URL Generator** (scope `bot`, permission *Send Messages*)
+→ invite-le sur ton serveur. Puis récupère ton **User ID** (Discord : Paramètres → Avancés →
+Mode développeur → clic droit sur ton nom → Copier l'identifiant).
+
+```powershell
+hermes gateway setup     # choisis Discord : le wizard vérifie le token, les intents, la liste blanche
+# ou manuellement, dans %LOCALAPPDATA%\hermes\.env :
+#   DISCORD_BOT_TOKEN=…
+#   DISCORD_ALLOWED_USERS=<ton user id>
+hermes gateway           # démarre la passerelle
+hermes pairing           # appairage/contrôle d'accès (sécurise les MP)
+```
+
+Points qui évitent les mauvaises surprises (comportements documentés) :
+
+| Réglage | Défaut | À savoir |
 |---|---|---|
-| Bot Telegram/Discord (« router bot ») | `hermes gateway setup` puis `hermes gateway start` | `platforms.telegram.enabled: true` + token BotFather ; vérifie `hermes pairing` (appairage des MP) avant de l'exposer |
-| Piloter la passerelle depuis l'agent | `hermes mcp add omniroute --url http://127.0.0.1:20128/api/mcp/stream --auth header` puis `hermes mcp test omniroute` | OmniRoute expose MCP (110 outils : routage, providers, combos) |
-| Veille / rapports nocturnes | `hermes cron create …` puis `hermes cron doctor` | c'est le « P8 pendant que tu dors » de `audit/REFERENCE.md` |
-| Éviter le cloud pour Codex (CLI) | `hermes codex-runtime migrate --dry-run` | réécrit le bloc géré de `~/.codex/config.toml` |
+| salons | le bot ne répond que sur **@mention** | `DISCORD_FREE_RESPONSE_CHANNELS` pour un salon « chat libre » |
+| MP | il répond à tout | d'où l'intérêt de `DISCORD_ALLOWED_USERS` (sans liste, tout est refusé par défaut) |
+| messages proactifs (cron, rappels) | — | `DISCORD_HOME_CHANNEL` = salon cible |
+| sessions partagées | isolées par utilisateur | `group_sessions_per_user: false` = une seule conversation pour tout le salon (coûts et contexte partagés) |
+| visionneuse | threads automatiques | `DISCORD_AUTO_THREAD` (défaut `true`) |
+
+**Sécurité** : un bot Discord, en palier A, tourne sur ton **modèle principal** = OmniRoute (cloud).
+Donc : le bot sert pour `public\` et les questions courantes, **jamais** pour les documents de `prive\`
+→ ceux-là passent par `hermes -p prive` en local. (Si tu veux un bot qui ne sort pas de la machine,
+il faut le palier B : un modèle local capable de tool-calling.)
+
+Optionnel utile : `hermes mcp add omniroute --url http://127.0.0.1:20128/api/mcp/stream --auth header`
+puis `hermes mcp test omniroute` (OmniRoute expose MCP : routage, providers, combos).
 
 ---
 
@@ -266,30 +287,26 @@ hermes usage --provider openai-codex --json          # windows[].used_percent + 
 
 | Qui | Quoi |
 |---|---|
-| **Moi (agent, ici)** | écrire les configs et scripts, générer les `CARTE.md` par dépôt, rédiger les 3 skills Hermes, adapter les commandes si tu me dis ton OS/répertoire exact |
-| **Toi (3 clics)** | créer la clé OmniRoute, brancher **un** fournisseur (accepter ses CGU), coller le token de bot si tu en veux un — je ne saisis ni tes mots de passe ni tes clés |
-| **Personne** | exposer un port en `0.0.0.0`, committer `.env`, envoyer un document `TP`/perso à un palier gratuit |
+| **Moi (agent)** | écrire les configs, scripts, procédures ; générer les `CARTE.md` des autres dépôts ; adapter si tu me donnes un retour d'exécution |
+| **Toi (clics)** | OmniRoute : créer la clé + brancher **un** fournisseur (accepter ses CGU) ; Discord : créer le bot et coller le token ; publier la purge (`push --mirror`) ; re-cloner |
+| **Personne** | exposer un port en `0.0.0.0`, committer `.env`, envoyer un document de `prive\` à un palier gratuit |
 
 ---
 
 ## Rollback
 
 ```powershell
-Copy-Item ((hermes config path) + ".bak-2026-10-12") (hermes config path) -Force   # restaure
-hermes config unset auxiliary.compression.provider                                   # une clé à la fois
-hermes fallback clear                                                                # vide la chaîne
-hermes profile delete prive                                                          # supprime le profil
+Copy-Item ((hermes config path) + ".bak-2026-10-12") (hermes config path) -Force
+hermes config unset auxiliary.compression.provider
+hermes fallback clear
+hermes profile delete prive
 ```
 
 ---
 
-## Questions ouvertes (elles changent le détail, pas le plan)
+## Ce qui reste ouvert
 
-1. **OS** : Windows natif (`%LOCALAPPDATA%\hermes`) ou WSL2 (`~/.hermes`) ? Les chemins des scripts
-   et de `terminal.cwd` en dépendent.
-2. **GPU** : lequel / combien de VRAM ? C'est ce qui décide du modèle local (paliers A/B/C).
-3. **Bot** : OmniRoute seul, ou un bot Telegram/Discord branché sur la passerelle Hermes ?
-   (Deux configurations différentes, l'une n'implique pas l'autre.)
-4. **OmniRoute est-il déjà installé** ? Si oui, saute l'étape 1.1 et va directement au 1.2.
-
-Dis-moi (1)(2)(3) et je réécris les étapes 3, 5 et 7 avec tes chemins et ton matériel exacts.
+1. **OmniRoute est-il déjà installé** (Docker ou npm) ? Si oui saute 1.1 → 1.2.
+2. **Quel fournisseur gratuit** tu vas brancher (le choix t'appartient : CGU + usage des données).
+3. **La purge** : tu la lances quand personne d'autre ne pousse ; je peux préparer la commande finale
+   dès que tu me dis « go ».

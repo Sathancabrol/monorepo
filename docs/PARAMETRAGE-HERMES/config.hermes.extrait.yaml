@@ -1,5 +1,7 @@
 # =============================================================================
-# EXTRAIT à FUSIONNER dans ~/.hermes/config.yaml  (Windows natif : %LOCALAPPDATA%\hermes\config.yaml)
+# EXTRAIT à FUSIONNER dans le config.yaml actif.
+# Windows natif : %LOCALAPPDATA%\hermes\config.yaml  (profils : %LOCALAPPDATA%\hermes\profiles\<nom>\config.yaml)
+# Chemin réel, toujours :  hermes config path
 # -----------------------------------------------------------------------------
 # ⚠️ NE PAS coller ce fichier par-dessus ton config.yaml installé :
 #    - Hermes gère lui-même `_config_version` (50 au 2026-10-12) et les migrations
@@ -30,13 +32,14 @@ model:
   default: "auto"                # OmniRoute route parmi les connexions éligibles
   # base_url / api_key : à ne PAS mettre ici quand `custom:omniroute` est utilisé
   #   (risque : la clé d'un fournisseur postée sur l'endpoint d'un autre).
-  ollama_num_ctx: 64000          # utile seulement quand le modèle courant est un modèle Ollama
+  ollama_num_ctx: 16384          # PALIER A (CPU, <= 8 Go RAM) : 64 k de contexte est inutilisable.
+  #                               # À monter (32768/64000) seulement avec un GPU (paliers B/C).
   # switch_context_confirm_tokens: 100000   # défaut : demande confirmation avant un switch coûteux
 
 # --- 2. Filet de sécurité gratuit (avant tout recours au payant) -------------
 fallback_providers:
   - provider: custom
-    model: "qwen3:4b"                            # ← adapte au palier matériel (audit/REFERENCE.md §1)
+    model: "qwen3:4b"                            # palier A : ~2,5 Go ; 1,7b/1b = plus rapides, moins capables
     base_url: "http://127.0.0.1:11434/v1"
 # NE PAS ajouter openai-codex ici : un palier gratuit instable brûlerait le quota
 # payant sans trace. Le payant se choisit explicitement dans une session (/model).
@@ -65,15 +68,16 @@ auxiliary:
 
 # --- 4. Comportement / budget -------------------------------------------------
 agent:
-  max_turns: 100        # 500 par défaut : trop cher pour du local ; 20-30 tâche ciblée, 50-100 exploration
+  max_turns: 30         # 500 par défaut : ingérable sur un petit modèle ; 20-30 tâche ciblée, 50-100 exploration
 compression:
   # (bloc existant) garde les valeurs par défaut ; /compress reste ton geste manuel
   proactive_prune_min_reclaim_tokens: 4096
 
 # --- 5. Profil « prive » (à écrire dans profiles/<nom>/config.yaml) ----------
 # hermes profile create prive --clone
-#   → terminal.cwd: "G:\\PERSO\\PROJET COGNITORIUM\\prive"
-#   → model.provider: "custom" + base_url Ollama + default local  (0 % cloud)
+#   → terminal.cwd: "G:\\PERSO\\PROJET COGNITORIUM\\prive"   (Windows)
+#   → model.provider: "custom" + base_url Ollama + default local + ollama_num_ctx: 16384  (0 % cloud)
+#   → agent.max_turns: 20  (palier A : le local fait de la lecture/résumé, pas de l'agentique)
 #   → auxiliary.compression sur custom:ollama-local
 # Le profil « par défaut » travaille sur public\ et peut utiliser OmniRoute.
 

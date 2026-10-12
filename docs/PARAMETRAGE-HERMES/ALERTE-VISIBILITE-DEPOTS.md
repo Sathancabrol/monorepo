@@ -7,11 +7,20 @@
 
 ## 1. Ce qui est constaté (preuves : commandes `gh` reproductibles)
 
-| Dépôt | Visibilité | Taille | Fichiers bureautiques suivis |
+| Dépôt | Visibilité | Taille | Fichiers binaires documentaires suivis |
 |---|---|---|---|
-| **`monorepo`** | 🔴 **public** | 335 Mo | **480** (PDF, XLS/XLSX, DOC, PPT, RTF, images) |
-| **`proto-cognitorium`** | 🔴 **public** | 94 Mo | **50** (dont des CV de tiers et des devis) |
+| **`monorepo`** | 🔴 **public** | 305 Mo (`size-pack`), 1818 fichiers | **268 documents (276 Mo)** + **300 images (64 Mo)** |
+| **`proto-cognitorium`** | 🔴 **public** | 94 Mo | **50 documents** (dont des CV de tiers et des devis) |
 | `COGNITORIUM` · `ETAT-DE-LART-PSYCHOLOGIE` · `HCSM` · `Language-decoder` · `animation-chronos` · `reaserch-engine` · `watchtower` | 🔴 public | 0,1–22 Mo | 0 (sauf 1 pptx côté état de l'art) |
+
+Répartition exacte dans `monorepo` (comptage `git ls-files -z`, insensible aux accents) :
+
+| Emplacement | Documents |
+|---|---|
+| **racine du dépôt** | **210** (dont devis, facture de situation, recours, marché, grille de salaires, plannings, DCE…) |
+| `projects/proto-cognitorium/raw/` | 56 (+ 5 images) |
+| `projects/ETAT-DE-LART-PSYCHOLOGIE/` | 1 pptx (ta présentation — à conserver) |
+| `docs/synthese-talbot-2026/` | 1 docx (ta synthèse — à conserver) |
 
 Contrôle : `gh api repos/Sathancabrol/monorepo --jq .visibility` → `public`.
 
@@ -28,8 +37,9 @@ Contrôle : `gh api repos/Sathancabrol/monorepo --jq .visibility` → `public`.
 |---|---|
 | Marchés / chantiers TP | DCE, CCAP, CCTP, BPU, DQE, métrés, devis d'entreprise (`23-LGPM-044_LABASTIDE D'ANJOU_DEVIS EXE ENTREPRISE`), factures de situation |
 | Litiges | `Recours Barbazan.docx/.pdf`, comptes-rendus de réunion n°1→n°9 |
-| Salaires / RH | `salaire_minima_hierarchiques_occitanie_2022_0.pdf`, `chantier en cours-Nathan` |
-| **Données personnelles de tiers** (`proto-cognitorium/raw/`) | **CV** de plusieurs personnes (Gianni, Amélie Cruagnes, Benoit Bonnamant, Pierre DENIAUD), questionnaires d'information, rapport de stage, mémoires TER |
+| Salaires / RH | `salaire_minima_hierarchiques_occitanie_2022_0.pdf`, `CHANTIER EN COURS-Nathan (2).xlsx` |
+| Images de terrain (racine) | `satellite.PNG`, `satellite 85.PNG`, `streetview.PNG`, `aret.jpeg`, `essai hydraulique.JPG` |
+| **Données personnelles de tiers** (`projects/proto-cognitorium/raw/`) | **CV** de plusieurs personnes (Gianni, Amélie Cruagnes, Benoit Bonnamant, Pierre DENIAUD), questionnaires d'information, rapport de stage, mémoires TER |
 
 Les CV et questionnaires de tiers relèvent de données personnelles : publiés, ils te mettent en
 situation de non-conformité, et toute personne concernée qui demanderait leur suppression y a droit.
@@ -64,20 +74,21 @@ gh api repos/Sathancabrol/monorepo --jq .visibility      # → private
 
 ### Étape C — Purger l'historique (si l'objectif est la suppression réelle)
 
+Procédure complète, mesurée et testée : **`PURGE-HISTORIQUE.md`**. En résumé, avec l'outil fourni :
+
 ```bash
+bash scripts/purger-documents-git.sh --inventaire    # reconnaissance, lecture seule
+bash scripts/purger-documents-git.sh --plan          # ce que les motifs retireraient réellement
 pip install git-filter-repo
-cp -r monorepo monorepo-backup                # copie de sûreté AVANT toute réécriture
-cd monorepo
-git filter-repo --path-glob '*.pdf' --path-glob '*.xls' --path-glob '*.xlsx' \
-                --path-glob '*.doc' --path-glob '*.docx' --path-glob '*.ppt' --path-glob '*.pptx' \
-                --path-glob '*.rtf' --invert-paths
-git push --force --tags                      # réécrit tout : à faire seul, sans collaborateur
+bash scripts/purger-documents-git.sh --executer --sortie "G:/PERSO/purge-2026-10-12"
+# → imprime la commande de publication ; il ne pousse rien tout seul
 ```
 
-- La réécriture **change tous les SHA** : trousseaux, CI, liens d'issues et copies locales deviennent
-  caducs. À faire sur une copie, jamais sur l'unique exemplaire.
-- Ensuite, ouvre un ticket **GitHub Support** (« removal of cached views ») en donnant le dépôt et
-  les SHA concernés : GitHub peut purger le cache des vues des commits devenus inaccessibles.
+- Le script travaille sur un **clone miroir** : ton clone de travail n'est pas modifié.
+- Les motifs vivent dans `docs/PURGE-MOTIFS.txt` (zone A = CV/données de tiers, zone B = les
+  210 documents de la racine, zone C = images, à décommenter).
+- La publication (`push --mirror`) puis le **re-clone de chaque machine** et le ticket
+  **GitHub Support « removal of cached views »** restent à ta main (voir `PURGE-HISTORIQUE.md` § 3-5).
 - Si une personne concernée demande la suppression → même procédure, et c'est la réponse à lui faire.
 
 ### Étape D — Empêcher la récidive (5 min, automatique)

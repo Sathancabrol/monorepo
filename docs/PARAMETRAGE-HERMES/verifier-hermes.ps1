@@ -107,6 +107,20 @@ if ($hermesExe) {
     Ecrire-Warn ("route principale = " + $provider + " (le payant doit rester un choix manuel)")
   }
 
+  # chaîne de repli (le filet gratuit : OmniRoute -> local)
+  $fallback = Invoke-Hermes @('fallback','list')
+  if ([string]::IsNullOrWhiteSpace($fallback)) {
+    Ecrire-Warn "chaîne de repli vide ou illisible — vérifie avec: hermes fallback list"
+  } else {
+    $apercu = (($fallback -split "`n") | Where-Object { $_.Trim() -ne '' } | Select-Object -First 3) -join ' | '
+    Write-Host ("  fallback : " + $apercu)
+    if ($fallback -match 'custom|ollama|localhost|127\.0\.0\.1') {
+      Ecrire-Ok "une cible locale figure dans la chaîne de repli"
+    } else {
+      Ecrire-Warn "aucune cible locale dans la chaîne de repli (étape 3 du README)"
+    }
+  }
+
   # doctor : on capture le code de sortie réel, sans pipe qui le masquerait
   $doctorOut = Join-Path $env:TEMP ("hermes-doctor-" + (Get-Random) + ".log")
   & hermes doctor *> $doctorOut

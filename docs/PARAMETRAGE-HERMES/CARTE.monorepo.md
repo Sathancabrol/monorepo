@@ -78,9 +78,14 @@ done
 
 ## Ce qui ne doit pas sortir de la machine
 
-- Tout le **dossier de chantier TP** présent à la racine (DCE, CCAP/CCTP, DQE, BPU, métrés, prix
-  fournisseurs, plannings, comptes-rendus de réunion, recours) : documents d'entreprise et données
-  de marché. **Jamais** vers un palier gratuit.
+> 🔴 Ces documents sont **déjà suivis par git dans un dépôt public** : voir
+> `docs/PARAMETRAGE-HERMES/ALERTE-VISIBILITE-DEPOTS.md` (constat) et `PURGE-HISTORIQUE.md`
+> (procédure de retrait, avec `scripts/purger-documents-git.sh`).
+
+- Tout le **dossier de chantier TP** présent à la racine (210 documents : DCE, CCAP/CCTP, DQE, BPU,
+  métrés, prix fournisseurs, plannings, comptes-rendus de réunion, recours) : documents d'entreprise
+  et données de marché. **Jamais** vers un palier gratuit.
+- `projects/proto-cognitorium/raw/` : **données personnelles de tiers** (CV, questionnaires).
 - `GITHUB_TOKEN` et tout `.env`.
 - Les images de terrain (satellite, streetview) si elles contiennent des tiers identifiables.
 

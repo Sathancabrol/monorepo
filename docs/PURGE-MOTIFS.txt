@@ -1,0 +1,28 @@
+# Motifs de retrait pour scripts/purger-documents-git.sh
+#
+# Préfixes acceptés : glob: (le * traverse les /)  ·  regex:  ·  path: (chemin exact)  ·  chemin nu
+# `#` en début de ligne = commentaire. Seules les lignes ACTIVES sont retirées de l'historique.
+# Vérifie toujours avec :  bash scripts/purger-documents-git.sh --plan
+
+# ── Zone A — données personnelles de tiers (à garder active) ──────────────────────────────
+#   56 documents + images sous projects/proto-cognitorium/raw : CV de personnes, questionnaires,
+#   devis, rapports de stage, mémoires. C'est la zone la plus sensible.
+glob:projects/*/raw/*
+
+# ── Zone B — documents à la racine du dépôt (210 fichiers, 276 Mo) ────────────────────────
+#   DCE, CCAP/CCTP, BPU, DQE, métrés, devis d'entreprise, factures de situation, recours,
+#   plannings, comptes-rendus, grilles de salaires, guides FNTP/SEQUELEC…
+#   Règle : la racine d'un dépôt de code ne porte aucun document. Ils vivent dans priv\.
+regex:^[^/]+\.(pdf|xls|xlsx|xlsm|doc|docx|ppt|pptx|rtf)$
+
+# ── Zone C — images de la racine, à décommenter si tu les considères privées ──────────────
+#   10 fichiers : satellite.PNG, satellite 85.PNG, streetview.PNG, aret.jpeg, aret 1.jpeg,
+#   aipr test result.png, essai hydraulique.JPG, logo stagiaire tp.JPG,
+#   couches-chaussee-différente couche(. 2)?.jpg
+# regex:^[^/]+\.(png|jpe?g|PNG|JPG|jpeg)$
+
+# ── Volontairement CONSERVÉ (donc jamais listé ici) ───────────────────────────────────────
+#   docs/synthese-talbot-2026/*.docx                       → ta synthèse, publiée dans docs/
+#   projects/ETAT-DE-LART-PSYCHOLOGIE/Cognition_Distribuee_2025.pptx → ta présentation
+#   projects/*/figures/ · projects/*/visuals/ · projects/*/docs/     → figures et docs de projet
+#   projects/watchtower/dist/**/*.png                      → textures CesiumJS (build)

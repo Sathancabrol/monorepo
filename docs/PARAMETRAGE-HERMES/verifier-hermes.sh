@@ -63,6 +63,17 @@ if have hermes; then
     *)                   warn "route principale = $PROVIDER (le payant doit rester manuel)" ;;
   esac
 
+  FALLBACK="$(hermes fallback list 2>/dev/null)"
+  if [ -z "$FALLBACK" ]; then
+    warn "chaîne de repli vide ou illisible — vérifie avec : hermes fallback list"
+  else
+    printf '  fallback : %s\n' "$(printf '%s' "$FALLBACK" | sed '/^[[:space:]]*$/d' | head -3 | tr '\n' '|')"
+    case "$FALLBACK" in
+      *custom*|*ollama*|*localhost*|*127.0.0.1*) ok "une cible locale figure dans la chaîne de repli" ;;
+      *) warn "aucune cible locale dans la chaîne de repli (étape 3 du README)" ;;
+    esac
+  fi
+
   if hermes doctor >/tmp/hermes-doctor-$$.log 2>&1; then
     ok "hermes doctor : exit 0 (aucun problème non résolu)"
   else

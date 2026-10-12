@@ -97,8 +97,10 @@ structure hybride `public\` / `prive\` (`STRUCTURE-HYBRIDE.md`), cartes de dép�
 (`CARTE.template.md`, `CARTE.monorepo.md`).
 
 ⚠️ **À lire d'abord** : `docs/PARAMETRAGE-HERMES/ALERTE-VISIBILITE-DEPOTS.md` — `monorepo` et
-`proto-cognitorium` sont **publics** et contiennent ≈530 fichiers bureautiques suivis (marchés TP,
-devis, factures, recours, **CV de tiers**). Garde-fou fourni : `scripts/garde-fou-donnees.sh`.
+`proto-cognitorium` sont **publics** et contiennent 268 documents (276 Mo) + 300 images suivis
+(marchés TP, devis, factures, recours, **CV de tiers**). Outils fournis :
+`scripts/garde-fou-donnees.sh` (hook `pre-commit`) et `scripts/purger-documents-git.sh`
+(réécriture d'historique sur clone miroir, procédure dans `docs/PARAMETRAGE-HERMES/PURGE-HISTORIQUE.md`).
 
 ## 📚 Fusion réelle (option b)
 
