@@ -89,6 +89,17 @@ git push -u origin arena/01a07e3c-monorepo   # cette branche
 
 Si push 403 → vérifier dans GitHub → Settings → Applications → Installed GitHub Apps → Arena → Repository access : ajouter `monorepo` (ou passer en All repositories), puis reconnecter Arena pour régénérer le token.
 
+## 🧠 Agent local (Hermes) + passerelle gratuite (OmniRoute)
+
+Kit d'exécution dans **`docs/PARAMETRAGE-HERMES/`** : état des lieux (`verifier-hermes.ps1|.sh`),
+config à fusionner (`config.hermes.extrait.yaml`), règle de routage local/gratuit/payant (`ROUTAGE.md`),
+structure hybride `public\` / `prive\` (`STRUCTURE-HYBRIDE.md`), cartes de dépôts
+(`CARTE.template.md`, `CARTE.monorepo.md`).
+
+⚠️ **À lire d'abord** : `docs/PARAMETRAGE-HERMES/ALERTE-VISIBILITE-DEPOTS.md` — `monorepo` et
+`proto-cognitorium` sont **publics** et contiennent ≈530 fichiers bureautiques suivis (marchés TP,
+devis, factures, recours, **CV de tiers**). Garde-fou fourni : `scripts/garde-fou-donnees.sh`.
+
 ## 📚 Fusion réelle (option b)
 
 Le code est déjà importé dans `projects/` (129 Mo, 1090 fichiers). Chaque projet reste autonome (son `package.json` / `requirements.txt` inchangé). La vue `fusion` ne copie pas le code, elle cartographie les interactions ; l'import physique est lui déjà réalisé pour navigation unifiée.

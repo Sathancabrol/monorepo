@@ -1,0 +1,112 @@
+# =============================================================================
+# EXTRAIT à FUSIONNER dans ~/.hermes/config.yaml  (Windows natif : %LOCALAPPDATA%\hermes\config.yaml)
+# -----------------------------------------------------------------------------
+# ⚠️ NE PAS coller ce fichier par-dessus ton config.yaml installé :
+#    - Hermes gère lui-même `_config_version` (50 au 2026-10-12) et les migrations
+#      de `hermes update` ; un fichier collé de l'extérieur casse cette comptabilité.
+#    - Ne recopie que les blocs qui t'intéressent, section par section.
+# Préférer les commandes `hermes config set …` (voir README étape 2), qui écrivent
+# au bon endroit, et garder ce fichier comme référence/lisibilité.
+# Sources : NousResearch/hermes-agent → cli-config.yaml.example, website/docs/
+#          (user-guide/features/fallback-providers.md, guides/local-ollama-setup.md,
+#           user-guide/configuring-models.md, reference/cli-commands.md) lus le 2026-10-12.
+# =============================================================================
+
+# --- 1. Route principale : OmniRoute (gratuit) -------------------------------
+# `providers:` = la forme courante (la liste `custom_providers:` est héritée et
+# migrée automatiquement depuis la config v12). `custom:<nom>` désigne une entrée
+# nommée pour le modèle principal comme pour les tâches auxiliaires.
+providers:
+  omniroute:
+    base_url: "http://127.0.0.1:20128/v1"   # OmniRoute écoute en local (Docker : 127.0.0.1:20128)
+    key_env: "OMNIROUTE_API_KEY"            # nom de la variable dans ~/.hermes/.env (600)
+    # request_timeout_seconds: 120          # défaut 1800 ; abaisse si tu veux échouer vite vers le fallback
+  ollama-local:
+    base_url: "http://127.0.0.1:11434/v1"   # Ollama n'exige pas de clé
+    request_timeout_seconds: 300             # démarrage à froid d'un modèle local
+
+model:
+  provider: "custom:omniroute"   # repli si ta version refuse la forme nommée → voir « Repli A »
+  default: "auto"                # OmniRoute route parmi les connexions éligibles
+  # base_url / api_key : à ne PAS mettre ici quand `custom:omniroute` est utilisé
+  #   (risque : la clé d'un fournisseur postée sur l'endpoint d'un autre).
+  ollama_num_ctx: 64000          # utile seulement quand le modèle courant est un modèle Ollama
+  # switch_context_confirm_tokens: 100000   # défaut : demande confirmation avant un switch coûteux
+
+# --- 2. Filet de sécurité gratuit (avant tout recours au payant) -------------
+fallback_providers:
+  - provider: custom
+    model: "qwen3:4b"                            # ← adapte au palier matériel (audit/REFERENCE.md §1)
+    base_url: "http://127.0.0.1:11434/v1"
+# NE PAS ajouter openai-codex ici : un palier gratuit instable brûlerait le quota
+# payant sans trace. Le payant se choisit explicitement dans une session (/model).
+
+# --- 3. Tâches auxiliaires (11 emplacements) ---------------------------------
+# Défaut = `auto` = le modèle principal → gratuit si le principal est OmniRoute.
+# On n'épingle que pour le PROFIL PRIVÉ (le texte de compression = tout le contexte).
+# Documenté comme expérimental hors OpenRouter / Nous Portal : à vérifier par un
+# `hermes doctor` + une longue session, et à remettre à `auto` au premier doute.
+# (Ne touche pas à `vision` : il faut un modèle multimodal.)
+auxiliary:
+  compression:
+    provider: "custom:ollama-local"   # ou "auto"
+    model: "qwen3:4b"
+    # reasoning_effort: "low"         # coupe la latence/coût des side-tasks sur modèles à raisonnement
+  title_generation:
+    provider: "custom:ollama-local"
+    model: "qwen3:4b"
+    enabled: true
+  session_search:
+    provider: "custom:ollama-local"
+    model: "qwen3:4b"
+    max_concurrency: 3
+  # web_extract: { provider: "auto" } # laisse auto : l'extraction de page a besoin de qualité
+  # background_review: { enabled: true, provider: "auto" }   # revue mémoire/skills après un tour
+
+# --- 4. Comportement / budget -------------------------------------------------
+agent:
+  max_turns: 100        # 500 par défaut : trop cher pour du local ; 20-30 tâche ciblée, 50-100 exploration
+compression:
+  # (bloc existant) garde les valeurs par défaut ; /compress reste ton geste manuel
+  proactive_prune_min_reclaim_tokens: 4096
+
+# --- 5. Profil « prive » (à écrire dans profiles/<nom>/config.yaml) ----------
+# hermes profile create prive --clone
+#   → terminal.cwd: "G:\\PERSO\\PROJET COGNITORIUM\\prive"
+#   → model.provider: "custom" + base_url Ollama + default local  (0 % cloud)
+#   → auxiliary.compression sur custom:ollama-local
+# Le profil « par défaut » travaille sur public\ et peut utiliser OmniRoute.
+
+# =============================================================================
+# Repli A — si ta version refuse `model.provider: "custom:omniroute"`
+# (forme documentée pour un endpoint local, cf. guides/local-ollama-setup.md)
+# =============================================================================
+# model:
+#   provider: "custom"
+#   default: "auto"
+#   base_url: "http://127.0.0.1:20128/v1"
+# et la clé dans ~/.hermes/.env :
+#   hermes config set OPENAI_API_KEY "<clé OmniRoute → Dashboard → Endpoints>"
+# (C'est la clé que la route « custom » lit ; c'est aussi pourquoi la forme nommée
+#  de l'étape 2 est préférable : elle n'écrase pas OPENAI_API_KEY.)
+
+# =============================================================================
+# Repli B — route 100 % locale comme modèle principal (aucun cloud du tout)
+# =============================================================================
+# model:
+#   provider: "custom"
+#   default: "qwen3:4b"
+#   base_url: "http://127.0.0.1:11434/v1"
+
+# =============================================================================
+# Vérifications associées (à lancer, pas à supposer)
+# =============================================================================
+# hermes config path                    # chemin réel du config.yaml
+# hermes config get model.provider      # ce que Hermes va réellement utiliser
+# hermes doctor                         # exit 0 = pas de problème non résolu, 1 sinon
+# hermes status                         # provider actif, credentials, gateway, jobs
+# hermes usage --provider openai-codex --json   # quota (windows: Session / Weekly)
+# hermes prompt-size                    # poids du prompt fixe (système + outils + skills)
+# hermes tools                          # désactiver les outils inutiles (cœur du gain en local)
+# hermes fallback list                  # chaîne de repli effective
+# hermes dump                           # diagnostic partageable (secrets masqués)

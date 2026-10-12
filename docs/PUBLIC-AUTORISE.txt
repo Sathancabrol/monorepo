@@ -1,0 +1,14 @@
+# Fichiers autorisés à être committés alors qu'ils ressemblent à des documents privés.
+#
+# Format : un chemin (ou un motif glob) par ligne, tel qu'il apparaît dans `git diff --cached`.
+#   - `#` en début de ligne = commentaire
+#   - motif glob accepté : `projects/*/raw/*.pdf`
+# Le contrôle est fait par scripts/garde-fou-donnees.sh (hook pre-commit) ; l'ignorer une fois :
+#   GARDE_FOU_OK=1 git commit …
+#
+# Règle de fond (voir docs/PARAMETRAGE-HERMES/ALERTE-VISIBILITE-DEPOTS.md) :
+#   - aucun document de tiers (CV, questionnaire, devis, facture) ne rentre dans un dépôt, même privé ;
+#   - les documents de travail vont dans  G:\PERSO\PROJET COGNITORIUM\prive\
+#   - seuls sont versionnés : code, docs/, projects/*/docs|audit|figures|visuals/.
+#
+# ── Autorisations explicites ci-dessous ────────────────────────────────────────────────
