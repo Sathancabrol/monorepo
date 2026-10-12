@@ -56,6 +56,25 @@ def all_pages(url):
         page += 1
     return result, errors
 
+def preserve_prior_records(old, current, repo, status, error):
+    for key, prior in old.items():
+        if key.startswith(repo + "@"):
+            preserved = dict(prior)
+            preserved["status"] = status
+            preserved["audit_error"] = error
+            current[key] = preserved
+
+def reconcile_unseen_records(old, current, repo, seen, page_errors):
+    for key, prior in old.items():
+        if key.startswith(repo + "@") and prior.get("branch") not in seen and key not in current:
+            preserved = dict(prior)
+            if page_errors:
+                preserved["status"] = "branch_list_error"
+                preserved["audit_error"] = "; ".join(page_errors)
+            else:
+                preserved["status"] = "not_listed_now"
+            current[key] = preserved
+
 def main():
     cfg = load(CONFIG, {})
     previous = load(INDEX, {"branches": {}})
@@ -67,6 +86,7 @@ def main():
         meta, err = get_json(API + "/repos/" + repo)
         if err:
             errors.append({"repo":repo,"stage":"metadata","error":err})
+            preserve_prior_records(old, current, repo, "metadata_error", err)
             continue
         default = meta.get("default_branch", "main")
         branches, page_errors = all_pages(API + "/repos/" + repo + "/branches")
@@ -101,11 +121,7 @@ def main():
                 kw = any(word in name.lower() for word in KEYWORDS)
                 score = (100 if focus else 0) + (80 if is_new else 0) + (60 if changed else 0) + (25 if kw else 0) + (10 if name == default else 0)
                 candidates.append((score, key))
-        for key, prior in old.items():
-            if key.startswith(repo + "@") and prior.get("branch") not in seen and key not in current:
-                gone = dict(prior)
-                gone["status"] = "not_listed_now"
-                current[key] = gone
+        reconcile_unseen_records(old, current, repo, seen, page_errors)
 
     candidates.sort(key=lambda x: (-x[0], x[1]))
     audited = []
@@ -137,7 +153,7 @@ def main():
 
     pending = []
     for rec in current.values():
-        if rec.get("status") in ("needs_tree_audit","tree_error") or rec.get("content_review_status") == "pending":
+        if rec.get("status") in ("needs_tree_audit","tree_error","metadata_error","branch_list_error") or rec.get("content_review_status") == "pending":
             pending.append({k:rec.get(k) for k in ("repo","branch","sha","status","new_branch",
                 "changed_since_audit","content_review_status","tree_file_count","relevant_paths","evidence_url")})
     generated = dt.datetime.now(dt.timezone.utc).isoformat()

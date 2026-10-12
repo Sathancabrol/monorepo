@@ -97,3 +97,16 @@ Un agent qui reprend une recherche doit retrouver la bonne question, son état v
 - Découverte importante : `proto-cognitorium` et `animation-chronos` ont `AGENTS.md` et `AGENT_HANDOFF.md` sur `chore/agent-handoff-2026-10-11`, même si `README.md` n'a pas été trouvé sur `main`. Cela confirme qu'il faut examiner les branches non principales avant de conclure qu'une règle ou un projet manque.
 - Ajout de `tests/test_project_audit_gaps.py` : tests prévus pour pagination, erreur API et JSON d'état invalide. Le workflow est configuré pour les exécuter, mais ils n'ont pas encore été exécutés dans cette session.
 - Le workflow inclut maintenant py_compile, validation JSON et tests unitaires avant le scan; aucune exécution CI réussie n'est revendiquée.
+
+## Session 2026-10-12 — Durcissement ciblé de l'audit
+
+- Besoin traité : confronter l'audit récent à l'état Git actuel et corriger rapidement les risques de faux état.
+- Branche locale : `codex/audit-hardening-2026-10-12`, basée sur `origin/feat/gap-driven-audit-2026-10-11` au SHA `370801b`.
+- Le lancement manuel du workflow vérifie désormais la ref sélectionnée; la publication des rapports reste limitée à `main`.
+- Les erreurs de métadonnées ou de pagination GitHub conservent le dernier inventaire connu avec un état d'erreur explicite, au lieu d'effacer des branches ou de les marquer implicitement absentes.
+- L'audit portefeuille pagine désormais toutes les branches et expose dans ses sorties humaines la complétude de l'inventaire, les erreurs partielles et la ref/SHA génératrice.
+- Vérifications effectuées : revue statique du diff, statut Git, SHA local, `git ls-remote` des branches d'audit GitHub, compilation Python, validation JSON, `git diff --check` et 7 tests unitaires réussis.
+- Commande automatisée : `python -m py_compile ...`, `python -m json.tool ...`, puis `python -m unittest discover -s tests -p 'test_project_audit*.py' -v`.
+- Incident corrigé pendant la vérification : le test de pagination cherchait naïvement `page=1`, qui correspondait aussi à `per_page=100` et bouclait; il analyse maintenant le paramètre d'URL.
+- Build applicatif et exécution GitHub Actions : non exécutés; ils ne sont pas nécessaires pour les scripts locaux, et le workflow distant exige d'abord une branche publiée.
+- Prochaine action : revoir les permissions du workflow, puis demander validation humaine avant commit/push et lancement manuel sur GitHub.

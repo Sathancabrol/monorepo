@@ -39,6 +39,22 @@ def request_json(url: str):
         return None, f"{type(exc).__name__}: {exc}"
 
 
+def request_pages(url: str):
+    rows = []
+    page = 1
+    while True:
+        separator = "&" if "?" in url else "?"
+        data, error = request_json(f"{url}{separator}per_page=100&page={page}")
+        if error:
+            return rows, error
+        if not isinstance(data, list):
+            return rows, "unexpected paginated response"
+        rows.extend(data)
+        if len(data) < 100:
+            return rows, None
+        page += 1
+
+
 def parse_date(value):
     if not value:
         return None
@@ -83,14 +99,14 @@ def audit_repo(owner: str, item: dict) -> dict:
     last_push = parse_date(meta.get("pushed_at"))
     result["days_since_push"] = max(0, (NOW - last_push).days) if last_push else None
 
-    branches, branch_error = request_json(f"{base}/branches?per_page=100")
+    branches, branch_error = request_pages(f"{base}/branches")
     branch_map = {}
     if branch_error:
         result["errors"].append(f"branches: {branch_error}")
-    elif isinstance(branches, list):
+    if branches:
         branch_map = {b.get("name"): b for b in branches}
         result["branch_count"] = len(branches)
-        result["branches_truncated_possible"] = len(branches) == 100
+    result["branch_inventory_complete"] = branch_error is None
 
     branch_names = []
     for candidate in [default_branch] + item.get("focus_branches", []):
@@ -100,7 +116,12 @@ def audit_repo(owner: str, item: dict) -> dict:
     for branch_name in branch_names:
         branch_info = branch_map.get(branch_name)
         if not branch_info:
-            selected.append({"name": branch_name, "exists": False, "tree_readable": False})
+            selected.append({
+                "name": branch_name,
+                "exists": None if branch_error else False,
+                "tree_readable": False,
+                "lookup_status": "unknown_due_to_branch_error" if branch_error else "not_found",
+            })
             continue
         sha = (branch_info.get("commit") or {}).get("sha")
         tree, tree_error = request_json(f"{base}/git/trees/{urllib.parse.quote(sha or '', safe='')}?recursive=1")
@@ -109,6 +130,9 @@ def audit_repo(owner: str, item: dict) -> dict:
             selected.append({"name": branch_name, "exists": True, "sha": sha, "tree_readable": False})
             continue
         entries = tree.get("tree", [])
+        tree_truncated = bool(tree.get("truncated", False))
+        if tree_truncated:
+            result["errors"].append(f"tree {branch_name}: GitHub returned a truncated tree")
         paths = [entry.get("path", "") for entry in entries if entry.get("type") == "blob"]
         lower_paths = [p.lower() for p in paths]
         docs = [p for p in paths if p.lower().startswith(("docs/", "doc/")) or p.lower().endswith((".md", ".rst"))]
@@ -127,6 +151,7 @@ def audit_repo(owner: str, item: dict) -> dict:
             "exists": True,
             "sha": sha,
             "tree_readable": True,
+            "tree_truncated": tree_truncated,
             "file_count": len(paths),
             "docs_count": len(docs),
             "test_file_count": len(tests),
@@ -140,7 +165,7 @@ def audit_repo(owner: str, item: dict) -> dict:
         })
     result["focus_branches"] = selected
     default = next((b for b in selected if b["name"] == default_branch), None)
-    if default and default.get("tree_readable"):
+    if default and default.get("tree_readable") and not default.get("tree_truncated"):
         result["metrics"] = {
             "file_count": default.get("file_count", 0),
             "docs_count": default.get("docs_count", 0),
@@ -158,7 +183,10 @@ def audit_repo(owner: str, item: dict) -> dict:
             "all_configured_paths_present": all(default.get("signal_paths", {}).values()) if item.get("signals") else None,
         }
     else:
-        result["errors"].append("default branch tree could not be inspected")
+        if not default or not default.get("tree_readable"):
+            result["errors"].append("default branch tree could not be inspected")
+        elif default.get("tree_truncated"):
+            result["errors"].append("default branch metrics withheld because the tree is truncated")
     if result.get("days_since_push") is not None and result["days_since_push"] >= 30:
         result["recommendations"].append("Review stale activity: last push is at least 30 days old.")
     if not result["signals"].get("has_documentation_signal", False):
@@ -201,10 +229,11 @@ def build_kpis(repos: list[dict], configured_count: int) -> dict:
 
 def markdown_report(report: dict) -> str:
     k = report["kpis"]
+    source = report.get("generated_from", {})
     lines = [
         "# Automated project audit",
         "",
-        f"> Generated at {report['generated_at']} · Read-only GitHub inventory. File presence is not proof of runtime health.",
+        f"> Generated at {report['generated_at']} from {source.get('ref', 'unknown')} @ {source.get('sha', 'unknown')} · Read-only GitHub inventory. File presence is not proof of runtime health.",
         "",
         "## Portfolio KPIs",
         "",
@@ -220,15 +249,18 @@ def markdown_report(report: dict) -> str:
         "",
         "## Repository status",
         "",
-        "| Priority | Repository | Default branch | Files | Docs | Test files | CI workflows | Days since push | Audit status |",
-        "|---|---|---|---:|---:|---:|---:|---:|---|",
+        "| Priority | Repository | Default branch | Branch inventory | Files | Docs | Test files | CI workflows | Days since push | Audit status | Errors |",
+        "|---|---|---|---|---:|---:|---:|---:|---:|---|---|",
     ]
     for r in report["repositories"]:
         m = r.get("metrics", {})
+        errors = "; ".join(r.get("errors", [])) or "—"
+        errors = errors.replace("|", "\\|").replace("\n", " ")
         lines.append(
             f"| {r.get('priority','')} | [{r['name']}]({r['url']}) | {r.get('default_branch') or '—'} | "
+            f"{'complete' if r.get('branch_inventory_complete') else 'incomplete'} | "
             f"{m.get('file_count','—')} | {m.get('docs_count','—')} | {m.get('test_file_count','—')} | "
-            f"{m.get('workflow_count','—')} | {r.get('days_since_push','—')} | {r['status']} |"
+            f"{m.get('workflow_count','—')} | {r.get('days_since_push','—')} | {r['status']} | {errors} |"
         )
     lines += ["", "## Automatically generated next actions", ""]
     actions = []
@@ -248,7 +280,7 @@ def markdown_report(report: dict) -> str:
         "",
         "- This audit inspects repository metadata, branch names and file trees; it does not run project code.",
         "- Test-like filenames are a signal only. The test suite, coverage and pass/fail status are not inferred.",
-        "- Branch lists are capped at 100 by this initial version; a capped list is flagged in JSON.",
+        "- Branch lists are paginated; an interrupted inventory is flagged as incomplete and missing branches remain unknown rather than absent.",
         "- Recommendations are deterministic heuristics, not AI conclusions.",
         "- KPI targets are portfolio tracking goals, not claims of current quality.",
         "",
@@ -258,6 +290,7 @@ def markdown_report(report: dict) -> str:
 
 def html_report(report: dict) -> str:
     k = report["kpis"]
+    source = report.get("generated_from", {})
     cards = [
         ("Audit coverage", f"{k['audit_coverage_pct']}%", f"{k['repositories_audited']} / {k['repositories_configured']} repos"),
         ("Docs signal", f"{k['documentation_signal_coverage_pct']}%", "Docs/Markdown detected"),
@@ -276,12 +309,14 @@ def html_report(report: dict) -> str:
             f'<td><a href="{html.escape(r["url"], quote=True)}">{html.escape(r["name"])}</a><small>{html.escape(r.get("role",""))}</small></td>',
             f'<td>{html.escape(r.get("priority",""))}</td>',
             f'<td>{html.escape(r.get("default_branch") or "—")}</td>',
+            f'<td>{"complete" if r.get("branch_inventory_complete") else "incomplete"}</td>',
             f'<td>{m.get("file_count","—")}</td>',
             f'<td>{m.get("docs_count","—")}</td>',
             f'<td>{m.get("test_file_count","—")}</td>',
             f'<td>{m.get("workflow_count","—")}</td>',
             f'<td>{r.get("days_since_push","—")}</td>',
             f'<td><span class="status">{html.escape(r["status"])}</span></td>',
+            f'<td>{html.escape("; ".join(r.get("errors", [])) or "—")}</td>',
         ]) + "</tr>")
     actions = []
     rank = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
@@ -299,9 +334,9 @@ main{{max-width:1400px;margin:auto;padding:28px}}h1{{margin:0 0 6px;font-size:28
 .kpi{{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}}.kpi strong{{display:block;font-size:30px;margin:6px 0}}
 .table-wrap{{overflow:auto;border:1px solid var(--line);border-radius:12px}}table{{border-collapse:collapse;width:100%;min-width:850px;background:var(--panel)}}th,td{{text-align:left;padding:12px;border-bottom:1px solid var(--line)}}th{{color:var(--muted);font-weight:600}}a{{color:var(--accent)}}small{{display:block;margin-top:3px}}.status{{padding:3px 7px;border:1px solid var(--line);border-radius:6px}}li{{margin:8px 0}}.notice{{margin-top:20px;padding:14px;border:1px solid var(--line);border-radius:10px;color:var(--muted)}}
 </style></head><body><main>
-<h1>Project Portfolio Audit</h1><div class="muted">Généré le {html.escape(report['generated_at'])} · inventaire automatisé en lecture seule</div>
+<h1>Project Portfolio Audit</h1><div class="muted">Généré le {html.escape(report['generated_at'])} depuis {html.escape(source.get('ref', 'unknown'))} @ {html.escape(source.get('sha', 'unknown'))} · inventaire automatisé en lecture seule</div>
 <section class="grid">{card_html}</section>
-<h2>Dépôts suivis</h2><div class="table-wrap"><table><thead><tr><th>Dépôt</th><th>Priorité</th><th>Branche principale</th><th>Fichiers</th><th>Docs</th><th>Fichiers test</th><th>Workflows CI</th><th>Jours depuis push</th><th>Audit</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+<h2>Dépôts suivis</h2><div class="table-wrap"><table><thead><tr><th>Dépôt</th><th>Priorité</th><th>Branche principale</th><th>Inventaire branches</th><th>Fichiers</th><th>Docs</th><th>Fichiers test</th><th>Workflows CI</th><th>Jours depuis push</th><th>Audit</th><th>Erreurs</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
 <h2>Prochaines actions proposées</h2><ul>{action_html or '<li>Aucune action générée par les règles actuelles.</li>'}</ul>
 <div class="notice"><b>Limite de preuve :</b> présence de fichiers ≠ tests réussis ≠ application fonctionnelle. L'audit actuel ne lance pas les projets et n'évalue pas la qualité scientifique ou métier des données.</div>
 </main></body></html>"""
@@ -317,6 +352,10 @@ def main() -> int:
     report = {
         "schema_version": 1,
         "generated_at": NOW.isoformat(),
+        "generated_from": {
+            "ref": os.getenv("GITHUB_REF") or os.getenv("GITHUB_REF_NAME") or "local-unrecorded",
+            "sha": os.getenv("GITHUB_SHA") or "local-unrecorded",
+        },
         "portfolio_name": config.get("portfolio_name", "Project portfolio"),
         "kpi_rules": config.get("kpi_rules", {}),
         "kpis": build_kpis(repos, len(config.get("repositories", []))),

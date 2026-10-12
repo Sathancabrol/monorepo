@@ -111,10 +111,12 @@ These are review prompts, not automatic deletion, merges, or code changes.
 ## Operational notes
 
 - Public GitHub API access is rate-limited; use a least-privilege GH_AUDIT_TOKEN secret when required.
-- The gap scanner paginates branch listing and caps tree inspections per run (default 15); unprocessed branches remain queued.
+- Both portfolio and gap scanners paginate branch listings. The gap scanner caps tree inspections per run (default 15); unprocessed branches remain queued.
 - GitHub Actions schedules may start later than the requested minute.
 - Reports are committed to main; report paths must not trigger an infinite workflow loop.
 - Workflow execution and local runtime have not yet been verified by this document.
+- Manual workflow runs check out the selected ref, so a feature branch can validate its own audit code. Report publication remains restricted to `main`.
+- Metadata or branch-list API failures preserve the last known branch records as explicit error states instead of making previously indexed branches disappear or look deleted.
 
 ## Verification status after automation-standard update
 
