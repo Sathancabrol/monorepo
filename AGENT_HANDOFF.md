@@ -108,5 +108,8 @@ Un agent qui reprend une recherche doit retrouver la bonne question, son état v
 - Vérifications effectuées : revue statique du diff, statut Git, SHA local, `git ls-remote` des branches d'audit GitHub, compilation Python, validation JSON, `git diff --check` et 7 tests unitaires réussis.
 - Commande automatisée : `python -m py_compile ...`, `python -m json.tool ...`, puis `python -m unittest discover -s tests -p 'test_project_audit*.py' -v`.
 - Incident corrigé pendant la vérification : le test de pagination cherchait naïvement `page=1`, qui correspondait aussi à `per_page=100` et bouclait; il analyse maintenant le paramètre d'URL.
-- Build applicatif et exécution GitHub Actions : non exécutés; ils ne sont pas nécessaires pour les scripts locaux, et le workflow distant exige d'abord une branche publiée.
-- Prochaine action : revoir les permissions du workflow, puis demander validation humaine avant commit/push et lancement manuel sur GitHub.
+- Build applicatif : non exécuté car hors périmètre des scripts d'audit.
+- Publication contrôlée : commits `f6d0dc0` et `d78a3bc` poussés uniquement sur `codex/audit-hardening-2026-10-12`.
+- Validation distante : GitHub Actions `Project portfolio audit`, exécution `38191715595`, terminée avec succès sur `d78a3bc`.
+- Vérification de non-régression Git : `main` reste à `a18938d`; les branches `feat/gap-driven-audit-2026-10-11` (`370801b`) et `feat/automated-project-audit-2026-10-11` (`d97f4b4`) sont inchangées.
+- Prochaine action : revue humaine du diff et des permissions `contents: write`; aucune PR ni fusion n'a été créée.

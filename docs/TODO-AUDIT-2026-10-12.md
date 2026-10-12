@@ -12,7 +12,7 @@ Base : `origin/feat/gap-driven-audit-2026-10-11` au SHA `370801b`
 - [x] Paginer l'inventaire des branches dans l'audit portefeuille.
 - [x] Ne pas déclarer absente une branche non retrouvée lorsque l'inventaire est incomplet.
 - [x] Exécuter les validations locales automatisées : compilation Python, JSON, 7 tests unitaires et contrôle du diff réussis le 12 octobre 2026.
-- [ ] Vérifier l'exécution GitHub Actions déclenchée automatiquement par le push de la branche, sans publication vers `main`.
+- [x] Vérifier l'exécution GitHub Actions déclenchée automatiquement par le push : succès sur `d78a3bc`, exécution `38191715595`, sans modification de `main` (`a18938d`).
 
 ## P1 — qualité des preuves
 
@@ -26,9 +26,9 @@ Base : `origin/feat/gap-driven-audit-2026-10-11` au SHA `370801b`
 ## P2 — intégration
 
 - [x] Comparer cette branche avec `feat/automated-project-audit-2026-10-11` et référencer les quatre audits métier qui restent conservés sur cette branche distante : `AUDIT-REUTILISATION-WATCHTOWER-COGNITORIUM-2026-10-11.md`, `DELTA-COMPARAISONS-BRANCHES-2026-10-11.md`, `MATRICE-REUTILISATION-TRANSVERSALE-2026-10-11.md` et `TODO-AUDIT-TRANSVERSAL-2026-10-11.md`.
-- [ ] Préparer un diff de fusion minimal, sans intégrer les propositions WorldTwin ou mémoire sur mesure non demandées.
+- [x] Préparer une branche isolée et un diff minimal, sans intégrer les propositions WorldTwin ou mémoire sur mesure non demandées.
 - [x] Mettre à jour le handoff avec les résultats réellement exécutés.
-- [ ] Demander validation humaine avant commit, push, PR ou fusion.
+- [x] Obtenir la validation humaine avant commit et push. Aucune PR ni fusion effectuée.
 
 ## Critère de sortie
 
