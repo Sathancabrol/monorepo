@@ -7,9 +7,11 @@ on:
   push:
     branches:
       - main
+      - "codex/audit-*"
     paths:
       - "data/audit/portfolio.json"
       - "scripts/project_audit/**"
+      - "tests/test_project_audit*.py"
       - ".github/workflows/project-audit.yml"
       - "docs/AUDIT_AUTOMATION.md"
       - "docs/AUDIT_GAP_DRIVEN_PROTOCOL.md"

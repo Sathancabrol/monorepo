@@ -12,7 +12,7 @@ Base : `origin/feat/gap-driven-audit-2026-10-11` au SHA `370801b`
 - [x] Paginer l'inventaire des branches dans l'audit portefeuille.
 - [x] Ne pas déclarer absente une branche non retrouvée lorsque l'inventaire est incomplet.
 - [x] Exécuter les validations locales automatisées : compilation Python, JSON, 7 tests unitaires et contrôle du diff réussis le 12 octobre 2026.
-- [ ] Lancer manuellement le workflow sur la branche et vérifier les artefacts sans publication vers `main`.
+- [ ] Vérifier l'exécution GitHub Actions déclenchée automatiquement par le push de la branche, sans publication vers `main`.
 
 ## P1 — qualité des preuves
 

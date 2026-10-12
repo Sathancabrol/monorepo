@@ -13,7 +13,7 @@ Maintain one repeatable audit workflow across the project ecosystem so each audi
 - Initial rules inventory with source SHAs and explicit gaps: docs/PROJECT_RULES_INVENTORY.md
 - Workflow: .github/workflows/project-audit.yml
 - Reports: reports/project-audit/latest.json, latest.md, index.html, history.jsonl, branch-index.json, gaps.json, gaps.md
-- Trigger: daily at 06:17 UTC, manual dispatch, or relevant audit-code/config changes on main.
+- Trigger: daily at 06:17 UTC, manual dispatch, or relevant audit-code/config changes on `main` and `codex/audit-*` branches. Publication remains restricted to `main`.
 - Scope: all paginated branches for configured repositories; new, changed, or unreviewed branch trees are prioritized in bounded batches. Relevant paths include agent instructions, handoffs, policies, standards, decisions, roadmaps, tests and workflows.
 - Validation: Python syntax and portfolio JSON are checked before an audit run.
 - Rule inventory: finding a rule file is only discovery. Its contents, scope, SHA, conflicts and downstream applicability still require review.
