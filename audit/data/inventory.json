@@ -1,0 +1,2412 @@
+{
+ "scopes": {
+  "S0-racine-fichiers-directs": {
+   "files": 224,
+   "size_bytes": 236012028,
+   "size_human": "225.1 Mo",
+   "exts": [
+    [
+     ".pdf",
+     167
+    ],
+    [
+     ".xlsx",
+     17
+    ],
+    [
+     ".xls",
+     15
+    ],
+    [
+     ".png",
+     4
+    ],
+    [
+     ".jpg",
+     4
+    ],
+    [
+     ".doc",
+     3
+    ],
+    [
+     ".docx",
+     3
+    ],
+    [
+     ".ppt",
+     3
+    ],
+    [
+     ".jpeg",
+     2
+    ],
+    [
+     ".rtf",
+     2
+    ],
+    [
+     "(sans)",
+     1
+    ],
+    [
+     ".json",
+     1
+    ],
+    [
+     ".md",
+     1
+    ],
+    [
+     ".txt",
+     1
+    ]
+   ]
+  },
+  "S1-app": {
+   "label": "app",
+   "root": "app",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 6,
+   "size_bytes": 42611,
+   "size_human": "41.6 Ko",
+   "by_ext": [
+    {
+     "ext": ".html",
+     "files": 4,
+     "size": 32170
+    },
+    {
+     "ext": ".py",
+     "files": 2,
+     "size": 10441
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "templates",
+     "files": 4,
+     "size": 32170
+    },
+    {
+     "dir": "(racine)",
+     "files": 2,
+     "size": 10441
+    }
+   ],
+   "loc": [
+    {
+     "lang": "HTML",
+     "lines": 544,
+     "files": 4
+    },
+    {
+     "lang": "Python",
+     "lines": 209,
+     "files": 2
+    }
+   ],
+   "loc_total": 753,
+   "loc_other": [],
+   "code_files": 6,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [],
+   "docs_count": 0,
+   "data_files": [],
+   "data_count": 0,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "templates/monorepo.html",
+     "size": 14062
+    },
+    {
+     "path": "main.py",
+     "size": 10441
+    },
+    {
+     "path": "templates/repos.html",
+     "size": 8996
+    },
+    {
+     "path": "templates/index.html",
+     "size": 6216
+    },
+    {
+     "path": "templates/base.html",
+     "size": 2896
+    },
+    {
+     "path": "__init__.py",
+     "size": 0
+    }
+   ]
+  },
+  "S1-scripts": {
+   "label": "scripts",
+   "root": "scripts",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 4,
+   "size_bytes": 32783,
+   "size_human": "32.0 Ko",
+   "by_ext": [
+    {
+     "ext": ".py",
+     "files": 3,
+     "size": 32057
+    },
+    {
+     "ext": ".sh",
+     "files": 1,
+     "size": 726
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "(racine)",
+     "files": 4,
+     "size": 32783
+    }
+   ],
+   "loc": [
+    {
+     "lang": "Python",
+     "lines": 686,
+     "files": 3
+    },
+    {
+     "lang": "Shell",
+     "lines": 22,
+     "files": 1
+    }
+   ],
+   "loc_total": 708,
+   "loc_other": [],
+   "code_files": 4,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [],
+   "docs_count": 0,
+   "data_files": [],
+   "data_count": 0,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 8,
+   "todos_top": [
+    [
+     "audit_inventory.py",
+     8
+    ]
+   ],
+   "biggest": [
+    {
+     "path": "github_inventory.py",
+     "size": 11261
+    },
+    {
+     "path": "audit_memory.py",
+     "size": 10829
+    },
+    {
+     "path": "audit_inventory.py",
+     "size": 9967
+    },
+    {
+     "path": "publish_monorepo.sh",
+     "size": 726
+    }
+   ]
+  },
+  "S1-data": {
+   "label": "data",
+   "root": "data",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 2,
+   "size_bytes": 58924,
+   "size_human": "57.5 Ko",
+   "by_ext": [
+    {
+     "ext": "(sans)",
+     "files": 1,
+     "size": 0
+    },
+    {
+     "ext": ".json",
+     "files": 1,
+     "size": 58924
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "(racine)",
+     "files": 2,
+     "size": 58924
+    }
+   ],
+   "loc": [],
+   "loc_total": 0,
+   "loc_other": [
+    {
+     "lang": "JSON",
+     "lines": 1459
+    }
+   ],
+   "code_files": 1,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [],
+   "docs_count": 0,
+   "data_files": [
+    "github_inventory.json"
+   ],
+   "data_count": 1,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "github_inventory.json",
+     "size": 58924
+    },
+    {
+     "path": ".gitkeep",
+     "size": 0
+    }
+   ]
+  },
+  "S1-docs": {
+   "label": "docs",
+   "root": "docs",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 7,
+   "size_bytes": 4223371,
+   "size_human": "4.0 Mo",
+   "by_ext": [
+    {
+     "ext": ".md",
+     "files": 4,
+     "size": 86718
+    },
+    {
+     "ext": ".docx",
+     "files": 1,
+     "size": 2056126
+    },
+    {
+     "ext": ".html",
+     "files": 1,
+     "size": 88852
+    },
+    {
+     "ext": ".png",
+     "files": 1,
+     "size": 1991675
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "synthese-talbot-2026",
+     "files": 5,
+     "size": 4206799
+    },
+    {
+     "dir": "(racine)",
+     "files": 2,
+     "size": 16572
+    }
+   ],
+   "loc": [
+    {
+     "lang": "HTML",
+     "lines": 737,
+     "files": 1
+    }
+   ],
+   "loc_total": 737,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 532
+    }
+   ],
+   "code_files": 5,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [
+    "DOSSIER-CHANTIER-INDEX.md",
+    "GITHUB_INVENTORY.md",
+    "synthese-talbot-2026/README.md",
+    "synthese-talbot-2026/Synthese-Talbot-2026-v4.docx",
+    "synthese-talbot-2026/Synthese-Talbot-2026-v4.md"
+   ],
+   "docs_count": 5,
+   "data_files": [],
+   "data_count": 0,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "synthese-talbot-2026/Synthese-Talbot-2026-v4.docx",
+     "size": 2056126
+    },
+    {
+     "path": "synthese-talbot-2026/images/lattice.png",
+     "size": 1991675
+    },
+    {
+     "path": "synthese-talbot-2026/Synthese-Talbot-2026-v4.html",
+     "size": 88852
+    },
+    {
+     "path": "synthese-talbot-2026/Synthese-Talbot-2026-v4.md",
+     "size": 68242
+    },
+    {
+     "path": "DOSSIER-CHANTIER-INDEX.md",
+     "size": 13464
+    },
+    {
+     "path": "GITHUB_INVENTORY.md",
+     "size": 3108
+    },
+    {
+     "path": "synthese-talbot-2026/README.md",
+     "size": 1904
+    }
+   ]
+  },
+  "P-COGNITORIUM": {
+   "label": "COGNITORIUM",
+   "root": "projects/COGNITORIUM",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 131,
+   "size_bytes": 23997537,
+   "size_human": "22.9 Mo",
+   "by_ext": [
+    {
+     "ext": ".js",
+     "files": 60,
+     "size": 1619246
+    },
+    {
+     "ext": ".md",
+     "files": 53,
+     "size": 186350
+    },
+    {
+     "ext": ".png",
+     "files": 12,
+     "size": 21964488
+    },
+    {
+     "ext": ".html",
+     "files": 3,
+     "size": 58956
+    },
+    {
+     "ext": ".css",
+     "files": 2,
+     "size": 8623
+    },
+    {
+     "ext": ".jpg",
+     "files": 1,
+     "size": 159874
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "watchtower-mods",
+     "files": 62,
+     "size": 1702196
+    },
+    {
+     "dir": "docs",
+     "files": 48,
+     "size": 139289
+    },
+    {
+     "dir": "(racine)",
+     "files": 14,
+     "size": 22125892
+    },
+    {
+     "dir": "learning",
+     "files": 7,
+     "size": 30160
+    }
+   ],
+   "loc": [
+    {
+     "lang": "JavaScript",
+     "lines": 26716,
+     "files": 60
+    },
+    {
+     "lang": "HTML",
+     "lines": 973,
+     "files": 3
+    },
+    {
+     "lang": "CSS",
+     "lines": 2,
+     "files": 2
+    }
+   ],
+   "loc_total": 27691,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 2291
+    }
+   ],
+   "code_files": 118,
+   "manifests": [
+    "watchtower-mods/vite.config.js"
+   ],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [
+    "README.md",
+    "docs/README.md",
+    "docs/agents/3d-agent.md",
+    "docs/agents/README.md",
+    "docs/agents/cad-agent.md",
+    "docs/agents/coding-agent.md",
+    "docs/agents/data-agent.md",
+    "docs/agents/gis-agent.md",
+    "docs/agents/ia-agent.md",
+    "docs/agents/learning-agent.md",
+    "docs/agents/manufacturing-agent.md",
+    "docs/agents/orchestrator.md",
+    "docs/agents/project-agent.md",
+    "docs/agents/research-agent.md",
+    "docs/agents/simulation-agent.md",
+    "docs/agents/verification-agent.md",
+    "docs/architecture/convergence.md",
+    "docs/architecture/current.md",
+    "docs/architecture/data-model.md",
+    "docs/architecture/target.md",
+    "docs/assets/README.md",
+    "docs/audits/costs/001-costs.md",
+    "docs/audits/external/002-bookofshapes.md",
+    "docs/audits/external/003-stack-donnees-memoire.md",
+    "docs/audits/external/004-stack-cad-fabrication.md",
+    "docs/audits/external/005-stack-llm-agents.md",
+    "docs/audits/internal/001-audit-global.md",
+    "docs/audits/security/001-security.md",
+    "docs/constitution/00-vision.md",
+    "docs/constitution/01-mission.md",
+    "docs/constitution/02-principles.md",
+    "docs/constitution/03-architecture.md",
+    "docs/constitution/04-roadmap.md",
+    "docs/constitution/05-buy-build-wrap.md",
+    "docs/constitution/06-budget.md",
+    "docs/constitution/07-risks.md",
+    "docs/constitution/08-competitors.md",
+    "docs/constitution/09-decision-log.md",
+    "docs/etat-des-lieux/01-cognitorium.md",
+    "docs/etat-des-lieux/02-proto-cognitorium.md",
+    "docs/etat-des-lieux/03-hcsm.md",
+    "docs/etat-des-lieux/04-reaserch-engine.md",
+    "docs/etat-des-lieux/05-etat-de-lart-psychologie.md",
+    "docs/etat-des-lieux/06-watchtower.md",
+    "docs/etat-des-lieux/07-animation-chronos.md",
+    "docs/etat-des-lieux/08-language-decoder.md",
+    "docs/etat-des-lieux/09-synthese.md",
+    "docs/etat-des-lieux/README.md",
+    "docs/glossary.md",
+    "learning/ARCHITECTURE.md",
+    "watchtower-mods/APPLIQUER.md",
+    "watchtower-mods/README.md",
+    "watchtower-mods/SOURCES-FR.md"
+   ],
+   "docs_count": 53,
+   "data_files": [],
+   "data_count": 0,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 2,
+   "todos_top": [
+    [
+     "docs/audits/internal/001-audit-global.md",
+     1
+    ],
+    [
+     "docs/etat-des-lieux/02-proto-cognitorium.md",
+     1
+    ]
+   ],
+   "biggest": [
+    {
+     "path": "téléchargement (1).png",
+     "size": 2133541
+    },
+    {
+     "path": "Generated Image July 30, 2026 - 5_50AM.png",
+     "size": 2115076
+    },
+    {
+     "path": "Generated Image August 01, 2026 - 10_50PM.png",
+     "size": 2101976
+    },
+    {
+     "path": "Generated Image August 01, 2026 - 10_44PM (1).png",
+     "size": 2060058
+    },
+    {
+     "path": "Generated Image August 01, 2026 - 10_45PM.png",
+     "size": 2033760
+    },
+    {
+     "path": "Generated Image July 27, 2026 - 6_55PM.png",
+     "size": 1982095
+    },
+    {
+     "path": "Generated Image July 27, 2026 - 6_55PM (1).png",
+     "size": 1980432
+    },
+    {
+     "path": "Generated Image July 27, 2026 - 6_56PM (1).png",
+     "size": 1969673
+    },
+    {
+     "path": "Generated Image July 30, 2026 - 1_23AM.png",
+     "size": 1802962
+    },
+    {
+     "path": "Gemini_Generated_Image_ujp0osujp0osujp0.png",
+     "size": 1734378
+    },
+    {
+     "path": "Generated Image July 29, 2026 - 10_15PM.png",
+     "size": 1690737
+    },
+    {
+     "path": "watchtower-mods/src/ui.js",
+     "size": 456011
+    },
+    {
+     "path": "generated-image.png",
+     "size": 359800
+    },
+    {
+     "path": "watchtower-mods/vite.config.js",
+     "size": 343080
+    },
+    {
+     "path": "a6aab6c7-0962-42ce-b4ce-cb70b5d2095a.jpg",
+     "size": 159874
+    }
+   ]
+  },
+  "P-ETAT-DE-LART-PSYCHOLOGIE": {
+   "label": "ETAT-DE-LART-PSYCHOLOGIE",
+   "root": "projects/ETAT-DE-LART-PSYCHOLOGIE",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 37,
+   "size_bytes": 3801845,
+   "size_human": "3.6 Mo",
+   "by_ext": [
+    {
+     "ext": ".md",
+     "files": 19,
+     "size": 253862
+    },
+    {
+     "ext": ".py",
+     "files": 4,
+     "size": 99925
+    },
+    {
+     "ext": ".html",
+     "files": 4,
+     "size": 101528
+    },
+    {
+     "ext": ".csv",
+     "files": 4,
+     "size": 47641
+    },
+    {
+     "ext": ".png",
+     "files": 3,
+     "size": 3078772
+    },
+    {
+     "ext": "(sans)",
+     "files": 1,
+     "size": 56
+    },
+    {
+     "ext": ".pptx",
+     "files": 1,
+     "size": 60187
+    },
+    {
+     "ext": ".jpg",
+     "files": 1,
+     "size": 159874
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "docs",
+     "files": 12,
+     "size": 183788
+    },
+    {
+     "dir": "output",
+     "files": 12,
+     "size": 2830229
+    },
+    {
+     "dir": "(racine)",
+     "files": 6,
+     "size": 606774
+    },
+    {
+     "dir": "app",
+     "files": 3,
+     "size": 140933
+    },
+    {
+     "dir": "data",
+     "files": 2,
+     "size": 26665
+    },
+    {
+     "dir": "scripts",
+     "files": 2,
+     "size": 13456
+    }
+   ],
+   "loc": [
+    {
+     "lang": "HTML",
+     "lines": 1349,
+     "files": 4
+    },
+    {
+     "lang": "Python",
+     "lines": 1220,
+     "files": 4
+    }
+   ],
+   "loc_total": 2569,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 2567
+    },
+    {
+     "lang": "CSV",
+     "lines": 116
+    }
+   ],
+   "code_files": 31,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [
+    "Cognition_Distribuee_2025.pptx",
+    "README.md",
+    "README_PRESENTATION.md",
+    "data/README.md",
+    "docs/ANALYSE_CONCEPTS_COGNITORIUM_4E.md",
+    "docs/ARCHITECTURE_BASE_DE_DONNEES.md",
+    "docs/ETAT_ART_CRITIQUE_PSYCHOLOGIE_2020_2026_CORRIGE.md",
+    "docs/GUIDE_REMPLISSAGE_IA.md",
+    "docs/INDEX_PROJET.md",
+    "docs/METACOGNITION_EDUCATION_2025_2026.md",
+    "docs/PRISMA_FLOW.md",
+    "docs/SEARCH_STRATEGIES.md",
+    "docs/SOURCE_PASTE_ANALYSE_4E_ORIGINAL.md",
+    "docs/SYNTHESE_CIBLEE_2026.md",
+    "docs/TAXONOMIE_PSYCHOLOGIE_COGNITIVE.md",
+    "output/classification_methodologique.md",
+    "output/guide_remplissage_ia.md",
+    "output/mermaid_methode_scientifique.md",
+    "output/mermaid_mindmap.md",
+    "output/tableau_etat_art.md"
+   ],
+   "docs_count": 20,
+   "data_files": [
+    "data/nodes_etat_art_psychologie.csv",
+    "docs/TEMPLATE_CHAMPS.csv",
+    "output/etat_art_psychologie_cognitive.csv",
+    "output/template_champs_base_donnees.csv"
+   ],
+   "data_count": 4,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "output/visual/etat_art_diagram.png",
+     "size": 1883360
+    },
+    {
+     "path": "output/visual/methode_matrix.png",
+     "size": 835612
+    },
+    {
+     "path": "generated-image.png",
+     "size": 359800
+    },
+    {
+     "path": "a6aab6c7-0962-42ce-b4ce-cb70b5d2095a.jpg",
+     "size": 159874
+    },
+    {
+     "path": "app/main.py",
+     "size": 82439
+    },
+    {
+     "path": "Cognition_Distribuee_2025.pptx",
+     "size": 60187
+    },
+    {
+     "path": "app/templates/index.html",
+     "size": 54464
+    },
+    {
+     "path": "docs/ETAT_ART_CRITIQUE_PSYCHOLOGIE_2020_2026_CORRIGE.md",
+     "size": 49964
+    },
+    {
+     "path": "docs/ANALYSE_CONCEPTS_COGNITORIUM_4E.md",
+     "size": 38759
+    },
+    {
+     "path": "data/nodes_etat_art_psychologie.csv",
+     "size": 25979
+    },
+    {
+     "path": "output/visual/taxonomy_graph.html",
+     "size": 23382
+    },
+    {
+     "path": "docs/GUIDE_REMPLISSAGE_IA.md",
+     "size": 23157
+    },
+    {
+     "path": "output/guide_remplissage_ia.md",
+     "size": 23157
+    },
+    {
+     "path": "docs/SOURCE_PASTE_ANALYSE_4E_ORIGINAL.md",
+     "size": 19383
+    },
+    {
+     "path": "output/visual/index.html",
+     "size": 19309
+    }
+   ]
+  },
+  "P-HCSM": {
+   "label": "HCSM",
+   "root": "projects/HCSM",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 87,
+   "size_bytes": 279572,
+   "size_human": "273.0 Ko",
+   "by_ext": [
+    {
+     "ext": ".md",
+     "files": 52,
+     "size": 171432
+    },
+    {
+     "ext": ".json",
+     "files": 23,
+     "size": 28963
+    },
+    {
+     "ext": ".py",
+     "files": 7,
+     "size": 61298
+    },
+    {
+     "ext": "(sans)",
+     "files": 2,
+     "size": 1219
+    },
+    {
+     "ext": ".cff",
+     "files": 1,
+     "size": 854
+    },
+    {
+     "ext": ".yaml",
+     "files": 1,
+     "size": 15782
+    },
+    {
+     "ext": ".txt",
+     "files": 1,
+     "size": 24
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "validator",
+     "files": 32,
+     "size": 93409
+    },
+    {
+     "dir": "docs",
+     "files": 16,
+     "size": 79737
+    },
+    {
+     "dir": "figures",
+     "files": 8,
+     "size": 8268
+    },
+    {
+     "dir": "(racine)",
+     "files": 6,
+     "size": 15949
+    },
+    {
+     "dir": "scientific",
+     "files": 6,
+     "size": 8941
+    },
+    {
+     "dir": "ontology",
+     "files": 5,
+     "size": 24958
+    },
+    {
+     "dir": "model",
+     "files": 4,
+     "size": 10510
+    },
+    {
+     "dir": "research",
+     "files": 4,
+     "size": 12711
+    },
+    {
+     "dir": "papers",
+     "files": 3,
+     "size": 17815
+    },
+    {
+     "dir": "specs",
+     "files": 3,
+     "size": 7274
+    }
+   ],
+   "loc": [
+    {
+     "lang": "Python",
+     "lines": 1508,
+     "files": 7
+    },
+    {
+     "lang": "YAML",
+     "lines": 409,
+     "files": 1
+    }
+   ],
+   "loc_total": 1917,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 2192
+    },
+    {
+     "lang": "JSON",
+     "lines": 1064
+    }
+   ],
+   "code_files": 83,
+   "manifests": [
+    "validator/requirements.txt"
+   ],
+   "tests": [
+    "validator/tests/test_validator.py"
+   ],
+   "tests_count": 1,
+   "docs": [
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "docs/00_PROJECT_OVERVIEW.md",
+    "docs/01_SCIENTIFIC_POSITION.md",
+    "docs/02_STATE_OF_THE_ART.md",
+    "docs/03_RESEARCH_GAP.md",
+    "docs/04_HCSM_CONCEPTUAL_MODEL.md",
+    "docs/05_ONTOLOGY.md",
+    "docs/06_EVIDENCE_MODEL.md",
+    "docs/07_INFERENCE_MODEL.md",
+    "docs/08_TEMPORAL_MODEL.md",
+    "docs/09_UNCERTAINTY_AND_PROVENANCE.md",
+    "docs/10_CONTEXT_MODEL.md",
+    "docs/11_FUNCTIONING_MODEL.md",
+    "docs/12_VALIDATION_FRAMEWORK.md",
+    "docs/13_RESEARCH_PROTOCOL.md",
+    "docs/14_LIMITATIONS.md",
+    "docs/README.md",
+    "figures/README.md",
+    "figures/cognitive-state-t0/state-t0.md",
+    "figures/conceptual-architecture/architecture.md",
+    "figures/conceptual-architecture/units-of-evidence.md",
+    "figures/evidence-graph/evidence-graph.md",
+    "figures/evidence-graph/knowledge-graph.md",
+    "figures/inference-graph/inference-graph.md",
+    "figures/temporal-dynamics/trajectory.md",
+    "model/latent-state-model.md",
+    "model/mathematical-model.md",
+    "model/temporal-state-model.md",
+    "model/uncertainty-model.md",
+    "ontology/README.md",
+    "ontology/entities.md",
+    "ontology/namespaces.md",
+    "ontology/relations.md",
+    "papers/references/bibliography.md",
+    "papers/working-paper/HCSM_working_paper.md",
+    "papers/working-paper/README.md",
+    "research/competing-models.md",
+    "research/novelty-matrix.md",
+    "research/open-questions.md",
+    "research/scientific-audit.md",
+    "scientific/constructs/core-constructs.md",
+    "scientific/hypotheses/H1-H6.md",
+    "scientific/literature/README.md",
+    "scientific/literature/key-references.md",
+    "scientific/measures/measure-catalog.md",
+    "scientific/models/competing-frameworks.md",
+    "specs/api-concept.md",
+    "specs/data-schema.md",
+    "specs/implementation-roadmap.md",
+    "validator/README.md"
+   ],
+   "docs_count": 52,
+   "data_files": [
+    "ontology/hcsm-v0.1.yaml",
+    "validator/cases/invalid/diagnostic_target.json",
+    "validator/cases/invalid/digital_feature_as_cognition.json",
+    "validator/cases/invalid/estimate_without_evidence.json",
+    "validator/cases/invalid/estimate_without_uncertainty.json",
+    "validator/cases/invalid/functional_projection_as_fact.json",
+    "validator/cases/invalid/naked_score.json",
+    "validator/cases/invalid/observation_as_construct.json",
+    "validator/cases/invalid/pii_in_person.json",
+    "validator/cases/invalid/refusal_with_default_value.json",
+    "validator/cases/invalid/refuse_context_missing.json",
+    "validator/cases/invalid/refuse_misaligned_measure.json",
+    "validator/cases/invalid/refuse_no_construct.json",
+    "validator/cases/invalid/refuse_no_evidence.json",
+    "validator/cases/invalid/refuse_provenance_broken.json",
+    "validator/cases/invalid/refuse_unresolved_alternatives.json",
+    "validator/cases/invalid/refuse_window_undefined.json",
+    "validator/cases/invalid/windowless_t0.json",
+    "validator/cases/valid/admit_attention_request.json",
+    "validator/cases/valid/construct_estimate_complete.json",
+    "validator/cases/valid/functional_projection_hypothesis.json",
+    "validator/cases/valid/mini_scenario_attention.json",
+    "validator/cases/valid/observation_only.json",
+    "validator/cases/valid/refusal_no_evidence.json"
+   ],
+   "data_count": 24,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "validator/hcsm_validate/schema.py",
+     "size": 24033
+    },
+    {
+     "path": "ontology/hcsm-v0.1.yaml",
+     "size": 15782
+    },
+    {
+     "path": "validator/hcsm_validate/admissibility.py",
+     "size": 14194
+    },
+    {
+     "path": "papers/working-paper/HCSM_working_paper.md",
+     "size": 12286
+    },
+    {
+     "path": "docs/02_STATE_OF_THE_ART.md",
+     "size": 11424
+    },
+    {
+     "path": "validator/tests/test_validator.py",
+     "size": 9474
+    },
+    {
+     "path": "docs/01_SCIENTIFIC_POSITION.md",
+     "size": 8572
+    },
+    {
+     "path": "validator/cases/valid/mini_scenario_attention.json",
+     "size": 8517
+    },
+    {
+     "path": "README.md",
+     "size": 8370
+    },
+    {
+     "path": "docs/04_HCSM_CONCEPTUAL_MODEL.md",
+     "size": 8083
+    },
+    {
+     "path": "validator/hcsm_validate/cli.py",
+     "size": 7112
+    },
+    {
+     "path": "docs/00_PROJECT_OVERVIEW.md",
+     "size": 5960
+    },
+    {
+     "path": "docs/05_ONTOLOGY.md",
+     "size": 5685
+    },
+    {
+     "path": "validator/hcsm_validate/ontology.py",
+     "size": 5637
+    },
+    {
+     "path": "docs/03_RESEARCH_GAP.md",
+     "size": 5625
+    }
+   ]
+  },
+  "P-Language-decoder": {
+   "label": "Language-decoder",
+   "root": "projects/Language-decoder",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 1,
+   "size_bytes": 19,
+   "size_human": "19 o",
+   "by_ext": [
+    {
+     "ext": ".md",
+     "files": 1,
+     "size": 19
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "(racine)",
+     "files": 1,
+     "size": 19
+    }
+   ],
+   "loc": [],
+   "loc_total": 0,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 0
+    }
+   ],
+   "code_files": 1,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [
+    "README.md"
+   ],
+   "docs_count": 1,
+   "data_files": [],
+   "data_count": 0,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "README.md",
+     "size": 19
+    }
+   ]
+  },
+  "P-animation-chronos": {
+   "label": "animation-chronos",
+   "root": "projects/animation-chronos",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 30,
+   "size_bytes": 3964684,
+   "size_human": "3.8 Mo",
+   "by_ext": [
+    {
+     "ext": ".tsx",
+     "files": 11,
+     "size": 98331
+    },
+    {
+     "ext": ".jpg",
+     "files": 6,
+     "size": 3700671
+    },
+    {
+     "ext": ".ts",
+     "files": 5,
+     "size": 13101
+    },
+    {
+     "ext": ".json",
+     "files": 4,
+     "size": 150202
+    },
+    {
+     "ext": ".example",
+     "files": 1,
+     "size": 445
+    },
+    {
+     "ext": "(sans)",
+     "files": 1,
+     "size": 73
+    },
+    {
+     "ext": ".html",
+     "files": 1,
+     "size": 1315
+    },
+    {
+     "ext": ".css",
+     "files": 1,
+     "size": 546
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "src",
+     "files": 22,
+     "size": 3811941
+    },
+    {
+     "dir": "(racine)",
+     "files": 8,
+     "size": 152743
+    }
+   ],
+   "loc": [
+    {
+     "lang": "TypeScript",
+     "lines": 2538,
+     "files": 16
+    },
+    {
+     "lang": "CSS",
+     "lines": 25,
+     "files": 1
+    },
+    {
+     "lang": "HTML",
+     "lines": 20,
+     "files": 1
+    }
+   ],
+   "loc_total": 2583,
+   "loc_other": [
+    {
+     "lang": "JSON",
+     "lines": 4362
+    }
+   ],
+   "code_files": 22,
+   "manifests": [
+    "package-lock.json",
+    "package.json",
+    "tsconfig.json",
+    "vite.config.ts"
+   ],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [],
+   "docs_count": 0,
+   "data_files": [
+    "metadata.json",
+    "package-lock.json",
+    "package.json",
+    "tsconfig.json"
+   ],
+   "data_count": 4,
+   "sensitive_names": [
+    ".env.example"
+   ],
+   "sensitive_count": 1,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "src/assets/images/ferrofluid_vessel_final_1788368078499.jpg",
+     "size": 767438
+    },
+    {
+     "path": "src/assets/images/core_consciousness_1788367719136.jpg",
+     "size": 687274
+    },
+    {
+     "path": "src/assets/images/core_consciousness_final_1788368098811.jpg",
+     "size": 667252
+    },
+    {
+     "path": "src/assets/images/ferrofluid_vessel_1788367701405.jpg",
+     "size": 562429
+    },
+    {
+     "path": "src/assets/images/ferrofluid_hemispheres_1788368385698.jpg",
+     "size": 526823
+    },
+    {
+     "path": "src/assets/images/hemispheric_bridge_core_1788368400168.jpg",
+     "size": 489455
+    },
+    {
+     "path": "package-lock.json",
+     "size": 148523
+    },
+    {
+     "path": "src/components/FullScreenFluidCanvas.tsx",
+     "size": 18841
+    },
+    {
+     "path": "src/components/ChronosBubble.tsx",
+     "size": 17845
+    },
+    {
+     "path": "src/App.tsx",
+     "size": 14646
+    },
+    {
+     "path": "src/components/VesselStage.tsx",
+     "size": 11051
+    },
+    {
+     "path": "src/components/ObservationControls.tsx",
+     "size": 8452
+    },
+    {
+     "path": "src/components/MonographDrawer.tsx",
+     "size": 8450
+    },
+    {
+     "path": "src/utils/audio.ts",
+     "size": 6702
+    },
+    {
+     "path": "src/components/ProgressiveDiscoveryBar.tsx",
+     "size": 5947
+    }
+   ]
+  },
+  "P-frontignan": {
+   "label": "frontignan",
+   "root": "projects/frontignan",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 28,
+   "size_bytes": 14271914,
+   "size_human": "13.6 Mo",
+   "by_ext": [
+    {
+     "ext": ".png",
+     "files": 16,
+     "size": 7364825
+    },
+    {
+     "ext": ".py",
+     "files": 4,
+     "size": 63919
+    },
+    {
+     "ext": ".md",
+     "files": 3,
+     "size": 160890
+    },
+    {
+     "ext": ".html",
+     "files": 3,
+     "size": 6059246
+    },
+    {
+     "ext": ".jpg",
+     "files": 2,
+     "size": 623034
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "figures",
+     "files": 14,
+     "size": 2480222
+    },
+    {
+     "dir": "(racine)",
+     "files": 6,
+     "size": 6220136
+    },
+    {
+     "dir": "scripts",
+     "files": 4,
+     "size": 63919
+    },
+    {
+     "dir": "visuals",
+     "files": 4,
+     "size": 5507637
+    }
+   ],
+   "loc": [
+    {
+     "lang": "HTML",
+     "lines": 2816,
+     "files": 3
+    },
+    {
+     "lang": "Python",
+     "lines": 948,
+     "files": 4
+    }
+   ],
+   "loc_total": 3764,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 635
+    }
+   ],
+   "code_files": 10,
+   "manifests": [],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [
+    "README.md",
+    "rapport-frontignan-analyse-territoriale.md",
+    "vision-frontignan-2026-2040.md"
+   ],
+   "docs_count": 3,
+   "data_files": [],
+   "data_count": 0,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "visuals/hero-frontignan-2030.png",
+     "size": 2637848
+    },
+    {
+     "path": "index.html",
+     "size": 2559810
+    },
+    {
+     "path": "visuals/carte-identite-frontignan.png",
+     "size": 2246755
+    },
+    {
+     "path": "rapport-frontignan-analyse-territoriale.html",
+     "size": 1998944
+    },
+    {
+     "path": "vision-frontignan-2026-2040.html",
+     "size": 1500492
+    },
+    {
+     "path": "visuals/hero-frontignan-2030.jpg",
+     "size": 348774
+    },
+    {
+     "path": "figures/fig6_swot.png",
+     "size": 315464
+    },
+    {
+     "path": "visuals/carte-identite-frontignan.jpg",
+     "size": 274260
+    },
+    {
+     "path": "figures/figV4_scenarios_2040.png",
+     "size": 250270
+    },
+    {
+     "path": "figures/figV2_focus_2030.png",
+     "size": 226146
+    },
+    {
+     "path": "figures/figV5_schema_territorial.png",
+     "size": 221767
+    },
+    {
+     "path": "figures/figV3_macro_2050.png",
+     "size": 216117
+    },
+    {
+     "path": "figures/fig5_frise_projets.png",
+     "size": 213488
+    },
+    {
+     "path": "figures/figV1_trajectoire_2026_2040.png",
+     "size": 187995
+    },
+    {
+     "path": "figures/fig8_parties_prenantes.png",
+     "size": 169315
+    }
+   ]
+  },
+  "P-proto-cognitorium": {
+   "label": "proto-cognitorium",
+   "root": "projects/proto-cognitorium",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 161,
+   "size_bytes": 77337435,
+   "size_human": "73.8 Mo",
+   "by_ext": [
+    {
+     "ext": ".pdf",
+     "files": 43,
+     "size": 36591965
+    },
+    {
+     "ext": ".tsx",
+     "files": 34,
+     "size": 779257
+    },
+    {
+     "ext": ".ts",
+     "files": 30,
+     "size": 6330901
+    },
+    {
+     "ext": ".jpg",
+     "files": 22,
+     "size": 5878459
+    },
+    {
+     "ext": ".md",
+     "files": 6,
+     "size": 79781
+    },
+    {
+     "ext": ".xlsm",
+     "files": 5,
+     "size": 2784037
+    },
+    {
+     "ext": ".json",
+     "files": 4,
+     "size": 155173
+    },
+    {
+     "ext": ".xlsx",
+     "files": 4,
+     "size": 461396
+    },
+    {
+     "ext": ".html",
+     "files": 2,
+     "size": 49065
+    },
+    {
+     "ext": ".docx",
+     "files": 2,
+     "size": 109914
+    },
+    {
+     "ext": ".example",
+     "files": 1,
+     "size": 16
+    },
+    {
+     "ext": "(sans)",
+     "files": 1,
+     "size": 73
+    },
+    {
+     "ext": ".lock",
+     "files": 1,
+     "size": 77939
+    },
+    {
+     "ext": ".patch",
+     "files": 1,
+     "size": 951491
+    },
+    {
+     "ext": ".doc",
+     "files": 1,
+     "size": 26112
+    },
+    {
+     "ext": ".png",
+     "files": 1,
+     "size": 157198
+    },
+    {
+     "ext": ".pptx",
+     "files": 1,
+     "size": 22896581
+    },
+    {
+     "ext": ".py",
+     "files": 1,
+     "size": 7224
+    },
+    {
+     "ext": ".css",
+     "files": 1,
+     "size": 853
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "src",
+     "files": 86,
+     "size": 12966443
+    },
+    {
+     "dir": "raw",
+     "files": 61,
+     "size": 64055736
+    },
+    {
+     "dir": "(racine)",
+     "files": 12,
+     "size": 296865
+    },
+    {
+     "dir": "docs",
+     "files": 1,
+     "size": 11167
+    },
+    {
+     "dir": "scripts",
+     "files": 1,
+     "size": 7224
+    }
+   ],
+   "loc": [
+    {
+     "lang": "TypeScript",
+     "lines": 52356,
+     "files": 64
+    },
+    {
+     "lang": "HTML",
+     "lines": 822,
+     "files": 2
+    },
+    {
+     "lang": "Python",
+     "lines": 142,
+     "files": 1
+    },
+    {
+     "lang": "CSS",
+     "lines": 14,
+     "files": 1
+    }
+   ],
+   "loc_total": 53334,
+   "loc_other": [
+    {
+     "lang": "JSON",
+     "lines": 4474
+    },
+    {
+     "lang": "Markdown",
+     "lines": 1150
+    }
+   ],
+   "code_files": 78,
+   "manifests": [
+    "bun.lock",
+    "package-lock.json",
+    "package.json",
+    "tsconfig.json",
+    "vite.config.ts"
+   ],
+   "tests": [],
+   "tests_count": 0,
+   "docs": [
+    "ANALYSE_RAW.md",
+    "CONSOLIDATION.md",
+    "docs/ANALYSE_VERSIONS.md",
+    "raw/CV_-_Agriculture gianni.pdf",
+    "raw/CV_2021-11-10_AMELIE_CRUAGNES (3).pdf",
+    "raw/CV_2025_BAT gianni.pdf",
+    "raw/CV_Benoit_Bonnamant_2020.pdf",
+    "raw/Cabrol.Rapport de stage.pdf",
+    "raw/Cabrol_Näthan_TER_M2_2019.pdf",
+    "raw/Cognitorium — Système de représentation multimodale.md",
+    "raw/Cognitorium_Cahier_des_charges_reference_v1.0.docx",
+    "raw/DEVIS DEF LEVE TOPO + DETECTION + PLAN GAJAC LA SELVE.pdf",
+    "raw/Devis.pdf",
+    "raw/Funes, Lupaniez, Miliken, 2007.pdf",
+    "raw/Manuel_exploitation.pdf",
+    "raw/OJ-FT-Grilles_de_protection_pr_chambres_telecom_(E01062018).pdf",
+    "raw/OpenBCI Research Collection (see openbci.com_citations).xlsx",
+    "raw/Pierre DENIAUD.doc",
+    "raw/Questionnaire d'information (Copie)(1-8).xlsx",
+    "raw/Questionnaire d'information(1-54).xlsx",
+    "raw/READMEnoeudneurono.md",
+    "raw/REV2_CDTTP_V05_05092019.pdf",
+    "raw/SANTA BARBARA SENSE OF DIRECTION  scoring.xlsx",
+    "raw/SeQuelec_Guide_3.pdf",
+    "raw/Soutenance-fin-de-stage-FINAL.pdf",
+    "raw/Support animation - Fiches sensibilisation petits matériels.pdf",
+    "raw/TARIFS LOCATION 2023.pdf",
+    "raw/TER M1 Cabrol.pdf",
+    "raw/accueil chantier - informations générales et personnes présentes sur chantier.pdf",
+    "raw/codex-biais-cognitifs.pdf",
+    "raw/coupe type.pdf",
+    "raw/cours-métré1.pdf",
+    "raw/cv_spA_cialisA_2021.pdf",
+    "raw/dossier chantier allégé.pdf",
+    "raw/déroulage.pdf",
+    "raw/déterminant du comportement itération+JMB+LB.docx",
+    "raw/fait le max - fait le max.pdf",
+    "raw/fiche progres.pdf",
+    "raw/fiche_poster_scientifique_et_presentation_orale.pdf",
+    "raw/guide compactage.pdf",
+    "raw/guide pour le croisement des reseaux.pdf",
+    "raw/guide-conception-ice.pdf",
+    "raw/inventaire bureau.pdf",
+    "raw/inventaire garage.pdf",
+    "raw/mmcreation-cahier-des-charges.pdf",
+    "raw/naethan_cabrol_1676467518 cetif tosa.pdf",
+    "raw/out notion de flow.pdf",
+    "raw/poster Cabrol_Näthan.pdf",
+    "raw/proce dict.pdf",
+    "raw/pv de marquage - piquetage.pdf",
+    "raw/recommendation marquage piquetage.pdf",
+    "raw/recueil des faits a chaud.pdf",
+    "raw/secu!.pdf",
+    "raw/secu.pdf",
+    "raw/securité et environnement.pdf",
+    "raw/slide carte représentation.pptx",
+    "src/assets/outils/README.md"
+   ],
+   "docs_count": 57,
+   "data_files": [
+    "metadata.json",
+    "package-lock.json",
+    "package.json",
+    "tsconfig.json"
+   ],
+   "data_count": 4,
+   "sensitive_names": [
+    ".env.example"
+   ],
+   "sensitive_count": 1,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "raw/slide carte représentation.pptx",
+     "size": 22896581
+    },
+    {
+     "path": "raw/Manuel_exploitation.pdf",
+     "size": 9473647
+    },
+    {
+     "path": "src/data/romeData.ts",
+     "size": 5772316
+    },
+    {
+     "path": "raw/Cabrol.Rapport de stage.pdf",
+     "size": 5649871
+    },
+    {
+     "path": "raw/Soutenance-fin-de-stage-FINAL.pdf",
+     "size": 3018053
+    },
+    {
+     "path": "raw/SeQuelec_Guide_3.pdf",
+     "size": 2398797
+    },
+    {
+     "path": "raw/guide-conception-ice.pdf",
+     "size": 1328601
+    },
+    {
+     "path": "raw/fiche_poster_scientifique_et_presentation_orale.pdf",
+     "size": 1220702
+    },
+    {
+     "path": "raw/01a0389d-fd9f-74c2-af4d-5d119e9f0080.patch",
+     "size": 951491
+    },
+    {
+     "path": "raw/codex-biais-cognitifs.pdf",
+     "size": 855161
+    },
+    {
+     "path": "raw/guide compactage.pdf",
+     "size": 824582
+    },
+    {
+     "path": "raw/Support animation - Fiches sensibilisation petits matériels.pdf",
+     "size": 801315
+    },
+    {
+     "path": "raw/Cabrol_Näthan_TER_M2_2019.pdf",
+     "size": 703223
+    },
+    {
+     "path": "raw/Copie de Dossier chantier - Divers.xlsm",
+     "size": 699144
+    },
+    {
+     "path": "raw/Copie de Dossier chantier - Divers modif.xlsm",
+     "size": 697663
+    }
+   ]
+  },
+  "P-reaserch-engine": {
+   "label": "reaserch-engine",
+   "root": "projects/reaserch-engine",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 61,
+   "size_bytes": 134348,
+   "size_human": "131.2 Ko",
+   "by_ext": [
+    {
+     "ext": ".py",
+     "files": 35,
+     "size": 58123
+    },
+    {
+     "ext": ".md",
+     "files": 16,
+     "size": 67050
+    },
+    {
+     "ext": ".json",
+     "files": 9,
+     "size": 9151
+    },
+    {
+     "ext": "(sans)",
+     "files": 1,
+     "size": 24
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "engine",
+     "files": 23,
+     "size": 47369
+    },
+    {
+     "dir": "docs",
+     "files": 15,
+     "size": 64378
+    },
+    {
+     "dir": "tests",
+     "files": 12,
+     "size": 10754
+    },
+    {
+     "dir": "schemas",
+     "files": 9,
+     "size": 9151
+    },
+    {
+     "dir": "(racine)",
+     "files": 2,
+     "size": 2696
+    }
+   ],
+   "loc": [
+    {
+     "lang": "Python",
+     "lines": 1167,
+     "files": 35
+    }
+   ],
+   "loc_total": 1167,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 1623
+    },
+    {
+     "lang": "JSON",
+     "lines": 178
+    }
+   ],
+   "code_files": 60,
+   "manifests": [],
+   "tests": [
+    "tests/test_academic_retrieval.py",
+    "tests/test_agents.py",
+    "tests/test_default_pipeline.py",
+    "tests/test_dossier.py",
+    "tests/test_engine.py",
+    "tests/test_evidence_graph.py",
+    "tests/test_graph_assessment.py",
+    "tests/test_persistence.py",
+    "tests/test_planner.py",
+    "tests/test_question_analyzer.py",
+    "tests/test_research_strategy.py",
+    "tests/test_retrieval.py"
+   ],
+   "tests_count": 12,
+   "docs": [
+    "README.md",
+    "docs/ARCHITECTURE_HERMES_INTEGRATION.md",
+    "docs/academic-retrieval-v0.1.md",
+    "docs/architecture.md",
+    "docs/engine-v0.1-architecture.md",
+    "docs/evidence-graph-v0.1.md",
+    "docs/glossary.md",
+    "docs/graph-assessment-v0.1.md",
+    "docs/mindmap-synthesis-v0.1.md",
+    "docs/persistence-v0.1.md",
+    "docs/product-requirements-v0.1.md",
+    "docs/research-dossier-v0.1.md",
+    "docs/research-lifecycle.md",
+    "docs/research-model-v0.1.md",
+    "docs/research-output-spec-v0.1.md",
+    "docs/research-protocol-v0.1.md"
+   ],
+   "docs_count": 16,
+   "data_files": [
+    "schemas/claim.schema.json",
+    "schemas/conclusion.schema.json",
+    "schemas/contradiction.schema.json",
+    "schemas/evidence.schema.json",
+    "schemas/research-action.schema.json",
+    "schemas/research-run.schema.json",
+    "schemas/source.schema.json",
+    "schemas/sufficiency-decision.schema.json",
+    "schemas/verification-report.schema.json"
+   ],
+   "data_count": 9,
+   "sensitive_names": [],
+   "sensitive_count": 0,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "docs/research-protocol-v0.1.md",
+     "size": 16529
+    },
+    {
+     "path": "docs/architecture.md",
+     "size": 10811
+    },
+    {
+     "path": "docs/mindmap-synthesis-v0.1.md",
+     "size": 10736
+    },
+    {
+     "path": "engine/evidence_graph.py",
+     "size": 6584
+    },
+    {
+     "path": "docs/ARCHITECTURE_HERMES_INTEGRATION.md",
+     "size": 6232
+    },
+    {
+     "path": "engine/agents.py",
+     "size": 4688
+    },
+    {
+     "path": "docs/research-lifecycle.md",
+     "size": 4052
+    },
+    {
+     "path": "engine/retrieval.py",
+     "size": 3993
+    },
+    {
+     "path": "schemas/research-run.schema.json",
+     "size": 3751
+    },
+    {
+     "path": "engine/orchestrator.py",
+     "size": 3731
+    },
+    {
+     "path": "engine/dossier.py",
+     "size": 3382
+    },
+    {
+     "path": "docs/product-requirements-v0.1.md",
+     "size": 3142
+    },
+    {
+     "path": "engine/persistence.py",
+     "size": 2964
+    },
+    {
+     "path": "engine/run_builder.py",
+     "size": 2682
+    },
+    {
+     "path": "README.md",
+     "size": 2672
+    }
+   ]
+  },
+  "P-watchtower": {
+   "label": "watchtower",
+   "root": "projects/watchtower",
+   "scanned_at": "2026-10-07T12:22:51Z",
+   "files": 583,
+   "size_bytes": 23918304,
+   "size_human": "22.8 Mo",
+   "by_ext": [
+    {
+     "ext": ".mjs",
+     "files": 268,
+     "size": 4549006
+    },
+    {
+     "ext": ".js",
+     "files": 224,
+     "size": 5526265
+    },
+    {
+     "ext": ".md",
+     "files": 35,
+     "size": 829936
+    },
+    {
+     "ext": ".json",
+     "files": 12,
+     "size": 4193636
+    },
+    {
+     "ext": ".glb",
+     "files": 9,
+     "size": 3275096
+    },
+    {
+     "ext": ".sh",
+     "files": 7,
+     "size": 44884
+    },
+    {
+     "ext": "(sans)",
+     "files": 5,
+     "size": 5186
+    },
+    {
+     "ext": ".svg",
+     "files": 5,
+     "size": 10097
+    },
+    {
+     "ext": ".py",
+     "files": 3,
+     "size": 157250
+    },
+    {
+     "ext": ".example",
+     "files": 2,
+     "size": 8344
+    },
+    {
+     "ext": ".html",
+     "files": 2,
+     "size": 66678
+    },
+    {
+     "ext": ".yml",
+     "files": 2,
+     "size": 5510
+    },
+    {
+     "ext": ".geojsonl",
+     "files": 2,
+     "size": 3292258
+    },
+    {
+     "ext": ".css",
+     "files": 1,
+     "size": 256232
+    },
+    {
+     "ext": ".tsv",
+     "files": 1,
+     "size": 42873
+    },
+    {
+     "ext": ".ps1",
+     "files": 1,
+     "size": 13516
+    },
+    {
+     "ext": ".wav",
+     "files": 1,
+     "size": 884274
+    },
+    {
+     "ext": ".csv",
+     "files": 1,
+     "size": 3962
+    },
+    {
+     "ext": ".pbf",
+     "files": 1,
+     "size": 22980
+    },
+    {
+     "ext": ".geojson",
+     "files": 1,
+     "size": 730321
+    }
+   ],
+   "by_top": [
+    {
+     "dir": "src",
+     "files": 446,
+     "size": 16121774
+    },
+    {
+     "dir": "scripts",
+     "files": 59,
+     "size": 2447382
+    },
+    {
+     "dir": "(racine)",
+     "files": 18,
+     "size": 1014145
+    },
+    {
+     "dir": "audit",
+     "files": 17,
+     "size": 615190
+    },
+    {
+     "dir": "public",
+     "files": 15,
+     "size": 3290122
+    },
+    {
+     "dir": "docs",
+     "files": 11,
+     "size": 335659
+    },
+    {
+     "dir": "pinokio",
+     "files": 7,
+     "size": 7077
+    },
+    {
+     "dir": "tools",
+     "files": 7,
+     "size": 83427
+    },
+    {
+     "dir": "config",
+     "files": 2,
+     "size": 1661
+    },
+    {
+     "dir": ".github",
+     "files": 1,
+     "size": 1867
+    }
+   ],
+   "loc": [
+    {
+     "lang": "JavaScript",
+     "lines": 178707,
+     "files": 492
+    },
+    {
+     "lang": "CSS",
+     "lines": 7658,
+     "files": 1
+    },
+    {
+     "lang": "Python",
+     "lines": 1729,
+     "files": 3
+    },
+    {
+     "lang": "HTML",
+     "lines": 1087,
+     "files": 2
+    },
+    {
+     "lang": "Shell",
+     "lines": 907,
+     "files": 7
+    },
+    {
+     "lang": "PowerShell",
+     "lines": 223,
+     "files": 1
+    },
+    {
+     "lang": "YAML",
+     "lines": 142,
+     "files": 2
+    }
+   ],
+   "loc_total": 190453,
+   "loc_other": [
+    {
+     "lang": "Markdown",
+     "lines": 7014
+    },
+    {
+     "lang": "JSON",
+     "lines": 6513
+    },
+    {
+     "lang": "TSV",
+     "lines": 87
+    },
+    {
+     "lang": "CSV",
+     "lines": 46
+    },
+    {
+     "lang": "GeoJSON",
+     "lines": 1
+    }
+   ],
+   "code_files": 558,
+   "manifests": [
+    "package-lock.json",
+    "package.json",
+    "pinokio/package.json",
+    "vite.config.js"
+   ],
+   "tests": [
+    "src/annotations/annotationEngine.test.mjs",
+    "src/annotations/annotationGeoJson.test.mjs",
+    "src/annotations/annotationResolver.test.mjs",
+    "src/annotations/hybridAnnotationRenderer.test.mjs",
+    "src/annotations/screenAnnotationRenderer.test.mjs",
+    "src/arIcons.test.mjs",
+    "src/batiMath.test.mjs",
+    "src/batiRapide.test.mjs",
+    "src/browserModuleBoundary.test.mjs",
+    "src/cadastre.test.mjs",
+    "src/cadrans.test.mjs",
+    "src/cameraHandoff.test.mjs",
+    "src/cctvFocusPolicy.test.mjs",
+    "src/cctvFocusRequest.test.mjs",
+    "src/celestialRing.test.mjs",
+    "src/cinematique.test.mjs",
+    "src/cockpit.test.mjs",
+    "src/cockpitCloudEffects.test.mjs",
+    "src/cockpitMarkup.test.mjs",
+    "src/cockpitMath.test.mjs",
+    "src/cockpitTracking.test.mjs",
+    "src/cockpitUtilityLayout.test.mjs",
+    "src/cockpitVisionPolicy.test.mjs",
+    "src/commandes.test.mjs",
+    "src/compassTape.test.mjs",
+    "src/compte.test.mjs",
+    "src/contactsDetectionPolicy.test.mjs",
+    "src/contextModePolicy.test.mjs",
+    "src/contextSessionOrdering.test.mjs",
+    "src/contours.test.mjs",
+    "src/creditAttribution.test.mjs",
+    "src/data/adsbLolFallback.test.mjs",
+    "src/data/aircraftClass.test.mjs",
+    "src/data/aircraftMeta.test.mjs",
+    "src/data/aircraftNearbyPolicy.test.mjs",
+    "src/data/aircraftRecession.test.mjs",
+    "src/data/aisLiveVessels.analyst.test.mjs",
+    "src/data/aisLiveVessels.test.mjs",
+    "src/data/aisStreamAdapter.test.mjs",
+    "src/data/aisWatchdog.test.mjs",
+    "src/data/aisWatchdogTransport.test.mjs",
+    "src/data/analystEngine.test.mjs",
+    "src/data/bikeshare.test.mjs",
+    "src/data/cctv.test.mjs",
+    "src/data/cctvCards.test.mjs",
+    "src/data/cctvGizmo.test.mjs",
+    "src/data/cctvLod.test.mjs",
+    "src/data/cctvProxy.test.mjs",
+    "src/data/cctvViewshed.test.mjs",
+    "src/data/cockpitAirLod.test.mjs",
+    "src/data/cockpitDetectionSubjects.test.mjs",
+    "src/data/cockpitModels.test.mjs",
+    "src/data/contactMatch.test.mjs",
+    "src/data/contextStore.test.mjs",
+    "src/data/detectionCohort.test.mjs",
+    "src/data/detectionDraw.test.mjs",
+    "src/data/detectionHost.test.mjs",
+    "src/data/detectionPolicy.test.mjs",
+    "src/data/detectionPresentation.test.mjs",
+    "src/data/detectionRenderDemand.test.mjs",
+    "src/data/directionText.test.mjs",
+    "src/data/dossiers.test.mjs",
+    "src/data/earthquakes.test.mjs",
+    "src/data/fireAnchors.test.mjs",
+    "src/data/firmsAdapt.test.mjs",
+    "src/data/firmsCards.test.mjs",
+    "src/data/firmsCsv.test.mjs",
+    "src/data/firmsHeatmap.test.mjs",
+    "src/data/firmsHorizonCull.test.mjs",
+    "src/data/firmsInteraction.test.mjs",
+    "src/data/firmsLabels.test.mjs",
+    "src/data/flights.test.mjs",
+    "src/data/flowMatch.test.mjs",
+    "src/data/flowTiles.test.mjs",
+    "src/data/focusAllocations.test.mjs",
+    "src/data/focusDeemphasis.test.mjs",
+    "src/data/focusResumeGate.test.mjs",
+    "src/data/geoCadrans.test.mjs",
+    "src/data/geoid.test.mjs",
+    "src/data/groundFloor.test.mjs"
+   ],
+   "tests_count": 208,
+   "docs": [
+    "AGENTS.md",
+    "AUDIT-OUTILS-2026.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "DATA_SOURCES.md",
+    "README.md",
+    "ROADMAP.md",
+    "SECURITY.md",
+    "TESTING.md",
+    "audit/CAPACITES-AGENT.md",
+    "audit/CATALOGUE-OUTILS.md",
+    "audit/COUTS-LICENCES-LEGAL.md",
+    "audit/REFERENCE.md",
+    "audit/RND-PROPOSITIONS-2026.md",
+    "audit/stack/README.md",
+    "docs/APPLIQUER.md",
+    "docs/AUDIT.md",
+    "docs/COMPARAISON_SITES.md",
+    "docs/CURRENT-STATE.md",
+    "docs/DIAGNOSTIC.md",
+    "docs/KNOWN-ISSUES.md",
+    "docs/PERFORMANCE.md",
+    "docs/REPRISE.md",
+    "docs/SOURCES-FR.md",
+    "docs/SOURCES_ET_OUTILS.md",
+    "docs/opensky-auth.md",
+    "public/models/README.md",
+    "scripts/fixtures/voice/README.md",
+    "src/data/fixtures/README.md",
+    "src/data/local_data/dams/README.md",
+    "src/data/local_data/datacenters/README.md",
+    "src/data/local_data/natural_earth/README.md",
+    "src/data/local_data/neighborhoods/SOURCE.md",
+    "src/data/local_data/telegeography_submarine_cables/README.md",
+    "tools/README.md"
+   ],
+   "docs_count": 35,
+   "data_files": [
+    ".github/workflows/ci.yml",
+    "audit/reference/REGISTRE-OUTILS.json",
+    "audit/reference/REGISTRE.tsv",
+    "audit/stack/docker-compose.yml",
+    "config/cctv_sources.austin.json",
+    "config/cctv_sources.shinjuku.json",
+    "package-lock.json",
+    "package.json",
+    "pinokio/package.json",
+    "src/data/fixtures/firms-viirs-noaa20-sample.csv",
+    "src/data/local_data/dams/dams.geojson",
+    "src/data/local_data/dams/dams.geojsonl",
+    "src/data/local_data/datacenters/datacenters.geojsonl",
+    "src/data/local_data/natural_earth/marine.json",
+    "src/data/local_data/natural_earth/regions.json",
+    "src/data/local_data/neighborhoods/san-francisco.json",
+    "src/data/local_data/telegeography_submarine_cables/cable-geo.json",
+    "src/data/local_data/telegeography_submarine_cables/landing-point-geo.json",
+    "src/data/local_data/telegeography_submarine_cables/source.json"
+   ],
+   "data_count": 19,
+   "sensitive_names": [
+    ".env.example",
+    "audit/stack/.env.example"
+   ],
+   "sensitive_count": 2,
+   "todos_total": 0,
+   "todos_top": [],
+   "biggest": [
+    {
+     "path": "src/data/local_data/datacenters/datacenters.geojsonl",
+     "size": 2561978
+    },
+    {
+     "path": "src/data/local_data/natural_earth/regions.json",
+     "size": 1987099
+    },
+    {
+     "path": "scripts/fixtures/voice/full-globe-turn-on-radio.wav",
+     "size": 884274
+    },
+    {
+     "path": "src/data/local_data/dams/dams.geojson",
+     "size": 730321
+    },
+    {
+     "path": "src/data/local_data/dams/dams.geojsonl",
+     "size": 730280
+    },
+    {
+     "path": "src/data/local_data/telegeography_submarine_cables/cable-geo.json",
+     "size": 728308
+    },
+    {
+     "path": "src/data/local_data/natural_earth/marine.json",
+     "size": 633342
+    },
+    {
+     "path": "public/models/citation2.glb",
+     "size": 562036
+    },
+    {
+     "path": "public/models/mq9.glb",
+     "size": 542880
+    },
+    {
+     "path": "public/models/c172.glb",
+     "size": 526088
+    },
+    {
+     "path": "public/models/b789.glb",
+     "size": 470200
+    },
+    {
+     "path": "src/ui.js",
+     "size": 456011
+    },
+    {
+     "path": "src/data/local_data/telegeography_submarine_cables/landing-point-geo.json",
+     "size": 359269
+    },
+    {
+     "path": "vite.config.js",
+     "size": 343080
+    },
+    {
+     "path": "public/models/bell206.glb",
+     "size": 320788
+    }
+   ]
+  }
+ }
+}
