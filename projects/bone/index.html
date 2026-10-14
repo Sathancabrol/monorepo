@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Olympus — Bone</title>
+  <link rel="icon" href="./assets/bone.png" />
+  <link rel="stylesheet" href="./assets/bone.css" />
+</head>
+<body>
+  <div id="intro">
+    <div class="sky"></div>
+    <img class="walker" src="./assets/bone.png" alt="Bone" />
+    <div class="card">
+      <h1>BONE</h1>
+      <p class="ep">Olympus · Épisode 1</p>
+      <p>« Bone arrive sur Discord et Satan a trop de PDF »</p>
+    </div>
+    <button class="skip" id="skip" type="button">Entrer sur Olympus →</button>
+  </div>
+
+  <div id="app">
+    <nav class="servers" aria-label="Serveurs">
+      <div class="pill" title="Perso">S</div>
+      <hr />
+      <div class="pill oly active" title="Olympus">Ω</div>
+      <div class="pill" title="Watchtower">🗼</div>
+      <div class="pill" title="Cognitorium">🧠</div>
+    </nav>
+
+    <aside class="channels">
+      <div class="banner">Olympus</div>
+      <div class="list" id="ch-list"></div>
+      <div class="me">
+        <img class="av" src="./assets/bone.png" alt="" style="filter:hue-rotate(200deg) saturate(.55)" />
+        <div>
+          <div class="who">Satan</div>
+          <div class="tag">Sathancabrol</div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="chat">
+      <header>
+        <span class="hash">#</span>
+        <span id="ch-name">général</span>
+        <span class="topic" id="topic">Cour de récré. Bone habite ici.</span>
+      </header>
+      <div class="msgs" id="msgs"></div>
+      <div class="quick" id="quick"></div>
+      <div class="typing" id="typing">Bone est en train d’écrire…</div>
+      <div class="composer">
+        <form id="form">
+          <input id="input" autocomplete="off" maxlength="500" placeholder="Message #général" />
+          <button class="send" type="submit">Envoyer</button>
+        </form>
+      </div>
+    </section>
+
+    <aside class="members">
+      <div class="stage" id="stage">
+        <img class="hero" src="./assets/bone.png" alt="Bone" />
+        <div class="line" id="stage-line">J’suis Bone. J’suis mort. J’m’en fous.</div>
+      </div>
+      <h3>En ligne — 2</h3>
+      <div class="member">
+        <div class="av" style="position:relative">
+          <img class="av" src="./assets/bone.png" alt="" style="filter:hue-rotate(200deg) saturate(.55)" />
+          <span class="dot on"></span>
+        </div>
+        <div>
+          <div class="nm">Satan <span class="crown">♛</span></div>
+          <div class="sub">owner · Sathancabrol</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="av" style="position:relative">
+          <img class="av" src="./assets/bone.png" alt="" />
+          <span class="dot on"></span>
+        </div>
+        <div>
+          <div class="nm" style="color:#e0a100">Bone</div>
+          <div class="sub">bot · watching South Park</div>
+        </div>
+      </div>
+      <h3>Inactif — 1</h3>
+      <div class="member">
+        <div class="av" style="position:relative">
+          <img class="av" src="./assets/bone.png" alt="" style="filter:grayscale(.4) hue-rotate(80deg)" />
+          <span class="dot idle"></span>
+        </div>
+        <div>
+          <div class="nm">Servietsky</div>
+          <div class="sub">t’as de l’herbe ?</div>
+        </div>
+      </div>
+      <h3>Hors ligne — 1</h3>
+      <div class="member">
+        <div class="av" style="position:relative">
+          <img class="av" src="./assets/bone.png" alt="" style="filter:grayscale(1) brightness(.6)" />
+          <span class="dot off"></span>
+        </div>
+        <div>
+          <div class="nm">Kenny</div>
+          <div class="sub">mmmph mmmph</div>
+        </div>
+      </div>
+      <div class="setup">
+        <strong>Le brancher sur Discord Olympus</strong><br />
+        1. <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Developer Portal</a> → New Application « Bone »<br />
+        2. Bot → Add Bot → token + <code>MESSAGE CONTENT INTENT</code><br />
+        3. Avatar = <code>assets/bone.png</code><br />
+        4. <code>cp .env.example .env</code> → coller le token<br />
+        5. Inviter le bot (scopes <code>bot</code> + <code>applications.commands</code>)<br />
+        6. <code>python discord_bot.py</code><br />
+        Détail dans <code>projects/bone/README.md</code>
+      </div>
+    </aside>
+  </div>
+  <script type="module" src="./assets/app.js"></script>
+</body>
+</html>

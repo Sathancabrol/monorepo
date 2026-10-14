@@ -1,0 +1,21 @@
+BONE SETUP — ZIP Windows
+========================
+
+1. Extraire TOUT le zip.
+2. Double-clic  INSTALLER.bat
+   Wizard sombre (bandeau Bone, barre rose).
+   Si Windows bloque : Plus d'infos → Exécuter quand même.
+3. Next → Install → colle le token Discord → choisis le serveur → Finish.
+
+Démo du look : setup.html (navigateur)
+
+Bot Discord (l'installeur ouvre la page) :
+  https://discord.com/developers/applications
+  New Application → Bone → Bot → Add Bot
+  MESSAGE CONTENT INTENT = ON
+  Reset Token → copier
+
+Après install : /autorisations dans Discord
+  ou menu Démarrer → Bone autorisations
+
+Désinstaller : %LOCALAPPDATA%\Bone\desinstaller.bat

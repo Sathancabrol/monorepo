@@ -1,6 +1,6 @@
 # Sathancabrol — Monorepo unifié
 
-> **Un seul dépôt, 8 projets, navigation + previews intégrées.** Agrégation visuelle et cartographie logique sans casser les projets individuels. Token GitHub côté serveur uniquement (jamais exposé au client).
+> **Un seul dépôt, 9 projets, navigation + previews intégrées.** Agrégation visuelle et cartographie logique sans casser les projets individuels. Token GitHub côté serveur uniquement (jamais exposé au client).
 
 ## 🗂 Structure
 
@@ -15,7 +15,8 @@ monorepo/
 │  ├─ HCSM/                     Python (ontology, model)
 │  ├─ reaserch-engine/          Python (engine/)
 │  ├─ Language-decoder/         README (quasi vide)
-│  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  ├─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
+│  └─ bone/                     Agent IA South Park · bot Discord Olympus + playground
 ├─ app/                         FastAPI + Jinja (interface unifiée)
 │  ├─ main.py                   API + preview server + explorer
 │  └─ templates/                base, index, repos, monorepo (drawer + iframe)

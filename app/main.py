@@ -2,6 +2,7 @@ import json
 import mimetypes
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -85,6 +86,36 @@ def safe_resolve(project: str, subpath: str) -> Path:
 @app.get("/health")
 def health():
     return {"ok": True}
+
+@app.get("/bone")
+def bone_home():
+    return RedirectResponse("/preview/bone/index.html")
+
+@app.post("/api/bone/chat")
+async def api_bone_chat(request: Request):
+    """Cerveau de Bone (même persona que le bot Discord)."""
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(400, "JSON attendu")
+    text = (body.get("text") or "").strip()
+    if not text:
+        raise HTTPException(400, "text manquant")
+    bone_dir = PROJECTS / "bone"
+    if str(bone_dir) not in sys.path:
+        sys.path.insert(0, str(bone_dir))
+    try:
+        from persona import think as bone_reply  # type: ignore
+        from llm import describe as bone_brain  # type: ignore
+    except Exception as e:
+        raise HTTPException(500, f"Bone KO: {e}")
+    channel = str(body.get("channel") or "web")
+    author = body.get("author")
+    return {
+        "text": bone_reply(text, channel_id=channel, author=author),
+        "author": "Bone",
+        "brain": bone_brain(),
+    }
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
