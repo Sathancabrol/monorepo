@@ -24,9 +24,11 @@ class ResearchStrategyEngine:
     def next_actions(self, state: StrategyState) -> list[ResearchAction]:
         actions = []
         if state.open_subquestions:
-            actions.append(ResearchAction("search", "highest-priority open subquestion", "close an unresolved research objective", 100, .9, ["systematic_review", "meta_analysis", "primary_study"]))
+            actions.append(ResearchAction("search", "highest-priority open subquestion", "close an unresolved research objective", 90, .9, ["systematic_review", "meta_analysis", "primary_study"]))
         if state.contradictions:
-            actions.append(ResearchAction("investigate_contradiction", "conflicting claims", "resolve or characterize disagreement", 98, .95, ["primary_study", "systematic_review"]))
+            # A known disagreement outranks closing another sub-question: leaving a
+            # contradiction unresolved would corrupt everything built on top of it.
+            actions.append(ResearchAction("investigate_contradiction", "conflicting claims", "resolve or characterize disagreement", 100, .95, ["primary_study", "systematic_review"]))
         if state.unresolved_claims:
             actions.append(ResearchAction("verify_claims", "unsupported material claims", "increase claim provenance", 95, .8, ["primary_study", "institutional_report"]))
         if state.source_coverage < .7:

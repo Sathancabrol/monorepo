@@ -12,6 +12,14 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
+class RetrievalError(RuntimeError):
+    """A provider could not answer (transport, payload or configuration).
+
+    Adapters raise this instead of leaking ``urllib``/JSON errors so callers can
+    fail soft per provider (see :mod:`engine.federation`).
+    """
+
+
 @dataclass
 class SearchRequest:
     query: str
@@ -19,6 +27,8 @@ class SearchRequest:
     source_types: list[str] = field(default_factory=list)
     max_results: int = 10
     recency_days: int | None = None
+    #: Provider-specific extras (e.g. ``{"urls": [...]}`` for a page reader).
+    metadata: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -43,6 +53,10 @@ class InMemoryRetriever:
 
     def search(self, request: SearchRequest) -> list[SearchResult]:
         terms = {term.lower() for term in request.query.split() if len(term) > 2}
+        if not terms:
+            # A short query ("Q", "eau") is still a query: falling back to every
+            # token beats silently returning nothing.
+            terms = {term.lower() for term in request.query.split() if term.strip()}
         ranked = []
         for doc in self.documents:
             haystack = f"{doc.title} {doc.snippet}".lower()

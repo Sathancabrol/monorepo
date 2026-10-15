@@ -1,0 +1,661 @@
+{
+  "question": "Quel est l'effet du trafic maritime sur la qualité de l'air à Sète ?",
+  "stop_reason": "evidence_saturation",
+  "stop_detail": "round 3 added 0 new result(s) below the threshold of 1",
+  "rounds": [
+    {
+      "index": 1,
+      "queries": [
+        {
+          "query": "Quel est l'effet du trafic maritime sur la qualité de l'air à Sète ?",
+          "reason": "verbatim research question",
+          "family": "question",
+          "subquestion_id": null
+        },
+        {
+          "query": "Que mesurent les réseaux de surveillance autour du port de Sète ?",
+          "reason": "planned sub-question sq1",
+          "family": "subquestion",
+          "subquestion_id": "sq1"
+        },
+        {
+          "query": "Quelles preuves relient les émissions des navires aux concentrations observées ?",
+          "reason": "planned sub-question sq2",
+          "family": "subquestion",
+          "subquestion_id": "sq2"
+        }
+      ],
+      "results_new": 3,
+      "results_returned": 7,
+      "corpus_size": 3,
+      "duplicates_merged": 4,
+      "providers": [
+        {
+          "name": "demo-index",
+          "returned": 2,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 2,
+            "query": "Quel est l'effet du trafic maritime sur la qualité de l'air à Sète ?"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 1,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 1,
+            "query": "Quel est l'effet du trafic maritime sur la qualité de l'air à Sète ?"
+          }
+        },
+        {
+          "name": "demo-index",
+          "returned": 3,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 3,
+            "query": "Que mesurent les réseaux de surveillance autour du port de Sète ?"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 1,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 1,
+            "query": "Que mesurent les réseaux de surveillance autour du port de Sète ?"
+          }
+        },
+        {
+          "name": "demo-index",
+          "returned": 2,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 2,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ?"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ?"
+          }
+        }
+      ],
+      "failed_providers": [],
+      "enrichment": [
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 1,
+          "enriched": 1,
+          "errors": []
+        },
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 1,
+          "enriched": 1,
+          "errors": []
+        },
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 0,
+          "enriched": 0,
+          "errors": []
+        }
+      ],
+      "notes": []
+    },
+    {
+      "index": 2,
+      "queries": [
+        {
+          "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? définition",
+          "reason": "sub-question without any matching evidence — définir le périmètre avant de conclure",
+          "family": "define_scope",
+          "subquestion_id": "sq2"
+        },
+        {
+          "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? revue de littérature",
+          "reason": "sub-question without any matching evidence — établir l'état des connaissances",
+          "family": "state_of_evidence",
+          "subquestion_id": "sq2"
+        },
+        {
+          "query": "Quelles limites méthodologiques affaiblissent ces preuves ? définition",
+          "reason": "sub-question without any matching evidence — définir le périmètre avant de conclure",
+          "family": "define_scope",
+          "subquestion_id": "sq3"
+        }
+      ],
+      "results_new": 1,
+      "results_returned": 5,
+      "corpus_size": 4,
+      "duplicates_merged": 4,
+      "providers": [
+        {
+          "name": "demo-index",
+          "returned": 2,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 2,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? définition"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? définition"
+          }
+        },
+        {
+          "name": "demo-index",
+          "returned": 2,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 2,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? revue de littérature"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? revue de littérature"
+          }
+        },
+        {
+          "name": "demo-index",
+          "returned": 1,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 1,
+            "query": "Quelles limites méthodologiques affaiblissent ces preuves ? définition"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles limites méthodologiques affaiblissent ces preuves ? définition"
+          }
+        }
+      ],
+      "failed_providers": [],
+      "enrichment": [
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 0,
+          "enriched": 0,
+          "errors": []
+        },
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 0,
+          "enriched": 0,
+          "errors": []
+        },
+        {
+          "provider": "openalex",
+          "candidates": 0,
+          "matched": 0,
+          "batches": 0
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 1,
+          "enriched": 1,
+          "errors": []
+        }
+      ],
+      "notes": []
+    },
+    {
+      "index": 3,
+      "queries": [
+        {
+          "query": "Quelles limites méthodologiques affaiblissent ces preuves ? revue de littérature",
+          "reason": "sub-question without any matching evidence — établir l'état des connaissances",
+          "family": "state_of_evidence",
+          "subquestion_id": "sq3"
+        },
+        {
+          "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? limites critiques",
+          "reason": "seek disconfirming evidence (Phase 9) — chercher activement l'infirmation",
+          "family": "counter_evidence",
+          "subquestion_id": "sq2"
+        },
+        {
+          "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? incertitudes",
+          "reason": "characterize what remains unknown — cartographier ce qui reste indéterminé",
+          "family": "uncertainty",
+          "subquestion_id": "sq2"
+        }
+      ],
+      "results_new": 0,
+      "results_returned": 8,
+      "corpus_size": 4,
+      "duplicates_merged": 8,
+      "providers": [
+        {
+          "name": "demo-index",
+          "returned": 2,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 2,
+            "query": "Quelles limites méthodologiques affaiblissent ces preuves ? revue de littérature"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles limites méthodologiques affaiblissent ces preuves ? revue de littérature"
+          }
+        },
+        {
+          "name": "demo-index",
+          "returned": 3,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 3,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? limites critiques"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? limites critiques"
+          }
+        },
+        {
+          "name": "demo-index",
+          "returned": 3,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-index",
+            "returned": 3,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? incertitudes"
+          }
+        },
+        {
+          "name": "demo-mirror",
+          "returned": 0,
+          "skipped": 0,
+          "ok": true,
+          "error": null,
+          "diagnostics": {
+            "provider": "demo-mirror",
+            "returned": 0,
+            "query": "Quelles preuves relient les émissions des navires aux concentrations observées ? incertitudes"
+          }
+        }
+      ],
+      "failed_providers": [],
+      "enrichment": [
+        {
+          "provider": "openalex",
+          "candidates": 0,
+          "matched": 0,
+          "batches": 0
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 1,
+          "enriched": 1,
+          "errors": []
+        },
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 1,
+          "enriched": 1,
+          "errors": []
+        },
+        {
+          "provider": "openalex",
+          "candidates": 1,
+          "matched": 1,
+          "batches": 1
+        },
+        {
+          "provider": "crawl4ai",
+          "candidates": 1,
+          "enriched": 1,
+          "errors": []
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "queries_tried": [
+    "que mesurent les reseaux de surveillance autour du port de sete",
+    "quel est l effet du trafic maritime sur la qualite de l air a sete",
+    "quelles limites methodologiques affaiblissent ces preuves definition",
+    "quelles limites methodologiques affaiblissent ces preuves revue de litterature",
+    "quelles preuves relient les emissions des navires aux concentrations observees",
+    "quelles preuves relient les emissions des navires aux concentrations observees definition",
+    "quelles preuves relient les emissions des navires aux concentrations observees incertitudes",
+    "quelles preuves relient les emissions des navires aux concentrations observees limites critiques",
+    "quelles preuves relient les emissions des navires aux concentrations observees revue de litterature"
+  ],
+  "coverage": {
+    "covered_subquestion_ids": [
+      "sq1"
+    ],
+    "uncovered_subquestion_ids": [
+      "sq2",
+      "sq3"
+    ],
+    "subquestion_hits": {
+      "sq1": 1,
+      "sq2": 0,
+      "sq3": 0
+    },
+    "source_types": [
+      "primary_study",
+      "secondary_source",
+      "unverified_web"
+    ],
+    "missing_source_types": [],
+    "domains": [
+      "doi.org",
+      "example.org"
+    ],
+    "families": [
+      "counter_evidence",
+      "define_scope",
+      "question",
+      "state_of_evidence",
+      "subquestion",
+      "uncertainty"
+    ]
+  },
+  "metrics": {
+    "rounds_used": 3,
+    "corpus_size": 4,
+    "unique_domains": 2,
+    "sources_by_provider": {
+      "crawl4ai": 2,
+      "demo-index": 4,
+      "demo-mirror": 1
+    },
+    "sources_by_type": {
+      "unverified_web": 2,
+      "primary_study": 1,
+      "secondary_source": 1
+    },
+    "new_results_per_round": [
+      3,
+      1,
+      0
+    ],
+    "yield_last_round": 0,
+    "duplicates_merged": 16,
+    "full_text_sources": 2,
+    "enriched_sources": 3
+  },
+  "sufficiency_hints": {
+    "critical_gaps": 2,
+    "unsearched_high_value_categories": 0,
+    "evidence_saturation": true,
+    "expected_information_gain": 0.0,
+    "notes": [
+      "stop_reason=evidence_saturation",
+      "rounds=3",
+      "corpus=4"
+    ]
+  },
+  "corpus": [
+    {
+      "id": "web:demo/rapport-thau-2024",
+      "title": "[DÉMO] Rapport annuel de surveillance de l'air — bassin de Thau (factice)",
+      "url": "https://example.org/demo/rapport-thau-2024",
+      "snippet": "Synthèse factice : concentrations mesurées à proximité du port, sans conclusion causale.\n\n# Section extraite (démo)\nCorps de page factice remplaçant le résumé de moteur de recherche.",
+      "source_type": "unverified_web",
+      "metadata": {
+        "provider": "demo-index",
+        "demo_fixture": true,
+        "keywords": [
+          "trafic",
+          "maritime",
+          "qualite",
+          "air",
+          "sete",
+          "port",
+          "mesures"
+        ],
+        "rank": 1,
+        "providers": [
+          "crawl4ai",
+          "demo-index",
+          "demo-mirror"
+        ],
+        "provider_ranks": {
+          "demo-index": 1,
+          "demo-mirror": 1
+        },
+        "merged_from": [
+          "web:demo/rapport-thau-2024",
+          "web:demo/rapport-thau-2024-mirror"
+        ],
+        "full_text": true,
+        "enriched_by": [
+          "crawl4ai"
+        ],
+        "content_sha256": "demo907923056",
+        "content_chars": 508
+      }
+    },
+    {
+      "id": "doi:10.0000/demo.2023.001",
+      "title": "[DÉMO] Shipping emissions and urban air quality in Mediterranean ports",
+      "url": "https://doi.org/10.0000/demo.2023.001",
+      "snippet": "Résumé factice reconstruit depuis un index inversé : émissions portuaires et qualité de l'air urbaine.",
+      "source_type": "primary_study",
+      "metadata": {
+        "provider": "demo-index",
+        "demo_fixture": true,
+        "keywords": [
+          "trafic",
+          "maritime",
+          "qualite",
+          "air",
+          "port",
+          "emissions"
+        ],
+        "doi": "10.0000/demo.2023.001",
+        "year": 2023,
+        "rank": 2,
+        "providers": [
+          "demo-index"
+        ],
+        "authors": [
+          "A. Demo",
+          "B. Factice"
+        ],
+        "venue": "[DÉMO] Journal of Fictional Port Studies",
+        "cited_by_count": 7,
+        "enriched_by": [
+          "openalex"
+        ],
+        "abstract_source": "provider_text",
+        "provider_ranks": {
+          "demo-index": 2
+        },
+        "merged_from": [
+          "doi:10.0000/demo.2023.001"
+        ]
+      }
+    },
+    {
+      "id": "doi:10.0000/demo.2021.014",
+      "title": "[DÉMO] Systematic review of port emission inventories",
+      "url": "https://doi.org/10.0000/demo.2021.014",
+      "snippet": "Revue systématique factice sur les inventaires d'émissions portuaires.",
+      "source_type": "secondary_source",
+      "metadata": {
+        "provider": "demo-index",
+        "demo_fixture": true,
+        "keywords": [
+          "revue",
+          "litterature",
+          "emissions",
+          "port",
+          "inventaire",
+          "etat"
+        ],
+        "doi": "10.0000/demo.2021.014",
+        "year": 2021,
+        "authors": [
+          "A. Demo"
+        ],
+        "rank": 2,
+        "providers": [
+          "demo-index"
+        ],
+        "provider_ranks": {
+          "demo-index": 1
+        },
+        "merged_from": [
+          "doi:10.0000/demo.2021.014"
+        ]
+      }
+    },
+    {
+      "id": "web:demo/contre-analyse-2025",
+      "title": "[DÉMO] Contre-analyse : les limites des mesures côtières (factice)",
+      "url": "https://example.org/demo/contre-analyse-2025",
+      "snippet": "Cette page fictive contredit la lecture dominante : biais de capteurs, vents dominants.\n\n# Section extraite (démo)\nCorps de page factice remplaçant le résumé de moteur de recherche.",
+      "source_type": "unverified_web",
+      "metadata": {
+        "provider": "demo-index",
+        "demo_fixture": true,
+        "keywords": [
+          "limites",
+          "critiques",
+          "contre",
+          "biais",
+          "capteurs",
+          "incertitudes"
+        ],
+        "rank": 1,
+        "providers": [
+          "crawl4ai",
+          "demo-index"
+        ],
+        "full_text": true,
+        "enriched_by": [
+          "crawl4ai"
+        ],
+        "content_sha256": "demo2184009347",
+        "content_chars": 507,
+        "provider_ranks": {
+          "demo-index": 1
+        },
+        "merged_from": [
+          "web:demo/contre-analyse-2025"
+        ]
+      }
+    }
+  ]
+}

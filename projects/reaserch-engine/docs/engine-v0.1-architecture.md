@@ -35,6 +35,15 @@ Question
 - `quality`: measurable quality/gap signals.
 - `agents`: structured contracts for LLM-backed implementations.
 
+### Retrieval layer increment
+
+- `web_retrieval`: SearXNG / OpenAlex / Crawl4AI adapters with injected transports.
+- `source_identity`: DOI/URL/title identities, de-duplication, provenance-safe merging.
+- `federation`: fan-out with per-provider isolation, interleaving, enrichment.
+- `query_strategy`: deterministic, reason-carrying follow-up queries.
+- `iteration`: the search → coverage → gap → enrich loop and its report.
+- `settings`: environment wiring, zero keys, providers disabled by empty URLs.
+
 ## Design principles
 
 1. **Provenance first** — every evidence item keeps a source identifier.
@@ -48,4 +57,4 @@ Question
 
 ## v0.1 boundary
 
-v0.1 provides the core contracts, deterministic primitives, testable orchestration, and provider seams. Production Web/academic retrieval, LLM structured-output adapters, advanced source quality scoring, citation parsing, and persistent storage are intentionally subsequent layers.
+v0.1 provides the core contracts, deterministic primitives, testable orchestration, and provider seams. The Web/academic retrieval layer is now implemented (`docs/web-retrieval-v0.1.md`, `docs/search-iteration-v0.1.md`). LLM structured-output adapters, advanced source quality scoring and citation parsing remain subsequent layers; JSON checkpointing already exists (`docs/persistence-v0.1.md`).

@@ -52,10 +52,48 @@ to checkpoint the initialized run, each completed agent step, and the final
 decision. This makes interrupted runs inspectable and recoverable without a
 database dependency.
 
-## Academic retrieval
+## Retrieval layer
 
-The injectable retrieval layer now includes `CrossrefRetriever` for DOI-backed
-academic discovery and `LocalFirstRetriever` for local evidence before external
-fallback. Neither performs a network request unless explicitly used.
+The injectable retrieval layer keeps the engine core free of network I/O. It now
+maps a question to a corpus through three providers, all keyless:
+
+| Adapter | Role |
+|---|---|
+| `SearxngRetriever` | web discovery through a local SearXNG (`format=json`) |
+| `OpenAlexRetriever` | scholarly discovery + DOI completion (abstract, authors, venue, citations) |
+| `Crawl4AiRetriever` | page reader: URL → markdown, snippet → full text |
+| `CrossrefRetriever` | DOI discovery (v0.1, unchanged) |
+| `LocalFirstRetriever` | local evidence before any external fallback |
+
+`FederatedRetriever` runs them together: a dead provider is reported instead of
+failing the round, duplicates are merged by DOI → canonical URL → title while
+keeping every provider in `metadata["providers"]`, and enrichers complete the
+merged corpus. No adapter performs a network request unless explicitly used.
+
+## Iterative search
+
+`IterativeSearch` turns one round of results into the next round of questions:
+search → measure coverage (sub-questions, source classes) → re-query the gaps
+(including counter-evidence) → enrich. It stops on saturation, budget or
+exhausted queries, and publishes a JSON-safe report — queries *with the reason
+they were generated*, per-provider status, de-duplication and enrichment counts,
+and sufficiency hints that feed `Orchestrator`'s own stopping decision through
+`IterativeResearcherAgent`.
+
+```bash
+python3 -m engine.cli "ma question"        # providers from the environment
+python3 -m engine.cli --check              # probe each provider honestly (exit 1 if none answers)
+python3 -m engine.cli demo --demo          # offline fictional corpus: run the machinery without network
+```
+
+Configuration lives in the environment only (`SEARXNG_BASE_URL`,
+`CRAWL4AI_BASE_URL`, `OPENALEX_MAILTO`, `RESEARCH_MAX_ROUNDS`, …) — see
+`docs/web-retrieval-v0.1.md` and `docs/search-iteration-v0.1.md`.
 
 See `docs/product-requirements-v0.1.md` and `docs/research-output-spec-v0.1.md` for the product and output contracts.
+
+## Tests
+
+```bash
+python3 -m pytest tests -q      # 78 tests, no network, no model required
+```

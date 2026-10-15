@@ -13,7 +13,7 @@ monorepo/
 │  ├─ COGNITORIUM/              learning/ + watchtower-mods/ (statique)
 │  ├─ ETAT-DE-LART-PSYCHOLOGIE/ app/ FastAPI + output/visual/*.html
 │  ├─ HCSM/                     Python (ontology, model)
-│  ├─ reaserch-engine/          Python (engine/)
+│  ├─ reaserch-engine/          Python — moteur de recherche itératif (SearXNG, OpenAlex, Crawl4AI)
 │  ├─ Language-decoder/         README (quasi vide)
 │  └─ frontignan/               Analyse territoriale + vision 2026-2040 (deck : index.html)
 ├─ app/                         FastAPI + Jinja (interface unifiée)
@@ -72,6 +72,30 @@ done
 ```
 
 Si une preview reste blanche, ouvre-la en nouvel onglet (bouton ↗) pour voir l'erreur console.
+
+## 🔎 reaserch-engine — récupération web itérative
+
+La couche récupération du moteur est outillée (cléless) : **SearXNG** (recherche
+web locale), **OpenAlex** (articles + complétion par DOI), **Crawl4AI** (page →
+markdown) et **Crossref**, fédérés avec dédoublonnage (DOI → URL → titre),
+enrichissement du corpus et isolation des pannes (un fournisseur mort est
+signalé, pas fatal).
+
+`IterativeSearch` relance des requêtes sur les **manques** observés (sous-questions
+non couvertes, classes de sources absentes, contre-évidence) puis s'arrête sur
+saturation ou budget ; le rapport JSON donne chaque requête **avec sa raison** et
+alimente la décision d'arrêt du moteur.
+
+```bash
+cd projects/reaserch-engine
+python3 -m engine.cli --check                 # quels fournisseurs répondent ? (exit 1 si aucun)
+python3 -m engine.cli "ma question" --rounds 3
+python3 -m engine.cli demo --demo             # corpus fictif hors-ligne : toute la mécanique
+python3 -m pytest tests -q                    # 78 tests, sans réseau
+```
+
+Docs : `docs/web-retrieval-v0.1.md` · `docs/search-iteration-v0.1.md` ·
+exemple de rapport : `docs/examples/recherche-iterative-demo.json`.
 
 ## 🔐 Sécurité
 
