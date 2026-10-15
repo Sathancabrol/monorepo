@@ -59,6 +59,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8123 --reload
     - `ETAT-…` → `output/visual/index.html` + `d3_interactive.html` + `taxonomy_graph.html`
     - `HCSM` / `reaserch-engine` / `Language-decoder` → code seul + README
   - Servie via `GET /preview/{project}/{path}` (FileResponse, pas de `X-Frame-Options` côté monorepo ; `watchtower` buildée sans en-têtes DENY).
+  - **Alias d'assets racine** : les builds qui référencent leurs assets depuis la racine (`/models/*.glb`, `/logo.svg`, `/mic.svg`, `/cesium/*` — cas de `watchtower`) sont ressertis depuis le dossier de preview du projet concerné, sinon ces appels 404 depuis l'iframe. Route catch-all déclarée en dernier → les autres routes et les 404 normaux sont inchangés, traversal toujours bloqué.
 
 ## 🛠 Rebuild des previews Vite
 

@@ -261,3 +261,39 @@ def api_manifest():
         return JSONResponse(json.loads(MANIFEST.read_text()))
     raise HTTPException(404, "MANIFEST manquant")
 
+# --- Alias d'assets racine (previews Vite) -----------------------------------
+# Certains builds référencent leurs assets depuis la racine du site
+# (« /models/airplane.glb », « /logo.svg »). Dans l'iframe
+# /preview/<projet>/<entrée>/ ces requêtes retombent sur la racine du monorepo
+# et renvoient 404. On les ressert depuis le dossier de preview du projet qui
+# contient réellement le fichier. Déclaré en dernier volontairement : seuls les
+# chemins non matchés par les routes ci-dessus arrivent ici.
+PREVIEW_ASSET_DIRS = {"models", "cesium", "assets"}
+PREVIEW_ASSET_FILES = {"logo.svg", "mic.svg", "pin.svg", "location.svg", "visual-presets.svg", "favicon.ico"}
+
+def preview_asset_candidates(asset: str):
+    if not PROJECTS.exists():
+        return
+    for project in sorted(p.name for p in PROJECTS.iterdir() if p.is_dir() and not p.name.startswith(".")):
+        entry = detect_preview_entry(project)
+        if not entry:
+            continue
+        root = (PROJECTS / project / entry).parent.resolve()
+        target = (root / asset).resolve()
+        try:
+            target.relative_to(root)  # traversal bloqué
+        except ValueError:
+            continue
+        if target.is_file():
+            yield target
+
+@app.get("/{asset:path}")
+def preview_asset_alias(asset: str):
+    first = asset.split("/", 1)[0]
+    if first not in PREVIEW_ASSET_DIRS and asset not in PREVIEW_ASSET_FILES:
+        raise HTTPException(404, f"Introuvable: /{asset}")
+    for target in preview_asset_candidates(asset):
+        mime = mimetypes.guess_type(str(target))[0] or "application/octet-stream"
+        return FileResponse(str(target), media_type=mime)
+    raise HTTPException(404, f"Asset non trouvé dans les previews: /{asset}")
+
