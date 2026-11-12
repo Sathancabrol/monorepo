@@ -1,13 +1,13 @@
 {
   "name": "olympus-studio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Local unified audiovisual studio shell — no paid APIs",
+  "description": "Unified audiovisual studio with local OBS WebSocket v5 control and ComfyUI bridge",
   "scripts": {
     "start": "node server.mjs",
     "dev": "node server.mjs",
-    "test": "node --test tests/smoke.test.mjs"
+    "test": "node --test"
   },
   "engines": {
     "node": ">=20"
