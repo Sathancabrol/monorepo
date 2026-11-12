@@ -18,3 +18,15 @@
 - Pas d'accès à la tour pendant cette conversation.
 - La limite de 5/5 automatisations ChatGPT empêche l'ajout d'un suivi nocturne sans libérer une place. Aucune tâche existante n'a été remplacée.
 - La première génération GitHub n'inclut pas tous les fichiers du prototype local v0.3.
+
+## Itération v0.2 — 12 novembre 2026 (soir)
+
+| Élément | Preuve reproductible | Résultat |
+|---|---|---|
+| Client OBS v5 | `src/obs-client.js`, `src/obs-panel.js`, `tests/obs-client.test.mjs` | Implémenté ; authentification/changement de scène/REC testés contre serveur WebSocket simulé |
+| Capture écran et micro | `src/app.js`, boutons `btnScreen` et `btnMicrophone` | Implémentée ; autorisation utilisateur requise ; non testée sur PC |
+| WebM avec piste audio | Assemblage MediaRecorder, clone de piste ou mélange Web Audio | Codé ; codecs/capture réelle à valider |
+| Protection fichiers et origines HTTP | `server.mjs`, `tests/smoke.test.mjs` | Corrigée ; requêtes interdites en tests automatiques |
+| GitHub Actions | https://github.com/Sathancabrol/monorepo/actions/runs/43288150897 | 13/13 tests réussis, Ubuntu / Node.js 22 |
+
+**Ne pas confondre** la simulation protocolaire OBS avec une véritable connexion OBS/Windows, ni l'export WebM codé avec un test audiovisuel de bout en bout.
