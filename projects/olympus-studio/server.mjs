@@ -8,6 +8,9 @@ const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
 const PORT = Number(process.env.OLYMPUS_PORT || 8787);
 const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
+// Serve only the Studio UI files. Never expose .env, source maps, tests or server code.
+const STATIC_FILES = new Set(['/index.html','/src/style.css','/src/app.js','/src/obs-panel.css','/src/obs-panel.js','/src/obs-client.js']);
+const ORIGINS = new Set(['http://127.0.0.1:'+PORT,'http://localhost:'+PORT]);
 
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
 function tcpCheck(port){return new Promise(done=>{const sock=net.createConnection({host:HOST,port});let settled=false;function finish(ok){if(!settled){settled=true;sock.destroy();done(ok);}}sock.setTimeout(800);sock.once('connect',()=>finish(true));sock.once('timeout',()=>finish(false));sock.once('error',()=>finish(false));});}
@@ -31,6 +34,9 @@ async function readImage(req){
 
 async function handle(req,res){
  const url=new URL(req.url,'http://127.0.0.1');
+ // Reject cross-origin writes and rebinding attempts before privileged local actions.
+ if (!['127.0.0.1:'+PORT,'localhost:'+PORT].includes(req.headers.host)) return json(res,403,{error:'Hôte interdit'});
+ if (req.method === 'POST' && req.headers.origin && !ORIGINS.has(req.headers.origin)) return json(res,403,{error:'Origine interdite'});
 
  if(req.method==='GET'&&url.pathname==='/obs'){
   res.writeHead(200,{'Content-Type':'multipart/x-mixed-replace; boundary=frame','Cache-Control':'no-cache, no-store','Connection':'keep-alive','X-Content-Type-Options':'nosniff'});
@@ -56,7 +62,7 @@ async function handle(req,res){
  const pathname=url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname);
  const full=resolve(ROOT,'.'+pathname);
  if(full!==ROOT && !full.startsWith(ROOT+sep))return json(res,403,{error:'Accès refusé'});
- if(/(^|\/)(\.|node_modules|media|cache)(\/|$)/.test(pathname))return json(res,403,{error:'Ressource privée'});
+ if(!STATIC_FILES.has(pathname))return json(res,403,{error:'Ressource privée'});
  try{const s=await stat(full);if(!s.isFile())return json(res,404,{error:'Introuvable'});const bytes=await readFile(full);res.writeHead(200,{'Content-Type':types[extname(full)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store'});res.end(req.method==='HEAD'?undefined:bytes);}
  catch{return json(res,404,{error:'Introuvable'});}
 }
