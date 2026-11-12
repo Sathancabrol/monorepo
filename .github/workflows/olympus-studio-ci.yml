@@ -36,3 +36,14 @@ jobs:
           node --check tests/smoke.test.mjs
       - name: API smoke tests
         run: npm test
+      - name: Pack Windows preview (Node.js requis)
+        run: |
+          zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs README.md
+          unzip -t olympus-studio-preview.zip | tail -1
+      - name: Publier le paquet de test
+        uses: actions/upload-artifact@v4
+        with:
+          name: olympus-studio-preview
+          path: projects/olympus-studio/olympus-studio-preview.zip
+          retention-days: 14
+          if-no-files-found: error
