@@ -1,0 +1,34 @@
+import http from 'node:http';
+import { readFile, stat } from 'node:fs/promises';
+import { join, resolve, extname, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import net from 'node:net';
+
+const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
+const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
+const PORT = Number(process.env.OLYMPUS_PORT || 8787);
+const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
+
+function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
+function tcpCheck(port){return new Promise(done=>{const sock=net.createConnection({host:HOST,port});let settled=false;function finish(ok){if(!settled){settled=true;sock.destroy();done(ok);}}sock.setTimeout(800);sock.once('connect',()=>finish(true));sock.once('timeout',()=>finish(false));sock.once('error',()=>finish(false));});}
+async function comfyCheck(){try{const r=await fetch('http://127.0.0.1:8188/system_stats',{signal:AbortSignal.timeout(1300)});return r.ok;}catch{return false;}}
+async function bodyJson(req){let body='';for await(const chunk of req){body+=chunk;if(body.length>1024*1024)throw new Error('Payload > 1 MiB');}return JSON.parse(body);}
+async function handle(req,res){
+ const url=new URL(req.url,'http://127.0.0.1');
+ if(req.method==='GET'&&url.pathname==='/api/health'){const [obs,comfy]=await Promise.all([tcpCheck(4455),comfyCheck()]);return json(res,200,{ok:true,local:true,services:{obs:{port:4455,reachable:obs,controlled:false},comfyui:{port:8188,reachable:comfy}},note:'Disponibilité réseau ≠ moteur configuré ou vérifié'});}
+ if(req.method==='POST'&&url.pathname==='/api/comfy/queue'){
+   let data;try{data=await bodyJson(req);}catch(e){return json(res,400,{error:'JSON invalide ou trop volumineux'});}
+   const prompt=data?.prompt; if(!prompt||typeof prompt!=='object'||Array.isArray(prompt)||Object.keys(prompt).length===0){return json(res,400,{error:'Attendu : {prompt: workflow_API_JSON}'});}
+   try{const response=await fetch('http://127.0.0.1:8188/prompt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,client_id:'olympus-studio'}),signal:AbortSignal.timeout(5000)});const out=await response.text();try{return json(res,response.status,JSON.parse(out));}catch{return json(res,502,{error:'Réponse ComfyUI invalide',detail:out.slice(0,500)});}}
+   catch(e){return json(res,502,{error:'ComfyUI local inaccessible',detail:String(e.message).slice(0,180)});}
+ }
+ if(req.method!=='GET'&&req.method!=='HEAD')return json(res,405,{error:'Méthode interdite'});
+ const pathname=url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname);
+ const full=resolve(ROOT,'.'+pathname);
+ if(full!==ROOT && !full.startsWith(ROOT+sep))return json(res,403,{error:'Accès refusé'});
+ if(/(^|\/)(\.|node_modules|media|cache)(\/|$)/.test(pathname))return json(res,403,{error:'Ressource privée'});
+ try{const s=await stat(full);if(!s.isFile())return json(res,404,{error:'Introuvable'});const bytes=await readFile(full);res.writeHead(200,{'Content-Type':types[extname(full)]||'application/octet-stream','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'no-store'});res.end(req.method==='HEAD'?undefined:bytes);}
+ catch{return json(res,404,{error:'Introuvable'});}
+}
+const server=http.createServer((req,res)=>{handle(req,res).catch(e=>json(res,500,{error:'Erreur serveur',detail:String(e.message)}));});
+server.listen(PORT,HOST,()=>console.log('OLYMPUS Studio : http://'+HOST+':'+PORT+' (local uniquement)'));
