@@ -35,3 +35,18 @@
 
 - API `GET /api/comfy/job?prompt_id=<UUID>` : interroge l'historique **du ComfyUI local** et normalise le statut / les métadonnées des sorties. L'interface GENERATE contient « Vérifier le dernier job ».
 - Protection des identifiants UUID ; test HTTP d'identifiant invalide ajouté. **Aucun ComfyUI réel ou modèle IA testé** ; les fichiers produits sont listés, pas encore importés dans la médiathèque.
+
+## Itération v0.2.1 — coffre média, réunions et migration v0.3
+
+| Élément | Preuve code / test | Validation |
+|---|---|---|
+| Stockage images/vidéos | `src/media-store.js` IndexedDB (assets, version 3), `src/app.js` reliaison des références | Unitaire Node sur encodage/décodage/référence; navigateur Windows non testé |
+| Projet portable | Bouton « Portable », export JSON avec médias ≤45 Mo et import réhydrateur | Tests binaires au-delà de 64 Ko réussis; grand projet non testé |
+| Réunions privées | `src/meeting-utils.js`, import/export SRT, compte rendu MD; sous-titres privés par défaut | Tests SRT réussis; pas de transcription IA |
+| Import legacy v0.3 | `src/v03-migration.js`, géométrie pixel 1280×720 → normalisée, `legacyV03` préserve notes/automation/timeline | Tests synthétiques réussis, portage du montage **non fait** |
+| Session automatique ChatGPT | Création tentée le 12/11/2026 | **Refusée : 5 automations actives sur 5** ; aucune tâche existante arrêtée |
+| Test E2E Chromium | Tentatives sur `127.0.0.1` et route Playwright virtuelle | **Bloqué par net::ERR_BLOCKED_BY_ADMINISTRATOR** ; ne pas compter comme réussi |
+
+**Règle :** `legacyV03` préserve les données du prototype précédent pour migration ultérieure, mais ne rend pas les fonctions storyboard/XR/automate opérationnelles. L'import de fichiers v0.3 réels doit encore être éprouvé sur navigateur et des fixtures complètes.
+
+L'application n'est **pas terminée**. Le socle unifié existe, mais un véritable éditeur audiovisuel complet, ASR/translation, VFX génératif, X-Ray et Watchtower actifs restent à réaliser.
