@@ -1,3 +1,4 @@
+import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
 const $=id=>document.getElementById(id);
 const C=$('stage'),ctx=C.getContext('2d');
 const spaces=[
@@ -19,6 +20,10 @@ const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),t
 const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],recording:false};
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
+const dbReady = openMediaDB().catch(() => null);
+const createdMediaURLs = new Set();
+function releaseMediaURLs(){for(const url of createdMediaURLs)URL.revokeObjectURL(url);createdMediaURLs.clear();}
+function localMediaURL(blob){const url=URL.createObjectURL(blob);createdMediaURLs.add(url);return url;}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const scene=()=>state.scenes.find(s=>s.id===state.activeScene)||state.scenes[0];
 const selected=()=>scene().layers.find(l=>l.id===state.selected);
@@ -75,24 +80,93 @@ function draw(){
  });
  const last=state.transcript[state.transcript.length-1];if(last&&state.space==='MEETING'){ctx.fillStyle='rgba(0,0,0,.76)';ctx.fillRect(140,630,1000,57);ctx.fillStyle='#fff';ctx.font='26px Segoe UI';ctx.textAlign='center';ctx.fillText((last.speaker+': '+last.text).slice(0,85),640,666,950);ctx.textAlign='left';}
 }
-function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
-function saveProject(){
+function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);
+initMediaLibrary();}
+function projectPayload(){
  const safe=state.scenes.map(s=>({id:s.id,name:s.name,layers:s.layers.map(l=>({...l,source:undefined}))}));
- const payload={format:'olympus-studio-project',schema:1,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,warning:'Les fichiers médias de session ne sont pas embarqués; relier les médias manuellement.'};
- dl('olympus-project-'+Date.now()+'.json',new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));status('Projet JSON exporté — médias non inclus');
+ return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
+}
+function saveProject(){
+ dl('olympus-project-'+Date.now()+'.json',new Blob([JSON.stringify(projectPayload(),null,2)],{type:'application/json'}));
+ status('Projet JSON exporté — les médias restent dans le coffre local du navigateur');
+}
+async function savePortableProject(){
+ const button=$('btnPortable');button.disabled=true;
+ try{
+  const db=await dbReady;
+  const refs=[...new Set(state.scenes.flatMap(s=>s.layers.filter(l=>l.type==='image'||l.type==='video').map(l=>l.id)))];
+  if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
+  const records=[];
+  for(const id of refs){const record=await getMedia(db,id);if(!record)throw Error('Média absent du coffre : '+id);records.push(record);}
+  const embeddedAssets=await exportPortableAssets(records);
+  const payload={...projectPayload(),portable:true,embeddedAssets};
+  dl('olympus-portable-'+Date.now()+'.json',new Blob([JSON.stringify(payload)],{type:'application/json'}));
+  status('Projet portable exporté : '+embeddedAssets.length+' média(s) intégré(s)');
+ }catch(e){status('Export portable impossible : '+e.message);}
+ finally{button.disabled=false;}
+}
+async function restoreLayerMedia(){
+ const db=await dbReady;if(!db)return;
+ const references=new Map();
+ for(const sc of state.scenes)for(const layer of sc.layers)
+  if(layer.type==='image'||layer.type==='video')references.set(layer.id,layer);
+ for(const [id,layer] of references){
+  try{
+   const record=await getMedia(db,id);
+   if(!mediaLayerUsable(record,layer))continue;
+   const url=localMediaURL(record.blob);
+   let media;
+   if(layer.type==='image'){media=new Image();media.src=url;await new Promise(resolve=>{media.onload=resolve;media.onerror=resolve;});}
+   else {media=document.createElement('video');media.src=url;media.loop=true;media.muted=true;media.playsInline=true;media.autoplay=true;media.play().catch(()=>{});}
+   runtime.set(id,media);
+  }catch(e){status('Reliaison média : '+e.message);}
+ }
+}
+async function initMediaLibrary(){
+ try{
+  const db=await dbReady;
+  if(!db){status('IndexedDB indisponible; médias non persistants');return;}
+  const records=await listMedia(db);
+  state.assets=records.map(r=>({id:r.id,name:r.name,type:r.type,size:r.size}));
+  await restoreLayerMedia();sync();panel();
+ }catch(e){status('Coffre de médias indisponible : '+e.message);}
 }
 async function loadProject(file){
  try{const data=JSON.parse(await file.text());if(data.format!=='olympus-studio-project'||!Array.isArray(data.scenes)||!data.scenes.length)throw Error('Format incompatible');
+  const db=await dbReady;
+  if(Array.isArray(data.embeddedAssets)&&data.embeddedAssets.length){
+   if(!db)throw Error('IndexedDB requis pour importer les médias portables');
+   const decoded=data.embeddedAssets.map(asset=>importPortableAsset(asset));
+   const total=decoded.reduce((sum,r)=>sum+r.size,0);
+   if(total>45*1024*1024)throw Error('Import portable trop volumineux');
+   for(const record of decoded)await putMedia(db,record);
+  }
   state.projectName=String(data.projectName||'Projet');$('projectName').value=state.projectName;
   state.scenes=data.scenes.filter(s=>Array.isArray(s.layers)).map(s=>({id:s.id||newId(),name:String(s.name||'Scène'),layers:s.layers.map(l=>({...l,id:l.id||newId(),visible:l.visible!==false}))}));
-  if(!state.scenes.length)throw Error('Aucune scène valide');state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];runtime.clear();sync();panel();status('Projet chargé — relier les médias référencés.');
+  if(!state.scenes.length)throw Error('Aucune scène valide');
+  state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];
+  runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
+  status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
 }
-async function addFiles(files){for(const file of files){const type=file.type.startsWith('image/')?'image':file.type.startsWith('video/')?'video':null;if(!type)continue;const url=URL.createObjectURL(file);let media;
- if(type==='image'){media=new Image();media.src=url;await new Promise(r=>{media.onload=r;media.onerror=r;});}
- else {media=document.createElement('video');media.src=url;media.muted=true;media.loop=true;media.playsInline=true;media.autoplay=true;media.play().catch(()=>{});}
- const l=addLayer({type,name:file.name,sourceName:file.name,x:.15,y:.15,w:.7,h:.65});runtime.set(l.id,media);state.assets.push({name:file.name,type,id:l.id,size:file.size});}
- sync();panel();status(files.length+' fichier(s) de session ajouté(s)');}
+async function addFiles(files){
+ const db=await dbReady;
+ let imported=0,failures=0;
+ for(const file of files){
+  const type=file.type.startsWith('image/')?'image':file.type.startsWith('video/')?'video':null;
+  if(!type)continue;
+  const layer=addLayer({type,name:file.name,sourceName:file.name,x:.15,y:.15,w:.7,h:.65});
+  if(db){try{await putMedia(db,{id:layer.id,name:file.name,type:file.type,blob:file});}catch{failures++;}}
+  else failures++;
+  const url=localMediaURL(file);let media;
+  if(type==='image'){media=new Image();media.src=url;await new Promise(resolve=>{media.onload=resolve;media.onerror=resolve;});}
+  else{media=document.createElement('video');media.src=url;media.muted=true;media.loop=true;media.playsInline=true;media.autoplay=true;media.play().catch(()=>{});}
+  runtime.set(layer.id,media);
+  state.assets.push({name:file.name,type:file.type,id:layer.id,size:file.size});
+  imported++;
+ }
+ sync();panel();status(imported+' média(s) importé(s)'+(failures?' · '+failures+' sans sauvegarde persistante':' · sauvegardés dans IndexedDB'));
+}
 async function camera(){
  if(webcamStream){webcamStream.getTracks().forEach(t=>t.stop());webcamStream=null;webcamVideo=null;status('Webcam arrêtée');return;}
  try{webcamStream=await navigator.mediaDevices.getUserMedia({video:{width:1280,height:720},audio:false});webcamVideo=document.createElement('video');webcamVideo.srcObject=webcamStream;webcamVideo.muted=true;webcamVideo.playsInline=true;await webcamVideo.play();addLayer({type:'webcam',name:'Webcam locale',x:.15,y:.1,w:.7,h:.75});status('Webcam autorisée par le navigateur');}catch(e){status('Webcam indisponible ou refusée : '+e.message);}
@@ -206,11 +280,11 @@ function panel(){
 makeNav();sync();setSpace('LIVE');
 $('projectName').onchange=e=>{state.projectName=e.target.value||'Projet';};
 $('btnNewScene').onclick=()=>{const s={id:newId(),name:'Scène '+(state.scenes.length+1),layers:[]};state.scenes.push(s);state.activeScene=s.id;state.selected=null;sync();status('Nouvelle scène');};
-$('btnSave').onclick=saveProject;$('fileProject').onchange=e=>{if(e.target.files[0])loadProject(e.target.files[0]);};
+$('btnSave').onclick=saveProject;$('btnPortable').onclick=savePortableProject;$('fileProject').onchange=e=>{if(e.target.files[0])loadProject(e.target.files[0]);};
 $('fileMedia').onchange=e=>addFiles([...e.target.files]);
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{if(b.dataset.add==='text')addLayer({type:'text',name:'Texte',value:'Nouveau texte',x:.2,y:.2,w:.6,h:.12,size:48,color:'#ffffff'});else addLayer({type:'rect',name:'Forme',x:.2,y:.2,w:.3,h:.2,color:'#28c8bf'});});
 $('btnCamera').onclick=camera;$('btnMicrophone').onclick=microphone;$('btnScreen').onclick=captureScreen;$('btnPNG').onclick=png;$('btnRecord').onclick=record;$('btnHealth').onclick=health;$('btnObsOutput').onclick=()=>{obsOutput=!obsOutput;$('btnObsOutput').classList.toggle('active',obsOutput);$('btnObsOutput').textContent=obsOutput?'■ Stop OBS':'Sortie OBS';status(obsOutput?'Sortie MJPEG active : ajouter Source navigateur http://127.0.0.1:8787/obs dans OBS · vidéo seule':'Sortie OBS arrêtée');};
 C.addEventListener('pointerdown',e=>{const rect=C.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;const hit=[...scene().layers].reverse().find(l=>l.visible&&x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h);state.selected=hit?.id||null;sync();});
 requestAnimationFrame(loop);
-window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());if(microphoneStream)microphoneStream.getTracks().forEach(t=>t.stop());if(screenStream)screenStream.getTracks().forEach(t=>t.stop());});
+window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());if(microphoneStream)microphoneStream.getTracks().forEach(t=>t.stop());if(screenStream)screenStream.getTracks().forEach(t=>t.stop());releaseMediaURLs();});
 health();
