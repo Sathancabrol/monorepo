@@ -1,4 +1,4 @@
-import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds } from './storyboard.js';
+import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, trimVideoClip, splitStoryboardAt } from './storyboard.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
@@ -306,7 +306,7 @@ function panel(){
  if(state.space==='LIVE'){const info=document.createElement('p');info.className='notice';info.textContent='La composition Canvas fonctionne localement. La régie OBS WebSocket se trouve à droite (à connecter à OBS installé). La sortie MJPEG reste vidéo seule; l’audio multipiste OBS natif reste externe.';el.append(info);const cards=document.createElement('div');cards.className='cards';cards.innerHTML=card('Écran / webcams','Webcam, écran et microphone disponibles sur autorisation, depuis la barre d’outils.')+card('OBS externe','Source navigateur sur /obs après activation du bouton « Sortie OBS », sans audio; vidéo MJPEG limitée par la machine.')+card('Enregistrement','WebM du Canvas avec piste microphone ou audio partagé si disponible; PNG du plan courant. OBS reste externe.');el.append(cards);}
  else if(state.space==='EDIT'){
   const header=document.createElement('p');header.className='notice';
-  header.textContent='Montage séquentiel non destructif : images et vidéos, réordonnancement, durées, aperçu et export WebM muet. Audio et transitions multipistes à intégrer.';
+  header.textContent='Montage séquentiel non destructif : points IN/OUT, coupe au curseur, titres, réordonnancement et export WebM muet. Audio et transitions multipistes à intégrer.';
   el.append(header);
   const preview=document.createElement('canvas');preview.id='editPreview';preview.width=1280;preview.height=720;preview.style.width='100%';preview.style.maxHeight='360px';preview.style.background='#071422';preview.style.borderRadius='8px';el.append(preview);
   const controls=document.createElement('div');controls.className='actions';el.append(controls);
@@ -316,7 +316,17 @@ function panel(){
   seek.oninput=()=>{state.editTime=Number(seek.value);state.editPlaying=false;state.editLast=0;};
   const clock=document.createElement('span');clock.id='editClock';clock.className='muted';clock.textContent=editClock(state.editTime);
   const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (sans audio)';exportButton.onclick=exportEditorWebM;
-  controls.append(play,seek,clock,exportButton);
+  const cutButton=document.createElement('button');cutButton.textContent='Diviser au curseur';
+  cutButton.title='Scinder une vidéo en deux segments à la position courante de la timeline';
+  cutButton.onclick=()=>{
+   if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
+   try{
+    state.clips=splitStoryboardAt(state.clips,state.editTime,newId());
+    state.editPlaying=false;state.editLast=0;panel();sync();
+    status('Clip vidéo divisé au curseur, source inchangée');
+   }catch(e){status('Division impossible : '+e.message);}
+  };
+  controls.append(play,seek,clock,cutButton,exportButton);
   const select=document.createElement('select');select.setAttribute('aria-label','Choisir un média du coffre');
   const eligible=state.assets.filter(a=>String(a.type).startsWith('image/')||String(a.type).startsWith('video/'));
   for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
@@ -342,6 +352,25 @@ function panel(){
     clip.duration=n;if(clip.kind==='video')clip.outPoint=(Number(clip.inPoint)||0)+n;
     state.editPlaying=false;panel();
    };
+   if(clip.kind==='video'){
+    const inputTime=(caption,value,callback)=>{
+     const wrapper=document.createElement('label');wrapper.className='muted';wrapper.textContent=caption+' ';
+     const control=document.createElement('input');control.type='number';control.min='0';control.step='0.1';control.style.width='82px';control.value=String(value);
+     control.setAttribute('aria-label',caption+' du clip '+(index+1));
+     control.onchange=callback;wrapper.append(control);return wrapper;
+    };
+    const updateTrim=(start,end)=>{
+     if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
+     try{
+      state.clips[index]=trimVideoClip(clip,start,end);
+      state.editPlaying=false;state.editLast=0;
+      state.editTime=Math.min(state.editTime,Math.max(0,storyboardDuration(state.clips)-0.001));
+      panel();sync();status('Plage source IN/OUT modifiée sans modifier le fichier');
+     }catch(e){status('Plage refusée : '+e.message);panel();}
+    };
+    row.append(inputTime('IN (s)',clip.inPoint,()=>updateTrim(Number(row.querySelector('[aria-label="IN (s) du clip '+(index+1)+'"]').value),Number(clip.outPoint))));
+    row.append(inputTime('OUT (s)',clip.outPoint,()=>updateTrim(Number(clip.inPoint),Number(row.querySelector('[aria-label="OUT (s) du clip '+(index+1)+'"]').value))));
+   }
    const title=document.createElement('input');title.type='text';title.placeholder='Titre incrusté';title.value=clip.title||'';title.style.flex='1';
    title.onchange=()=>{clip.title=title.value;};
    const up=document.createElement('button');up.textContent='↑';up.title='Monter';up.onclick=()=>{state.clips=moveClip(state.clips,index,-1);panel();};
