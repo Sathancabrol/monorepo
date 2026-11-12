@@ -1,6 +1,6 @@
 # OLYMPUS Studio — poste de production unifié
 
-**État :** fondation v0.2.2 (12 novembre 2026). Développement autonome dans `projects/olympus-studio/`, branche `feat/olympus-studio-20261112`. **Aucun changement dans les projets voisins, ni fusion dans main.**
+**État :** fondation v0.2.3 (12 novembre 2026). Développement autonome dans `projects/olympus-studio/`, branche `feat/olympus-studio-20261112`. **Aucun changement dans les projets voisins, ni fusion dans main.**
 
 ## Intention
 Une **seule interface** pour réalisation/streaming OBS, montage non destructif, IA image/vidéo ComfyUI, XR/X-Ray Mirror, géospatial/Watchtower, transcription/traduction/réunions, automations Chronos, audio, captures, personnages et bibliothèque locale. Gratuit et local en priorité; respecter Windows 10 et GPU GTX 1060 6 Go / GTX 1650 4 Go.
@@ -48,3 +48,7 @@ Le prototype web local **OLYMPUS Studio v0.3** (indépendant, plus avancé sur p
 3. LIVE a priorité sur les traitements IA lourds; génération vidéo **différée** sur GPU modestes.
 4. Aucun service cloud obligatoire, aucune clé dans Git, pas de collecte secrète, pas de scan biométrique non autorisé.
 5. Toute case « terminé » doit fournir une preuve reproductible, version, plate-forme et test.
+
+### Montage EDIT v0.2.3
+- Vidéos : champs de découpe **IN/OUT** et bouton **Diviser au curseur**. La source est préservée dans la médiathèque. Tests mathématiques et JSON validés; tests navigateur/Windows à venir.
+- [Mode d'emploi et limites](docs/EDIT_TRIM.md).
