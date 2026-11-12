@@ -1,4 +1,4 @@
-import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip } from './storyboard.js';
+import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds } from './storyboard.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
@@ -170,7 +170,7 @@ async function savePortableProject(){
  const button=$('btnPortable');button.disabled=true;
  try{
   const db=await dbReady;
-  const refs=[...new Set([...state.scenes.flatMap(s=>s.layers.filter(l=>l.type==='image'||l.type==='video').map(l=>l.assetId||l.id)),...state.clips.map(c=>c.assetId)])];
+  const refs=referencedAssetIds(state.scenes,state.clips);
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
   const records=[];
   for(const id of refs){const record=await getMedia(db,id);if(!record)throw Error('Média absent du coffre : '+id);records.push(record);}
