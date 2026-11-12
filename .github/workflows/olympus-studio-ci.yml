@@ -1,0 +1,35 @@
+name: OLYMPUS Studio — smoke tests
+on:
+  push:
+    branches:
+      - feat/olympus-studio-20261112
+    paths:
+      - 'projects/olympus-studio/**'
+      - '.github/workflows/olympus-studio-ci.yml'
+  pull_request:
+    paths:
+      - 'projects/olympus-studio/**'
+      - '.github/workflows/olympus-studio-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/olympus-studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static parse
+        run: |
+          node --check server.mjs
+          node --check src/app.js
+          node --check tests/smoke.test.mjs
+      - name: API smoke tests
+        run: npm test
