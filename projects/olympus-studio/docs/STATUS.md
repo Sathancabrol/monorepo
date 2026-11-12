@@ -50,3 +50,15 @@
 **Règle :** `legacyV03` préserve les données du prototype précédent pour migration ultérieure, mais ne rend pas les fonctions storyboard/XR/automate opérationnelles. L'import de fichiers v0.3 réels doit encore être éprouvé sur navigateur et des fixtures complètes.
 
 L'application n'est **pas terminée**. Le socle unifié existe, mais un véritable éditeur audiovisuel complet, ASR/translation, VFX génératif, X-Ray et Watchtower actifs restent à réaliser.
+
+## Itération v0.2.2 — storyboard EDIT
+
+| Élément | Preuve | État |
+|---|---|---|
+| Modèle non destructif de clips | `src/storyboard.js` + `tests/storyboard.test.mjs` | Durées, ordre, mapping temporel et références média testés Node |
+| Espace EDIT | `src/app.js` | UI codée : choix de médias, ordre, durée, titres, aperçu Canvas et lecture; test navigateur réel restant |
+| Export EDIT | `exportEditorWebM`, `MediaRecorder` sur Canvas dédié | Code présent, **vidéo sans audio**; export limité à 120 sec, non testé en conditions réelles |
+| Sauvegarde des clips | `projectPayload().clips`, `loadProject`, `referencedAssetIds` | Série de clips conservée dans JSON, médias EDIT inclus dans portable |
+| Multimédia avancé | Transitions, pistes audio, coupure de clips par points IN/OUT dans UI, MP4 | **Non implémenté** ; pas équivalent à FreeCut/Kdenlive |
+
+La piste éditoriale suivante consiste à valider la lecture vidéo et les exports sur Chromium Windows, intégrer la sélection et synchronisation audio, puis seulement évaluer une intégration plus profonde de FreeCut ou d'un moteur de montage natif.
