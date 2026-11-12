@@ -17,7 +17,7 @@ const spaces=[
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
 const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],recording:false};
-const runtime=new Map();let webcamStream=null;let webcamVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;
+const runtime=new Map();let webcamStream=null;let webcamVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;
 state.activeScene=state.scenes[0].id;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const scene=()=>state.scenes.find(s=>s.id===state.activeScene)||state.scenes[0];
@@ -75,7 +75,7 @@ function draw(){
  });
  const last=state.transcript[state.transcript.length-1];if(last&&state.space==='MEETING'){ctx.fillStyle='rgba(0,0,0,.76)';ctx.fillRect(140,630,1000,57);ctx.fillStyle='#fff';ctx.font='26px Segoe UI';ctx.textAlign='center';ctx.fillText((last.speaker+': '+last.text).slice(0,85),640,666,950);ctx.textAlign='left';}
 }
-function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}requestAnimationFrame(loop);}
+function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
 function saveProject(){
  const safe=state.scenes.map(s=>({id:s.id,name:s.name,layers:s.layers.map(l=>({...l,source:undefined}))}));
  const payload={format:'olympus-studio-project',schema:1,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,warning:'Les fichiers médias de session ne sont pas embarqués; relier les médias manuellement.'};
@@ -112,7 +112,7 @@ const card=(name,detail)=>'<div class="mini-card"><h3>'+esc(name)+'</h3><p>'+esc
 function panel(){
  const el=$('workspacePanel');el.innerHTML='';const h=document.createElement('h2');h.textContent=state.space+' · atelier';el.append(h);
  const wrap=document.createElement('div');wrap.className='actions';el.append(wrap);
- if(state.space==='LIVE'){const info=document.createElement('p');info.className='notice';info.textContent='La composition Canvas fonctionne localement. OBS doit encore être piloté par obs-websocket et l’audio multipiste reste à intégrer.';el.append(info);const cards=document.createElement('div');cards.className='cards';cards.innerHTML=card('Écran / webcams','Ajouter des vidéos, images et webcams locales via les contrôles au-dessus de l’aperçu.')+card('OBS externe','Source navigateur ou capture de fenêtre possible après configuration manuelle.')+card('Enregistrement','WebM depuis le Canvas (sans audio) ; PNG du plan courant.');el.append(cards);}
+ if(state.space==='LIVE'){const info=document.createElement('p');info.className='notice';info.textContent='La composition Canvas fonctionne localement. OBS doit encore être piloté par obs-websocket et l’audio multipiste reste à intégrer.';el.append(info);const cards=document.createElement('div');cards.className='cards';cards.innerHTML=card('Écran / webcams','Ajouter des vidéos, images et webcams locales via les contrôles au-dessus de l’aperçu.')+card('OBS externe','Source navigateur sur /obs après activation du bouton « Sortie OBS », sans audio; vidéo MJPEG limitée par la machine.')+card('Enregistrement','WebM depuis le Canvas (sans audio) ; PNG du plan courant.');el.append(cards);}
  else if(state.space==='MEETING'){
   const speaker=document.createElement('input');speaker.placeholder='Intervenant';speaker.value='Intervenant 1';const line=document.createElement('input');line.placeholder='Phrase / transcription manuelle';line.setAttribute('aria-label','Texte de la transcription');const add=document.createElement('button');add.textContent='+ Segment';add.onclick=()=>{if(!line.value.trim())return;state.transcript.push({speaker:speaker.value||'Inconnu',text:line.value.trim(),t:Math.floor(performance.now()/1000)});line.value='';panel();status('Segment ajouté à la réunion');};const exportBtn=document.createElement('button');exportBtn.textContent='Exporter SRT';exportBtn.onclick=downloadSRT;wrap.append(speaker,line,add,exportBtn);
   const info=document.createElement('p');info.className='notice';info.textContent='Saisie manuelle seulement. Transcription, traduction et diarisation automatiques restent à intégrer; informer les participants avant enregistrement.';el.append(info);
@@ -147,7 +147,7 @@ $('btnNewScene').onclick=()=>{const s={id:newId(),name:'Scène '+(state.scenes.l
 $('btnSave').onclick=saveProject;$('fileProject').onchange=e=>{if(e.target.files[0])loadProject(e.target.files[0]);};
 $('fileMedia').onchange=e=>addFiles([...e.target.files]);
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{if(b.dataset.add==='text')addLayer({type:'text',name:'Texte',value:'Nouveau texte',x:.2,y:.2,w:.6,h:.12,size:48,color:'#ffffff'});else addLayer({type:'rect',name:'Forme',x:.2,y:.2,w:.3,h:.2,color:'#28c8bf'});});
-$('btnCamera').onclick=camera;$('btnPNG').onclick=png;$('btnRecord').onclick=record;$('btnHealth').onclick=health;
+$('btnCamera').onclick=camera;$('btnPNG').onclick=png;$('btnRecord').onclick=record;$('btnHealth').onclick=health;$('btnObsOutput').onclick=()=>{obsOutput=!obsOutput;$('btnObsOutput').classList.toggle('active',obsOutput);$('btnObsOutput').textContent=obsOutput?'■ Stop OBS':'Sortie OBS';status(obsOutput?'Sortie MJPEG active : ajouter Source navigateur http://127.0.0.1:8787/obs dans OBS · vidéo seule':'Sortie OBS arrêtée');};
 C.addEventListener('pointerdown',e=>{const rect=C.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;const hit=[...scene().layers].reverse().find(l=>l.visible&&x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h);state.selected=hit?.id||null;sync();});
 requestAnimationFrame(loop);
 window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());});
