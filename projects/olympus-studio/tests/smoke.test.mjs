@@ -24,6 +24,7 @@ test('Fichier privé inaccessible',async()=>{
 test('Diagnostic OBS/ComfyUI en lecture seule',async()=>{
  const r=await fetch(base+'/api/health');assert.equal(r.status,200);const j=await r.json();assert.equal(j.local,true);assert.ok(j.services?.obs);assert.ok(j.services?.comfyui);
 });
+test('Trame vidéo invalide rejetée',async()=>{const r=await fetch(base+'/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:'pas une image'});assert.equal(r.status,400);});
 test('Workflow ComfyUI malformé rejeté, sans requête externe',async()=>{
  const r=await fetch(base+'/api/comfy/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:{}})});assert.equal(r.status,400);
 });
