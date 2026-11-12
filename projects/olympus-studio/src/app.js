@@ -1,3 +1,4 @@
+import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip } from './storyboard.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
@@ -19,10 +20,11 @@ const spaces=[
 ];
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
-const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],captionsVisible:false,legacyV03:null,recording:false};
+const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],clips:[],editTime:0,editPlaying:false,editLast:0,captionsVisible:false,legacyV03:null,recording:false};
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const dbReady = openMediaDB().catch(() => null);
+const editMedia = new Map();let editorRecorder=null;
 const createdMediaURLs = new Set();
 function releaseMediaURLs(){for(const url of createdMediaURLs)URL.revokeObjectURL(url);createdMediaURLs.clear();}
 function localMediaURL(blob){const url=URL.createObjectURL(blob);createdMediaURLs.add(url);return url;}
@@ -32,7 +34,7 @@ const selected=()=>scene().layers.find(l=>l.id===state.selected);
 function status(t){$('status').textContent=t;}
 function dl(name,blob){const a=document.createElement('a');const u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),10000);}
 function addLayer(layer){layer.id=newId();layer.visible=true;scene().layers.push(layer);state.selected=layer.id;sync();return layer;}
-function setSpace(key){state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
+function setSpace(key){if(key!=='EDIT')state.editPlaying=false;state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
 function makeNav(){const root=$('navItems');spaces.forEach(([key,icon,label])=>{const b=document.createElement('button');b.dataset.space=key;b.innerHTML='<b aria-hidden="true">'+esc(icon)+'</b><span>'+key+'</span>';b.title=label;b.onclick=()=>setSpace(key);root.append(b);});}
 function sync(){
  $('stageLabel').textContent=scene().name+' · 1280 × 720';
@@ -82,10 +84,10 @@ function draw(){
  });
  const last=state.transcript[state.transcript.length-1];if(last&&state.captionsVisible===true){ctx.fillStyle='rgba(0,0,0,.76)';ctx.fillRect(140,630,1000,57);ctx.fillStyle='#fff';ctx.font='26px Segoe UI';ctx.textAlign='center';ctx.fillText((last.speaker+': '+last.text).slice(0,85),640,666,950);ctx.textAlign='left';}
 }
-function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
+function loop(t){if(t-lastCanvas>=32){draw();drawEditor(t);lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
 function projectPayload(){
  const safe=state.scenes.map(s=>({id:s.id,name:s.name,layers:s.layers.map(l=>({...l,source:undefined}))}));
- return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,legacyV03:state.legacyV03,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
+ return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,clips:state.clips,legacyV03:state.legacyV03,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
 }
 function saveProject(){
  dl('olympus-project-'+Date.now()+'.json',new Blob([JSON.stringify(projectPayload(),null,2)],{type:'application/json'}));
@@ -146,6 +148,10 @@ async function loadProject(file){
   state.scenes=data.scenes.filter(s=>Array.isArray(s.layers)).map(s=>({id:s.id||newId(),name:String(s.name||'Scène'),layers:s.layers.map(l=>({...l,id:l.id||newId(),visible:l.visible!==false}))}));
   if(!state.scenes.length)throw Error('Aucune scène valide');
   state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];state.captionsVisible=false;state.legacyV03=data.legacyV03||null;
+  const legacyClips=data.legacyV03?.edit?.clips;
+  const candidates=Array.isArray(data.clips)?data.clips:Array.isArray(legacyClips)?legacyClips:[];
+  state.clips=candidates.slice(0,1000).flatMap(c=>{try{return [validateClip(c)];}catch{return [];}});
+  state.editTime=0;state.editPlaying=false;editMedia.clear();
   runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
   status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
