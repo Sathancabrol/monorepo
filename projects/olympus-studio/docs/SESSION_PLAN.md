@@ -12,8 +12,8 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 
 - Lancer une **itération de travail** à chaque session agent disponible : consulter STATUS, HANDOFF, PR #16 et tickets #11 à #15 ; sélectionner une tâche ; implémenter ; ajouter des tests ; vérifier GitHub Actions ; documenter la preuve ; mettre à jour les tickets ; conserver le travail sur la branche.
 - Les **tests GitHub Actions** s'exécutent déjà automatiquement aux pushes sur `feat/olympus-studio-20261112` et sur PR. Une exécution CI n'est **pas** un agent qui écrit du nouveau code.
-- **Limite ChatGPT : 5/5 automations actives.** La tâche récurrente OLYMPUS demandée a été refusée avec `too_many_active_automations`. Ne supprimer ni réaffecter les cinq veilles de l'utilisateur sans choix explicite.
-- Aucune session de développement autonome future n'est actuellement garantie par ChatGPT. Les tâches restent prêtes à être exécutées par une prochaine session ou par un agent externe explicitement configuré.
+- **Tâche ChatGPT activée le 12/11/2026** : `OLYMPUS Studio — développement` (`6af632ef3df88191a7ef46e372054ac4`), reprise quotidienne à **02:00 Europe/Paris**. Une exécution immédiate a été déclenchée à la demande de l'utilisateur le 12/11.
+- Une tâche planifiée exécute des sessions **bornées**; pas de programmation ou génération garantie en continu. Accès GitHub et qualité CI à revérifier à chaque passage.
 
 ## Ordre de travail, critères et preuves
 
@@ -46,3 +46,9 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 - CI : https://github.com/Sathancabrol/monorepo/actions/workflows/olympus-studio-ci.yml
 - X-Ray et Watchtower : bibliothèques **externes** ; lire les contrats et preuves avant toute attribution d'une fonction « intégrée ».
 - Archive v0.3 indépendante dans la conversation `OLYMPUS_STUDIO_reprise_2026-11-12.zip`, non fusionnée.
+
+## Session immédiate — v0.2.3, 12 novembre au soir
+- S04 : édition vidéo avec réglages IN/OUT et découpage au curseur sur la timeline globale (sans mutation des fichiers sources).
+- Fonctions pures `trimVideoClip`, `splitVideoClip`, `splitStoryboardAt` testées, sérialisation JSON stable.
+- Preuve : https://github.com/Sathancabrol/monorepo/actions/runs/43316401111 — **29/29 tests réussis** sur Node/Ubuntu.
+- Critère S04 **partiel** : export vidéo sans audio, durée source non contraignante, validation Chromium/Windows requise.
