@@ -9,7 +9,7 @@
 | X-Ray Mirror | Conversations : moteur de détections et gestes; version du dépôt local non inspectée dans cette session | Adaptateur à écrire |
 | Watchtower | `src/main.js`, `src/batiRapide.js`, `src/osmBuildings3D.js` inspectés sur GitHub | Code présent, exécution 3D non vérifiée |
 | Montage FreeCut / Velorn | Docs publiques consultées le 12/11/2026 | Candidats, NON intégrés |
-| CI, distribution Windows, perf GTX | Aucun résultat | À faire |
+| Workflow GitHub Actions ciblé | `.github/workflows/olympus-studio-ci.yml` ajouté sur branche | Exécution / résultat non confirmé |\n| Distribution Windows, perf GTX | Aucun résultat | À faire |
 
 ## Règle de signalement
 **Proposé** ≠ **codé** ≠ **test isolé** ≠ **test navigateur** ≠ **test sur Windows de l'utilisateur** ≠ **déployé**. Garder ces colonnes séparées.
