@@ -1,3 +1,4 @@
+import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
 const $=id=>document.getElementById(id);
@@ -18,7 +19,7 @@ const spaces=[
 ];
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
-const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],captionsVisible:false,recording:false};
+const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],captionsVisible:false,legacyV03:null,recording:false};
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const dbReady = openMediaDB().catch(() => null);
@@ -84,7 +85,7 @@ function draw(){
 function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
 function projectPayload(){
  const safe=state.scenes.map(s=>({id:s.id,name:s.name,layers:s.layers.map(l=>({...l,source:undefined}))}));
- return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
+ return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,legacyV03:state.legacyV03,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
 }
 function saveProject(){
  dl('olympus-project-'+Date.now()+'.json',new Blob([JSON.stringify(projectPayload(),null,2)],{type:'application/json'}));
@@ -94,7 +95,7 @@ async function savePortableProject(){
  const button=$('btnPortable');button.disabled=true;
  try{
   const db=await dbReady;
-  const refs=[...new Set(state.scenes.flatMap(s=>s.layers.filter(l=>l.type==='image'||l.type==='video').map(l=>l.id)))];
+  const refs=[...new Set(state.scenes.flatMap(s=>s.layers.filter(l=>l.type==='image'||l.type==='video').map(l=>l.assetId||l.id)))];
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
   const records=[];
   for(const id of refs){const record=await getMedia(db,id);if(!record)throw Error('Média absent du coffre : '+id);records.push(record);}
@@ -112,7 +113,7 @@ async function restoreLayerMedia(){
   if(layer.type==='image'||layer.type==='video')references.set(layer.id,layer);
  for(const [id,layer] of references){
   try{
-   const record=await getMedia(db,id);
+   const record=await getMedia(db,layer.assetId||id);
    if(!mediaLayerUsable(record,layer))continue;
    const url=localMediaURL(record.blob);
    let media;
@@ -132,7 +133,7 @@ async function initMediaLibrary(){
  }catch(e){status('Coffre de médias indisponible : '+e.message);}
 }
 async function loadProject(file){
- try{const data=JSON.parse(await file.text());if(data.format!=='olympus-studio-project'||!Array.isArray(data.scenes)||!data.scenes.length)throw Error('Format incompatible');
+ try{let data=JSON.parse(await file.text());if(data.app==='OLYMPUS Studio'&&String(data.version)==='0.3')data=migrateV03Project(data);if(data.format!=='olympus-studio-project'||!Array.isArray(data.scenes)||!data.scenes.length)throw Error('Format incompatible');
   const db=await dbReady;
   if(Array.isArray(data.embeddedAssets)&&data.embeddedAssets.length){
    if(!db)throw Error('IndexedDB requis pour importer les médias portables');
@@ -144,7 +145,7 @@ async function loadProject(file){
   state.projectName=String(data.projectName||'Projet');$('projectName').value=state.projectName;
   state.scenes=data.scenes.filter(s=>Array.isArray(s.layers)).map(s=>({id:s.id||newId(),name:String(s.name||'Scène'),layers:s.layers.map(l=>({...l,id:l.id||newId(),visible:l.visible!==false}))}));
   if(!state.scenes.length)throw Error('Aucune scène valide');
-  state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];state.captionsVisible=false;
+  state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];state.captionsVisible=false;state.legacyV03=data.legacyV03||null;
   runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
   status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
