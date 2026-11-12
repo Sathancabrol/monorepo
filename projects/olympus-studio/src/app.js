@@ -1,3 +1,4 @@
+import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
 const $=id=>document.getElementById(id);
 const C=$('stage'),ctx=C.getContext('2d');
@@ -17,7 +18,7 @@ const spaces=[
 ];
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
-const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],recording:false};
+const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],captionsVisible:false,recording:false};
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const dbReady = openMediaDB().catch(() => null);
@@ -78,7 +79,7 @@ function draw(){
   }catch{}
   if(l.id===state.selected){ctx.strokeStyle='#42e8df';ctx.lineWidth=3;ctx.strokeRect(x,y,w,h);}
  });
- const last=state.transcript[state.transcript.length-1];if(last&&state.space==='MEETING'){ctx.fillStyle='rgba(0,0,0,.76)';ctx.fillRect(140,630,1000,57);ctx.fillStyle='#fff';ctx.font='26px Segoe UI';ctx.textAlign='center';ctx.fillText((last.speaker+': '+last.text).slice(0,85),640,666,950);ctx.textAlign='left';}
+ const last=state.transcript[state.transcript.length-1];if(last&&state.captionsVisible===true){ctx.fillStyle='rgba(0,0,0,.76)';ctx.fillRect(140,630,1000,57);ctx.fillStyle='#fff';ctx.font='26px Segoe UI';ctx.textAlign='center';ctx.fillText((last.speaker+': '+last.text).slice(0,85),640,666,950);ctx.textAlign='left';}
 }
 function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
 function projectPayload(){
@@ -143,7 +144,7 @@ async function loadProject(file){
   state.projectName=String(data.projectName||'Projet');$('projectName').value=state.projectName;
   state.scenes=data.scenes.filter(s=>Array.isArray(s.layers)).map(s=>({id:s.id||newId(),name:String(s.name||'Scène'),layers:s.layers.map(l=>({...l,id:l.id||newId(),visible:l.visible!==false}))}));
   if(!state.scenes.length)throw Error('Aucune scène valide');
-  state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];
+  state.activeScene=state.scenes.find(s=>s.id===data.activeScene)?.id||state.scenes[0].id;state.selected=null;state.transcript=Array.isArray(data.transcript)?data.transcript:[];state.captionsVisible=false;
   runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
   status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
@@ -216,7 +217,7 @@ function record(){const button=$('btnRecord');
  }catch(e){stream?.getTracks().forEach(t=>t.stop());mixContext?.close();status('Enregistrement impossible : '+e.message);}
 }
 function srtTime(s){const ms=Math.max(0,Math.round(s*1000)),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sec=Math.floor(ms%60000/1000),r=ms%1000;return [h,m,sec].map(n=>String(n).padStart(2,'0')).join(':')+','+String(r).padStart(3,'0');}
-function downloadSRT(){const body=state.transcript.map((x,i)=>String(i+1)+'\n'+srtTime(x.t)+' --> '+srtTime(x.t+3)+'\n'+x.speaker+': '+x.text+'\n').join('\n');dl('reunion.srt',new Blob([body],{type:'text/plain'}));}
+function downloadSRT(){dl('reunion.srt',new Blob([formatSRT(state.transcript)],{type:'text/plain'}));}
 async function health(){try{const r=await fetch('/api/health');const x=await r.json();$('engineStatus').textContent='OBS '+(x.services.obs.reachable?'visible':'absent')+' · ComfyUI '+(x.services.comfyui.reachable?'visible':'absent')+' · XR non connecté';status('Diagnostic local effectué — visible ne signifie pas connecté');return x;}catch(e){status('Diagnostic non disponible : '+e.message);return null;}}
 const card=(name,detail)=>'<div class="mini-card"><h3>'+esc(name)+'</h3><p>'+esc(detail)+'</p></div>';
 function panel(){
@@ -224,9 +225,27 @@ function panel(){
  const wrap=document.createElement('div');wrap.className='actions';el.append(wrap);
  if(state.space==='LIVE'){const info=document.createElement('p');info.className='notice';info.textContent='La composition Canvas fonctionne localement. La régie OBS WebSocket se trouve à droite (à connecter à OBS installé). La sortie MJPEG reste vidéo seule; l’audio multipiste OBS natif reste externe.';el.append(info);const cards=document.createElement('div');cards.className='cards';cards.innerHTML=card('Écran / webcams','Webcam, écran et microphone disponibles sur autorisation, depuis la barre d’outils.')+card('OBS externe','Source navigateur sur /obs après activation du bouton « Sortie OBS », sans audio; vidéo MJPEG limitée par la machine.')+card('Enregistrement','WebM du Canvas avec piste microphone ou audio partagé si disponible; PNG du plan courant. OBS reste externe.');el.append(cards);}
  else if(state.space==='MEETING'){
-  const speaker=document.createElement('input');speaker.placeholder='Intervenant';speaker.value='Intervenant 1';const line=document.createElement('input');line.placeholder='Phrase / transcription manuelle';line.setAttribute('aria-label','Texte de la transcription');const add=document.createElement('button');add.textContent='+ Segment';add.onclick=()=>{if(!line.value.trim())return;state.transcript.push({speaker:speaker.value||'Inconnu',text:line.value.trim(),t:Math.floor(performance.now()/1000)});line.value='';panel();status('Segment ajouté à la réunion');};const exportBtn=document.createElement('button');exportBtn.textContent='Exporter SRT';exportBtn.onclick=downloadSRT;wrap.append(speaker,line,add,exportBtn);
-  const info=document.createElement('p');info.className='notice';info.textContent='Saisie manuelle seulement. Transcription, traduction et diarisation automatiques restent à intégrer; informer les participants avant enregistrement.';el.append(info);
-  state.transcript.slice(-7).forEach(s=>{const div=document.createElement('div');div.className='transcript';div.innerHTML='<span class="speaker">'+esc(s.speaker)+'</span><span>'+esc(s.text)+'</span><small>'+esc(srtTime(s.t))+'</small>';el.append(div);});
+  const speaker=document.createElement('input');speaker.placeholder='Intervenant';speaker.value='Intervenant 1';
+  const line=document.createElement('input');line.placeholder='Phrase / transcription manuelle';line.setAttribute('aria-label','Texte de la transcription');
+  const add=document.createElement('button');add.textContent='+ Segment';
+  add.onclick=()=>{if(!line.value.trim())return;state.transcript.push({speaker:speaker.value||'Inconnu',text:line.value.trim(),t:Math.floor(performance.now()/1000),verified:false});line.value='';panel();status('Segment ajouté à la réunion');};
+  const exportBtn=document.createElement('button');exportBtn.textContent='Exporter SRT';exportBtn.onclick=downloadSRT;
+  const exportNotes=document.createElement('button');exportNotes.textContent='Compte rendu Markdown';exportNotes.onclick=()=>dl('reunion-notes.md',new Blob([exportMeetingNotes(state.transcript)],{type:'text/markdown'}));
+  const importLabel=document.createElement('label');importLabel.className='file-button';importLabel.textContent='Importer SRT';
+  const input=document.createElement('input');input.type='file';input.accept='.srt,text/plain';input.hidden=true;
+  input.onchange=async()=>{try{
+    const file=input.files?.[0];if(!file)return;
+    const imported=parseSRT(await file.text());if(!imported.length)throw Error('Aucun segment valide');
+    state.transcript.push(...imported);state.transcript.sort((a,b)=>a.t-b.t);panel();status(imported.length+' segments SRT importés (non vérifiés)');
+  }catch(error){status('Import SRT : '+error.message);}};
+  importLabel.append(input);wrap.append(speaker,line,add,importLabel,exportBtn,exportNotes);
+  const captionLabel=document.createElement('label');captionLabel.className='notice';
+  const check=document.createElement('input');check.type='checkbox';check.checked=state.captionsVisible;
+  check.onchange=()=>{state.captionsVisible=check.checked;status(check.checked?'Sous-titres visibles dans le flux public':'Sous-titres retirés du flux public');};
+  captionLabel.append(check,document.createTextNode(' Afficher explicitement les sous-titres sur le flux public'));
+  el.append(captionLabel);
+  const info=document.createElement('p');info.className='notice';info.textContent='Import, saisie et export locaux. Les sous-titres sont PRIVÉS par défaut et non analysés automatiquement. Transcription et traduction IA restent à intégrer.';el.append(info);
+  state.transcript.slice(-7).forEach(item=>{const div=document.createElement('div');div.className='transcript';div.innerHTML='<span class="speaker">'+esc(item.speaker)+'</span><span>'+esc(item.text)+'</span><small>'+esc(srtTime(item.t))+'</small>';el.append(div);});
  }
  else if(state.space==='GENERATE'){
   const info=document.createElement('p');info.className='notice';info.textContent='Relais local vers ComfyUI, port 8188. Importer un workflow API JSON contenant des noeuds. Aucun modèle n’est inclus; génération non temps réel.';el.append(info);
