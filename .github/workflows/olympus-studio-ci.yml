@@ -36,6 +36,8 @@ jobs:
           node --check tests/meeting-utils.test.mjs
           node --check src/v03-migration.js
           node --check tests/v03-migration.test.mjs
+          node --check src/storyboard.js
+          node --check tests/storyboard.test.mjs
           node --check src/obs-client.js
           node --check src/obs-panel.js
           node --check tests/obs-client.test.mjs
