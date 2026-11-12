@@ -9,7 +9,7 @@ const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
 const PORT = Number(process.env.OLYMPUS_PORT || 8787);
 const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
 // Serve only the Studio UI files. Never expose .env, source maps, tests or server code.
-const STATIC_FILES = new Set(['/index.html','/src/style.css','/src/app.js','/src/media-store.js','/src/meeting-utils.js','/src/v03-migration.js','/src/obs-panel.css','/src/obs-panel.js','/src/obs-client.js']);
+const STATIC_FILES = new Set(['/index.html','/src/style.css','/src/app.js','/src/media-store.js','/src/meeting-utils.js','/src/v03-migration.js','/src/storyboard.js','/src/obs-panel.css','/src/obs-panel.js','/src/obs-client.js']);
 const ORIGINS = new Set(['http://127.0.0.1:'+PORT,'http://localhost:'+PORT]);
 
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
