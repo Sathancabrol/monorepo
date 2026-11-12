@@ -4,7 +4,7 @@
 |---|---|---|
 | Dépôt choisi | `Sathancabrol/monorepo`, branche isolée `feat/olympus-studio-20261112` | Création confirmée |
 | Prototype OLYMPUS Studio v0.3 local | Tests `smoke_test.py` : all tests passed; documentation des fonctions et limites | Artefact local distinct de ce dossier |
-| Connexions OBS / ComfyUI | Serveur prévu avec détection de disponibilité, aucune connexion réelle à la tour Windows | À tester en situation |
+| Connexions OBS / ComfyUI | Diagnostic de ports et POST local ComfyUI codés; MJPEG `/obs` + POST `/api/frame` codés | Vérification syntaxique seulement; test direct OBS/ComfyUI à faire |
 | Capture caméra / micro | Dépend des autorisations navigateur | Non validé sur machines utilisateur |
 | X-Ray Mirror | Conversations : moteur de détections et gestes; version du dépôt local non inspectée dans cette session | Adaptateur à écrire |
 | Watchtower | `src/main.js`, `src/batiRapide.js`, `src/osmBuildings3D.js` inspectés sur GitHub | Code présent, exécution 3D non vérifiée |
