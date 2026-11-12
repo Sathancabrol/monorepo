@@ -42,3 +42,8 @@ test('Les origines distantes ne peuvent pas poster vers les moteurs locaux',asyn
  const r=await fetch(base+'/api/comfy/queue',{method:'POST',headers:{Origin:'https://attacker.invalid','Content-Type':'application/json'},body:JSON.stringify({prompt:{'1':{class_type:'Test',inputs:{}}}})});
  assert.equal(r.status,403);
 });
+
+test('ID de job ComfyUI invalide rejeté sans requête externe',async()=>{
+ const r=await fetch(base+'/api/comfy/job?prompt_id=../../secret');assert.equal(r.status,400);
+ const j=await r.json();assert.match(j.error,/UUID/);
+});
