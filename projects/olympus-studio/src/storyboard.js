@@ -49,3 +49,37 @@ export function referencedAssetIds(scenes, clips) {
  const clipAssets=(Array.isArray(clips)?clips:[]).map(clip=>clip.assetId);
  return [...new Set([...mediaLayers,...clipAssets].filter(Boolean))];
 }
+
+// Edition non destructive : seule la plage source change, jamais le média original.
+// Minimum 0,1 seconde, pas de valeur infinie, durée maximale de 10 h.
+export function trimVideoClip(clip, inPoint, outPoint) {
+  if (!clip || clip.kind !== 'video') throw new Error('Découpe réservée aux vidéos');
+  const start=Number(inPoint), end=Number(outPoint);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start<0 || end-start<0.1-1e-7 || end-start>36000)
+    throw new Error('Plage IN/OUT invalide (0,1 s minimum, 10 h maximum)');
+  return {...clip,inPoint:start,outPoint:end,duration:end-start};
+}
+
+// Les deux segments partagent la même source vidéo mais portent des identifiants
+// différents : renommer/supprimer l'un ne modifie pas l'autre.
+export function splitVideoClip(clip, atLocalTime, rightId) {
+  if (!clip || clip.kind !== 'video') throw new Error('Division réservée aux vidéos');
+  if (typeof rightId !== 'string' || !rightId || rightId === clip.id) throw new Error('Identifiant de segment invalide');
+  const duration=clipDuration(clip);
+  const at=Number(atLocalTime);
+  if (!Number.isFinite(at) || at<0.1-1e-7 || duration-at<0.1-1e-7)
+    throw new Error('Point de coupe trop proche du bord (0,1 s minimum)');
+  const start=Number(clip.inPoint)||0;
+  return [
+    trimVideoClip(clip,start,start+at),
+    trimVideoClip({...clip,id:rightId},start+at,start+duration),
+  ];
+}
+
+// Découpe au temps du projet (timeline globale), pas au temps du fichier source.
+export function splitStoryboardAt(clips, projectTime, rightId) {
+  const located=locateClip(clips,projectTime);
+  if (!located) throw new Error('Aucun clip au curseur');
+  const [left,right]=splitVideoClip(located.clip,located.localTime,rightId);
+  return [...clips.slice(0,located.index),left,right,...clips.slice(located.index+1)];
+}
