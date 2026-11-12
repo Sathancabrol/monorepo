@@ -81,5 +81,5 @@ export function importPortableAsset(asset, maxBytes = PORTABLE_LIMIT) {
 
 export function mediaLayerUsable(record, layer) {
   if (!record || !layer) return false;
-  return record.id === layer.id && typeof record.type === 'string' && (layer.type === 'image' && record.type.startsWith('image/') || layer.type === 'video' && record.type.startsWith('video/'));
+  return record.id === (layer.assetId || layer.id) && typeof record.type === 'string' && (layer.type === 'image' && record.type.startsWith('image/') || layer.type === 'video' && record.type.startsWith('video/'));
 }
