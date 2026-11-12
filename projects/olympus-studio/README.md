@@ -19,6 +19,7 @@ npm test
 - Interface unique avec navigation entre 12 espaces, une scène 2D modifiable, calques, textes, images et fichiers vidéo, bibliothèque de session, chronologie simple et panneau de connexions.
 - Serveur local Node pour servir l'interface et diagnostiquer **OBS TCP 4455** et **ComfyUI 8188**. Une route permet l'envoi explicite de workflows ComfyUI API JSON au serveur local; aucune génération n'a lieu sans ComfyUI installé et modèles.
 - Sauvegarde/restauration JSON des scènes et paramètres textuels. Les médias ajoutés comme objets URL navigateur ne survivent pas à un redémarrage : rechargement requis.
+- Sortie MJPEG pour OBS : dans LIVE activer **Sortie OBS**, puis ajouter à OBS une **Source navigateur** `http://127.0.0.1:8787/obs` (1280 × 720). Vidéo uniquement, jusqu’à environ 6-7 ips JPEG selon la machine; audio à capturer dans OBS. Non testé dans OBS sur la tour.
 - Sélection scène, masquage des calques, ajout de textes, capture d'image PNG de la composition. La timeline est encore une vue d'édition illustrative, pas un NLE complet.
 - **Non implémenté / non testé** : sortie OBS complète, streaming natif, montage multipiste fiable, caméra virtuelle, ASR local, reconstruction 3D, connexion réelle aux agents ou applications du PC. Aucun droit d'accès à la tour Windows depuis cette session.
 
