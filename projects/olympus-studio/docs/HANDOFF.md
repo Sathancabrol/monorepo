@@ -80,3 +80,18 @@ Ne pas confondre **plan de sessions** (`docs/SESSION_PLAN.md`) et **sessions eff
 - `tests/storyboard.test.mjs` : modèle de clips et union des références testés ; refaire `npm test` et vérifier la CI après chaque commit.
 - **Vérification Chromium Windows obligatoire avant de déclarer le montage fonctionnel en production.**
 - Limite automate inchangée : ChatGPT 5/5, planning stocké dans SESSION_PLAN mais pas d'agent programmé.
+
+## Checkpoint immédiat — 12 novembre 2026, v0.2.3
+
+**Exécution immédiate de la tâche automatique** `6af632ef3df88191a7ef46e372054ac4` demandée par l'utilisateur, en plus du planning quotidien à 02:00 Europe/Paris.
+
+**Livrable S04 :** `src/storyboard.js` expose `trimVideoClip`, `splitVideoClip`, `splitStoryboardAt`; `src/app.js` ajoute le bouton « Diviser au curseur » et les champs vidéo IN/OUT. Le projet reste séquentiel et l'export reste vidéo seule; les sources IndexedDB ne changent pas. [Procédure](EDIT_TRIM.md).
+
+**Preuve CI :** https://github.com/Sathancabrol/monorepo/actions/runs/43316401111 (29 tests réussis). Le dernier commit de documentation/version peut déclencher une nouvelle exécution; vérifier à la prochaine session.
+
+**Prochaines trois priorités :**
+1. Relecture matérielle réelle d'un fichier vidéo : relever `duration`, bloquer OUT au-delà, vérifier la prévisualisation après split/trims, créer un test navigateur E2E exécutable.
+2. Intégration de l'audio dans EDIT et export A/V synchronisé sans dégrader LIVE.
+3. Audit FreeCut/OpenReelio (licences et interchange), puis migration contrôlée du prototype v0.3 et ajout du module XR/Meeting.
+
+Aucun merge main; aucun accès à la tour, aucun nouveau logiciel tiers installé.
