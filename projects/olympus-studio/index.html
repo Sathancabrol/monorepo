@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OLYMPUS Studio · Local</title><link rel="stylesheet" href="/src/style.css"></head>
+<title>OLYMPUS Studio · Local</title><link rel="stylesheet" href="/src/style.css"><link rel="stylesheet" href="/src/obs-panel.css"></head>
 <body>
 <div class="app">
 <header class="top">
@@ -20,9 +20,9 @@
   <section id="workspacePanel" class="workspace-panel"></section>
   <div class="timeline-panel"><div class="panel-caption"><span>TIMELINE · STRUCTURE DE PROJET</span><span id="playhead">00:00:00</span></div><div id="timeline"></div><div class="disclaimer">La timeline est une visualisation des calques, pas encore un moteur de montage non linéaire.</div></div>
  </main>
- <aside class="inspector"><section><div class="panel-caption">SCÈNES</div><div id="scenes"></div></section><section><div class="panel-caption">CALQUES</div><div id="layers"></div></section><section><div class="panel-caption">INSPECTEUR</div><div id="properties" class="muted">Sélectionne un calque.</div></section></aside>
+ <aside class="inspector"><section><div class="panel-caption">SCÈNES</div><div id="scenes"></div></section><section><div class="panel-caption">CALQUES</div><div id="layers"></div></section><section><div class="panel-caption">INSPECTEUR</div><div id="properties" class="muted">Sélectionne un calque.</div></section><section><div class="panel-caption">OBS · RÉGIE DISTANTE</div><div id="obsControl"></div></section></aside>
 </div>
 <footer class="footer"><span>Version de fondation 0.1 · local 127.0.0.1 · pas de collecte silencieuse</span><span id="engineStatus">OBS ? · ComfyUI ? · XR à raccorder</span></footer>
 </div>
-<script type="module" src="/src/app.js"></script>
+<script type="module" src="/src/app.js"></script><script type="module" src="/src/obs-panel.js"></script>
 </body></html>
