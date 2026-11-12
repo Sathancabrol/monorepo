@@ -80,8 +80,7 @@ function draw(){
  });
  const last=state.transcript[state.transcript.length-1];if(last&&state.space==='MEETING'){ctx.fillStyle='rgba(0,0,0,.76)';ctx.fillRect(140,630,1000,57);ctx.fillStyle='#fff';ctx.font='26px Segoe UI';ctx.textAlign='center';ctx.fillText((last.speaker+': '+last.text).slice(0,85),640,666,950);ctx.textAlign='left';}
 }
-function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);
-initMediaLibrary();}
+function loop(t){if(t-lastCanvas>=32){draw();lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
 function projectPayload(){
  const safe=state.scenes.map(s=>({id:s.id,name:s.name,layers:s.layers.map(l=>({...l,source:undefined}))}));
  return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
@@ -286,5 +285,6 @@ document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{if(b.dataset.a
 $('btnCamera').onclick=camera;$('btnMicrophone').onclick=microphone;$('btnScreen').onclick=captureScreen;$('btnPNG').onclick=png;$('btnRecord').onclick=record;$('btnHealth').onclick=health;$('btnObsOutput').onclick=()=>{obsOutput=!obsOutput;$('btnObsOutput').classList.toggle('active',obsOutput);$('btnObsOutput').textContent=obsOutput?'■ Stop OBS':'Sortie OBS';status(obsOutput?'Sortie MJPEG active : ajouter Source navigateur http://127.0.0.1:8787/obs dans OBS · vidéo seule':'Sortie OBS arrêtée');};
 C.addEventListener('pointerdown',e=>{const rect=C.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;const hit=[...scene().layers].reverse().find(l=>l.visible&&x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h);state.selected=hit?.id||null;sync();});
 requestAnimationFrame(loop);
+initMediaLibrary();
 window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());if(microphoneStream)microphoneStream.getTracks().forEach(t=>t.stop());if(screenStream)screenStream.getTracks().forEach(t=>t.stop());releaseMediaURLs();});
 health();
