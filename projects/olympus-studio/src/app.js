@@ -304,6 +304,54 @@ function panel(){
  const el=$('workspacePanel');el.innerHTML='';const h=document.createElement('h2');h.textContent=state.space+' · atelier';el.append(h);
  const wrap=document.createElement('div');wrap.className='actions';el.append(wrap);
  if(state.space==='LIVE'){const info=document.createElement('p');info.className='notice';info.textContent='La composition Canvas fonctionne localement. La régie OBS WebSocket se trouve à droite (à connecter à OBS installé). La sortie MJPEG reste vidéo seule; l’audio multipiste OBS natif reste externe.';el.append(info);const cards=document.createElement('div');cards.className='cards';cards.innerHTML=card('Écran / webcams','Webcam, écran et microphone disponibles sur autorisation, depuis la barre d’outils.')+card('OBS externe','Source navigateur sur /obs après activation du bouton « Sortie OBS », sans audio; vidéo MJPEG limitée par la machine.')+card('Enregistrement','WebM du Canvas avec piste microphone ou audio partagé si disponible; PNG du plan courant. OBS reste externe.');el.append(cards);}
+ else if(state.space==='EDIT'){
+  const header=document.createElement('p');header.className='notice';
+  header.textContent='Montage séquentiel non destructif : images et vidéos, réordonnancement, durées, aperçu et export WebM muet. Audio et transitions multipistes à intégrer.';
+  el.append(header);
+  const preview=document.createElement('canvas');preview.id='editPreview';preview.width=1280;preview.height=720;preview.style.width='100%';preview.style.maxHeight='360px';preview.style.background='#071422';preview.style.borderRadius='8px';el.append(preview);
+  const controls=document.createElement('div');controls.className='actions';el.append(controls);
+  const play=document.createElement('button');play.id='editPlay';play.textContent=state.editPlaying?'Pause':'Lecture';
+  play.onclick=()=>{if(!state.clips.length)return status('Ajouter un clip');if(state.editTime>=storyboardDuration(state.clips))state.editTime=0;state.editPlaying=!state.editPlaying;state.editLast=0;};
+  const seek=document.createElement('input');seek.id='editSeek';seek.type='range';seek.min='0';seek.max=String(Math.max(0.1,storyboardDuration(state.clips)));seek.step='.05';seek.value=String(state.editTime);seek.style.flex='1';
+  seek.oninput=()=>{state.editTime=Number(seek.value);state.editPlaying=false;state.editLast=0;};
+  const clock=document.createElement('span');clock.id='editClock';clock.className='muted';clock.textContent=editClock(state.editTime);
+  const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (sans audio)';exportButton.onclick=exportEditorWebM;
+  controls.append(play,seek,clock,exportButton);
+  const select=document.createElement('select');select.setAttribute('aria-label','Choisir un média du coffre');
+  const eligible=state.assets.filter(a=>String(a.type).startsWith('image/')||String(a.type).startsWith('video/'));
+  for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
+  const add=document.createElement('button');add.textContent='+ Clip';add.disabled=!eligible.length;
+  add.onclick=()=>{
+   const asset=state.assets.find(a=>a.id===select.value);if(!asset)return;
+   const kind=asset.type.startsWith('video/')?'video':'image';
+   state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration:5,inPoint:0}));
+   loadEditAsset(asset.id).catch(error=>status('Prévisualisation média : '+error.message));
+   state.editTime=0;state.editPlaying=false;panel();sync();status('Clip ajouté à la timeline');
+  };
+  wrap.append(select,add);
+  const count=document.createElement('p');count.className='muted';
+  count.textContent=state.clips.length+' clip(s) · '+editClock(storyboardDuration(state.clips))+' · projet sauvegardable';
+  el.append(count);
+  state.clips.forEach((clip,index)=>{
+   const row=document.createElement('div');row.className='layer-row';row.style.flexWrap='wrap';row.style.gap='6px';
+   const info=document.createElement('span');info.className='name';info.textContent=(index+1)+'. '+clip.name+' · '+clip.kind;
+   const duration=document.createElement('input');duration.type='number';duration.min='0.1';duration.max='3600';duration.step='0.1';duration.style.width='75px';
+   duration.title='Durée en secondes';duration.value=String(clipDuration(clip));
+   duration.onchange=()=>{
+    const n=Number(duration.value);if(!Number.isFinite(n)||n<.1||n>3600)return;
+    clip.duration=n;if(clip.kind==='video')clip.outPoint=(Number(clip.inPoint)||0)+n;
+    state.editPlaying=false;panel();
+   };
+   const title=document.createElement('input');title.type='text';title.placeholder='Titre incrusté';title.value=clip.title||'';title.style.flex='1';
+   title.onchange=()=>{clip.title=title.value;};
+   const up=document.createElement('button');up.textContent='↑';up.title='Monter';up.onclick=()=>{state.clips=moveClip(state.clips,index,-1);panel();};
+   const down=document.createElement('button');down.textContent='↓';down.title='Descendre';down.onclick=()=>{state.clips=moveClip(state.clips,index,1);panel();};
+   const remove=document.createElement('button');remove.textContent='×';remove.title='Retirer le clip';remove.onclick=()=>{state.clips.splice(index,1);state.editTime=0;panel();};
+   row.append(info,duration,title,up,down,remove);el.append(row);
+   loadEditAsset(clip.assetId).catch(()=>{});
+  });
+  if(!state.clips.length){const msg=document.createElement('p');msg.className='muted';msg.textContent='Ajoute une image ou une vidéo par + Média, puis sélectionne-la ici.';el.append(msg);}
+ }
  else if(state.space==='MEETING'){
   const speaker=document.createElement('input');speaker.placeholder='Intervenant';speaker.value='Intervenant 1';
   const line=document.createElement('input');line.placeholder='Phrase / transcription manuelle';line.setAttribute('aria-label','Texte de la transcription');
