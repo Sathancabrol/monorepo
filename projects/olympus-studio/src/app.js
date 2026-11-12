@@ -70,6 +70,79 @@ function sync(){
 function renderTimeline(){
  const el=$('timeline');el.innerHTML='';scene().layers.forEach(l=>{const tr=document.createElement('div');tr.className='track';const name=document.createElement('b');name.textContent=l.name;const bar=document.createElement('div');bar.className='bar';bar.style.opacity=l.visible?1:.22;bar.title='Calque de composition — pas encore un clip montable';tr.append(name,bar);el.append(tr);});
 }
+async function loadEditAsset(assetId){
+ if(editMedia.has(assetId))return editMedia.get(assetId);
+ const db=await dbReady;
+ let record=db?await getMedia(db,assetId):null;
+ if(!record){
+  const available=runtime.get(assetId);
+  if(available){editMedia.set(assetId,available);return available;}
+  return null;
+ }
+ const url=localMediaURL(record.blob);
+ let element;
+ if(record.type.startsWith('image/')){
+  element=new Image();element.src=url;
+  await new Promise(resolve=>{element.onload=resolve;element.onerror=resolve;});
+ }else if(record.type.startsWith('video/')){
+  element=document.createElement('video');element.src=url;element.muted=true;element.preload='auto';element.playsInline=true;
+ }else return null;
+ editMedia.set(assetId,element);return element;
+}
+function editClock(seconds){
+ const total=Math.max(0,Math.floor(seconds));
+ return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
+}
+function drawEditor(now){
+ const canvas=$('editPreview');if(!canvas){state.editLast=now;return;}
+ const context=canvas.getContext('2d'), total=storyboardDuration(state.clips);
+ if(state.editPlaying && state.editLast)state.editTime+=(now-state.editLast)/1000;
+ state.editLast=now;
+ if(total>0&&state.editTime>=total){state.editTime=total;state.editPlaying=false;if(editorRecorder?.state==='recording')editorRecorder.stop();}
+ context.fillStyle='#081421';context.fillRect(0,0,canvas.width,canvas.height);
+ const found=locateClip(state.clips,Math.min(state.editTime,Math.max(0,total-0.0001)));
+ if(found){
+  const source=editMedia.get(found.clip.assetId);
+  if(source){
+   try{
+    if(found.clip.kind==='video'){
+     const target=found.sourceTime;
+     if(Math.abs(source.currentTime-target)>0.28 && Number.isFinite(target))source.currentTime=target;
+     if(state.editPlaying&&source.paused)source.play().catch(()=>{});
+     if(!state.editPlaying&&!source.paused)source.pause();
+     if(source.readyState>=2)context.drawImage(source,0,0,canvas.width,canvas.height);
+    }else if(source.complete&&source.naturalWidth)context.drawImage(source,0,0,canvas.width,canvas.height);
+   }catch{}
+  }
+  if(found.clip.title){context.fillStyle='rgba(0,0,0,.65)';context.fillRect(20,canvas.height-95,canvas.width-40,65);context.font='bold 38px Segoe UI,Arial';context.fillStyle='#fff';context.fillText(found.clip.title,34,canvas.height-55,canvas.width-80);}
+ }else{
+  context.fillStyle='#8ca4c0';context.textAlign='center';context.font='27px Segoe UI,Arial';context.fillText('Ajouter un média à la timeline',canvas.width/2,canvas.height/2);context.textAlign='left';
+ }
+ const seek=$('editSeek');if(seek&&document.activeElement!==seek){seek.max=String(Math.max(0.1,total));seek.value=String(Math.min(state.editTime,total));}
+ const clock=$('editClock');if(clock)clock.textContent=editClock(state.editTime)+' / '+editClock(total);
+ const play=$('editPlay');if(play)play.textContent=state.editPlaying?'Pause':'Lecture';
+}
+function exportEditorWebM(){
+ const canvas=$('editPreview'),total=storyboardDuration(state.clips);
+ if(!canvas||!total)return status('Aucun clip à exporter');
+ if(total>120)return status('Export de démonstration limité à 120 secondes');
+ if(editorRecorder?.state==='recording')return status('Un export est déjà en cours');
+ try{
+  state.editTime=0;state.editLast=0;state.editPlaying=true;
+  const stream=canvas.captureStream(24);
+  const mime=['video/webm;codecs=vp8','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
+  editorRecorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
+  const chunks=[];
+  editorRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+  editorRecorder.onstop=()=>{
+   stream.getTracks().forEach(t=>t.stop());state.editPlaying=false;
+   dl('olympus-storyboard-'+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
+   status('Storyboard WebM exporté sans audio — rendu en temps réel');
+  };
+  editorRecorder.start(1000);
+  status('Export storyboard en cours — garder EDIT visible (vidéo seule)');
+ }catch(e){state.editPlaying=false;status('Export storyboard impossible : '+e.message);}
+}
 function draw(){
  ctx.fillStyle='#0b1725';ctx.fillRect(0,0,C.width,C.height);
  const grd=ctx.createLinearGradient(0,0,C.width,C.height);grd.addColorStop(0,'#0b1725');grd.addColorStop(1,'#153d55');ctx.fillStyle=grd;ctx.fillRect(0,0,C.width,C.height);
