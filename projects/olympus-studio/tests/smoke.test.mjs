@@ -47,3 +47,8 @@ test('ID de job ComfyUI invalide rejeté sans requête externe',async()=>{
  const r=await fetch(base+'/api/comfy/job?prompt_id=../../secret');assert.equal(r.status,400);
  const j=await r.json();assert.match(j.error,/UUID/);
 });
+
+test('Bibliothèque IndexedDB servie comme module et non comme fichier privé',async()=>{
+ const r=await fetch(base+'/src/media-store.js');assert.equal(r.status,200);
+ const code=await r.text();assert.match(code,/export function openMediaDB/);
+});
