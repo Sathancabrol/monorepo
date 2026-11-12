@@ -2,9 +2,12 @@
 
 **État au 12/11/2026.** Aucun logiciel à installer ni identifiant à transmettre dans le chat pour poursuivre l'écriture du code et les tests GitHub.
 
-## Blocage de la planification ChatGPT
+## Planification ChatGPT — active depuis le 12 novembre 2026
 
-5 automations sur 5 sont actives (actualités/YouTube, emploi Thau, Cognitorium MVP, immobilier Thau, bilan économique Thau). Tentative de tâche quotidienne OLYMPUS rejetée le 12/11/2026 : `too_many_active_automations`. Pour des **sessions ChatGPT planifiées**, l'utilisateur doit **choisir une tâche existante à désactiver ou remplacer**. Ne pas désactiver une autre veille sans choix explicite. Même avec une tâche, chaque session est bornée; pas un processus informatique continu ni une garantie d'achèvement.
+**Tâche activée :** « OLYMPUS Studio — développement », identifiant `6af632ef3df88191a7ef46e372054ac4`, chaque jour à 02:00, heure Europe/Paris. L'utilisateur a libéré un emplacement le 12 novembre et demandé une exécution immédiate. `run_now` a réussi et a déclenché une session inline dans la conversation le 12 novembre au soir.
+
+Une session est **bornée** : elle ne maintient pas un processus en continu, ne garantit pas l'achèvement, et ne peut pas valider la GTX/Windows sans accès matériel réel.
+
 
 ## Tests matériels Windows, quand disponibles
 
