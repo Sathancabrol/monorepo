@@ -28,3 +28,17 @@ test('Trame vidéo invalide rejetée',async()=>{const r=await fetch(base+'/api/f
 test('Workflow ComfyUI malformé rejeté, sans requête externe',async()=>{
  const r=await fetch(base+'/api/comfy/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:{}})});assert.equal(r.status,400);
 });
+
+test('Le dossier source privé et les secrets ne sont pas exposés',async()=>{
+ for(const name of ['/server.mjs','/package.json','/tests/obs-client.test.mjs','/.env','/docs/CONTRACTS.md']){
+   const r=await fetch(base+name);assert.equal(r.status,403,name);
+ }
+});
+test('Le connecteur OBS est servi comme module local',async()=>{
+ const r=await fetch(base+'/src/obs-client.js');assert.equal(r.status,200);
+ assert.match(await r.text(),/class OBSClient/);
+});
+test('Les origines distantes ne peuvent pas poster vers les moteurs locaux',async()=>{
+ const r=await fetch(base+'/api/comfy/queue',{method:'POST',headers:{Origin:'https://attacker.invalid','Content-Type':'application/json'},body:JSON.stringify({prompt:{'1':{class_type:'Test',inputs:{}}}})});
+ assert.equal(r.status,403);
+});
