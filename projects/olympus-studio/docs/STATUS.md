@@ -62,3 +62,14 @@ L'application n'est **pas terminée**. Le socle unifié existe, mais un véritab
 | Multimédia avancé | Transitions, pistes audio, coupure de clips par points IN/OUT dans UI, MP4 | **Non implémenté** ; pas équivalent à FreeCut/Kdenlive |
 
 La piste éditoriale suivante consiste à valider la lecture vidéo et les exports sur Chromium Windows, intégrer la sélection et synchronisation audio, puis seulement évaluer une intégration plus profonde de FreeCut ou d'un moteur de montage natif.
+
+## Exécution immédiate — EDIT v0.2.3, 12 novembre 2026
+| Fonction | Code / preuve | État |
+|---|---|---|
+| Vidéo IN/OUT | `src/storyboard.js`: `trimVideoClip`; champs dans EDIT | **Codé**, tests mathématiques réussis |
+| Division au curseur | `splitStoryboardAt`, nouvelle commande dans EDIT | **Codé**, timeline globale et conservation assetId testées |
+| Conserver les médias | Aucune réécriture des Blob IndexedDB; clips partagent assetId | **Modèle testé**, navigateur non vérifié |
+| Tests de régression | https://github.com/Sathancabrol/monorepo/actions/runs/43316401111 | **29/29 sur Node/Ubuntu** |
+| Planification quotidienne | Tâche `6af632ef3df88191a7ef46e372054ac4` créée et exécution immédiate déclenchée | **Active**, 02:00 Europe/Paris |
+
+Limitations : aucun mixage audio EDIT, aucune coupe bornée par métadonnées de durée réelle du fichier, aucun test sur la tour Windows. La modification est sur branche seulement, PR #16 brouillon.
