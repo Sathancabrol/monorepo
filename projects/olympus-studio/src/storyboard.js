@@ -41,5 +41,5 @@ export function validateClip(clip) {
   if (!clip || typeof clip.id!=='string' || typeof clip.assetId!=='string' || !['image','video'].includes(clip.kind)) throw new Error('Clip de montage invalide');
   const d=clipDuration(clip);
   if (!Number.isFinite(d) || d<=0) throw new Error('Durée du clip invalide');
-  return {id:clip.id,assetId:clip.assetId,kind:clip.kind,name:String(clip.name||'Clip'),duration:d,inPoint:Math.max(0,Number(clip.inPoint)||0),outPoint:clip.kind==='video'?Math.max(0,Number(clip.inPoint)||0)+d:0};
+  return {id:clip.id,assetId:clip.assetId,kind:clip.kind,name:String(clip.name||'Clip'),title:String(clip.title||''),duration:d,inPoint:Math.max(0,Number(clip.inPoint)||0),outPoint:clip.kind==='video'?Math.max(0,Number(clip.inPoint)||0)+d:0};
 }
