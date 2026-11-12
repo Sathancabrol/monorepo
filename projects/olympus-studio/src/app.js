@@ -17,7 +17,7 @@ const spaces=[
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
 const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],recording:false};
-const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;
+const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const scene=()=>state.scenes.find(s=>s.id===state.activeScene)||state.scenes[0];
@@ -158,7 +158,32 @@ function panel(){
  else if(state.space==='GENERATE'){
   const info=document.createElement('p');info.className='notice';info.textContent='Relais local vers ComfyUI, port 8188. Importer un workflow API JSON contenant des noeuds. Aucun modèle n’est inclus; génération non temps réel.';el.append(info);
   const input=document.createElement('textarea');input.id='workflow';input.placeholder='{"3":{"class_type":"...","inputs":{...}}}';input.setAttribute('aria-label','Workflow ComfyUI API JSON');el.append(input);
-  const send=document.createElement('button');send.textContent='Envoyer à ComfyUI local';send.onclick=async()=>{try{const prompt=JSON.parse(input.value);const r=await fetch('/api/comfy/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});const data=await r.json();status(r.ok?'Job ComfyUI : '+(data.prompt_id||'en file'):'ComfyUI : '+(data.error||'échec'));}catch(e){status('JSON invalide : '+e.message);}};wrap.append(send);
+  const send=document.createElement('button');send.textContent='Envoyer à ComfyUI local';
+  const check=document.createElement('button');check.textContent='Vérifier le dernier job';check.disabled=!lastComfyJob;
+  const result=document.createElement('pre');result.className='muted';result.style.whiteSpace='pre-wrap';result.style.overflowWrap='anywhere';
+  result.textContent=lastComfyJob?'Dernier job : '+lastComfyJob+' (état non vérifié)':'Aucun job soumis dans cette session.';
+  send.onclick=async()=>{try{
+    const prompt=JSON.parse(input.value);
+    const r=await fetch('/api/comfy/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    const data=await r.json();
+    if(r.ok&&data.prompt_id){lastComfyJob=String(data.prompt_id);check.disabled=false;result.textContent='Job '+lastComfyJob+' en file — cliquer sur Vérifier.';}
+    status(r.ok?'Job ComfyUI : '+(data.prompt_id||'en file'):'ComfyUI : '+(data.error||'échec'));
+  }catch(e){status('Erreur génération : '+e.message);}};
+  check.onclick=async()=>{
+    if(!lastComfyJob)return;
+    check.disabled=true;
+    result.textContent='Recherche du résultat ComfyUI…';
+    try{
+      const r=await fetch('/api/comfy/job?prompt_id='+encodeURIComponent(lastComfyJob));
+      const data=await r.json();
+      if(!r.ok)throw Error(data.error||'Erreur ComfyUI');
+      const names=(data.outputs||[]).map(item=>item.kind+' : '+item.filename);
+      result.textContent='Job : '+data.prompt_id+'\nÉtat : '+data.status+'\nFichiers produits : '+names.length+(names.length?'\n'+names.join('\n'):'');
+      status(data.status==='completed'?'Génération terminée, fichiers sur ComfyUI local':'Suivi ComfyUI : '+data.status);
+    }catch(e){result.textContent='Suivi impossible : '+e.message;}
+    finally{check.disabled=false;}
+  };
+  wrap.append(send,check);el.append(result);
  }
  else if(state.space==='XR'){
   const intro=document.createElement('p');intro.className='notice';intro.textContent='Importer un événement X-Ray au format {"type":"detections","items":[{"label":"main","x":0.1,"y":0.2,"w":0.2,"h":0.3}]}. Démo d’overlays seulement.';el.append(intro);
