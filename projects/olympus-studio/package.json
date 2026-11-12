@@ -1,9 +1,9 @@
 {
   "name": "olympus-studio",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
-  "description": "Local unified audiovisual studio: OBS WebSocket, ComfyUI bridge, IndexedDB media, SRT, v0.3 import",
+  "description": "Local unified studio: OBS, ComfyUI, media persistence, SRT, legacy import and sequential storyboard",
   "scripts": {
     "start": "node server.mjs",
     "dev": "node server.mjs",
