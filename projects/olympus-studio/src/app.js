@@ -17,7 +17,7 @@ const spaces=[
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
 const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],recording:false};
-const runtime=new Map();let webcamStream=null;let webcamVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;
+const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;
 state.activeScene=state.scenes[0].id;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const scene=()=>state.scenes.find(s=>s.id===state.activeScene)||state.scenes[0];
@@ -69,7 +69,7 @@ function draw(){
   try{
    if(l.type==='rect'){ctx.fillStyle=l.color||'#23cfc2';ctx.fillRect(x,y,w,h);}
    else if(l.type==='text'){ctx.font='600 '+(l.size||44)+'px Segoe UI,Arial,sans-serif';ctx.fillStyle=l.color||'#fff';ctx.textBaseline='middle';ctx.fillText(l.value||'',x,y+h/2,w);}
-   else if(l.type==='image'||l.type==='video'||l.type==='webcam'){const media=l.type==='webcam'?webcamVideo:runtime.get(l.id);if(media&&((l.type==='image'&&media.complete)||(l.type!=='image'&&media.readyState>=2)))ctx.drawImage(media,x,y,w,h);else {ctx.strokeStyle='#7894af';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#a9bdcf';ctx.font='22px Segoe UI';ctx.fillText(l.name+' · fichier à relier',x+12,y+35,w-24);}}
+   else if(l.type==='image'||l.type==='video'||l.type==='webcam'||l.type==='screen'){const media=l.type==='webcam'?webcamVideo:l.type==='screen'?screenVideo:runtime.get(l.id);if(media&&((l.type==='image'&&media.complete)||(l.type!=='image'&&media.readyState>=2)))ctx.drawImage(media,x,y,w,h);else {ctx.strokeStyle='#7894af';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#a9bdcf';ctx.font='22px Segoe UI';ctx.fillText(l.name+' · fichier à relier',x+12,y+35,w-24);}}
   }catch{}
   if(l.id===state.selected){ctx.strokeStyle='#42e8df';ctx.lineWidth=3;ctx.strokeRect(x,y,w,h);}
  });
@@ -97,13 +97,50 @@ async function camera(){
  if(webcamStream){webcamStream.getTracks().forEach(t=>t.stop());webcamStream=null;webcamVideo=null;status('Webcam arrêtée');return;}
  try{webcamStream=await navigator.mediaDevices.getUserMedia({video:{width:1280,height:720},audio:false});webcamVideo=document.createElement('video');webcamVideo.srcObject=webcamStream;webcamVideo.muted=true;webcamVideo.playsInline=true;await webcamVideo.play();addLayer({type:'webcam',name:'Webcam locale',x:.15,y:.1,w:.7,h:.75});status('Webcam autorisée par le navigateur');}catch(e){status('Webcam indisponible ou refusée : '+e.message);}
 }
+async function microphone(){
+ if(microphoneStream){microphoneStream.getTracks().forEach(track=>track.stop());microphoneStream=null;$('btnMicrophone').textContent='+ Micro';status('Microphone arrêté');return;}
+ try{
+  microphoneStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+  $('btnMicrophone').textContent='■ Micro';status('Microphone autorisé; sera inclus au prochain enregistrement WebM');
+ }catch(e){status('Microphone indisponible ou refusé : '+e.message);}
+}
+async function captureScreen(){
+ if(screenStream){screenStream.getTracks().forEach(t=>t.stop());screenStream=null;screenVideo=null;$('btnScreen').textContent='+ Écran';status('Partage d’écran arrêté');return;}
+ try{
+  if(!navigator.mediaDevices?.getDisplayMedia)throw Error('Partage d’écran non pris en charge par ce navigateur');
+  screenStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true});
+  screenVideo=document.createElement('video');screenVideo.srcObject=screenStream;screenVideo.muted=true;screenVideo.playsInline=true;
+  await screenVideo.play();
+  const track=screenStream.getVideoTracks()[0];
+  track?.addEventListener('ended',()=>{screenStream=null;screenVideo=null;$('btnScreen').textContent='+ Écran';status('Partage d’écran terminé');},{once:true});
+  addLayer({type:'screen',name:'Écran / fenêtre capturée',x:.1,y:.1,w:.8,h:.8});
+  $('btnScreen').textContent='■ Écran';
+  status('Partage d’écran actif; son de l’onglet inclus uniquement si le navigateur le fournit');
+ }catch(e){if(screenStream)screenStream.getTracks().forEach(t=>t.stop());screenStream=null;screenVideo=null;status('Capture écran impossible : '+e.message);}
+}
 function png(){C.toBlob(b=>{if(b)dl('olympus-'+Date.now()+'.png',b)},'image/png');}
 function record(){const button=$('btnRecord');
  if(recorder&&recorder.state==='recording'){recorder.stop();return;}
- try{const stream=C.captureStream(24);const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);chunks=[];recStarted=Date.now();
- recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});dl('olympus-live-'+Date.now()+'.webm',blob);stream.getTracks().forEach(t=>t.stop());button.textContent='● WebM';state.recording=false;status('WebM téléchargé (vidéo Canvas, sans audio)');};
- recorder.start(1000);state.recording=true;button.textContent='■ Arrêter';status('Enregistrement vidéo Canvas uniquement — audio non inclus');
- }catch(e){status('Enregistrement impossible : '+e.message);}
+ let stream=null;let mixContext=null;
+ try{
+  stream=C.captureStream(24);
+  const sources=[microphoneStream,screenStream].filter(Boolean).flatMap(s=>s.getAudioTracks()).filter(t=>t.readyState==='live');
+  if(sources.length===1)stream.addTrack(sources[0].clone());
+  if(sources.length>1){
+   const Context=window.AudioContext||window.webkitAudioContext;
+   if(!Context)throw Error('Mixage audio non pris en charge');
+   mixContext=new Context();const target=mixContext.createMediaStreamDestination();
+   for(const track of sources)mixContext.createMediaStreamSource(new MediaStream([track])).connect(target);
+   stream.addTrack(target.stream.getAudioTracks()[0].clone());
+  }
+  const withAudio=stream.getAudioTracks().length>0;
+  const formats=withAudio?['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']:['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+  const mime=formats.find(t=>MediaRecorder.isTypeSupported(t));
+  recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);chunks=[];recStarted=Date.now();
+  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+  recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});dl('olympus-live-'+Date.now()+'.webm',blob);stream.getTracks().forEach(t=>t.stop());mixContext?.close();button.textContent='● WebM';state.recording=false;status(withAudio?'WebM téléchargé (vidéo et audio autorisé)':'WebM téléchargé (vidéo seule; activer Micro ou partage audio)');};
+  recorder.start(1000);state.recording=true;button.textContent='■ Arrêter';status(withAudio?'Enregistrement WebM vidéo + audio autorisé':'Enregistrement WebM vidéo seule');
+ }catch(e){stream?.getTracks().forEach(t=>t.stop());mixContext?.close();status('Enregistrement impossible : '+e.message);}
 }
 function srtTime(s){const ms=Math.max(0,Math.round(s*1000)),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sec=Math.floor(ms%60000/1000),r=ms%1000;return [h,m,sec].map(n=>String(n).padStart(2,'0')).join(':')+','+String(r).padStart(3,'0');}
 function downloadSRT(){const body=state.transcript.map((x,i)=>String(i+1)+'\n'+srtTime(x.t)+' --> '+srtTime(x.t+3)+'\n'+x.speaker+': '+x.text+'\n').join('\n');dl('reunion.srt',new Blob([body],{type:'text/plain'}));}
@@ -147,8 +184,8 @@ $('btnNewScene').onclick=()=>{const s={id:newId(),name:'Scène '+(state.scenes.l
 $('btnSave').onclick=saveProject;$('fileProject').onchange=e=>{if(e.target.files[0])loadProject(e.target.files[0]);};
 $('fileMedia').onchange=e=>addFiles([...e.target.files]);
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{if(b.dataset.add==='text')addLayer({type:'text',name:'Texte',value:'Nouveau texte',x:.2,y:.2,w:.6,h:.12,size:48,color:'#ffffff'});else addLayer({type:'rect',name:'Forme',x:.2,y:.2,w:.3,h:.2,color:'#28c8bf'});});
-$('btnCamera').onclick=camera;$('btnPNG').onclick=png;$('btnRecord').onclick=record;$('btnHealth').onclick=health;$('btnObsOutput').onclick=()=>{obsOutput=!obsOutput;$('btnObsOutput').classList.toggle('active',obsOutput);$('btnObsOutput').textContent=obsOutput?'■ Stop OBS':'Sortie OBS';status(obsOutput?'Sortie MJPEG active : ajouter Source navigateur http://127.0.0.1:8787/obs dans OBS · vidéo seule':'Sortie OBS arrêtée');};
+$('btnCamera').onclick=camera;$('btnMicrophone').onclick=microphone;$('btnScreen').onclick=captureScreen;$('btnPNG').onclick=png;$('btnRecord').onclick=record;$('btnHealth').onclick=health;$('btnObsOutput').onclick=()=>{obsOutput=!obsOutput;$('btnObsOutput').classList.toggle('active',obsOutput);$('btnObsOutput').textContent=obsOutput?'■ Stop OBS':'Sortie OBS';status(obsOutput?'Sortie MJPEG active : ajouter Source navigateur http://127.0.0.1:8787/obs dans OBS · vidéo seule':'Sortie OBS arrêtée');};
 C.addEventListener('pointerdown',e=>{const rect=C.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;const hit=[...scene().layers].reverse().find(l=>l.visible&&x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h);state.selected=hit?.id||null;sync();});
 requestAnimationFrame(loop);
-window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());});
+window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());if(microphoneStream)microphoneStream.getTracks().forEach(t=>t.stop());if(screenStream)screenStream.getTracks().forEach(t=>t.stop());});
 health();
