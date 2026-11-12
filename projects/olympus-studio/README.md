@@ -15,6 +15,10 @@ npm start
 npm test
 ```
 
+### Windows : lancement rapide
+
+Télécharger l'artefact `olympus-studio-preview` depuis la dernière [exécution GitHub Actions](https://github.com/Sathancabrol/monorepo/actions/workflows/olympus-studio-ci.yml) réussie, extraire le ZIP et double-cliquer `LANCER_OLYMPUS.bat` (Node.js >=20 requis). Le lanceur n'installe rien, démarre seulement le serveur local sur `127.0.0.1:8787`. **Ce paquet n'est pas un programme .exe autonome et n'inclut ni OBS, ni ComfyUI, ni modèles.**
+
 ## Vrai périmètre du code livré
 - Interface unique avec navigation entre 12 espaces, une scène 2D modifiable, calques, textes, images et fichiers vidéo, bibliothèque de session, chronologie simple et panneau de connexions.
 - Serveur local Node pour servir l'interface et diagnostiquer **OBS TCP 4455** et **ComfyUI 8188**. Une route permet l'envoi explicite de workflows ComfyUI API JSON au serveur local, et un second endpoint interroge l'historique d'un job et la liste des fichiers produits. Aucun traitement génératif n'a lieu sans ComfyUI installé et modèles; aucun import automatique de ses médias n'est encore réalisé.
