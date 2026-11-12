@@ -212,6 +212,11 @@ def preview_serve(project: str, path: str):
     if not path or path.strip() == "":
         entry = detect_preview_entry(project)
         if entry:
+            # Nested entry (dist/index.html, output/visual/index.html…) must be
+            # served from its own directory, otherwise relative assets resolve
+            # one level too high and the preview appears blank.
+            if "/" in entry:
+                return RedirectResponse(url=f"/preview/{project}/{entry}")
             path = entry
         else:
             # list directory as fallback

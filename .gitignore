@@ -13,3 +13,6 @@ monorepo.bundle
 !projects/
 !projects/*/dist/
 !projects/*/dist/**
+
+# X-Ray Mirror Studio — wasm sources are copied to dist, which is committed for preview
+projects/xraymirror/public/mediapipe/

@@ -58,7 +58,7 @@ pre{margin:0;padding:12px;overflow:auto;background:#0f1115;font:12px ui-monospac
         <select id="entry-sel" style="background:#0b0c0f;border:1px solid var(--line);color:var(--text);padding:6px;border-radius:8px;font-size:12px"></select>
       </div>
       <div style="flex:1;position:relative;background:white">
-        <iframe id="preview" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>
+        <iframe id="preview" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads" allow="camera; microphone; fullscreen"></iframe>
         <div id="preview-fallback" style="display:none;position:absolute;inset:0;background:#0f1115;color:var(--text);padding:20px;overflow:auto"></div>
       </div>
     </div>
@@ -152,7 +152,7 @@ async function openFile(path){
     if(data.mime && data.mime.startsWith('image/')){
       $('viewer').innerHTML=`<div style="padding:12px"><img src="/preview/${currentProject}/${path}" style="max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px"><div class="muted" style="font-size:12px;margin-top:6px">${data.mime} • ${data.size} o</div></div>`;
     } else if(data.mime==='application/pdf' || path.toLowerCase().endsWith('.pdf')){
-      $('viewer').innerHTML=`<iframe src="/preview/${currentProject}/${path}" style="width:100%;height:520px;border:0;background:white"></iframe>`;
+      $('viewer').innerHTML=`<iframe src="/preview/${currentProject}/${path}" allow="camera; microphone; fullscreen" style="width:100%;height:520px;border:0;background:white"></iframe>`;
     } else {
       $('viewer').innerHTML=`<div style="padding:12px" class="muted">Binaire ${data.mime||''} • ${data.size} o — <a href="/preview/${currentProject}/${path}" target="_blank">ouvrir</a></div>`;
     }
