@@ -13,8 +13,38 @@ function json(res,status,data){res.writeHead(status,{'Content-Type':'application
 function tcpCheck(port){return new Promise(done=>{const sock=net.createConnection({host:HOST,port});let settled=false;function finish(ok){if(!settled){settled=true;sock.destroy();done(ok);}}sock.setTimeout(800);sock.once('connect',()=>finish(true));sock.once('timeout',()=>finish(false));sock.once('error',()=>finish(false));});}
 async function comfyCheck(){try{const r=await fetch('http://127.0.0.1:8188/system_stats',{signal:AbortSignal.timeout(1300)});return r.ok;}catch{return false;}}
 async function bodyJson(req){let body='';for await(const chunk of req){body+=chunk;if(body.length>1024*1024)throw new Error('Payload > 1 MiB');}return JSON.parse(body);}
+
+let lastJpeg=null;
+const viewers=new Set();
+function sendFrame(res,bytes){
+ try{
+  if(res.destroyed){viewers.delete(res);return;}
+  res.write('--frame\r\nContent-Type: image/jpeg\r\nContent-Length: '+bytes.length+'\r\n\r\n');
+  res.write(bytes);res.write('\r\n');
+ }catch{viewers.delete(res);}
+}
+async function readImage(req){
+ const chunks=[];let length=0;
+ for await(const chunk of req){length+=chunk.length;if(length>2*1024*1024)throw Error('Image trop volumineuse');chunks.push(chunk);}
+ return Buffer.concat(chunks);
+}
+
 async function handle(req,res){
  const url=new URL(req.url,'http://127.0.0.1');
+
+ if(req.method==='GET'&&url.pathname==='/obs'){
+  res.writeHead(200,{'Content-Type':'multipart/x-mixed-replace; boundary=frame','Cache-Control':'no-cache, no-store','Connection':'keep-alive','X-Content-Type-Options':'nosniff'});
+  viewers.add(res);req.once('close',()=>viewers.delete(res));
+  if(lastJpeg)sendFrame(res,lastJpeg);
+  return;
+ }
+ if(req.method==='POST'&&url.pathname==='/api/frame'){
+  if(!String(req.headers['content-type']||'').startsWith('image/jpeg'))return json(res,415,{error:'JPEG attendu'});
+  try{const bytes=await readImage(req);if(bytes.length<8||bytes[0]!==255||bytes[1]!==216)return json(res,400,{error:'JPEG invalide'});
+  lastJpeg=bytes;for(const viewer of viewers)sendFrame(viewer,bytes);return json(res,200,{received:bytes.length,viewers:viewers.size});}
+  catch(e){return json(res,413,{error:String(e.message)});}
+ }
+
  if(req.method==='GET'&&url.pathname==='/api/health'){const [obs,comfy]=await Promise.all([tcpCheck(4455),comfyCheck()]);return json(res,200,{ok:true,local:true,services:{obs:{port:4455,reachable:obs,controlled:false},comfyui:{port:8188,reachable:comfy}},note:'Disponibilité réseau ≠ moteur configuré ou vérifié'});}
  if(req.method==='POST'&&url.pathname==='/api/comfy/queue'){
    let data;try{data=await bodyJson(req);}catch(e){return json(res,400,{error:'JSON invalide ou trop volumineux'});}
