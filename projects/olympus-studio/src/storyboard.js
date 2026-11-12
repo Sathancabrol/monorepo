@@ -43,3 +43,9 @@ export function validateClip(clip) {
   if (!Number.isFinite(d) || d<=0) throw new Error('Durée du clip invalide');
   return {id:clip.id,assetId:clip.assetId,kind:clip.kind,name:String(clip.name||'Clip'),title:String(clip.title||''),duration:d,inPoint:Math.max(0,Number(clip.inPoint)||0),outPoint:clip.kind==='video'?Math.max(0,Number(clip.inPoint)||0)+d:0};
 }
+
+export function referencedAssetIds(scenes, clips) {
+ const mediaLayers = (Array.isArray(scenes)?scenes:[]).flatMap(scene=>(scene.layers||[]).filter(layer=>layer.type==='image'||layer.type==='video').map(layer=>layer.assetId||layer.id));
+ const clipAssets=(Array.isArray(clips)?clips:[]).map(clip=>clip.assetId);
+ return [...new Set([...mediaLayers,...clipAssets].filter(Boolean))];
+}
