@@ -58,6 +58,29 @@ async function handle(req,res){
    try{const response=await fetch('http://127.0.0.1:8188/prompt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,client_id:'olympus-studio'}),signal:AbortSignal.timeout(5000)});const out=await response.text();try{return json(res,response.status,JSON.parse(out));}catch{return json(res,502,{error:'Réponse ComfyUI invalide',detail:out.slice(0,500)});}}
    catch(e){return json(res,502,{error:'ComfyUI local inaccessible',detail:String(e.message).slice(0,180)});}
  }
+ if(req.method==='GET'&&url.pathname==='/api/comfy/job'){
+  const id=url.searchParams.get('prompt_id')||'';
+  if(!/^[a-f0-9-]{36}$/i.test(id))return json(res,400,{error:'prompt_id UUID invalide'});
+  try{
+   const upstream=await fetch('http://127.0.0.1:8188/history/'+encodeURIComponent(id),{signal:AbortSignal.timeout(5000)});
+   if(!upstream.ok)return json(res,502,{error:'Historique ComfyUI inaccessible',code:upstream.status});
+   const history=await upstream.json(),job=history?.[id];
+   if(!job)return json(res,200,{prompt_id:id,status:'queued_or_running',outputs:[]});
+   const info=job.status||{};
+   const outputs=[];
+   for(const value of Object.values(job.outputs||{})){
+    for(const kind of ['images','videos','gifs','audio']){
+     if(!Array.isArray(value?.[kind]))continue;
+     for(const item of value[kind]){
+      if(!item||typeof item.filename!=='string')continue;
+      outputs.push({kind,filename:item.filename,subfolder:String(item.subfolder||''),type:String(item.type||'output')});
+     }
+    }
+   }
+   const status=info.status_str==='error'?'failed':info.completed===true?'completed':'known';
+   return json(res,200,{prompt_id:id,status,outputs:outputs.slice(0,250)});
+  }catch(e){return json(res,502,{error:'Suivi ComfyUI indisponible',detail:String(e.message).slice(0,140)});}
+ }
  if(req.method!=='GET'&&req.method!=='HEAD')return json(res,405,{error:'Méthode interdite'});
  const pathname=url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname);
  const full=resolve(ROOT,'.'+pathname);
