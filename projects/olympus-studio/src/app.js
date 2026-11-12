@@ -34,7 +34,7 @@ const selected=()=>scene().layers.find(l=>l.id===state.selected);
 function status(t){$('status').textContent=t;}
 function dl(name,blob){const a=document.createElement('a');const u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),10000);}
 function addLayer(layer){layer.id=newId();layer.visible=true;scene().layers.push(layer);state.selected=layer.id;sync();return layer;}
-function setSpace(key){if(key!=='EDIT')state.editPlaying=false;state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
+function setSpace(key){if(key!=='EDIT'){state.editPlaying=false;if(editorRecorder?.state==='recording'){editorRecorder.stop();status('Export storyboard interrompu par changement d’espace');}}state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
 function makeNav(){const root=$('navItems');spaces.forEach(([key,icon,label])=>{const b=document.createElement('button');b.dataset.space=key;b.innerHTML='<b aria-hidden="true">'+esc(icon)+'</b><span>'+key+'</span>';b.title=label;b.onclick=()=>setSpace(key);root.append(b);});}
 function sync(){
  $('stageLabel').textContent=scene().name+' · 1280 × 720';
@@ -170,7 +170,7 @@ async function savePortableProject(){
  const button=$('btnPortable');button.disabled=true;
  try{
   const db=await dbReady;
-  const refs=[...new Set(state.scenes.flatMap(s=>s.layers.filter(l=>l.type==='image'||l.type==='video').map(l=>l.assetId||l.id)))];
+  const refs=[...new Set([...state.scenes.flatMap(s=>s.layers.filter(l=>l.type==='image'||l.type==='video').map(l=>l.assetId||l.id)),...state.clips.map(c=>c.assetId)])];
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
   const records=[];
   for(const id of refs){const record=await getMedia(db,id);if(!record)throw Error('Média absent du coffre : '+id);records.push(record);}
