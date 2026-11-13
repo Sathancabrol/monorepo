@@ -13,7 +13,7 @@ function SafeCommand([string]$Name, [string[]]$CommandArgs) {
   Record ("=== " + $Name + " ===")
   try {
     $Result = & $CommandArgs[0] $CommandArgs[1..($CommandArgs.Length-1)] 2>&1 | Out-String
-    foreach ($Line in ($Result -split '`r?`n')) {
+    foreach ($Line in ($Result -split '\r?\n')) {
       if ($Line -match '(?i)(api.?key|password|secret|authorization|bearer|credential|token|sk-[A-Za-z0-9_-]{10,}|AIza[A-Za-z0-9_-]{12,})') {
         Record '[ligne potentiellement sensible masquee]'
       } elseif ($Line.Trim()) { Record $Line }
