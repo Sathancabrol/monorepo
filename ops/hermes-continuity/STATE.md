@@ -36,3 +36,13 @@ hermes cron list
 ## Critère de reprise
 
 Appel réel sur modèle primaire puis secours, test d'appel d'outil réel, session Hermes reprise dans le même profil, exécution de tâche vérifiée, mise à jour du journal. Aucune de ces validations n'est encore attestée.
+
+## Alternative native Windows pour automation desktop
+
+Hermes expose nativement `computer_use` via cua-driver, compatible Windows :
+```powershell
+hermes computer-use status
+hermes computer-use doctor
+```
+Si absent, voir `hermes computer-use install` (installation distincte de `uvx` et OpenAdapt). Tester le toolset dans une session avec approvals ; ne pas activer `--yolo` sur la machine personnelle. OpenAdapt MCP n'est pas nécessaire à la bascule des modèles.
+Source: https://hermes-agent.nousresearch.com/docs/user-guide/features/computer-use
