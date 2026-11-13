@@ -1,6 +1,7 @@
 // OLYMPUS Studio — opt-in shared camera preview over private Tailscale Serve.
 // No cloud. No audio. No access to ComfyUI / OBS / Hermes APIs.
 // JPEG frames ~4fps are a low-latency prototype, not full WebRTC video.
+import { acquireCamera, releaseCamera } from './camera-pool.js';
 const holder = document.getElementById('sharedCameras');
 const status = document.createElement('p');
 status.className = 'notice';
@@ -46,7 +47,7 @@ function stopLocal() {
   if (!published) return;
   const old = published;
   published = null;
-  old.media.getTracks().forEach(track => track.stop());
+  releaseCamera('shared-preview');
   clearTimeout(old.timer);
   ownPreview.replaceChildren();
   startButton.disabled = !available;
@@ -91,10 +92,7 @@ async function startLocal() {
   if (!available || published) return;
   startButton.disabled = true;
   try {
-    const media = await navigator.mediaDevices.getUserMedia({
-      video: { width:{ideal:640}, height:{ideal:360}, facingMode:'environment' },
-      audio:false,
-    });
+    const media = await acquireCamera('shared-preview', { preferRear:true });
     const video = document.createElement('video');
     video.autoplay = true;
     video.playsInline = true;
@@ -104,7 +102,7 @@ async function startLocal() {
     const ended = () => stopLocal();
     media.getVideoTracks().forEach(track => track.addEventListener('ended', ended, {once:true}));
     try { await video.play(); }
-    catch(e) { media.getTracks().forEach(track=>track.stop()); throw e; }
+    catch(e) { releaseCamera('shared-preview'); throw e; }
     const id = identity();
     published = { ...id, media, video, timer:null };
     ownPreview.replaceChildren(video);
@@ -113,8 +111,9 @@ async function startLocal() {
     message('Caméra activée sur cet appareil. Connexion au relais…');
     publishFrame();
   } catch(e) {
+    releaseCamera('shared-preview');
     startButton.disabled = !available;
-    message('Autorisation caméra refusée / indisponible : ' + e.message);
+    message('Caméra indisponible (' + (e.name || 'Erreur') + ') : ' + e.message + '. Ferme les autres applis caméra, puis recharge la page.');
   }
 }
 startButton.onclick = startLocal;
