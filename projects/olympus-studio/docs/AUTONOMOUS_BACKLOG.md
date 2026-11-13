@@ -56,3 +56,7 @@ Une seule interface Windows capable de créer et reprendre un projet avec média
 - Une session automatique démarre **au plus une fois par heure** et n'est pas une heure garantie de calcul ou de codage. Les travaux en cours sont repris depuis les checkpoints.
 - **Taille relative des tâches** et règle de progression : [WORK_ESTIMATES.md](WORK_ESTIMATES.md). Ne pas confondre poids du chantier, temps de passage et date de livraison.
 - Les tâches matérielles Windows restent dans les blocages; passer à une autre tâche READY sans attendre l'utilisateur.
+
+## Checkpoint 13/11/2026 09h — CI prioritaire
+
+- Run 43383108337 **rouge** : Node et analyse statique réussis, Chromium E2E échoue sur timeout du nom du PNG importé. Diagnostic par lecture : `src/app.js` importe `./video-duration.js` mais `server.mjs` ne l'autorisait pas dans `STATIC_FILES` (HTTP 403), ce qui empêche l'initialisation du module principal. Correctif `ca9fc17e`, test E2E d'initialisation et réponse HTTP `d8df55a3`. Attendre le run CI du dernier commit; si encore rouge, inspecter précisément les logs et corriger. A02 reste ouvert.
