@@ -143,6 +143,40 @@ def main():
                     duration.dispatch_event("change")
                     page.get_by_role("button", name="Ajouter / remplacer piste").click()
                     page.locator('[aria-label="Audio Départ projet (s)"]').wait_for()
+                    # E2E Portable via real UI: preserve EDIT clips and audio,
+                    # not only the LIVE scene. The image and WAV must be embedded
+                    # once each, then restored after a real page navigation.
+                    with page.expect_download(timeout=15000) as portable_info:
+                        page.locator("#btnPortable").click()
+                    portable_download = portable_info.value
+                    portable_path = Path(temp) / "edit-project-portable.json"
+                    portable_download.save_as(portable_path)
+                    project = json.loads(portable_path.read_text(encoding="utf-8"))
+                    assert project["format"] == "olympus-studio-project"
+                    assert project["portable"] is True
+                    assert len(project["clips"]) == 1, project["clips"]
+                    clip_before = project["clips"][0]
+                    assert abs(float(clip_before["duration"]) - 2.5) < 0.01
+                    audio_before = project["editAudioTrack"]
+                    assert audio_before and audio_before["enabled"], audio_before
+                    embedded_ids = [asset["id"] for asset in project["embeddedAssets"]]
+                    assert len(embedded_ids) == len(set(embedded_ids)) == 2, embedded_ids
+                    assert clip_before["assetId"] in embedded_ids
+                    assert audio_before["assetId"] in embedded_ids
+                    page.reload(wait_until="load")
+                    page.locator("#fileProject").set_input_files(str(portable_path))
+                    page.locator("#status").get_by_text("Projet chargé", exact=False).wait_for(timeout=10000)
+                    with page.expect_download(timeout=15000) as restored_info:
+                        page.locator("#btnPortable").click()
+                    restored_path = Path(temp) / "edit-project-restored.json"
+                    restored_info.value.save_as(restored_path)
+                    restored = json.loads(restored_path.read_text(encoding="utf-8"))
+                    assert restored["clips"] == project["clips"], "EDIT clips changed after reload"
+                    assert restored["editAudioTrack"] == audio_before, "Audio settings changed after reload"
+                    assert {a["id"] for a in restored["embeddedAssets"]} == set(embedded_ids)
+                    page.locator('[data-space="EDIT"]').first.click()
+                    page.locator('[aria-label="Audio Départ projet (s)"]').wait_for()
+                    assert not errors, "JS errors after Portable reload: " + " | ".join(errors)
                     assert not errors, "JS errors before export: " + " | ".join(errors)
                     with page.expect_download(timeout=25000) as download_info:
                         page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
