@@ -96,3 +96,10 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 - Commit de code : [`16ef2e1d`](https://github.com/Sathancabrol/monorepo/commit/16ef2e1da3c5099eb5844f80a6f672f85684be8e). CI associée [`43376152256`](https://github.com/Sathancabrol/monorepo/actions/runs/43376152256) **en cours à la consultation**, donc ne pas déclarer A02 validée.
 - **Limites** : test Chromium Linux/HTTP automatisé, sans preuve Windows, ni sauvegarde du montage de clips par les boutons UI, ni export WebM audio audible. A01 et A02 restent ouverts.
 - **Reprise exacte (S)** : lire les étapes/logs de la CI `43376152256`; si échec, corriger d'abord le test ou le produit. Si succès, poursuivre A01/A03 (M) : fixture WebM A/V avec inspection du codec Opus, présence sonore et dérive; ne pas confondre présence de piste et qualité audio.
+
+
+## Session 08h — incrément de sûreté audio EDIT
+
+- A01 (taille M) : `src/editor-export.js` sélectionne exclusivement VP8/Opus ou VP9/Opus quand une piste audio est demandée. Sans encodeur audio déclaré compatible, l'export est refusé plutôt que de produire silencieusement un WebM potentiellement muet.
+- Tests de contrat écrits dans `tests/editor-export.test.mjs`, syntaxe intégrée au workflow CI dédié, module ajouté à l'allowlist du serveur local.
+- **À reprendre (S)** : contrôler CI du dernier commit et réparer si nécessaire. **Puis (M)** : test E2E réel avec fichier WebM et ffprobe, puis E2E sauvegarde clips UI. Pas de preuve Windows.
