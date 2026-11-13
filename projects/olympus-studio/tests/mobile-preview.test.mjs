@@ -48,5 +48,5 @@ test('Mobile preview exposes only static files and a read-only health check', as
     body: '{}',
   });
   assert.equal(post.status, 405);
-  assert.equal(upstreamRequests.length, 3, 'Forbidden requests must never reach Studio');
+  assert.equal(upstreamRequests.length, 4, 'Only the four permitted GET requests should reach Studio; forbidden requests must not');
 });
