@@ -16,7 +16,7 @@ const STATIC_PATHS = new Set([
   '/src/meeting-utils.js', '/src/v03-migration.js',
   '/src/storyboard.js', '/src/edit-audio.js',
   '/src/obs-panel.css', '/src/obs-panel.js', '/src/obs-client.js',
-  '/src/video-duration.js', '/src/shared-camera.js',
+  '/src/video-duration.js', '/src/shared-camera.js', '/src/camera-pool.js',
 ]);
 
 function reply(res, status, message) {
