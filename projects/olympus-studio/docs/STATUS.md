@@ -73,3 +73,17 @@ La piste éditoriale suivante consiste à valider la lecture vidéo et les expor
 | Planification quotidienne | Tâche `6af632ef3df88191a7ef46e372054ac4` créée et exécution immédiate déclenchée | **Active**, 02:00 Europe/Paris |
 
 Limitations : aucun mixage audio EDIT, aucune coupe bornée par métadonnées de durée réelle du fichier, aucun test sur la tour Windows. La modification est sur branche seulement, PR #16 brouillon.
+
+## Itération v0.2.4 — 13 novembre 2026, source vidéo réelle
+
+| Fonction | Preuve | Niveau |
+|---|---|---|
+| Durée source | `src/video-duration.js`, `loadedmetadata`, `durationchange` et cache par assetId | Codé; tests Node et vidéo Chromium |
+| Création de clip | Vidéo WebM témoin 2,00 s → durée initiale 2,00 s | **Vérifié dans Chromium headless**, source en mémoire |
+| IN/OUT bornés | OUT=5 s rejeté pour source 2 s, message explicite | **Vérifié dans Chromium headless**, pas encore Windows |
+| Division vidéo | Split au curseur sur le même média après import réel | **Vérifié dans Chromium headless** |
+| Cas erreurs | Source inconnue, timeout, vidéo endommagée | 5 tests Node nouveaux |
+| Browser smoke reproductible | `tests/browser_media_smoke.py`, Python Playwright + FFmpeg + Chromium, sans réseau | Ajouté; exécution manuelle locale sur environnement de test |
+| Persistance IndexedDB, export audiovisuel, GPU | Navigateur de test utilise modules en mémoire, IndexedDB bloqué | **Non vérifié** |
+
+Les métadonnées peuvent être inconnues ou invalides (ex. flux live, conteneurs incomplets). Dans ce cas les coupes ne sont pas présentées comme vérifiées. L'essai Chromium ne certifie pas les performances sur la tour Windows.
