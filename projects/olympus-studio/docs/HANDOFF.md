@@ -295,3 +295,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Nouveau commit [0e54ab1f](https://github.com/Sathancabrol/monorepo/commit/0e54ab1f8a71b11016bb578e48949d932561b490) : extension du véritable E2E Chromium `tests/browser_edit_export_e2e.py` pour modifier le volume audio EDIT 1→0,35, annuler et rétablir en conservant les clips, puis annuler et créer une nouvelle branche 0,6 qui doit désactiver Rétablir. Preuves via export Portable de chaque état; aucune donnée utilisateur.
 - **CI du nouveau commit à confirmer** : le succès du run précédent ne prouve pas ces nouvelles assertions. Si rouge, inspecter le step Chromium EDIT et réparer avant d'étendre A04.
 - Prochaine tranche (M, 1–2 sessions estimées) : couvrir le titre et l'ordre des clips dans l'E2E, puis la sécurité des éditions pendant export; conserver un test Windows/GTX/OBS réel comme blocage matériel distinct. Aucun merge main ni modification hors Studio.
+
+## Reprise 13 novembre 2026, 22 h — A04 titre et ordre E2E
+
+- Base : checkpoint précédent `108c4d10`; [CI #43497174089](https://github.com/Sathancabrol/monorepo/actions/runs/43497174089) **success** (test volume audio et invalidation redo). Vérification via exécutions associées au commit.
+- Nouvelle tranche : [commit 60988b03](https://github.com/Sathancabrol/monorepo/commit/60988b032e6c45762ceba146d34cce2dc74e561f) ajoute dans `tests/browser_edit_export_e2e.py` les opérations UI titre et réordonnancement de clips, leur annulation/rétablissement, avec comparaison des snapshots Portable, références médias et piste audio.
+- **Preuve actuelle :** écriture GitHub confirmée, **nouvelle CI non vérifiée**. Aucun test Windows ni écoute humaine; aucune fusion main ou modification hors Studio.
+- **Reprise exacte (S)** : inspecter le workflow CI au commit `60988b03` et corriger toute erreur du step Chromium. Si vert, tester le verrouillage des modifications pendant export EDIT (M) puis choisir la prochaine tâche READY (A05 benchmark FreeCut/OpenReelio ou A06 ASR) après vérification des critères A01–A04. 
