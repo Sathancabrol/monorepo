@@ -119,4 +119,4 @@ py -3 -m unittest -v test_fleet_router.py
 py -3 -m py_compile fleet_router.py
 ```
 
-Tests du dépôt : sélection des nœuds, exclusion du téléphone pour les outils, API OpenAI-compatible en mock. **Ne constituent pas** des tests matériels sur les appareils de l'utilisateur.
+Tests du dépôt : sélection des nœuds, exclusion du téléphone pour les outils, API OpenAI-compatible en mock, repli effectif après nœud inaccessible, refus explicite d’un appel d’outil sans modèle compatible. **Ne constituent pas** des tests matériels sur les appareils de l'utilisateur.
