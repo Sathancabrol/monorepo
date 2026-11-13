@@ -146,3 +146,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - L'historique des sessions plus anciennes mentionne l'ancienne cadence 02:00 quotidienne; **ce checkpoint plus récent la remplace**.
 - A01, export A/V EDIT, reste ouverte tant qu'aucun WebM sonore et synchronisé n'a été prouvé. Passer à A02/A03 si contraintes navigateur/Windows empêchent son essai, et ne pas relancer inutilement le même correctif.
 - La récurrence horaire ne transforme pas le chat en daemon continu et ne garantit pas une heure de développement effectif par passage. Aucun agent résident Windows n'a été installé.
+
+## Checkpoint technique — 13 novembre 2026, 04h — A02 navigateur/IndexedDB
+
+- Vérification préalable : backlog, STATUS, SESSION_PLAN, ROADMAP, PR #16 et issues #11–#17 relus. CI précédente run 43349763003 : job smoke terminé avec succès; ne pas confondre avec le nouveau code.
+- Livré : `tests/browser_indexeddb_e2e.py` avec serveur HTTP local Node et Playwright Chromium, écrit un Blob IndexedDB, recharge réellement l'origine, contrôle les octets, utilise `splitVideoClip` pour deux segments de même source, vérifie une seule référence média, puis export/import Portable. Test limité à un Blob synthétique, pas une lecture A/V.
+- CI : `.github/workflows/olympus-studio-ci.yml` installe Playwright 1.56.0 + Chromium et exécute le nouveau test; **résultat de la CI du nouveau commit à confirmer**. Commits de fonctionnalité : `d79772d7`, `b6a7788e`, `d688b9a7`.
+- Prochaine action **prioritaire** (taille S) : vérifier la CI du dernier commit, lire les logs d'échec, réparer Playwright, puis compléter le parcours E2E UI import/sauvegarde/reprise. Ensuite A01/A03 (taille M) : capture WebM avec WAV synthétique et analyse audio Opus/dérive. Ne pas prétendre avoir testé Windows.
