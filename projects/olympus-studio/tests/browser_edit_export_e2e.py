@@ -202,6 +202,12 @@ def main():
                     video_select.select_option(label="synthetic-video.webm")
                     page.get_by_role("button", name="+ Clip").click()
                     # The preceding image lasts 2.5s; split the video at 1s local.
+                    # Wait for the UI to include the newly added video in timeline duration.
+                    # Filling a range while max is still 2.5 raises "Malformed value".
+                    page.wait_for_function(
+                        "() => Number(document.querySelector('#editSeek')?.max) >= 4.45",
+                        timeout=10000,
+                    )
                     page.locator("#editSeek").fill("3.5")
                     page.locator("#editSeek").dispatch_event("input")
                     page.get_by_role("button", name="Diviser au curseur").click()
