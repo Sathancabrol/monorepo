@@ -33,6 +33,7 @@ jobs:
       - name: Static parse
         run: |
           node --check server.mjs
+          node --check scripts/mobile-preview.mjs
           node --check src/app.js
           node --check src/media-store.js
           node --check tests/media-store.test.mjs
@@ -55,7 +56,7 @@ jobs:
         run: npm test
       - name: Pack Windows preview (Node.js requis)
         run: |
-          zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
+          zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat LANCER_MOBILE.bat src scripts docs tests README.md
           unzip -t olympus-studio-preview.zip | tail -1
       - name: Publier le paquet de test
         uses: actions/upload-artifact@v4
