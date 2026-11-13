@@ -1,5 +1,6 @@
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
 import {validateEditAudioTrack, audioAtTimeline} from './edit-audio.js';
+import {selectEditorWebMMime} from './editor-export.js';
 import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from './video-duration.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
@@ -219,9 +220,8 @@ async function exportEditorWebM(){
    await attachAudioToEditorCapture(stream,audio,state.editAudioTrack.volume);
    audioIncluded=true;
   }
-  const formats=audioIncluded?['video/webm;codecs=vp8,opus','video/webm']:['video/webm;codecs=vp8','video/webm'];
-  const mime=formats.find(x=>MediaRecorder.isTypeSupported(x));
-  editorRecorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
+  const mime=selectEditorWebMMime(audioIncluded, type=>MediaRecorder.isTypeSupported(type));
+  editorRecorder=new MediaRecorder(stream,{mimeType:mime});
   const chunks=[];
   editorRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
   const captureStream=stream;
