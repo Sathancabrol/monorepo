@@ -32,6 +32,8 @@ test('Mobile preview exposes only static files and a read-only health check', as
 
   const js = await fetch(base + '/src/app.js');
   assert.equal(js.status, 200);
+  const cameraPool = await fetch(base + '/src/camera-pool.js');
+  assert.equal(cameraPool.status, 200);
   const health = await fetch(base + '/api/health');
   assert.equal(health.status, 200);
 
