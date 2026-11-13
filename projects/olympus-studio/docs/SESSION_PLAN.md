@@ -76,3 +76,8 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 
 - Nouveau scénario E2E Chromium **sur origine HTTP réelle**, avec IndexedDB persistant après `reload`, Blob octet-identique, `splitVideoClip` et export Portable unique. La CI a été modifiée pour exécuter ce scénario ; vérifier le statut avant de le considérer comme validé.
 - Prochaine tranche : corriger tout échec du job Chromium, étendre le test à la sauvegarde UI complète, puis prouver la piste sonore de l'export EDIT. Aucun essai Windows effectué.
+
+## Reprise A02 — 13 novembre, 05h
+
+- Corriger le step GitHub Actions Chromium mal formaté (séquences `\\n` littérales), puis tester deux rechargements HTTP/IndexedDB avec import Portable intermédiaire. Commits `a83a31a9` et `eabbd614`.
+- Vérification CI des commits en attente : ne pas fermer A02 avant résultat vert. Prochaine tranche S : logs CI et réparation; ensuite M : sauvegarde/reprise depuis l'interface complète, puis preuve WebM/Opus A/V.
