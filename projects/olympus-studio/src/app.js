@@ -1,4 +1,5 @@
-import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, trimVideoClip, splitStoryboardAt } from './storyboard.js';
+import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
+import { readVideoDuration, initialClipDuration, trimWithinVideoDuration } from './video-duration.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
@@ -24,7 +25,30 @@ const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const dbReady = openMediaDB().catch(() => null);
-const editMedia = new Map();let editorRecorder=null;
+const editMedia = new Map();const videoDurations = new Map();const videoDurationJobs = new Map();
+let editorRecorder=null;
+function knownVideoDuration(assetId){return videoDurations.get(assetId)??null;}
+function updateVideoDurationHint(assetId, duration){
+ for(const element of document.querySelectorAll('[data-video-asset]')){
+  if(element.dataset.videoAsset!==assetId)continue;
+  element.textContent=duration===null?'Durée source : inconnue (coupes non vérifiées)':'Source : '+duration.toFixed(2)+' s';
+  element.classList.toggle('warning',duration===null);
+ }
+}
+function ensureVideoDuration(assetId, video){
+ if(videoDurations.has(assetId))return Promise.resolve(videoDurations.get(assetId));
+ if(videoDurationJobs.has(assetId))return videoDurationJobs.get(assetId);
+ const job=readVideoDuration(video,4500).then(duration=>{
+  videoDurations.set(assetId,duration);
+  updateVideoDurationHint(assetId,duration);
+  return duration;
+ }).catch(()=>{
+  updateVideoDurationHint(assetId,null);
+  return null;
+ });
+ videoDurationJobs.set(assetId,job);
+ return job;
+}
 const createdMediaURLs = new Set();
 function releaseMediaURLs(){for(const url of createdMediaURLs)URL.revokeObjectURL(url);createdMediaURLs.clear();}
 function localMediaURL(blob){const url=URL.createObjectURL(blob);createdMediaURLs.add(url);return url;}
@@ -71,12 +95,16 @@ function renderTimeline(){
  const el=$('timeline');el.innerHTML='';scene().layers.forEach(l=>{const tr=document.createElement('div');tr.className='track';const name=document.createElement('b');name.textContent=l.name;const bar=document.createElement('div');bar.className='bar';bar.style.opacity=l.visible?1:.22;bar.title='Calque de composition — pas encore un clip montable';tr.append(name,bar);el.append(tr);});
 }
 async function loadEditAsset(assetId){
- if(editMedia.has(assetId))return editMedia.get(assetId);
+ if(editMedia.has(assetId)){
+  const media=editMedia.get(assetId);
+  if(media?.tagName==='VIDEO'&&!videoDurations.has(assetId))ensureVideoDuration(assetId,media);
+  return media;
+ }
  const db=await dbReady;
  let record=db?await getMedia(db,assetId):null;
  if(!record){
   const available=runtime.get(assetId);
-  if(available){editMedia.set(assetId,available);return available;}
+  if(available){editMedia.set(assetId,available);if(available.tagName==='VIDEO')ensureVideoDuration(assetId,available);return available;}
   return null;
  }
  const url=localMediaURL(record.blob);
@@ -85,7 +113,8 @@ async function loadEditAsset(assetId){
   element=new Image();element.src=url;
   await new Promise(resolve=>{element.onload=resolve;element.onerror=resolve;});
  }else if(record.type.startsWith('video/')){
-  element=document.createElement('video');element.src=url;element.muted=true;element.preload='auto';element.playsInline=true;
+  element=document.createElement('video');element.preload='metadata';element.muted=true;element.playsInline=true;element.src=url;
+  ensureVideoDuration(assetId,element);
  }else return null;
  editMedia.set(assetId,element);return element;
 }
@@ -224,7 +253,7 @@ async function loadProject(file){
   const legacyClips=data.legacyV03?.edit?.clips;
   const candidates=Array.isArray(data.clips)?data.clips:Array.isArray(legacyClips)?legacyClips:[];
   state.clips=candidates.slice(0,1000).flatMap(c=>{try{return [validateClip(c)];}catch{return [];}});
-  state.editTime=0;state.editPlaying=false;editMedia.clear();
+  state.editTime=0;state.editPlaying=false;editMedia.clear();videoDurations.clear();videoDurationJobs.clear();
   runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
   status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
@@ -331,12 +360,20 @@ function panel(){
   const eligible=state.assets.filter(a=>String(a.type).startsWith('image/')||String(a.type).startsWith('video/'));
   for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
   const add=document.createElement('button');add.textContent='+ Clip';add.disabled=!eligible.length;
-  add.onclick=()=>{
+  add.onclick=async()=>{
    const asset=state.assets.find(a=>a.id===select.value);if(!asset)return;
    const kind=asset.type.startsWith('video/')?'video':'image';
-   state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration:5,inPoint:0}));
-   loadEditAsset(asset.id).catch(error=>status('Prévisualisation média : '+error.message));
-   state.editTime=0;state.editPlaying=false;panel();sync();status('Clip ajouté à la timeline');
+   add.disabled=true;status('Lecture des métadonnées '+asset.name+'…');
+   try{
+    const media=await loadEditAsset(asset.id);
+    if(!media)throw Error('Média absent du coffre');
+    const measured=kind==='video'?await ensureVideoDuration(asset.id,media):null;
+    const duration=kind==='video'?initialClipDuration(measured):5;
+    state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration,inPoint:0}));
+    state.editTime=0;state.editPlaying=false;panel();sync();
+    status('Clip ajouté : '+duration.toFixed(2)+' s'+(kind==='video'&&measured===null?' · durée source inconnue':''));
+   }catch(error){status('Ajout clip impossible : '+error.message);}
+   finally{add.disabled=false;}
   };
   wrap.append(select,add);
   const count=document.createElement('p');count.className='muted';
@@ -362,7 +399,7 @@ function panel(){
     const updateTrim=(start,end)=>{
      if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
      try{
-      state.clips[index]=trimVideoClip(clip,start,end);
+      state.clips[index]=trimWithinVideoDuration(clip,start,end,knownVideoDuration(clip.assetId));
       state.editPlaying=false;state.editLast=0;
       state.editTime=Math.min(state.editTime,Math.max(0,storyboardDuration(state.clips)-0.001));
       panel();sync();status('Plage source IN/OUT modifiée sans modifier le fichier');
@@ -370,6 +407,17 @@ function panel(){
     };
     row.append(inputTime('IN (s)',clip.inPoint,()=>updateTrim(Number(row.querySelector('[aria-label="IN (s) du clip '+(index+1)+'"]').value),Number(clip.outPoint))));
     row.append(inputTime('OUT (s)',clip.outPoint,()=>updateTrim(Number(clip.inPoint),Number(row.querySelector('[aria-label="OUT (s) du clip '+(index+1)+'"]').value))));
+    const durationHint=document.createElement('small');durationHint.className='muted';
+    durationHint.dataset.videoAsset=clip.assetId;
+    const known=knownVideoDuration(clip.assetId);
+    durationHint.textContent=known===null?'Durée source : en attente / inconnue':'Source : '+known.toFixed(2)+' s';
+    if(known===null)durationHint.classList.add('warning');
+    if(known!==null&&clip.outPoint>known+.001){
+     const warning=document.createElement('small');warning.className='warning';
+     warning.textContent='Attention : OUT dépasse la durée source; corriger la coupe.';
+     row.append(warning);
+    }
+    row.append(durationHint);
    }
    const title=document.createElement('input');title.type='text';title.placeholder='Titre incrusté';title.value=clip.title||'';title.style.flex='1';
    title.onchange=()=>{clip.title=title.value;};
