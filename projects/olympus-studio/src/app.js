@@ -249,7 +249,7 @@ function draw(){
   try{
    if(l.type==='rect'){ctx.fillStyle=l.color||'#23cfc2';ctx.fillRect(x,y,w,h);}
    else if(l.type==='text'){ctx.font='600 '+(l.size||44)+'px Segoe UI,Arial,sans-serif';ctx.fillStyle=l.color||'#fff';ctx.textBaseline='middle';ctx.fillText(l.value||'',x,y+h/2,w);}
-   else if(l.type==='image'||l.type==='video'||l.type==='webcam'||l.type==='screen'){const media=l.type==='webcam'?webcamVideo:l.type==='screen'?screenVideo:runtime.get(l.id);if(media&&((l.type==='image'&&media.complete)||(l.type!=='image'&&media.readyState>=2)))ctx.drawImage(media,x,y,w,h);else {ctx.strokeStyle='#7894af';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#a9bdcf';ctx.font='22px Segoe UI';ctx.fillText(l.name+' · fichier à relier',x+12,y+35,w-24);}}
+   else if(l.type==='image'||l.type==='video'||l.type==='webcam'||l.type==='screen'||l.type==='remote-webcam'){const media=l.type==='webcam'?webcamVideo:l.type==='screen'?screenVideo:runtime.get(l.id);if(media&&(((l.type==='image'||l.type==='remote-webcam')&&media.complete&&media.naturalWidth>0)||(!['image','remote-webcam'].includes(l.type)&&media.readyState>=2)))ctx.drawImage(media,x,y,w,h);else {ctx.strokeStyle='#7894af';ctx.strokeRect(x,y,w,h);ctx.fillStyle='#a9bdcf';ctx.font='22px Segoe UI';ctx.fillText(l.name+' · fichier à relier',x+12,y+35,w-24);}}
   }catch{}
   if(l.id===state.selected){ctx.strokeStyle='#42e8df';ctx.lineWidth=3;ctx.strokeRect(x,y,w,h);}
  });
@@ -637,6 +637,8 @@ function panel(){
 }
 makeNav();sync();setSpace('LIVE');
 $('projectName').onchange=e=>{state.projectName=e.target.value||'Projet';};
+window.olympusAddRemoteCamera = (id, name, image) => { const existing=scene().layers.find(layer=>layer.type==='remote-webcam'&&layer.remoteCameraId===id);if(existing){runtime.set(existing.id,image);state.selected=existing.id;sync();return;}const layer=addLayer({type:'remote-webcam',name:'Caméra · '+name,remoteCameraId:id,x:.1,y:.1,w:.8,h:.8});runtime.set(layer.id,image);};
+window.olympusRemoveRemoteCamera = id => {for(const item of scene().layers){if(item.type==='remote-webcam'&&item.remoteCameraId===id)runtime.delete(item.id);}};
 $('btnNewScene').onclick=()=>{const s={id:newId(),name:'Scène '+(state.scenes.length+1),layers:[]};state.scenes.push(s);state.activeScene=s.id;state.selected=null;sync();status('Nouvelle scène');};
 $('btnSave').onclick=saveProject;$('btnPortable').onclick=savePortableProject;$('fileProject').onchange=e=>{if(e.target.files[0])loadProject(e.target.files[0]);};
 $('fileMedia').onchange=e=>addFiles([...e.target.files]);
