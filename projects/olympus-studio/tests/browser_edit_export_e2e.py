@@ -211,6 +211,32 @@ def main():
                     page.locator("#editSeek").fill("3.5")
                     page.locator("#editSeek").dispatch_event("input")
                     page.get_by_role("button", name="Diviser au curseur").click()
+                    # A04: exercise actual undo/redo buttons, not just history helpers.
+                    # The split must undo to one video clip and redo to two while
+                    # preserving the original source asset and audio track.
+                    def portable_snapshot(filename):
+                        with page.expect_download(timeout=15000) as snapshot_info:
+                            page.locator("#btnPortable").click()
+                        target = Path(temp) / filename
+                        snapshot_info.value.save_as(target)
+                        return json.loads(target.read_text(encoding="utf-8"))
+
+                    page.locator("#editUndo").wait_for(state="visible")
+                    assert page.locator("#editUndo").is_enabled(), "Split must be undoable"
+                    page.locator("#editUndo").click()
+                    undone = portable_snapshot("split-undone.json")
+                    undone_video = [c for c in undone["clips"] if c["kind"] == "video"]
+                    assert len(undone_video) == 1, undone["clips"]
+                    assert page.locator("#editRedo").is_enabled(), "Undo must enable redo"
+                    page.locator("#editRedo").click()
+                    redone = portable_snapshot("split-redone.json")
+                    redone_video = [c for c in redone["clips"] if c["kind"] == "video"]
+                    assert len(redone_video) == 2, redone["clips"]
+                    assert redone_video[0]["assetId"] == redone_video[1]["assetId"]
+                    assert redone["editAudioTrack"] == undone["editAudioTrack"]
+                    assert {a["id"] for a in redone["embeddedAssets"]} == {a["id"] for a in undone["embeddedAssets"]}
+                    assert not errors, "JS errors during undo/redo: " + " | ".join(errors)
+                    print("EDIT undo/redo UI: split restored, audio and source preserved")
                     with page.expect_download(timeout=15000) as split_info:
                         page.locator("#btnPortable").click()
                     split_path = Path(temp) / "split-portable.json"
