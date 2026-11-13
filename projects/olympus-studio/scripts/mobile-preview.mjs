@@ -36,13 +36,6 @@ export function createMobilePreviewServer({ upstreamPort = 8787 } = {}) {
 
   const handleLive = createSharedCameraRelay();
   return http.createServer((req, res) => {
-    if (pathname.startsWith('/api/live/')) {
-      void handleLive(req, res, new URL(req.url, 'http://localhost')).catch(() => {
-        if (!res.headersSent) reply(res, 500, 'Erreur caméra'); else res.destroy();
-      });
-      return;
-    }
-
     if (!['GET', 'HEAD'].includes(req.method)) {
       return reply(res, 405, 'Mobile preview is read-only');
     }
@@ -52,6 +45,13 @@ export function createMobilePreviewServer({ upstreamPort = 8787 } = {}) {
       pathname = new URL(req.url ?? '/', 'http://localhost').pathname;
     } catch {
       return reply(res, 400, 'Invalid URL');
+    }
+
+    if (pathname.startsWith('/api/live/')) {
+      void handleLive(req, res, new URL(req.url, 'http://localhost')).catch(() => {
+        if (!res.headersSent) reply(res, 500, 'Erreur caméra'); else res.destroy();
+      });
+      return;
     }
 
     if (!STATIC_PATHS.has(pathname) && pathname !== '/api/health') {
