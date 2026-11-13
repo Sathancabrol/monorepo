@@ -59,6 +59,7 @@ test('Le module de durée vidéo EDIT est bien chargé par le navigateur',async(
  assert.match(await r.text(),/export function readVideoDuration/);
 });
 
+test('Le module partagé caméra est servi dans les imports du navigateur',async()=>{const r=await fetch(base+'/src/camera-pool.js');assert.equal(r.status,200);assert.match(await r.text(),/createCameraPool/);});
 test('Le module audio EDIT est servi localement mais le serveur reste fermé aux fichiers privés',async()=>{
  const r=await fetch(base+'/src/edit-audio.js');
  assert.equal(r.status,200);
