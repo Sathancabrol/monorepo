@@ -47,7 +47,7 @@ jobs:
           node --check tests/edit-audio.test.mjs
           node --check src/video-duration.js
           node --check tests/video-duration.test.mjs
-          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py tests/browser_av_fixture.py
+          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py tests/browser_av_fixture.py tests/browser_edit_export_e2e.py
           node --check tests/storyboard.test.mjs
           node --check src/obs-client.js
           node --check src/obs-panel.js
@@ -64,6 +64,9 @@ jobs:
         run: |
           command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
           python tests/browser_av_fixture.py
+      - name: Chromium EDIT export E2E — bouton réel, WebM Opus et ffprobe
+        run: |
+          python tests/browser_edit_export_e2e.py
       - name: Pack Windows preview (Node.js requis)
         run: |
           zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
