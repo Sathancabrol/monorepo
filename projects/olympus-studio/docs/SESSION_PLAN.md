@@ -81,3 +81,11 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 
 - Corriger le step GitHub Actions Chromium mal formaté (séquences `\\n` littérales), puis tester deux rechargements HTTP/IndexedDB avec import Portable intermédiaire. Commits `a83a31a9` et `eabbd614`.
 - Vérification CI des commits en attente : ne pas fermer A02 avant résultat vert. Prochaine tranche S : logs CI et réparation; ensuite M : sauvegarde/reprise depuis l'interface complète, puis preuve WebM/Opus A/V.
+
+## Checkpoint A02 — 13 novembre 2026, 06h — import média par l'interface
+
+- Relecture des documents de pilotage, PR #16, tickets #11–#17, workflow CI et scénario IndexedDB avant écriture.
+- **Nouveau test E2E réel-origine HTTP codé** : `tests/browser_indexeddb_e2e.py` pilote maintenant le champ `#fileMedia` dans Chromium Playwright, importe un PNG 1×1 via l'interface, vérifie son stockage IndexedDB, recharge le navigateur puis confirme le média et ses octets en base (taille). Le scénario API existant continue à tester split et aller-retour Portable.
+- Commit de test : `a7819e49df64eb4ec80864d5d1cea694be4128a3` (branche isolée). **Pas de preuve CI verte pour ce commit** : la recherche des runs liés a retourné zéro résultat lors de la session; la CI précédente `43362826557` a été annulée, ce qui n'est pas une preuve d'échec de tests. Les annulations peuvent venir de `cancel-in-progress: true`.
+- Ce test **ne valide pas** la sauvegarde d'un projet complet via les boutons de l'interface, ni l'export A/V, ni Windows. Il reste à vérifier la présence du média dans l'UI après rechargement et l'export/import Portable par l'UI.
+- **Reprise exacte (taille S)** : récupérer le run CI le plus récent sur la branche, inspecter le job Chromium et corriger immédiatement si rouge. **Ensuite (taille M)** : E2E de projet complet `#btnPortable`/`#fileProject`, puis A01/A03 fixture WebM + son et vérification codec Opus/décalage. Aucun merge ni installation sur Windows.
