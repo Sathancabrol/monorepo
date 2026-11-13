@@ -288,3 +288,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **Preuve** : écriture GitHub confirmée. **CI du commit b3d792d6 non confirmée** : l'API de recherche des runs liés au commit ne retourne aucun run à cette consultation; cela ne prouve ni succès ni échec. Ne pas déclarer E2E validé.
 - **Reprise exacte S** : vérifier le workflow dédié sur le SHA b3d792d6 (et toute tête ultérieure), corriger immédiatement si rouge. Puis M : E2E undo/redo de réglages audio, titre et ordre; vérifier que le redo est invalidé après une nouvelle édition. Éviter d'étendre les tests Windows sans machine.
 - Blocages : Windows GTX1060/1650, OBS réel et écoute humaine non accessibles. Aucun merge main, aucun changement d'autre projet.
+
+## Reprise 13 novembre 2026, 21 h — A04 audio UI et branche redo
+
+- Base contrôlée : PR #16 brouillon, tête initiale `9a44f9fb`; CI de cette tête [43488406477](https://github.com/Sathancabrol/monorepo/actions/runs/43488406477) **success**. Backlog, journaux, issues #11–#17 et workflow dédié relus.
+- Nouveau commit [0e54ab1f](https://github.com/Sathancabrol/monorepo/commit/0e54ab1f8a71b11016bb578e48949d932561b490) : extension du véritable E2E Chromium `tests/browser_edit_export_e2e.py` pour modifier le volume audio EDIT 1→0,35, annuler et rétablir en conservant les clips, puis annuler et créer une nouvelle branche 0,6 qui doit désactiver Rétablir. Preuves via export Portable de chaque état; aucune donnée utilisateur.
+- **CI du nouveau commit à confirmer** : le succès du run précédent ne prouve pas ces nouvelles assertions. Si rouge, inspecter le step Chromium EDIT et réparer avant d'étendre A04.
+- Prochaine tranche (M, 1–2 sessions estimées) : couvrir le titre et l'ordre des clips dans l'E2E, puis la sécurité des éditions pendant export; conserver un test Windows/GTX/OBS réel comme blocage matériel distinct. Aucun merge main ni modification hors Studio.
