@@ -6,6 +6,7 @@
  * No privileged Studio POST operations are forwarded from mobile devices.
  */
 import http from 'node:http';
+import { createSharedCameraRelay } from './shared-camera-relay.mjs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
@@ -15,7 +16,7 @@ const STATIC_PATHS = new Set([
   '/src/meeting-utils.js', '/src/v03-migration.js',
   '/src/storyboard.js', '/src/edit-audio.js',
   '/src/obs-panel.css', '/src/obs-panel.js', '/src/obs-client.js',
-  '/src/video-duration.js',
+  '/src/video-duration.js', '/src/shared-camera.js',
 ]);
 
 function reply(res, status, message) {
@@ -33,7 +34,15 @@ export function createMobilePreviewServer({ upstreamPort = 8787 } = {}) {
     throw new Error('Invalid OLYMPUS_PORT');
   }
 
+  const handleLive = createSharedCameraRelay();
   return http.createServer((req, res) => {
+    if (pathname.startsWith('/api/live/')) {
+      void handleLive(req, res, new URL(req.url, 'http://localhost')).catch(() => {
+        if (!res.headersSent) reply(res, 500, 'Erreur caméra'); else res.destroy();
+      });
+      return;
+    }
+
     if (!['GET', 'HEAD'].includes(req.method)) {
       return reply(res, 405, 'Mobile preview is read-only');
     }
