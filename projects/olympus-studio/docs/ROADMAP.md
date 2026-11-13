@@ -49,3 +49,11 @@
 
 ## Routines de reprise
 Chaque session : relire STATUS, choisir le premier test faisable, réaliser 1 changement isolé, ajouter preuve/limite, puis réordonner les trois prochaines tâches. Pas de promesse de travail continu : nécessite exécution explicite ou tâche planifiée active.
+
+## 13 novembre — état S04
+
+- [x] Contrôle des bornes IN/OUT sur durée source connue.
+- [x] Contrôle du champ « Durée » par la même validation, avec test de régression.
+- [ ] Test de sauvegarde/reprise de clips avec IndexedDB sur une vraie origine.
+- [ ] Export EDIT A/V synchronisé et vérifié.
+- [ ] Tests matériels Windows GTX 1060 / GTX 1650.
