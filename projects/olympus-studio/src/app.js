@@ -1,3 +1,4 @@
+import { createEditHistory, snapshotEdit, recordEdit, undoEdit, redoEdit } from './edit-history.js';
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
 import {validateEditAudioTrack, audioAtTimeline} from './edit-audio.js';
 import {selectEditorWebMMime} from './editor-export.js';
@@ -27,6 +28,10 @@ const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const dbReady = openMediaDB().catch(() => null);
+let editHistory=createEditHistory();
+function editSnapshot(){return snapshotEdit(state.clips,state.editAudioTrack);}
+function commitEdit(before){editHistory=recordEdit(editHistory,before,editSnapshot());}
+function travelEdit(direction){if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant annulation');const result=direction==='undo'?undoEdit(editHistory,editSnapshot()):redoEdit(editHistory,editSnapshot());editHistory=result.history;state.clips=result.snapshot.clips;state.editAudioTrack=result.snapshot.audioTrack;state.editTime=Math.min(state.editTime,storyboardDuration(state.clips));state.editPlaying=false;state.editLast=0;syncEditorAudio();panel();sync();status(direction==='undo'?'Montage annulé':'Montage rétabli');}
 const editMedia = new Map();const editAudioGraph = new WeakMap();const videoDurations = new Map();const videoDurationJobs = new Map();
 let editorRecorder=null;
 function knownVideoDuration(assetId){return videoDurations.get(assetId)??null;}
@@ -429,12 +434,14 @@ function panel(){
   cutButton.onclick=()=>{
    if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
    try{
-    state.clips=splitStoryboardAt(state.clips,state.editTime,newId());
+    const before=editSnapshot();state.clips=splitStoryboardAt(state.clips,state.editTime,newId());commitEdit(before);
     state.editPlaying=false;state.editLast=0;panel();sync();
     status('Clip vidéo divisé au curseur, source inchangée');
    }catch(e){status('Division impossible : '+e.message);}
   };
-  controls.append(play,seek,clock,cutButton,exportButton);
+  const undo=document.createElement('button');undo.id='editUndo';undo.textContent='Annuler';undo.disabled=!editHistory.past.length;undo.onclick=()=>travelEdit('undo');
+  const redo=document.createElement('button');redo.id='editRedo';redo.textContent='Rétablir';redo.disabled=!editHistory.future.length;redo.onclick=()=>travelEdit('redo');
+  controls.append(play,seek,clock,cutButton,undo,redo,exportButton);
   const select=document.createElement('select');select.setAttribute('aria-label','Choisir un média du coffre');
   const eligible=state.assets.filter(a=>String(a.type).startsWith('image/')||String(a.type).startsWith('video/'));
   for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
@@ -448,7 +455,7 @@ function panel(){
     if(!media)throw Error('Média absent du coffre');
     const measured=kind==='video'?await ensureVideoDuration(asset.id,media):null;
     const duration=kind==='video'?initialClipDuration(measured):5;
-    state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration,inPoint:0}));
+    const before=editSnapshot();state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration,inPoint:0}));commitEdit(before);
     state.editTime=0;state.editPlaying=false;panel();sync();
     status('Clip ajouté : '+duration.toFixed(2)+' s'+(kind==='video'&&measured===null?' · durée source inconnue':''));
    }catch(error){status('Ajout clip impossible : '+error.message);}
@@ -474,7 +481,7 @@ function panel(){
      const old=editMedia.get(state.editAudioTrack.assetId);
      if(old?.tagName==='AUDIO')old.pause();
     }
-    state.editAudioTrack=validateEditAudioTrack({assetId:asset.id,name:asset.name,offset:0,inPoint:0,volume:1});
+    const before=editSnapshot();state.editAudioTrack=validateEditAudioTrack({assetId:asset.id,name:asset.name,offset:0,inPoint:0,volume:1});commitEdit(before);
     panel();status('Piste audio EDIT ajoutée : '+asset.name);
    }catch(error){status('Piste audio : '+error.message);}
   };
@@ -489,16 +496,16 @@ function panel(){
     if(field==='volume')control.max='1';
     control.onchange=()=>{
      if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant réglage audio');
-     try{state.editAudioTrack=validateEditAudioTrack({...state.editAudioTrack,[field]:Number(control.value)});panel();status('Réglage audio enregistré');}
+     try{const before=editSnapshot();state.editAudioTrack=validateEditAudioTrack({...state.editAudioTrack,[field]:Number(control.value)});commitEdit(before);panel();status('Réglage audio enregistré');}
      catch(error){status('Réglage audio refusé : '+error.message);panel();}
     };
     item.append(control);settings.append(item);
    }
    const mute=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=track.enabled;
-   cb.onchange=()=>{if(editorRecorder?.state==='recording'){cb.checked=track.enabled;return status('Arrêter export EDIT avant modification');}state.editAudioTrack={...track,enabled:cb.checked};syncEditorAudio();};
+   cb.onchange=()=>{if(editorRecorder?.state==='recording'){cb.checked=track.enabled;return status('Arrêter export EDIT avant modification');}const before=editSnapshot();state.editAudioTrack={...track,enabled:cb.checked};commitEdit(before);syncEditorAudio();panel();};
    mute.append(cb,document.createTextNode(' Activée'));settings.append(mute);
    const remove=document.createElement('button');remove.textContent='Retirer la piste audio';
-   remove.onclick=()=>{if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification');const old=editMedia.get(track.assetId);if(old?.tagName==='AUDIO')old.pause();state.editAudioTrack=null;panel();};
+   remove.onclick=()=>{if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification');const old=editMedia.get(track.assetId);if(old?.tagName==='AUDIO')old.pause();const before=editSnapshot();state.editAudioTrack=null;commitEdit(before);panel();};
    settings.append(remove);audioPanel.append(settings);
    loadEditAsset(track.assetId).catch(e=>status('Audio EDIT : '+e.message));
   }else{
@@ -518,7 +525,7 @@ function panel(){
     const n=Number(duration.value);
     if(!Number.isFinite(n)||n<.1||n>3600){status('Durée invalide (0,1 à 3600 s)');panel();return;}
     try{
-     state.clips[index]=setClipDuration(clip,n,knownVideoDuration(clip.assetId));
+     const before=editSnapshot();state.clips[index]=setClipDuration(clip,n,knownVideoDuration(clip.assetId));commitEdit(before);
      state.editPlaying=false;state.editLast=0;
      state.editTime=Math.min(state.editTime,Math.max(0,storyboardDuration(state.clips)-0.001));
      panel();sync();status('Durée du clip mise à jour');
@@ -534,7 +541,7 @@ function panel(){
     const updateTrim=(start,end)=>{
      if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
      try{
-      state.clips[index]=trimWithinVideoDuration(clip,start,end,knownVideoDuration(clip.assetId));
+      const before=editSnapshot();state.clips[index]=trimWithinVideoDuration(clip,start,end,knownVideoDuration(clip.assetId));commitEdit(before);
       state.editPlaying=false;state.editLast=0;
       state.editTime=Math.min(state.editTime,Math.max(0,storyboardDuration(state.clips)-0.001));
       panel();sync();status('Plage source IN/OUT modifiée sans modifier le fichier');
@@ -555,10 +562,10 @@ function panel(){
     row.append(durationHint);
    }
    const title=document.createElement('input');title.type='text';title.placeholder='Titre incrusté';title.value=clip.title||'';title.style.flex='1';
-   title.onchange=()=>{clip.title=title.value;};
-   const up=document.createElement('button');up.textContent='↑';up.title='Monter';up.onclick=()=>{state.clips=moveClip(state.clips,index,-1);panel();};
-   const down=document.createElement('button');down.textContent='↓';down.title='Descendre';down.onclick=()=>{state.clips=moveClip(state.clips,index,1);panel();};
-   const remove=document.createElement('button');remove.textContent='×';remove.title='Retirer le clip';remove.onclick=()=>{state.clips.splice(index,1);state.editTime=0;panel();};
+   title.onchange=()=>{const before=editSnapshot();clip.title=title.value;commitEdit(before);panel();};
+   const up=document.createElement('button');up.textContent='↑';up.title='Monter';up.onclick=()=>{const before=editSnapshot();state.clips=moveClip(state.clips,index,-1);commitEdit(before);panel();};
+   const down=document.createElement('button');down.textContent='↓';down.title='Descendre';down.onclick=()=>{const before=editSnapshot();state.clips=moveClip(state.clips,index,1);commitEdit(before);panel();};
+   const remove=document.createElement('button');remove.textContent='×';remove.title='Retirer le clip';remove.onclick=()=>{const before=editSnapshot();state.clips.splice(index,1);commitEdit(before);state.editTime=0;panel();};
    row.append(info,duration,title,up,down,remove);el.append(row);
    loadEditAsset(clip.assetId).catch(()=>{});
   });
