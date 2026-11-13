@@ -12,7 +12,7 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 
 - Lancer une **itération de travail** à chaque session agent disponible : consulter STATUS, HANDOFF, PR #16 et tickets #11 à #15 ; sélectionner une tâche ; implémenter ; ajouter des tests ; vérifier GitHub Actions ; documenter la preuve ; mettre à jour les tickets ; conserver le travail sur la branche.
 - Les **tests GitHub Actions** s'exécutent déjà automatiquement aux pushes sur `feat/olympus-studio-20261112` et sur PR. Une exécution CI n'est **pas** un agent qui écrit du nouveau code.
-- **Tâche ChatGPT activée le 12/11/2026** : `OLYMPUS Studio — développement` (`6af632ef3df88191a7ef46e372054ac4`), reprise quotidienne à **02:00 Europe/Paris**. Une exécution immédiate a été déclenchée à la demande de l'utilisateur le 12/11.
+- **Tâche ChatGPT activée le 12/11/2026** : `OLYMPUS Studio — développement` (`6af632ef3df88191a7ef46e372054ac4`), reprise **horaire** à partir du 13/11/2026 à 04:00 Europe/Paris. Une exécution immédiate a été déclenchée à la demande de l'utilisateur le 12/11.
 - Une tâche planifiée exécute des sessions **bornées**; pas de programmation ou génération garantie en continu. Accès GitHub et qualité CI à revérifier à chaque passage.
 
 ## Ordre de travail, critères et preuves
@@ -32,7 +32,7 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 ## Fonctionnement de chaque session
 
 1. **Lire** `docs/HANDOFF.md`, `docs/STATUS.md`, `docs/SESSION_PLAN.md` et PR #16 ; inspecter les derniers échecs CI.
-2. **Choisir une seule tranche verticale** testable de 1 à 3 fonctions complémentaires, et **une nouveauté visible par version** (pas seulement des refactorings).
+2. **Choisir une tranche verticale** testable de 1 à 3 fonctions complémentaires avec une nouveauté visible par version. Une fois cette tranche validée, enchaîner une autre tranche si le run dispose encore des ressources; sinon consigner le prochain incrément exact.
 3. **Implémenter** sur la branche isolée, en préservant le mode local sans cloud/paywall ; ne jamais envoyer une clé/API privée au dépôt.
 4. **Ajouter des tests** (syntaxiques, API, unitaires, E2E si navigateur disponible), confirmer le workflow GitHub Actions après le dernier commit.
 5. **Tracer** fonctionnalité annoncée vs codée vs testée vs validée Windows ; documenter la provenance des modules tiers/licences.
@@ -61,6 +61,13 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 
 ## Planification autonome mise à jour — 13 novembre 2026
 
-- L'automatisation ChatGPT `6af632ef3df88191a7ef46e372054ac4` a été vérifiée **active** et son instruction mise à jour pour exécuter la première tâche `READY` du [backlog autonome](AUTONOMOUS_BACKLOG.md) chaque jour sans attendre un nouveau « continue ».
-- Prochaine exécution annoncée par l'automatisation : **14 novembre 2026, 02:00 Europe/Paris**. Les sessions restent bornées, et les tests Windows/OBS/ComfyUI réels peuvent nécessiter une intervention ultérieure.
+- L'automatisation ChatGPT `6af632ef3df88191a7ef46e372054ac4` a été vérifiée **active** et son instruction mise à jour pour exécuter la première tâche `READY` du [backlog autonome](AUTONOMOUS_BACKLOG.md) chaque heure sans attendre un nouveau « continue ».
+- Prochaine exécution annoncée par l'automatisation après modification : **13 novembre 2026, 04:00 Europe/Paris**. Les sessions restent bornées, et les tests Windows/OBS/ComfyUI réels peuvent nécessiter une intervention ultérieure.
 - A01 démarre par le module son unique d'EDIT et ses tests de modèle; la génération A/V n'est pas validée. Éviter de fermer A01 avant preuve de sortie sonore.
+
+## Cadence renforcée — 13 novembre 2026
+
+- L'utilisateur demande une reprise qui enchaîne sans nouvelle sollicitation. La tâche existante reste unique, activée **toutes les heures à partir de 04:00 Europe/Paris**. Aucun deuxième automate concurrent n'est créé.
+- Une exécution reste bornée et peut durer moins que l'intervalle entre deux déclenchements : il n'y a **pas de processus réellement continu** sur un ordinateur permanent.
+- À la fin d'une tranche, traiter la suivante si possible; à la fin de la session, sauvegarder le checkpoint et reprendre depuis celui-ci au déclenchement horaire suivant.
+- Estimation par **taille relative**, et non par promesse de délai : [WORK_ESTIMATES.md](WORK_ESTIMATES.md). Si un exécuteur permanent Hermes/Chronos est établi ultérieurement avec autorisations, l'automatisation horaire peut servir de contrôle/supervision plutôt que de moteur de développement.
