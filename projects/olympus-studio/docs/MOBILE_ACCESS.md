@@ -66,3 +66,17 @@ Limites de cette étape : JPEG en mémoire RAM (max 640×360, environ 4 images/s
 Ce mode ne synchronise **pas** la composition, les fichiers IndexedDB ou les agents Chronos : chaque appareil garde sa scène. Le bouton « Ajouter à ma scène LIVE » agit seulement sur la scène du navigateur concerné. Ne pas activer Funnel et ne pas ouvrir de port sur la box.
 
 **Actualiser les fichiers locaux** après publication de cette version : dans `%USERPROFILE%\olympus-mobile-test`, effectuer `git pull --ff-only` sur la branche `feat/olympus-mobile-preview-20261113` après avoir fermé les deux consoles de serveur, puis double-cliquer `projects\olympus-studio\LANCER_MOBILE.bat`. Les nouvelles routes ne seront pas présentes tant que les anciens processus Node.js tournent.
+
+
+### Correctif Android : « Could not start video source »
+
+Les fonctions **+ Webcam** et **Diffuser ma caméra** réutilisent désormais la **même capture dans un onglet**, via `src/camera-pool.js` ; fermer une vue ne coupe pas l'autre. Sur `NotReadableError` lors de l'ouverture de la caméra arrière, le navigateur essaie une caméra avant, puis la source automatique. Un refus explicite d'autorisation n'est pas contourné.
+
+Si l'erreur demeure :
+1. Fermer les autres onglets OLYMPUS du **même téléphone**, ainsi que les applications caméra/visio.
+2. Fermer l'ancienne session caméra locale, ou recharger l'onglet OLYMPUS.
+3. Vérifier l'autorisation caméra d'Android et du site HTTPS Tailscale dans Chrome.
+4. Tester le bouton **Diffuser ma caméra**. En cas d'échec, relever le nom exact de l'erreur (`NotReadableError`, `NotAllowedError`, etc.), visible sous le bouton.
+5. Si même l'application photo Android ne démarre pas, suspecter une indisponibilité matérielle/système plutôt qu'OLYMPUS.
+
+**Test multi-appareils après mise à jour :** arrêter les deux processus Node (8787 et 8788), `git pull --ff-only` depuis `%USERPROFILE%\olympus-mobile-test`, double-cliquer sur `LANCER_MOBILE.bat`, actualiser l'URL HTTPS sur chaque téléphone. Le port Tailscale Serve (8788) ne change pas. Ce correctif n'a pas encore été confirmé sur Android réel.
