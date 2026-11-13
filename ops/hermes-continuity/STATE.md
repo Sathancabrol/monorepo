@@ -1,23 +1,38 @@
-# État de la reprise Hermes
+# Hermes / Chronos — état observé le 14 novembre 2026
 
-Dernière mise à jour : 2026-11-14 (état documentaire non validé sur la machine).
+Source : sortie PowerShell communiquée par l'utilisateur (pas d'accès direct à Windows).
 
-| Élément | État / preuve |
-| --- | --- |
-| Gateway Windows | Ancien diagnostic : actif ; revalidation requise |
-| OpenRouter gratuit | 429 auparavant ; quotas à revalider |
-| Gemini `gemini-3.8-flash` | Test antérieur positif ; fallback non validé |
-| Ollama Qwen3 4B | Serveur antérieurement OK ; tool_calls non validés |
-| Redmi / Samsung via Termux | Serveurs locaux antérieurement OK ; routage Hermes non validé |
-| Profils / sessions | `default`, `cronos`, `cronoslocal` ; isolation confirmée par conception Hermes |
-| Test d'une vraie tâche autonome | NON EFFECTUÉ |
+| Composant | Observation | Verdict |
+| --- | --- | --- |
+| Hermes | v0.23.1+4388.g415fa33 ; git ; Python 3.14.9 ; OpenAI SDK 2.54.0 ; 3 commits derrière upstream | Démarre ; pas de mise à jour automatique |
+| Gateway Windows | Hermes_Gateway enregistrée et active, PID 1940 | Service OK selon dernier diagnostic |
+| Profil default | primaire qwen3:4b | Inférence et outil non testés |
+| Profil cronos | primaire gpt-6.1-sol ; fallback 1 openrouter/nvidia/nemotron-3.5-lightning ; fallback 2 custom/qwen3:1.7b | Contrôle statique OK, contrôle live à effectuer |
+| Profil cronoslocal | primaire qwen3:4b-hermes64k ; aucune entrée fallback | Pas de relais secondaire |
+| Ollama | 7 modèles installés (Qwen 1.7/4B et dérivés Chronos) ; ollama ps vide | Aucun modèle chargé pendant le test, pas une erreur en soi |
+| VoiceStudio MCP | http://127.0.0.1:3900/mcp/ actif | Test d'appel d'outil à compléter |
+| OpenAdapt MCP | désactivé ; uvx absent du PATH ; handshake timeout après 30 s | Installer uv avec winget, vérifier Python 3.12 puis retester |
 
-## À renseigner après chaque intervention
-- Date, modèle réellement utilisé, profil, URL d'inférence masquée si sensible.
-- Objectif précis.
-- Fichiers modifiés et sauvegardes.
-- Commandes et tests, avec résultats OK/KO.
-- Blocages et prochaine opération autonome (une seule, explicite).
-- Validation de la reprise sur Discord/Telegram ou cron, si concerné.
+## Commandes de validation non destructives
 
-**Aucun correctif local n'a été exécuté par la création de ce dossier GitHub.**
+```powershell
+hermes -p cronos fallback check --live
+Invoke-RestMethod http://127.0.0.1:11434/api/tags | Select-Object -ExpandProperty models | Select-Object name
+hermes -p cronoslocal fallback list
+hermes -p default fallback list
+hermes -p cronos doctor
+hermes cron list
+```
+
+## Correctifs différés en attendant les tests
+
+1. Conserver les configs existantes, ne pas appeler `hermes fallback clear`.
+2. Si Ollama 4B produit de vrais tool_calls, privilégier `qwen3:4b-hermes64k` comme dernier secours de `cronos` plutôt que 1.7B pour les tâches agentiques longues. Vérifier ressources et contextes utilisés.
+3. Si la chaîne n'a pas de modèle gratuit en ligne opérationnel, ajouter un Gemini validé avec `hermes -p cronos fallback add` (après vérification des quotas).
+4. Tester `cronoslocal` avec un autre modèle local en relais ; ne pas le dupliquer avec son primaire.
+5. Contrôler que cron et délégation ne sont pas épinglés à des fournisseurs non repliables (les jobs pinned n'héritent pas du fallback).
+6. Si OpenAdapt est nécessaire, installer `uv` via `winget install --id astral-sh.uv -e`, démarrer une nouvelle console et vérifier `uvx --python 3.12 openadapt-agent --help`. Reconfigurer l'entrée MCP uniquement après test.
+
+## Critère de reprise
+
+Appel réel sur modèle primaire puis secours, test d'appel d'outil réel, session Hermes reprise dans le même profil, exécution de tâche vérifiée, mise à jour du journal. Aucune de ces validations n'est encore attestée.
