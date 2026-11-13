@@ -49,4 +49,44 @@ class TestRouting(unittest.TestCase):
             router.shutdown(); router.server_close()
             upstream.shutdown(); upstream.server_close()
 
+    def test_failover_if_first_node_unreachable(self):
+        upstream=ThreadingHTTPServer(('127.0.0.1',0),MockNode)
+        threading.Thread(target=upstream.serve_forever, daemon=True).start()
+        # Allocate and immediately release a port: deliberately unreachable.
+        import socket
+        s=socket.socket(); s.bind(('127.0.0.1',0)); dead_port=s.getsockname()[1]; s.close()
+        router=ThreadingHTTPServer(('127.0.0.1',0),RouterHandler)
+        router.nodes={'nodes':[
+            {'name':'dead','enabled':True,'tier':'agent','priority':1,'timeout':1,
+             'url':f'http://127.0.0.1:{dead_port}/v1','model':'dead-model','supports_tools':True},
+            {'name':'backup','enabled':True,'tier':'agent','priority':2,'timeout':2,
+             'url':f'http://127.0.0.1:{upstream.server_port}/v1','model':'backup-model','supports_tools':True}
+        ]}
+        threading.Thread(target=router.serve_forever, daemon=True).start()
+        try:
+            url=f'http://127.0.0.1:{router.server_port}/v1/chat/completions'
+            payload={'model':'cronos-local','messages':[{'role':'user','content':'hi'}]}
+            req=Request(url,data=json.dumps(payload).encode(),headers={'Content-Type':'application/json'})
+            with urlopen(req,timeout=5) as res:
+                self.assertEqual(res.headers['X-Cronos-Node'],'backup')
+                self.assertEqual(json.loads(res.read())['choices'][0]['message']['content'],'Hello backup-model')
+        finally:
+            router.shutdown();router.server_close();upstream.shutdown();upstream.server_close()
+
+    def test_tools_without_agent_node_return_503(self):
+        from urllib.error import HTTPError
+        router=ThreadingHTTPServer(('127.0.0.1',0),RouterHandler)
+        router.nodes={'nodes':[{'name':'phone','enabled':True,'tier':'light','priority':1,
+            'url':'http://127.0.0.1:9999/v1','model':'tiny','supports_tools':False}]}
+        threading.Thread(target=router.serve_forever,daemon=True).start()
+        try:
+            url=f'http://127.0.0.1:{router.server_port}/v1/chat/completions'
+            payload={'model':'cronos-light','messages':[{'role':'user','content':'hi'}],
+                     'tools':[{'type':'function','function':{'name':'do','parameters':{'type':'object'}}}]}
+            req=Request(url,data=json.dumps(payload).encode(),headers={'Content-Type':'application/json'})
+            with self.assertRaises(HTTPError) as cm: urlopen(req,timeout=5)
+            self.assertEqual(cm.exception.code,503)
+        finally: router.shutdown();router.server_close()
+
+
 if __name__=='__main__': unittest.main()
