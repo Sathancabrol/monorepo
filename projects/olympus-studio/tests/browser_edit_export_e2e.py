@@ -235,6 +235,33 @@ def main():
                     assert redone_video[0]["assetId"] == redone_video[1]["assetId"]
                     assert redone["editAudioTrack"] == undone["editAudioTrack"]
                     assert {a["id"] for a in redone["embeddedAssets"]} == {a["id"] for a in undone["embeddedAssets"]}
+                    # A04: audio parameter changes are reversible through real UI.
+                    # New edits after undo must invalidate the redo branch.
+                    volume = page.locator('[aria-label="Audio Volume (0–1)"]')
+                    volume.wait_for()
+                    original_volume = float(redone["editAudioTrack"]["volume"])
+                    assert abs(original_volume - 1.0) < 0.001
+                    volume.fill("0.35")
+                    volume.dispatch_event("change")
+                    changed = portable_snapshot("audio-volume-changed.json")
+                    assert abs(float(changed["editAudioTrack"]["volume"]) - 0.35) < 0.001
+                    page.locator("#editUndo").click()
+                    audio_undone = portable_snapshot("audio-volume-undone.json")
+                    assert audio_undone["editAudioTrack"] == redone["editAudioTrack"]
+                    assert audio_undone["clips"] == redone["clips"]
+                    page.locator("#editRedo").click()
+                    audio_redone = portable_snapshot("audio-volume-redone.json")
+                    assert audio_redone["editAudioTrack"] == changed["editAudioTrack"]
+                    page.locator("#editUndo").click()
+                    # A distinct new volume edit invalidates the abandoned 0.35 redo.
+                    volume = page.locator('[aria-label="Audio Volume (0–1)"]')
+                    volume.fill("0.6")
+                    volume.dispatch_event("change")
+                    assert not page.locator("#editRedo").is_enabled(), "New edit must clear redo"
+                    final_audio = portable_snapshot("audio-volume-branched.json")
+                    assert abs(float(final_audio["editAudioTrack"]["volume"]) - 0.6) < 0.001
+                    assert final_audio["clips"] == redone["clips"]
+                    print("EDIT audio undo/redo UI: volume restored and redo invalidated")
                     assert not errors, "JS errors during undo/redo: " + " | ".join(errors)
                     print("EDIT undo/redo UI: split restored, audio and source preserved")
                     with page.expect_download(timeout=15000) as split_info:
