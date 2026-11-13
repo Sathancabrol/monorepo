@@ -58,3 +58,9 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 - Correctif du champ « Durée » (même règle source que IN/OUT), test de régression et message d'erreur. Pas de nouvelle capacité audio.
 - Les critères S04 « sauvegarde/recharge et export A/V synchronisé » restent ouverts; v0.2.4 ne signifie pas une version complète.
 - Prochaine tranche : fixture E2E IndexedDB puis audio EDIT. Conserver l'éditeur non destructif et le mode local.
+
+## Planification autonome mise à jour — 13 novembre 2026
+
+- L'automatisation ChatGPT `6af632ef3df88191a7ef46e372054ac4` a été vérifiée **active** et son instruction mise à jour pour exécuter la première tâche `READY` du [backlog autonome](AUTONOMOUS_BACKLOG.md) chaque jour sans attendre un nouveau « continue ».
+- Prochaine exécution annoncée par l'automatisation : **14 novembre 2026, 02:00 Europe/Paris**. Les sessions restent bornées, et les tests Windows/OBS/ComfyUI réels peuvent nécessiter une intervention ultérieure.
+- A01 démarre par le module son unique d'EDIT et ses tests de modèle; la génération A/V n'est pas validée. Éviter de fermer A01 avant preuve de sortie sonore.
