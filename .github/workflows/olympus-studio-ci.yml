@@ -42,6 +42,8 @@ jobs:
           node --check tests/v03-migration.test.mjs
           node --check src/storyboard.js
           node --check src/edit-audio.js
+          node --check src/edit-history.js
+          node --check tests/edit-history.test.mjs
           node --check src/editor-export.js
           node --check tests/editor-export.test.mjs
           node --check tests/edit-audio.test.mjs
