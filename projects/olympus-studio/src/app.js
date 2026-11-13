@@ -1,3 +1,4 @@
+import { acquireCamera, releaseCamera } from './camera-pool.js';
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
 import {validateEditAudioTrack, audioAtTimeline} from './edit-audio.js';
 import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from './video-duration.js';
@@ -356,8 +357,18 @@ async function addFiles(files){
  sync();panel();status(imported+' média(s) importé(s)'+(failures?' · '+failures+' sans sauvegarde persistante':' · sauvegardés dans IndexedDB'));
 }
 async function camera(){
- if(webcamStream){webcamStream.getTracks().forEach(t=>t.stop());webcamStream=null;webcamVideo=null;status('Webcam arrêtée');return;}
- try{webcamStream=await navigator.mediaDevices.getUserMedia({video:{width:1280,height:720},audio:false});webcamVideo=document.createElement('video');webcamVideo.srcObject=webcamStream;webcamVideo.muted=true;webcamVideo.playsInline=true;await webcamVideo.play();addLayer({type:'webcam',name:'Webcam locale',x:.15,y:.1,w:.7,h:.75});status('Webcam autorisée par le navigateur');}catch(e){status('Webcam indisponible ou refusée : '+e.message);}
+ if(webcamStream){releaseCamera('local-webcam');webcamStream=null;webcamVideo=null;status('Webcam arrêtée');return;}
+ try{
+  webcamStream=await acquireCamera('local-webcam');
+  webcamVideo=document.createElement('video');webcamVideo.srcObject=webcamStream;
+  webcamVideo.muted=true;webcamVideo.playsInline=true;
+  await webcamVideo.play();
+  addLayer({type:'webcam',name:'Webcam locale',x:.15,y:.1,w:.7,h:.75});
+  status('Webcam active · flux partagé avec les autres fonctions locales si nécessaire');
+ }catch(e){
+  releaseCamera('local-webcam');webcamStream=null;webcamVideo=null;
+  status('Webcam indisponible ('+(e.name||'Erreur')+') : '+e.message);
+ }
 }
 async function microphone(){
  if(microphoneStream){microphoneStream.getTracks().forEach(track=>track.stop());microphoneStream=null;$('btnMicrophone').textContent='+ Micro';status('Microphone arrêté');return;}
@@ -647,5 +658,5 @@ $('btnCamera').onclick=camera;$('btnMicrophone').onclick=microphone;$('btnScreen
 C.addEventListener('pointerdown',e=>{const rect=C.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;const hit=[...scene().layers].reverse().find(l=>l.visible&&x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h);state.selected=hit?.id||null;sync();});
 requestAnimationFrame(loop);
 initMediaLibrary();
-window.addEventListener('beforeunload',()=>{if(webcamStream)webcamStream.getTracks().forEach(t=>t.stop());if(microphoneStream)microphoneStream.getTracks().forEach(t=>t.stop());if(screenStream)screenStream.getTracks().forEach(t=>t.stop());releaseMediaURLs();});
+window.addEventListener('beforeunload',()=>{if(webcamStream)releaseCamera('local-webcam');if(microphoneStream)microphoneStream.getTracks().forEach(t=>t.stop());if(screenStream)screenStream.getTracks().forEach(t=>t.stop());releaseMediaURLs();});
 health();
