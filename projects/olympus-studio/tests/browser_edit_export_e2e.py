@@ -111,8 +111,10 @@ def main():
                     })
                     page.get_by_text("synthetic-image.png", exact=True).first.wait_for()
                     page.locator("#fileMedia").set_input_files(str(tone))
-                    page.get_by_text("synthetic-440hz.wav", exact=True).first.wait_for()
+                    # Audio is a library asset, not a LIVE visual layer. Check it in EDIT.
                     page.locator('[data-space="EDIT"]').first.click()
+                    audio_choice = page.get_by_role("combobox", name="Choisir une piste audio")
+                    audio_choice.locator("option", has_text="synthetic-440hz.wav").wait_for()
                     page.get_by_role("button", name="+ Clip").click()
                     page.locator(".layer-row input[title='Durée en secondes']").first.wait_for()
                     duration = page.locator(".layer-row input[title='Durée en secondes']").first
