@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   smoke:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: projects/olympus-studio
@@ -33,6 +33,12 @@ jobs:
       - name: Static parse
         run: |
           node --check server.mjs
+          node --check scripts/mobile-preview.mjs
+          node --check scripts/shared-camera-relay.mjs
+          node --check src/shared-camera.js
+          node --check src/camera-pool.js
+          node --check tests/camera-pool.test.mjs
+          node --check tests/shared-camera.test.mjs
           node --check src/app.js
           node --check src/media-store.js
           node --check tests/media-store.test.mjs
@@ -60,7 +66,7 @@ jobs:
           python tests/browser_indexeddb_e2e.py
       - name: Pack Windows preview (Node.js requis)
         run: |
-          zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
+          zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat LANCER_MOBILE.bat src scripts docs tests README.md
           unzip -t olympus-studio-preview.zip | tail -1
       - name: Publier le paquet de test
         uses: actions/upload-artifact@v4
