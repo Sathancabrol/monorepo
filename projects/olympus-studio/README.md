@@ -52,3 +52,12 @@ Le prototype web local **OLYMPUS Studio v0.3** (indépendant, plus avancé sur p
 ### Montage EDIT v0.2.3
 - Vidéos : champs de découpe **IN/OUT** et bouton **Diviser au curseur**. La source est préservée dans la médiathèque. Tests mathématiques et JSON validés; tests navigateur/Windows à venir.
 - [Mode d'emploi et limites](docs/EDIT_TRIM.md).
+
+## Itération v0.2.4 — durée source vidéo vérifiée dans EDIT
+
+- Lecture asynchrone des métadonnées du fichier (`HTMLVideoElement.duration`), délai d'attente borné de 4,5 s.
+- Les nouvelles vidéos de 2 s ne reçoivent plus automatiquement un clip de 5 s; la première durée s'adapte à la source.
+- Les champs **IN/OUT** rejettent une coupe après la fin réelle d'une vidéo lorsque la durée est connue; un ancien projet hors plage affiche un avertissement.
+- 34 tests Node réussis; test Chromium headless avec une vidéo WebM synthétique de 2 s : import, durée, coupe invalide, division (sans tests Windows/IndexedDB).
+- Pour reproduire le test de navigateur localement : installer Python Playwright (`python -m pip install playwright`), FFmpeg et Chromium/Chrome, puis lancer `python tests/browser_media_smoke.py`. Cela ne fait partie **ni de l'installation normale du studio, ni des 34 tests Node de CI**.
+- [Documentation et limites de la découpe](docs/EDIT_TRIM.md).
