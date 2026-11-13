@@ -153,3 +153,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Livré : `tests/browser_indexeddb_e2e.py` avec serveur HTTP local Node et Playwright Chromium, écrit un Blob IndexedDB, recharge réellement l'origine, contrôle les octets, utilise `splitVideoClip` pour deux segments de même source, vérifie une seule référence média, puis export/import Portable. Test limité à un Blob synthétique, pas une lecture A/V.
 - CI : `.github/workflows/olympus-studio-ci.yml` installe Playwright 1.56.0 + Chromium et exécute le nouveau test; **résultat de la CI du nouveau commit à confirmer**. Commits de fonctionnalité : `d79772d7`, `b6a7788e`, `d688b9a7`.
 - Prochaine action **prioritaire** (taille S) : vérifier la CI du dernier commit, lire les logs d'échec, réparer Playwright, puis compléter le parcours E2E UI import/sauvegarde/reprise. Ensuite A01/A03 (taille M) : capture WebM avec WAV synthétique et analyse audio Opus/dérive. Ne pas prétendre avoir testé Windows.
+
+## Checkpoint A02 — 13 novembre 2026, 05h — réparation CI et reprise Portable
+
+- **Erreur détectée** dans le workflow CI dédié : le nouveau step Chromium avait été écrit avec des séquences littérales `\\n` au lieu de vrais sauts de ligne YAML. Cela rendait le step invalide et empêchait son exécution. Correctif commit `a83a31a9`, fichier `.github/workflows/olympus-studio-ci.yml` uniquement.
+- **Test renforcé** commit `eabbd614` : après le premier rechargement HTTP/IndexedDB, le scénario réimporte le Portable dans une nouvelle transaction, recharge encore le navigateur et contrôle les octets restaurés, puis nettoie le média temporaire.
+- **Preuve disponible** : lecture GitHub du YAML corrigé, avec de vrais retours à la ligne; code de test ajouté. **Pas de run CI vert confirmé pour ces commits** (l'API de statut consultée n'a retourné aucun check); ne pas marquer A02 DONE.
+- **Prochaine action exacte, taille S** : lire le dernier run de `olympus-studio-ci.yml` et ses logs; corriger toute erreur Python/Playwright. Puis, **taille M**, ajouter le parcours UI sauvegarde/rechargement des clips, et revenir à A01/A03 export WebM audio réel.
+- Aucun test sur la tour Windows, aucune modification des autres projets, aucun merge.
