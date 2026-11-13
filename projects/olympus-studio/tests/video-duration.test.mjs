@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { finiteVideoDuration, readVideoDuration, initialClipDuration, trimWithinVideoDuration } from '../src/video-duration.js';
+import { finiteVideoDuration, readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from '../src/video-duration.js';
 
 class FakeVideo extends EventTarget {
   constructor(duration = NaN) {
@@ -63,4 +63,17 @@ test('Contrôle IN/OUT : rejette les bornes au-delà du fichier source', () => {
   assert.throws(() => trimWithinVideoDuration(clip, 2, 2.05, 8), /invalide/);
   assert.throws(() => trimWithinVideoDuration(clip, 3, 2, null), /invalide/);
   assert.equal(trimWithinVideoDuration(clip, 1, 3, null).outPoint, 3);
+});
+
+test('Champ durée EDIT : ne peut pas contourner les bornes source et reste non destructif', () => {
+  const video = { id: 'v', assetId: 'file', kind: 'video', inPoint: 1.5, outPoint: 4.5, duration: 3 };
+  const changed = setClipDuration(video, 1.25, 3);
+  assert.equal(changed.outPoint, 2.75);
+  assert.equal(changed.inPoint, 1.5);
+  assert.equal(video.outPoint, 4.5);
+  assert.throws(() => setClipDuration(video, 3, 3), /dépasse la durée source/);
+  assert.throws(() => setClipDuration(video, Infinity, 3), /invalide/);
+  assert.throws(() => setClipDuration(video, 0.05, 3), /invalide/);
+  assert.deepEqual(setClipDuration({ id:'i', kind:'image', duration:5 }, 8, null), { id:'i', kind:'image', duration:8 });
+  assert.throws(() => setClipDuration({ kind:'audio' }, 2, null), /non pris en charge/);
 });
