@@ -71,3 +71,8 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 - Une exécution reste bornée et peut durer moins que l'intervalle entre deux déclenchements : il n'y a **pas de processus réellement continu** sur un ordinateur permanent.
 - À la fin d'une tranche, traiter la suivante si possible; à la fin de la session, sauvegarder le checkpoint et reprendre depuis celui-ci au déclenchement horaire suivant.
 - Estimation par **taille relative**, et non par promesse de délai : [WORK_ESTIMATES.md](WORK_ESTIMATES.md). Si un exécuteur permanent Hermes/Chronos est établi ultérieurement avec autorisations, l'automatisation horaire peut servir de contrôle/supervision plutôt que de moteur de développement.
+
+## Itération A02 — 13 novembre, 04h
+
+- Nouveau scénario E2E Chromium **sur origine HTTP réelle**, avec IndexedDB persistant après `reload`, Blob octet-identique, `splitVideoClip` et export Portable unique. La CI a été modifiée pour exécuter ce scénario ; vérifier le statut avant de le considérer comme validé.
+- Prochaine tranche : corriger tout échec du job Chromium, étendre le test à la sauvegarde UI complète, puis prouver la piste sonore de l'export EDIT. Aucun essai Windows effectué.
