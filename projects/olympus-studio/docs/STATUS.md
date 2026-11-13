@@ -191,3 +191,12 @@ Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture
 - **Nouvel incrément** : `tests/browser_edit_export_e2e.py` démarre le vrai serveur HTTP Studio, importe un PNG et un WAV 440 Hz synthétiques via l'UI, crée un clip de 2,5 s, assigne la piste audio et **clique le vrai bouton « Exporter WebM (audio optionnel) »**. Il sauvegarde le téléchargement et vérifie par `ffprobe` VP8/VP9 + Opus, paquets A/V, écarts de début/fin <0,6 s, et par `ffmpeg volumedetect` un niveau audio non silencieux. Aucune caméra, donnée personnelle ni Windows.
 - Commits : [382132e0](https://github.com/Sathancabrol/monorepo/commit/382132e0f8ec4cedc594e2846128b8a647e54e05) (test) et [bea7edf6](https://github.com/Sathancabrol/monorepo/commit/bea7edf635b1f0dc2e99a992b6c808717136dbfb) (workflow CI). **Ce nouveau scénario est codé, mais pas encore déclaré réussi** : consulter les résultats CI au dernier commit, diagnostiquer tout échec et corriger avant de clôturer A01/A03.
 - **Prochaine action exacte (S)** : consulter le dernier run CI du commit suivant ce checkpoint, notamment le step `Chromium EDIT export E2E`, analyser logs et corriger les erreurs éventuelles de sélecteurs, d'initialisation AudioContext, d'export ou de timing. **Ensuite (M)** : persistance/reprise des clips et audio EDIT via l'UI Portable et nouveau test E2E. **Puis (M)** : A04 undo/redo. Tests matériels Windows GTX1060/1650 et écoute humaine non réalisés.
+
+
+## Checkpoint 13/11/2026 14h — CI rouge A03, sélecteur audio natif
+
+- CI du commit `be01a01b` : [run 43421595781](https://github.com/Sathancabrol/monorepo/actions/runs/43421595781) **failure** au step `Chromium EDIT export E2E`. Les étapes Node, HTTP/IndexedDB et fixture A/V synthétique réussissent.
+- Logs précis : l'option `<option>synthetic-440hz.wav</option>` existe (65 résolutions), mais Playwright `wait_for()` attend par défaut l'état `visible`; les options d'un `<select>` natif sont cachées pour Playwright. Ce n'est pas une preuve de défaut d'import audio.
+- Correctif test `66c72186824a98c4cc33668f885481e757f44c68` : `wait_for(state="attached")` puis sélection explicite par label avant `Ajouter / remplacer piste`. Aucun code applicatif touché.
+- **À vérifier** : CI au dernier commit de cette branche; si rouge, lire les logs du job EDIT et corriger. Le vrai export EDIT WebM/Opus n'est pas encore validé. A01/A03 restent READY. Puis E2E reprise IndexedDB clips + piste audio (M), ensuite A04 undo/redo (M).
+- Aucun test Windows/GTX ni écoute humaine; aucun merge main, secret ou projet voisin modifié.
