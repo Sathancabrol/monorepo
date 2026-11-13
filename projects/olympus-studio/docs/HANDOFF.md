@@ -124,3 +124,16 @@ Aucun merge de `main` ni installation distante; les résultats de tests Chromium
 1. E2E navigateur sur vraie origine HTTP et IndexedDB : importer/sauvegarder/recharger des clips vidéo scindés, vérifier médias et bornes.
 2. S04 : piste audio EDIT, synchronisation A/V, export WebM avec audio et tests de dérive.
 3. S02/S06 : essais OBS et ComfyUI réels sous Windows autorisé, puis intégration XR et Watchtower.
+
+## Checkpoint v0.2.5 — 13 novembre 2026
+
+- Le chantier est désormais piloté automatiquement par `docs/AUTONOMOUS_BACKLOG.md` et la tâche quotidienne ChatGPT (ID `6af632ef3df88191a7ef46e372054ac4`, 02:00 Europe/Paris). Elle doit sélectionner la première tâche `READY` et **passer les étapes bloquées par Windows**, sans demander « continue ».
+- Nouveauté visible : fichiers audio importables via `+ Média`, piste EDIT indépendante, offset/IN/volume/activée, sauvegarde JSON/portable, et tentative de WebM A/V via Web Audio. Aucun audio n'est injecté dans LIVE par cette fonction.
+- Modèle et tests : `src/edit-audio.js`, `tests/edit-audio.test.mjs`. UI dans `src/app.js`, serveur autorise `/src/edit-audio.js`, test HTTP dédié.
+- `tests/browser_media_smoke.py` augmenté d'une fixture WAV et d'un contrôle de placement; pas encore exécuté/validé dans l'environnement Windows utilisateur.
+- Détails, limites et protocole de validation : `docs/EDIT_AUDIO.md`.
+
+### Première tâche de la prochaine session
+A01 reste **ouvert** : confirmer que l'export audio/vidéo crée une véritable piste audible et synchronisée, avec test de décalage et correction des erreurs; si impossible sans matériel, avancer sur A02 (IndexedDB navigateur/HTTP). Ne pas commencer plusieurs gros modules sans valider la CI.
+
+Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifié.
