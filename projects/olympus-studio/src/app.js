@@ -1,5 +1,5 @@
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
-import { readVideoDuration, initialClipDuration, trimWithinVideoDuration } from './video-duration.js';
+import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from './video-duration.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
@@ -390,10 +390,7 @@ function panel(){
     const n=Number(duration.value);
     if(!Number.isFinite(n)||n<.1||n>3600){status('Durée invalide (0,1 à 3600 s)');panel();return;}
     try{
-     if(clip.kind==='video'){
-      const start=Number(clip.inPoint)||0;
-      state.clips[index]=trimWithinVideoDuration(clip,start,start+n,knownVideoDuration(clip.assetId));
-     }else state.clips[index]={...clip,duration:n};
+     state.clips[index]=setClipDuration(clip,n,knownVideoDuration(clip.assetId));
      state.editPlaying=false;state.editLast=0;
      state.editTime=Math.min(state.editTime,Math.max(0,storyboardDuration(state.clips)-0.001));
      panel();sync();status('Durée du clip mise à jour');
