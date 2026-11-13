@@ -53,7 +53,12 @@ jobs:
           node --check tests/smoke.test.mjs
       - name: API smoke tests
         run: npm test
-      - name: Chromium E2E — HTTP, IndexedDB, portable\n        run: |\n          python -m pip install playwright==1.56.0\n          python -m playwright install --with-deps chromium\n          python tests/browser_indexeddb_e2e.py\n      - name: Pack Windows preview (Node.js requis)
+      - name: Chromium E2E — HTTP, IndexedDB, portable
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          python tests/browser_indexeddb_e2e.py
+      - name: Pack Windows preview (Node.js requis)
         run: |
           zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
           unzip -t olympus-studio-preview.zip | tail -1
