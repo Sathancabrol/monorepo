@@ -64,3 +64,10 @@ Chaque session : relire STATUS, choisir le premier test faisable, réaliser 1 ch
 - [x] Brancher le scénario sur la CI dédiée.
 - [ ] Obtenir une CI verte au dernier commit et conserver sa preuve.
 - [ ] Étendre à l'interface complète (sauvegarder/recharger le projet), puis valider sous Windows.
+
+## A02 — 13 novembre, 05h
+
+- [x] Corriger la syntaxe YAML du nouveau step Chromium (littéraux `\\n` remplacés par vrais sauts de ligne).
+- [x] Ajouter un second reload HTTP et vérifier les octets du média Portable réimporté en IndexedDB.
+- [ ] Vérifier CI verte sur dernier commit, corriger les échecs.
+- [ ] Tester le parcours UI complet et l'export A/V sonore, puis Windows.
