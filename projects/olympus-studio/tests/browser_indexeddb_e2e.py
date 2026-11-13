@@ -100,7 +100,40 @@ def main():
                   }
                 }""", result)
                 assert check["clips"] == 2 and check["assets"] == 1
-                print("Chromium HTTP + IndexedDB E2E OK:", check)
+                # The Portable roundtrip must also survive a second real navigation
+                # and a fresh IndexedDB transaction, not just an in-memory Blob.
+                restored = page.evaluate("""async ({id,expected}) => {
+                  const store = await import('/src/media-store.js');
+                  const db = await store.openMediaDB();
+                  try {
+                    const source = new Blob([new Uint8Array(expected)], {type:'video/webm'});
+                    const exported = await store.exportPortableAssets([
+                      {id, name:'fixture.webm', type:'video/webm', blob:source}
+                    ]);
+                    const imported = store.importPortableAsset(exported[0]);
+                    await store.putMedia(db, imported);
+                    return {size: imported.size};
+                  } finally { db.close(); }
+                }""", result)
+                assert restored["size"] == len(result["expected"])
+                page.reload(wait_until="load")
+                after_second_reload = page.evaluate("""async ({id,expected}) => {
+                  const store = await import('/src/media-store.js');
+                  const db = await store.openMediaDB();
+                  try {
+                    const media = await store.getMedia(db,id);
+                    if (!media) throw Error('Portable restore lost after reload');
+                    const bytes = Array.from(new Uint8Array(await media.blob.arrayBuffer()));
+                    if (JSON.stringify(bytes)!==JSON.stringify(expected))
+                      throw Error('Portable restore changed bytes');
+                    return {persisted: true, bytes: bytes.length};
+                  } finally {
+                    await store.deleteMedia(db,id);
+                    db.close();
+                  }
+                }""", result)
+                assert after_second_reload["persisted"]
+                print("Chromium HTTP + IndexedDB E2E OK:", check, after_second_reload)
             finally:
                 browser.close()
     finally:
