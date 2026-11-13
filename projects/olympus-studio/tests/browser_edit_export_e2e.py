@@ -261,6 +261,31 @@ def main():
                     final_audio = portable_snapshot("audio-volume-branched.json")
                     assert abs(float(final_audio["editAudioTrack"]["volume"]) - 0.6) < 0.001
                     assert final_audio["clips"] == redone["clips"]
+                    # A04: title and order changes must undo/redo without media mutation.
+                    before_title = portable_snapshot("before-title.json")
+                    title_input = page.locator('input[placeholder="Titre incrusté"]').first
+                    title_input.fill("Titre E2E A04")
+                    title_input.dispatch_event("change")
+                    titled = portable_snapshot("titled.json")
+                    assert titled["clips"][0]["title"] == "Titre E2E A04"
+                    page.locator("#editUndo").click()
+                    assert portable_snapshot("title-undone.json")["clips"] == before_title["clips"]
+                    page.locator("#editRedo").click()
+                    assert portable_snapshot("title-redone.json")["clips"] == titled["clips"]
+                    # Second clip moves to first position; the same IDs and audio remain.
+                    assert page.locator('input[placeholder="Titre incrusté"]').count() == 3
+                    page.locator('input[placeholder="Titre incrusté"]').nth(1).locator("..").locator('button[title="Monter"]').click()
+                    reordered = portable_snapshot("reordered.json")
+                    assert reordered["clips"][0]["id"] == titled["clips"][1]["id"]
+                    assert reordered["clips"][1]["id"] == titled["clips"][0]["id"]
+                    assert reordered["editAudioTrack"] == titled["editAudioTrack"]
+                    page.locator("#editUndo").click()
+                    assert portable_snapshot("order-undone.json")["clips"] == titled["clips"]
+                    page.locator("#editRedo").click()
+                    order_redone = portable_snapshot("order-redone.json")
+                    assert order_redone["clips"] == reordered["clips"]
+                    assert {a["id"] for a in order_redone["embeddedAssets"]} == {a["id"] for a in titled["embeddedAssets"]}
+                    print("EDIT title/order undo/redo UI: clips, audio and media preserved")
                     print("EDIT audio undo/redo UI: volume restored and redo invalidated")
                     assert not errors, "JS errors during undo/redo: " + " | ".join(errors)
                     print("EDIT undo/redo UI: split restored, audio and source preserved")
