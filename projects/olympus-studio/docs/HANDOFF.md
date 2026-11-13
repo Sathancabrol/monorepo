@@ -279,3 +279,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Nouvelle tranche A04 : `src/edit-history.js` (snapshots bornés à 40, undo/redo, invalidation redo après nouvelle édition, aucun octet média copié) + `tests/edit-history.test.mjs` (split, ordre, titre, audio, invariants, limites). Interface EDIT : boutons Annuler/Rétablir et historique des opérations split, ajout/suppression/réordonnancement de clips, durée/IN/OUT/titres, piste audio et réglages. Chargement d'un projet remet l'historique à zéro. Le serveur autorise le module et la CI en contrôle la syntaxe.
 - Commits de cette tranche : 8947c09c, 4dc101c2, a256fb9d, 9508b10e, 6970facc, 9039b8b1 (dernier au moment de l'écriture). **CI de ce nouveau code non confirmée**; vérifier le run au dernier commit avant de déclarer A04 validée.
 - **Reprise exacte (S)** : inspecter GitHub Actions sur 9039b8b1 ou checkpoint docs plus récent; si rouge réparer en priorité. **Ensuite (M)** : E2E Chromium UI Annuler/Rétablir sur split et audio, vérifier état Portable et aucun effet sur média source; couvrir navigation clavier, sécurité d'édition durant export. Windows GTX 1060/1650 et écoute humaine non testés. Aucun merge main ni modification de projets voisins.
+
+
+## Reprise 13 novembre 2026, 20 h — A04 E2E Annuler/Rétablir
+
+- Après lecture du backlog, des quatre journaux et tickets #11–#17, la prochaine tranche A04 concerne les vrais boutons UI.
+- Commit de code [b3d792d6](https://github.com/Sathancabrol/monorepo/commit/b3d792d615ce49d57b08adb52aac334af82d3ea5) : extension de `tests/browser_edit_export_e2e.py` après division d'une vidéo. Le test clique `#editUndo`, vérifie par export Portable le retour à un segment, clique `#editRedo`, vérifie deux segments partageant le même assetId, les références média sans pertes et la piste audio inchangée. Contrôle des erreurs JS inclus.
+- **Preuve** : écriture GitHub confirmée. **CI du commit b3d792d6 non confirmée** : l'API de recherche des runs liés au commit ne retourne aucun run à cette consultation; cela ne prouve ni succès ni échec. Ne pas déclarer E2E validé.
+- **Reprise exacte S** : vérifier le workflow dédié sur le SHA b3d792d6 (et toute tête ultérieure), corriger immédiatement si rouge. Puis M : E2E undo/redo de réglages audio, titre et ordre; vérifier que le redo est invalidé après une nouvelle édition. Éviter d'étendre les tests Windows sans machine.
+- Blocages : Windows GTX1060/1650, OBS réel et écoute humaine non accessibles. Aucun merge main, aucun changement d'autre projet.
