@@ -45,7 +45,7 @@ jobs:
           node --check tests/edit-audio.test.mjs
           node --check src/video-duration.js
           node --check tests/video-duration.test.mjs
-          python -m py_compile tests/browser_media_smoke.py
+          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py
           node --check tests/storyboard.test.mjs
           node --check src/obs-client.js
           node --check src/obs-panel.js
@@ -53,7 +53,7 @@ jobs:
           node --check tests/smoke.test.mjs
       - name: API smoke tests
         run: npm test
-      - name: Pack Windows preview (Node.js requis)
+      - name: Chromium E2E — HTTP, IndexedDB, portable\n        run: |\n          python -m pip install playwright==1.56.0\n          python -m playwright install --with-deps chromium\n          python tests/browser_indexeddb_e2e.py\n      - name: Pack Windows preview (Node.js requis)
         run: |
           zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
           unzip -t olympus-studio-preview.zip | tail -1
