@@ -64,6 +64,12 @@ def main() -> None:
     with tempfile.TemporaryDirectory(prefix="olympus-studio-e2e-") as tmp:
         fixture = Path(tmp) / "source-2s.webm"
         create_fixture(fixture)
+        soundtrack = Path(tmp) / "tone-2s.wav"
+        subprocess.run([
+            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000",
+            "-t", "2.0", "-c:a", "pcm_s16le", "-y", str(soundtrack),
+        ], check=True)
         errors: list[str] = []
 
         with sync_playwright() as playwright:
@@ -96,9 +102,21 @@ def main() -> None:
                 page.get_by_role("button", name="Diviser au curseur").click()
                 assert page.locator('[aria-label^="IN (s)"]').count() == 2
                 assert "divisé au curseur" in page.locator("#status").inner_text()
+
+                # The soundtrack is an independent asset, not a new VIDEO/IMAGE LIVE overlay.
+                page.locator("#fileMedia").set_input_files(str(soundtrack))
+                audio_choice = page.locator('select[aria-label="Choisir une piste audio"] option')
+                audio_choice.first.wait_for(timeout=10000)
+                page.get_by_role("button", name="Ajouter / remplacer piste").click()
+                page.locator('[aria-label="Audio Départ projet (s)"]').wait_for(timeout=10000)
+                offset = page.locator('[aria-label="Audio Départ projet (s)"]')
+                offset.fill("0.5")
+                offset.dispatch_event("change")
+                assert page.locator('[aria-label="Audio Départ projet (s)"]').input_value() == "0.5"
+                assert page.get_by_role("button", name="Exporter WebM (audio optionnel)").count() == 1
                 if errors:
                     raise AssertionError("Erreurs JavaScript : " + " | ".join(errors))
-                print("Chromium E2E OK : import 2s, metadata, OUT invalid, split, 0 JS error")
+                print("Chromium E2E OK : vidéo 2s, découpe, audio WAV importé, départ 0.5s, 0 JS error (export non validé)")
             finally:
                 browser.close()
 
