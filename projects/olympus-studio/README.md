@@ -61,3 +61,10 @@ Le prototype web local **OLYMPUS Studio v0.3** (indépendant, plus avancé sur p
 - 34 tests Node réussis; test Chromium headless avec une vidéo WebM synthétique de 2 s : import, durée, coupe invalide, division (sans tests Windows/IndexedDB).
 - Pour reproduire le test de navigateur localement : installer Python Playwright (`python -m pip install playwright`), FFmpeg et Chromium/Chrome, puis lancer `python tests/browser_media_smoke.py`. Cela ne fait partie **ni de l'installation normale du studio, ni des 34 tests Node de CI**.
 - [Documentation et limites de la découpe](docs/EDIT_TRIM.md).
+
+## v0.2.5 — bande-son EDIT expérimentale et autonomie du chantier
+
+- `+ Média` accepte `audio/*`. Un fichier sonore peut être placé dans la timeline EDIT, avec son heure de départ, son point IN, son volume et son activation. Le projet sauvegarde la référence `editAudioTrack` et l'export portable inclut le média audio.
+- L'export EDIT tente de combiner Canvas + piste WebAudio dans WebM ; **le rendu audiovisuel n'est pas encore validé sur Windows**. Les clips vidéo restent muets dans EDIT; une seule bande-son indépendante est disponible.
+- [Documentation AUDIO](docs/EDIT_AUDIO.md) · [Backlog de développement autonome](docs/AUTONOMOUS_BACKLOG.md).
+- Automatisation ChatGPT active quotidiennement à 02:00 Europe/Paris; elle lit ce backlog, avance la première tâche possible et consigne tests/commits dans ce dossier, sans nécessiter la commande « continue ».
