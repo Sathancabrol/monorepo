@@ -118,3 +118,12 @@ Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture
 - **CI configurée** : `.github/workflows/olympus-studio-ci.yml` installe Playwright/Chromium et exécute le scénario en plus de `npm test` ; ceci n'est pas une preuve d'exécution tant que le nouveau run n'est pas vert.
 - **Preuve de code** : commits `d79772d7`, `b6a7788e`, `d688b9a7`. Le run précédent 43349763003 était vert, **avant ces modifications**.
 - **Limites** : pas de test d'export WebM sonore, pas de vraie vidéo décodable dans la fixture Blob, pas de Windows/GTX. A02 n'est pas DONE avant une CI verte et le test d'interface sauvegarde/reprise complet.
+
+## A02 — correction CI et seconde persistance Portable (13 novembre, 05h)
+
+| Composant | État | Preuve |
+|---|---|---|
+| Syntaxe du step Chromium CI | **Corrigée dans le code**, pas encore validée par run | `a83a31a9`, retours à la ligne YAML réels |
+| Import Portable → écriture IndexedDB → second reload | **Scénario ajouté**, exécution à confirmer | `eabbd614`, `tests/browser_indexeddb_e2e.py` |
+| CI du nouveau scénario | **Inconnue**, ne pas déclarer verte | Aucun check renvoyé pour les nouveaux SHA lors de la consultation |
+| Export WebM sonore et test Windows | **Non vérifiés** | Nécessitent essais A/V et Windows distincts |
