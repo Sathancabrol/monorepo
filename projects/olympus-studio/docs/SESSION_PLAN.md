@@ -103,3 +103,11 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 - A01 (taille M) : `src/editor-export.js` sélectionne exclusivement VP8/Opus ou VP9/Opus quand une piste audio est demandée. Sans encodeur audio déclaré compatible, l'export est refusé plutôt que de produire silencieusement un WebM potentiellement muet.
 - Tests de contrat écrits dans `tests/editor-export.test.mjs`, syntaxe intégrée au workflow CI dédié, module ajouté à l'allowlist du serveur local.
 - **À reprendre (S)** : contrôler CI du dernier commit et réparer si nécessaire. **Puis (M)** : test E2E réel avec fichier WebM et ffprobe, puis E2E sauvegarde clips UI. Pas de preuve Windows.
+
+## Checkpoint 13 novembre 2026, 09h — réparation CI A02
+
+- Lecture des logs [run 43383108337](https://github.com/Sathancabrol/monorepo/actions/runs/43383108337) : `Static parse` et `API smoke tests` verts; l'E2E Chromium a expiré à la ligne 75 en attendant `olympus-ui-fixture.png`. Chromium a bien été téléchargé sous Ubuntu 24.04. Il ne s'agit plus de l'erreur de support Ubuntu 26.04.
+- **Cause déduite du code, à confirmer par CI** : `src/app.js` importe `./video-duration.js`, mais la liste statique de `server.mjs` ne contenait pas `/src/video-duration.js`; le navigateur reçoit donc 403 et n'initialise pas l'interface. Correctif [ca9fc17e](https://github.com/Sathancabrol/monorepo/commit/ca9fc17eb4d2c492549c525d2e302534b76020a1).
+- **Test de non-régression** : [d8df55a3](https://github.com/Sathancabrol/monorepo/commit/d8df55a3ff988548743540bf558315f5567083a9) vérifie HTTP 200 sur ce module, les 12 espaces réellement initialisés et l'absence d'erreurs JavaScript avant le parcours IndexedDB.
+- **Validation** : correctif et test codés; pas encore de preuve d'exécution Chromium verte sur ces commits. A01/A02/A03 restent ouverts. Aucune intervention Windows ni merge main.
+- **Reprise exacte, taille S** : consulter la CI du dernier commit, réparer tout nouveau traceback, confirmer le parcours IndexedDB/Portable. **Ensuite, taille M** : fixture A/V WebM Opus réelle avec analyse ffprobe et mesure de dérive; puis sauvegarde de clips via UI.
