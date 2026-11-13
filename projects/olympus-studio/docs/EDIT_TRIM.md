@@ -9,9 +9,11 @@
 
 ## Limites
 - Cette étape ne constitue pas un éditeur de montage multipiste. Pas encore de transitions, audio synchronisé dans l'export EDIT, gestion de la fréquence d'images source, snapping ni touches J/K/L.
-- Les champs IN/OUT ne sont **pas encore bornés par la durée réellement lue dans le média** (metadata). Saisir un OUT supérieur à la durée réelle peut produire une image figée ou vide pendant la prévisualisation.
+- **Depuis v0.2.4**, EDIT lit la durée des vidéos via `loadedmetadata`/`durationchange` et refuse un OUT supérieur à cette durée lorsqu'elle est connue. Il adapte la durée du premier clip (maximum 5 secondes) aux vidéos courtes. Quand les métadonnées ne peuvent pas être lues, le contrôle ne peut pas garantir la limite; l'interface affiche « durée inconnue ».
+- Un ancien projet dont la coupe OUT dépasse le fichier n'est pas modifié silencieusement : un avertissement s'affiche lorsque la durée source devient connue.
 - L'export reste un WebM Canvas en temps réel, sans audio, limité à 120 s.
-- Tests du modèle purs Node, **pas de test navigateur/Windows** : la reproductibilité de la prévisualisation et de l'export sur les GTX 1060 / GTX 1650 reste à vérifier.
+- Tests du modèle Node **et essai Chromium headless** avec une vraie vidéo WebM synthétique de 2 s : import, détection 2,00 s, refus OUT=5 s et division au curseur sans erreur JavaScript. La navigation HTTP étant bloquée dans l'environnement de test, les modules ont été chargés en mémoire ; **IndexedDB, la persistance et l'export réel sur Windows ne sont pas validés**.
+- Test navigateur reproductible (facultatif, dépendances de développement) : `python -m pip install playwright` ; installer FFmpeg et Chromium, puis `python tests/browser_media_smoke.py`. Le script n'utilise ni réseau ni modèle IA.
 
 ## Preuves
 - Code : `src/storyboard.js` (`trimVideoClip`, `splitVideoClip`, `splitStoryboardAt`) et `src/app.js` (panneau EDIT).
@@ -19,4 +21,4 @@
 - L'état de la CI GitHub figure dans `docs/STATUS.md`; une CI verte ne prouve pas un montage Windows fonctionnel.
 
 ## Étape suivante
-Tester dans Chromium avec une vraie vidéo; lire `duration` pour limiter les bornes, préserver le montage à la réouverture, puis ajouter une piste audio synchronisée et comparer FreeCut/OpenReelio avant de remplacer le moteur simple.
+Tester avec IndexedDB actif sur un véritable serveur HTTP/Windows : sauvegarder, recharger, relire les segments. Ajouter une piste audio synchronisée et comparer FreeCut/OpenReelio avant de remplacer le moteur simple.
