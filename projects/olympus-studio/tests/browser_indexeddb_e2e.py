@@ -56,7 +56,7 @@ def main():
                 options["executable_path"] = chrome
             browser = playwright.chromium.launch(**options)
             try:
-                context = browser.new_context()
+                context = browser.new_context(accept_downloads=True)
                 page = context.new_page()
                 page.goto(f"http://127.0.0.1:{port}/", wait_until="load")
                 # Real UI path: import a tiny PNG through the file picker, then
@@ -84,6 +84,49 @@ def main():
                   } finally { db.close(); }
                 }""")
                 assert ui_asset["size"] == len(png)
+                # UI portable export: the layer must be referenced and the
+                # original media embedded exactly once, not only stored in DB.
+                with page.expect_download(timeout=15000) as download_info:
+                    page.locator("#btnPortable").click()
+                download = download_info.value
+                assert download.suggested_filename.startswith("olympus-portable-")
+                import json
+                portable = json.loads(Path(download.path()).read_text(encoding="utf-8"))
+                assert portable["format"] == "olympus-studio-project"
+                assert portable["portable"] is True
+                assert len(portable["embeddedAssets"]) == 1
+                assert portable["embeddedAssets"][0]["id"] == ui_asset["id"]
+                assert any(
+                    layer.get("id") == ui_asset["id"]
+                    for scene in portable["scenes"]
+                    for layer in scene["layers"]
+                ), "UI media layer absent from exported project"
+                # Simulate loss of the local media vault. A portable import
+                # must restore the original bytes and the visible scene.
+                page.evaluate("""async id => {
+                  const store = await import('/src/media-store.js');
+                  const db = await store.openMediaDB();
+                  try { await store.deleteMedia(db,id); } finally { db.close(); }
+                }""", ui_asset["id"])
+                page.reload(wait_until="load")
+                page.locator("#fileProject").set_input_files(str(download.path()))
+                page.locator("#status").get_by_text(
+                    "Projet chargé", exact=False
+                ).wait_for(timeout=10000)
+                assert page.locator("#layers").get_by_text(
+                    "olympus-ui-fixture.png", exact=False
+                ).count() > 0, "Restored image not visible in UI layers"
+                restored_ui = page.evaluate("""async ({id,size}) => {
+                  const store = await import('/src/media-store.js');
+                  const db = await store.openMediaDB();
+                  try {
+                    const record = await store.getMedia(db,id);
+                    if (!record || record.blob.size!==size) throw Error('Portable UI media missing');
+                    const bytes = new Uint8Array(await record.blob.arrayBuffer());
+                    return Array.from(bytes);
+                  } finally { db.close(); }
+                }""", ui_asset)
+                assert restored_ui == list(png), "Portable UI changed media bytes"
                 page.reload(wait_until="load")
                 ui_check = page.evaluate("""async ({id,size}) => {
                   const store = await import('/src/media-store.js');
