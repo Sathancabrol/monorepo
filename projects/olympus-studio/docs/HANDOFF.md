@@ -111,3 +111,16 @@ Aucun merge main; aucun accès à la tour, aucun nouveau logiciel tiers install�
 3. Comparer FreeCut / OpenReelio sur un exemple concret et choisir une stratégie d'intégration; poursuivre les passerelles X-Ray / Watchtower / Chronos.
 
 Aucun merge de `main` ni installation distante; les résultats de tests Chromium ne doivent pas être présentés comme essais matériels Windows.
+
+## Checkpoint session nocturne — 13 novembre 2026, correctif EDIT
+
+- Relecture du checkpoint v0.2.4, STATUS, SESSION_PLAN, ROADMAP et PR #16 avant modification.
+- Correction d'un contournement de validation : le champ « Durée » modifiait directement `outPoint` sans respecter la durée réelle du fichier, contrairement aux champs IN/OUT. Désormais `setClipDuration` passe par `trimWithinVideoDuration`, conserve les fichiers originaux et refuse une durée hors source.
+- Modification du montage bloquée pendant un export en cours; les durées invalides provoquent un message explicite. Ajout d'un test de régression pour ce chemin UI.
+- Commit de test : `cc4ebc9fc71e67e91d65ff943fe6e0df6ebb3f75`. Vérifier le run CI correspondant avant de déclarer cette itération validée.
+- État : **codé et testé au niveau unitaire après CI**, pas de test de l'interface modifiée sur Windows; aucun merge, aucune installation distante.
+
+### Prochaines priorités
+1. E2E navigateur sur vraie origine HTTP et IndexedDB : importer/sauvegarder/recharger des clips vidéo scindés, vérifier médias et bornes.
+2. S04 : piste audio EDIT, synchronisation A/V, export WebM avec audio et tests de dérive.
+3. S02/S06 : essais OBS et ComfyUI réels sous Windows autorisé, puis intégration XR et Watchtower.
