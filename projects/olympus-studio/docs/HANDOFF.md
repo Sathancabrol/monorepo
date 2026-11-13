@@ -191,3 +191,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **Preuve** : tests unitaires écrits pour les cas Opus disponible/indisponible, et vérification de code statique par lecture. **Pas encore de run CI vert constaté au dernier commit**, ni de fichier WebM analysé. Cela empêche uniquement un repli silencieux; cela **ne prouve pas** la présence d'audio audible, la synchronisation ni l'absence de dérive.
 - **Prochaine action exacte (S)** : récupérer le dernier run CI du commit `63a420e0` ou successeur, lire les logs du job Chromium et réparer les erreurs. **Ensuite (M)** : générer un vrai WebM A/V synthétique dans Chromium, examiner la piste Opus et mesurer début/durée via ffprobe. **Ensuite (M)** : consolider A02 (scène/clips UI et rechargement) sans tests Windows simulés.
 - A01/A02/A03 restent ouverts, aucune modification hors périmètre, aucune fusion main.
+
+## Checkpoint 13 novembre 2026, 09h — réparation CI A02
+
+- Lecture des logs [run 43383108337](https://github.com/Sathancabrol/monorepo/actions/runs/43383108337) : `Static parse` et `API smoke tests` verts; l'E2E Chromium a expiré à la ligne 75 en attendant `olympus-ui-fixture.png`. Chromium a bien été téléchargé sous Ubuntu 24.04. Il ne s'agit plus de l'erreur de support Ubuntu 26.04.
+- **Cause déduite du code, à confirmer par CI** : `src/app.js` importe `./video-duration.js`, mais la liste statique de `server.mjs` ne contenait pas `/src/video-duration.js`; le navigateur reçoit donc 403 et n'initialise pas l'interface. Correctif [ca9fc17e](https://github.com/Sathancabrol/monorepo/commit/ca9fc17eb4d2c492549c525d2e302534b76020a1).
+- **Test de non-régression** : [d8df55a3](https://github.com/Sathancabrol/monorepo/commit/d8df55a3ff988548743540bf558315f5567083a9) vérifie HTTP 200 sur ce module, les 12 espaces réellement initialisés et l'absence d'erreurs JavaScript avant le parcours IndexedDB.
+- **Validation** : correctif et test codés; pas encore de preuve d'exécution Chromium verte sur ces commits. A01/A02/A03 restent ouverts. Aucune intervention Windows ni merge main.
+- **Reprise exacte, taille S** : consulter la CI du dernier commit, réparer tout nouveau traceback, confirmer le parcours IndexedDB/Portable. **Ensuite, taille M** : fixture A/V WebM Opus réelle avec analyse ffprobe et mesure de dérive; puis sauvegarde de clips via UI.
