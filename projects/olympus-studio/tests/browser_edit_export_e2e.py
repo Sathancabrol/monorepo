@@ -312,6 +312,11 @@ def main():
                     again = json.loads(again_path.read_text(encoding="utf-8"))
                     assert again["clips"] == split_project["clips"], "Split clips changed after Portable reload"
                     assert again["editAudioTrack"] == split_project["editAudioTrack"]
+                    # A04: importing a project must not allow undo into a previous session.
+                    page.locator('[data-space="EDIT"]').first.click()
+                    page.locator("#editUndo").wait_for(state="visible")
+                    assert not page.locator("#editUndo").is_enabled(), "Undo history leaked across project reload"
+                    assert not page.locator("#editRedo").is_enabled(), "Redo history leaked across project reload"
                     assert {a["id"] for a in again["embeddedAssets"]} == set(media_ids)
                     assert not errors, "JS errors during video split roundtrip: " + " | ".join(errors)
                     print("EDIT split Portable: two segments, one source, three unique media")
