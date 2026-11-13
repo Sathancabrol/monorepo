@@ -47,7 +47,7 @@ jobs:
           node --check tests/edit-audio.test.mjs
           node --check src/video-duration.js
           node --check tests/video-duration.test.mjs
-          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py
+          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py tests/browser_av_fixture.py
           node --check tests/storyboard.test.mjs
           node --check src/obs-client.js
           node --check src/obs-panel.js
@@ -60,6 +60,10 @@ jobs:
           python -m pip install playwright==1.56.0
           python -m playwright install --with-deps chromium
           python tests/browser_indexeddb_e2e.py
+      - name: Chromium A/V fixture — Opus via ffprobe
+        run: |
+          command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+          python tests/browser_av_fixture.py
       - name: Pack Windows preview (Node.js requis)
         run: |
           zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
