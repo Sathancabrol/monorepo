@@ -187,6 +187,51 @@ def main():
                     assert output.stat().st_size > 1500
                     assert not errors, "JS errors during export: " + " | ".join(errors)
                     print("EDIT UI A/V export:", inspect_export(output))
+                    # A02: split two segments of one real video source through EDIT,
+                    # then round-trip Portable and verify deduplicated media.
+                    video_path = Path(temp) / "synthetic-video.webm"
+                    subprocess.run(
+                        ["ffmpeg", "-hide_banner", "-loglevel", "error",
+                         "-f", "lavfi", "-i", "color=c=blue:s=160x90:r=15",
+                         "-t", "2", "-c:v", "libvpx", "-b:v", "200k",
+                         "-an", "-y", str(video_path)], check=True, timeout=30,
+                    )
+                    page.locator("#fileMedia").set_input_files(str(video_path))
+                    video_select = page.get_by_role("combobox", name="Choisir un média du coffre")
+                    video_select.locator("option", has_text="synthetic-video.webm").wait_for(state="attached")
+                    video_select.select_option(label="synthetic-video.webm")
+                    page.get_by_role("button", name="+ Clip").click()
+                    # The preceding image lasts 2.5s; split the video at 1s local.
+                    page.locator("#editSeek").fill("3.5")
+                    page.locator("#editSeek").dispatch_event("input")
+                    page.get_by_role("button", name="Diviser au curseur").click()
+                    with page.expect_download(timeout=15000) as split_info:
+                        page.locator("#btnPortable").click()
+                    split_path = Path(temp) / "split-portable.json"
+                    split_info.value.save_as(split_path)
+                    split_project = json.loads(split_path.read_text(encoding="utf-8"))
+                    video_clips = [c for c in split_project["clips"] if c["kind"] == "video"]
+                    assert len(video_clips) == 2, split_project["clips"]
+                    assert video_clips[0]["id"] != video_clips[1]["id"]
+                    assert video_clips[0]["assetId"] == video_clips[1]["assetId"]
+                    assert abs(float(video_clips[0]["outPoint"]) - float(video_clips[1]["inPoint"])) < 0.1
+                    assert all(0.1 <= float(c["duration"]) <= 2 for c in video_clips)
+                    media_ids = [a["id"] for a in split_project["embeddedAssets"]]
+                    assert len(media_ids) == len(set(media_ids)) == 3, media_ids
+                    page.reload(wait_until="load")
+                    page.locator("#fileProject").set_input_files(str(split_path))
+                    page.locator("#status").get_by_text("Projet chargé", exact=False).wait_for(timeout=10000)
+                    with page.expect_download(timeout=15000) as again_info:
+                        page.locator("#btnPortable").click()
+                    again_path = Path(temp) / "split-restored.json"
+                    again_info.value.save_as(again_path)
+                    again = json.loads(again_path.read_text(encoding="utf-8"))
+                    assert again["clips"] == split_project["clips"], "Split clips changed after Portable reload"
+                    assert again["editAudioTrack"] == split_project["editAudioTrack"]
+                    assert {a["id"] for a in again["embeddedAssets"]} == set(media_ids)
+                    assert not errors, "JS errors during video split roundtrip: " + " | ".join(errors)
+                    print("EDIT split Portable: two segments, one source, three unique media")
+
                 finally:
                     browser.close()
         finally:
