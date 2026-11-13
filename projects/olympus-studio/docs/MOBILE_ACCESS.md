@@ -11,7 +11,14 @@ Ne pas remplacer son écoute `127.0.0.1` par `0.0.0.0` : il possède des API de 
 Il expose seulement la page et les scripts/styles autorisés, et `GET /api/health`.
 Il refuse les autres API, les flux OBS et **toutes** les requêtes POST : les moteurs du PC restent inaccessibles depuis le téléphone.
 
-## Étapes Windows — premier test
+## Installation simplifiée : ZIP GitHub Actions
+
+Après validation de la PR sur GitHub Actions, ouvrir la dernière exécution verte du workflow `OLYMPUS Studio — smoke tests` correspondant à cette branche, télécharger l'artefact `olympus-studio-preview`, décompresser entièrement le ZIP sur la tour Windows, puis double-cliquer **`LANCER_MOBILE.bat`**.
+Ce lanceur ouvre **deux consoles** (Studio sur 8787 et passerelle sur 8788) ; elles doivent rester ouvertes.
+Installer ensuite Tailscale sur PC et Android, et dans PowerShell lancer `tailscale serve --bg 8788` puis `tailscale serve status`. Ouvrir l'URL HTTPS privée indiquée sur Android.
+Ceci ne rend pas encore Chronos pilotable depuis le téléphone.
+
+## Étapes Windows — premier test (alternative Git)
 
 1. Installer Node.js 20+ si nécessaire. Installer Tailscale sur Windows et Android. Connecter les deux machines au **même tailnet privé**.
 2. Depuis PowerShell, récupérer la branche de cette PR :
