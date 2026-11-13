@@ -126,6 +126,54 @@ function editClock(seconds){
  const total=Math.max(0,Math.floor(seconds));
  return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
 }
+// Single soundtrack, played against the EDIT timeline, never sent to LIVE.
+function syncEditorAudio(){
+ const track=state.editAudioTrack;
+ if(!track)return;
+ const audio=editMedia.get(track.assetId);
+ if(!audio||audio.tagName!=='AUDIO')return;
+ const graph=editAudioGraph.get(audio);
+ if(graph)graph.gain.gain.value=track.volume;
+ else audio.volume=track.volume;
+ const sourceDuration=Number.isFinite(audio.duration)?audio.duration:null;
+ const pos=audioAtTimeline(track,state.editTime,sourceDuration);
+ const shouldPlay=state.space==='EDIT'&&state.editPlaying&&pos.active;
+ if(!shouldPlay){
+  if(!audio.paused)audio.pause();
+  if(pos.active&&Math.abs(audio.currentTime-pos.sourceTime)>0.25){
+   try{audio.currentTime=pos.sourceTime;}catch{}
+  }
+  return;
+ }
+ if(Math.abs(audio.currentTime-pos.sourceTime)>0.28){
+  try{audio.currentTime=pos.sourceTime;}catch{}
+ }
+ if(audio.paused)audio.play().catch(()=>{});
+}
+
+async function attachAudioToEditorCapture(stream, audio, volume){
+ const Context=window.AudioContext||window.webkitAudioContext;
+ if(!Context)throw new Error('Web Audio indisponible : export audio impossible');
+ let graph=editAudioGraph.get(audio);
+ if(!graph){
+  const context=new Context();
+  const source=context.createMediaElementSource(audio);
+  const gain=context.createGain();
+  const destination=context.createMediaStreamDestination();
+  source.connect(gain);
+  gain.connect(context.destination);
+  gain.connect(destination);
+  graph={context,gain,destination};
+  editAudioGraph.set(audio,graph);
+ }
+ graph.gain.gain.value=volume;
+ audio.volume=1;
+ if(graph.context.state==='suspended')await graph.context.resume();
+ const track=graph.destination.stream.getAudioTracks()[0];
+ if(!track)throw new Error('Piste audio de capture indisponible');
+ stream.addTrack(track.clone());
+}
+
 function drawEditor(now){
  const canvas=$('editPreview');if(!canvas){state.editLast=now;return;}
  const context=canvas.getContext('2d'), total=storyboardDuration(state.clips);
@@ -154,27 +202,44 @@ function drawEditor(now){
  const seek=$('editSeek');if(seek&&document.activeElement!==seek){seek.max=String(Math.max(0.1,total));seek.value=String(Math.min(state.editTime,total));}
  const clock=$('editClock');if(clock)clock.textContent=editClock(state.editTime)+' / '+editClock(total);
  const play=$('editPlay');if(play)play.textContent=state.editPlaying?'Pause':'Lecture';
+ syncEditorAudio();
 }
-function exportEditorWebM(){
+async function exportEditorWebM(){
  const canvas=$('editPreview'),total=storyboardDuration(state.clips);
  if(!canvas||!total)return status('Aucun clip à exporter');
  if(total>120)return status('Export de démonstration limité à 120 secondes');
  if(editorRecorder?.state==='recording')return status('Un export est déjà en cours');
+ let stream=null;
  try{
-  state.editTime=0;state.editLast=0;state.editPlaying=true;
-  const stream=canvas.captureStream(24);
-  const mime=['video/webm;codecs=vp8','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
+  stream=canvas.captureStream(24);
+  let audioIncluded=false;
+  if(state.editAudioTrack?.enabled){
+   const audio=await loadEditAsset(state.editAudioTrack.assetId);
+   if(!audio||audio.tagName!=='AUDIO')throw new Error('Piste audio manquante : export interrompu');
+   await attachAudioToEditorCapture(stream,audio,state.editAudioTrack.volume);
+   audioIncluded=true;
+  }
+  const formats=audioIncluded?['video/webm;codecs=vp8,opus','video/webm']:['video/webm;codecs=vp8','video/webm'];
+  const mime=formats.find(x=>MediaRecorder.isTypeSupported(x));
   editorRecorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
   const chunks=[];
   editorRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+  const captureStream=stream;
   editorRecorder.onstop=()=>{
-   stream.getTracks().forEach(t=>t.stop());state.editPlaying=false;
+   captureStream.getTracks().forEach(t=>t.stop());state.editPlaying=false;
+   const audio=state.editAudioTrack&&editMedia.get(state.editAudioTrack.assetId);
+   if(audio?.tagName==='AUDIO')audio.pause();
    dl('olympus-storyboard-'+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
-   status('Storyboard WebM exporté sans audio — rendu en temps réel');
+   status(audioIncluded?'WebM exporté avec piste son dédiée (synchronisation à valider sur Windows)':'Storyboard WebM exporté sans audio');
   };
+  state.editTime=0;state.editLast=0;state.editPlaying=true;
   editorRecorder.start(1000);
-  status('Export storyboard en cours — garder EDIT visible (vidéo seule)');
- }catch(e){state.editPlaying=false;status('Export storyboard impossible : '+e.message);}
+  status(audioIncluded?'Export vidéo + piste audio en cours — conserver EDIT visible':'Export storyboard vidéo seule en cours');
+ }catch(e){
+  stream?.getTracks().forEach(t=>t.stop());
+  state.editPlaying=false;
+  status('Export storyboard impossible : '+e.message);
+ }
 }
 function draw(){
  ctx.fillStyle='#0b1725';ctx.fillRect(0,0,C.width,C.height);
@@ -349,7 +414,7 @@ function panel(){
  if(state.space==='LIVE'){const info=document.createElement('p');info.className='notice';info.textContent='La composition Canvas fonctionne localement. La régie OBS WebSocket se trouve à droite (à connecter à OBS installé). La sortie MJPEG reste vidéo seule; l’audio multipiste OBS natif reste externe.';el.append(info);const cards=document.createElement('div');cards.className='cards';cards.innerHTML=card('Écran / webcams','Webcam, écran et microphone disponibles sur autorisation, depuis la barre d’outils.')+card('OBS externe','Source navigateur sur /obs après activation du bouton « Sortie OBS », sans audio; vidéo MJPEG limitée par la machine.')+card('Enregistrement','WebM du Canvas avec piste microphone ou audio partagé si disponible; PNG du plan courant. OBS reste externe.');el.append(cards);}
  else if(state.space==='EDIT'){
   const header=document.createElement('p');header.className='notice';
-  header.textContent='Montage séquentiel non destructif : points IN/OUT, coupe au curseur, titres, réordonnancement et export WebM muet. Audio et transitions multipistes à intégrer.';
+  header.textContent='Montage séquentiel non destructif : clips vidéo, coupes IN/OUT et piste audio locale unique, export WebM A/V expérimental. Le mixage multipiste reste à développer.';
   el.append(header);
   const preview=document.createElement('canvas');preview.id='editPreview';preview.width=1280;preview.height=720;preview.style.width='100%';preview.style.maxHeight='360px';preview.style.background='#071422';preview.style.borderRadius='8px';el.append(preview);
   const controls=document.createElement('div');controls.className='actions';el.append(controls);
@@ -358,7 +423,7 @@ function panel(){
   const seek=document.createElement('input');seek.id='editSeek';seek.type='range';seek.min='0';seek.max=String(Math.max(0.1,storyboardDuration(state.clips)));seek.step='.05';seek.value=String(state.editTime);seek.style.flex='1';
   seek.oninput=()=>{state.editTime=Number(seek.value);state.editPlaying=false;state.editLast=0;};
   const clock=document.createElement('span');clock.id='editClock';clock.className='muted';clock.textContent=editClock(state.editTime);
-  const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (sans audio)';exportButton.onclick=exportEditorWebM;
+  const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (audio optionnel)';exportButton.onclick=exportEditorWebM;
   const cutButton=document.createElement('button');cutButton.textContent='Diviser au curseur';
   cutButton.title='Scinder une vidéo en deux segments à la position courante de la timeline';
   cutButton.onclick=()=>{
@@ -390,6 +455,56 @@ function panel(){
    finally{add.disabled=false;}
   };
   wrap.append(select,add);
+  // One independent soundtrack placed on the common storyboard timeline.
+  const audioFiles=state.assets.filter(a=>String(a.type).startsWith('audio/'));
+  const audioPanel=document.createElement('div');audioPanel.className='notice';
+  const audioTitle=document.createElement('strong');audioTitle.textContent='Piste audio EDIT (une seule)';audioPanel.append(audioTitle);
+  const audioSelect=document.createElement('select');audioSelect.setAttribute('aria-label','Choisir une piste audio');
+  for(const asset of audioFiles){
+   const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;audioSelect.append(option);
+  }
+  const assign=document.createElement('button');assign.textContent='Ajouter / remplacer piste';assign.disabled=!audioFiles.length;
+  assign.onclick=async()=>{
+   if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification de la piste');
+   const asset=state.assets.find(a=>a.id===audioSelect.value);if(!asset)return;
+   try{
+    const media=await loadEditAsset(asset.id);
+    if(!media||media.tagName!=='AUDIO')throw Error('Média audio indisponible');
+    if(state.editAudioTrack){
+     const old=editMedia.get(state.editAudioTrack.assetId);
+     if(old?.tagName==='AUDIO')old.pause();
+    }
+    state.editAudioTrack=validateEditAudioTrack({assetId:asset.id,name:asset.name,offset:0,inPoint:0,volume:1});
+    panel();status('Piste audio EDIT ajoutée : '+asset.name);
+   }catch(error){status('Piste audio : '+error.message);}
+  };
+  audioPanel.append(audioSelect,assign);
+  if(state.editAudioTrack){
+   const track=state.editAudioTrack;
+   const settings=document.createElement('div');settings.className='actions';
+   for(const [label,field,step] of [['Départ projet (s)','offset','0.1'],['IN source (s)','inPoint','0.1'],['Volume (0–1)','volume','0.05']]){
+    const item=document.createElement('label');item.textContent=label+' ';
+    const control=document.createElement('input');control.type='number';control.min='0';control.step=step;control.value=String(track[field]);control.style.width='85px';
+    control.setAttribute('aria-label','Audio '+label);
+    if(field==='volume')control.max='1';
+    control.onchange=()=>{
+     if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant réglage audio');
+     try{state.editAudioTrack=validateEditAudioTrack({...state.editAudioTrack,[field]:Number(control.value)});panel();status('Réglage audio enregistré');}
+     catch(error){status('Réglage audio refusé : '+error.message);panel();}
+    };
+    item.append(control);settings.append(item);
+   }
+   const mute=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=track.enabled;
+   cb.onchange=()=>{if(editorRecorder?.state==='recording'){cb.checked=track.enabled;return status('Arrêter export EDIT avant modification');}state.editAudioTrack={...track,enabled:cb.checked};syncEditorAudio();};
+   mute.append(cb,document.createTextNode(' Activée'));settings.append(mute);
+   const remove=document.createElement('button');remove.textContent='Retirer la piste audio';
+   remove.onclick=()=>{if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification');const old=editMedia.get(track.assetId);if(old?.tagName==='AUDIO')old.pause();state.editAudioTrack=null;panel();};
+   settings.append(remove);audioPanel.append(settings);
+   loadEditAsset(track.assetId).catch(e=>status('Audio EDIT : '+e.message));
+  }else{
+   const hint=document.createElement('p');hint.className='muted';hint.textContent='Ajouter un fichier MP3/OGG/WAV via + Média. Les pistes son intégrées aux vidéos restent muettes; une piste externe peut accompagner le montage.';audioPanel.append(hint);
+  }
+  el.append(audioPanel);
   const count=document.createElement('p');count.className='muted';
   count.textContent=state.clips.length+' clip(s) · '+editClock(storyboardDuration(state.clips))+' · projet sauvegardable';
   el.append(count);
