@@ -84,8 +84,8 @@ def main():
                     const data = Array.from(new Uint8Array(await record.blob.arrayBuffer()));
                     if (JSON.stringify(data)!==JSON.stringify(expected)) throw Error('Blob bytes changed');
                     // Two segments share ONE media asset; exporting must not duplicate it.
-                    const clips = [{id:'left',type:'video',assetId:id,inPoint:0,outPoint:1},
-                                   {id:'right',type:'video',assetId:id,inPoint:1,outPoint:2}];
+                    const clips = sb.splitVideoClip({id:'left',kind:'video',assetId:id,inPoint:0,outPoint:2,duration:2},1,'right');
+                    if (clips[0].outPoint !== clips[1].inPoint || clips[1].outPoint !== 2) throw Error('Split boundaries changed');
                     const refs = sb.referencedAssetIds([],clips);
                     if (refs.length!==1 || refs[0]!==id) throw Error('Split asset dedup failed');
                     const packed = await store.exportPortableAssets([record]);
