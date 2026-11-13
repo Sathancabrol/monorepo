@@ -137,3 +137,12 @@ Aucun merge de `main` ni installation distante; les résultats de tests Chromium
 A01 reste **ouvert** : confirmer que l'export audio/vidéo crée une véritable piste audible et synchronisée, avec test de décalage et correction des erreurs; si impossible sans matériel, avancer sur A02 (IndexedDB navigateur/HTTP). Ne pas commencer plusieurs gros modules sans valider la CI.
 
 Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifié.
+
+## Planification horaire — 13 novembre 2026
+
+- **Modification confirmée par Automations** : `6af632ef3df88191a7ef46e372054ac4` demeure active, RRULE `FREQ=HOURLY;INTERVAL=1`, démarrage `20261113T040000 Europe/Paris`. Premier prochain déclenchement rapporté : 13/11/2026 à **04:00 locale**, puis une fois par heure.
+- L'instruction horaire demande de **terminer une tranche testable et d'enchaîner la suivante pendant le même run**, tant que le contexte et les outils le permettent. À l'arrêt, écrire un checkpoint pour que le run suivant reprenne sans demander « continue ».
+- Plan autonome : `docs/AUTONOMOUS_BACKLOG.md`; estimation relative : `docs/WORK_ESTIMATES.md`.
+- L'historique des sessions plus anciennes mentionne l'ancienne cadence 02:00 quotidienne; **ce checkpoint plus récent la remplace**.
+- A01, export A/V EDIT, reste ouverte tant qu'aucun WebM sonore et synchronisé n'a été prouvé. Passer à A02/A03 si contraintes navigateur/Windows empêchent son essai, et ne pas relancer inutilement le même correctif.
+- La récurrence horaire ne transforme pas le chat en daemon continu et ne garantit pas une heure de développement effectif par passage. Aucun agent résident Windows n'a été installé.
