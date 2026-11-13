@@ -14,6 +14,10 @@ from playwright.sync_api import sync_playwright
 
 
 def main():
+    # Regression: ffmpeg volumedetect prints whitespace before its numeric value.
+    # A double-escaped raw regex would fail to match and abort every A/V CI run.
+    sample = "[Parsed_volumedetect_0 @ 0x1] mean_volume: -19.7 dB"
+    assert re.search(r"mean_volume:\s*(-?[\d.]+) dB", sample).group(1) == "-19.7"
     probe = shutil.which("ffprobe")
     if not probe:
         raise RuntimeError("ffprobe required for A/V codec verification")
