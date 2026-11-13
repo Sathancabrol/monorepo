@@ -57,3 +57,10 @@ Chaque session : relire STATUS, choisir le premier test faisable, réaliser 1 ch
 - [ ] Test de sauvegarde/reprise de clips avec IndexedDB sur une vraie origine.
 - [ ] Export EDIT A/V synchronisé et vérifié.
 - [ ] Tests matériels Windows GTX 1060 / GTX 1650.
+
+## Itération A02 — 13 novembre, 04h
+
+- [x] Écrire un test Playwright Chromium HTTP/IndexedDB avec reload réel, deux segments partageant une seule source et roundtrip Portable.
+- [x] Brancher le scénario sur la CI dédiée.
+- [ ] Obtenir une CI verte au dernier commit et conserver sa preuve.
+- [ ] Étendre à l'interface complète (sauvegarder/recharger le projet), puis valider sous Windows.
