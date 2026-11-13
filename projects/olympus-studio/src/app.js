@@ -31,8 +31,9 @@ function knownVideoDuration(assetId){return videoDurations.get(assetId)??null;}
 function updateVideoDurationHint(assetId, duration){
  for(const element of document.querySelectorAll('[data-video-asset]')){
   if(element.dataset.videoAsset!==assetId)continue;
-  element.textContent=duration===null?'Durée source : inconnue (coupes non vérifiées)':'Source : '+duration.toFixed(2)+' s';
-  element.classList.toggle('warning',duration===null);
+  const overrun=duration!==null&&state.clips.some(clip=>clip.kind==='video'&&clip.assetId===assetId&&clip.outPoint>duration+0.001);
+  element.textContent=duration===null?'Durée source : inconnue (coupes non vérifiées)':'Source : '+duration.toFixed(2)+' s'+(overrun?' · ATTENTION : coupe OUT hors source':'');
+  element.classList.toggle('warning',duration===null||overrun);
  }
 }
 function ensureVideoDuration(assetId, video){
