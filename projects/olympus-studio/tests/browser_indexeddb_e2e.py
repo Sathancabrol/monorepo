@@ -58,7 +58,14 @@ def main():
             try:
                 context = browser.new_context(accept_downloads=True)
                 page = context.new_page()
+                js_errors = []
+                page.on("pageerror", lambda err: js_errors.append(str(err)))
                 page.goto(f"http://127.0.0.1:{port}/", wait_until="load")
+                # Catch missing ES module (HTTP 403) before waiting for UI import.
+                module_response = page.request.get(f"http://127.0.0.1:{port}/src/video-duration.js")
+                assert module_response.status == 200, "Main UI dependency video-duration.js is not served"
+                page.wait_for_function("document.querySelectorAll('#navItems [data-space]').length === 12", timeout=10000)
+                assert not js_errors, "JavaScript initialization errors: " + " | ".join(js_errors)
                 # Real UI path: import a tiny PNG through the file picker, then
                 # verify the persisted record after a full browser reload.
                 # This complements direct store API checks below.
