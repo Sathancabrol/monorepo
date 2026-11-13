@@ -87,3 +87,14 @@ Limitations : aucun mixage audio EDIT, aucune coupe bornée par métadonnées de
 | Persistance IndexedDB, export audiovisuel, GPU | Navigateur de test utilise modules en mémoire, IndexedDB bloqué | **Non vérifié** |
 
 Les métadonnées peuvent être inconnues ou invalides (ex. flux live, conteneurs incomplets). Dans ce cas les coupes ne sont pas présentées comme vérifiées. L'essai Chromium ne certifie pas les performances sur la tour Windows.
+
+## Session nocturne — 13 novembre 2026, validation du champ Durée
+
+| Fonction | État | Preuve |
+|---|---|---|
+| Contrôle du champ « Durée » vidéo selon la durée source | Codé | `src/app.js`, `src/video-duration.js:setClipDuration` |
+| Préservation du média source et rejet de la durée hors fichier | Test unitaire ajouté | `tests/video-duration.test.mjs` ; test UI Windows non réalisé |
+| Blocage des modifications pendant export | Codé, non testé navigateur | `src/app.js` |
+| E2E IndexedDB / export audio / Windows GPU | Non vérifié | Aucun accès matériel autorisé |
+
+Le champ Durée constituait un contournement des bornes IN/OUT de v0.2.4 ; ce chemin est désormais unifié. Revalider la CI du dernier commit avant toute publication de package.
