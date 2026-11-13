@@ -148,3 +148,10 @@ Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture
 - Diagnostic **confirmé par les logs** du run [43376152256](https://github.com/Sathancabrol/monorepo/actions/runs/43376152256) : 39/39 tests Node réussis, mais Playwright 1.56 ne peut installer Chromium sur l'image `ubuntu-latest` devenue Ubuntu 26.04 (`Playwright does not support chromium on ubuntu26.04-x64`). Ce n'est **pas** un échec démontré du test UI.
 - Correction du **workflow dédié seulement** : `runs-on: ubuntu-24.04` au lieu de `ubuntu-latest`, commit [`6837a003`](https://github.com/Sathancabrol/monorepo/commit/6837a00363daae6d865ab0018adf90074ff7568c). Cette image est une cible supportée par Playwright 1.56; attendre la CI du commit pour confirmer.
 - Prochaine action exacte (S) : lire le dernier job sur Ubuntu 24.04; si erreur du scénario UI, inspecter traceback et corriger. Ensuite A01/A03 (M) : fixture A/V Opus avec mesure de dérive. A02 reste ouverte jusqu'à CI verte.
+
+
+### Point 13/11/2026 — sécurité de l'export A/V EDIT
+
+- **Codé** : `src/editor-export.js` impose un `MediaRecorder` compatible WebM/Opus pour tout export EDIT avec piste audio. L'ancien repli générique `video/webm` pouvait produire une vidéo muette présentée comme audiovisuelle; désormais une erreur explicite empêche cet export trompeur. Le mode vidéo seule garde ses formats de repli.
+- **Tests écrits, CI à confirmer** : `tests/editor-export.test.mjs` vérifie la sélection VP8/Opus, VP9/Opus et le refus d'un encodeur audio absent. Workflow dédié et allowlist HTTP mis à jour.
+- **Non validé** : lecture audible, synchronisation A/V, export réel et recette Windows. A01/A03 non clos; dernière CI du commit `63a420e0` non confirmée au checkpoint.
