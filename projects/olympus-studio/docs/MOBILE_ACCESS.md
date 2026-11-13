@@ -50,3 +50,19 @@ Les trois programmes doivent rester actifs : Studio, le proxy et Tailscale. Ce p
 ## Vérification
 
 Dans `projects/olympus-studio` : `npm test`. Le fichier `tests/mobile-preview.test.mjs` simule le serveur Studio et prouve que le proxy ne transmet pas d'actions POST ni de fichiers privés.
+
+
+## Caméra d'un téléphone visible sur la tour et les autres téléphones (prototype)
+
+La fonction « + Webcam » d'origine reste **strictement locale**. Pour partager volontairement le flux :
+
+1. Ouvrir **la même version mise à jour d'OLYMPUS** sur les trois appareils : tour sur `http://127.0.0.1:8788`, téléphones sur l'adresse Tailscale HTTPS. Ne pas utiliser le port 8787 pour les fonctions collaboratives.
+2. Sur le Samsung, descendre au panneau **CAMÉRAS · APPAREILS CONNECTÉS**. Renseigner éventuellement le nom et cliquer sur **Diffuser ma caméra**, puis autoriser Android.
+3. Sur la tour et le Redmi, ouvrir le même panneau, patienter environ 2 secondes : une vignette distante actualisée apparaît. Cliquer sur **Ajouter à ma scène LIVE** pour dessiner la caméra dans le Canvas de cette session.
+4. Sur le Samsung, **■ Arrêter la diffusion** stoppe la capture. Une déconnexion silencieuse supprime le flux côté serveur après 12 secondes sans nouvelle image.
+
+Limites de cette étape : JPEG en mémoire RAM (max 640×360, environ 4 images/s), **sans audio**, sans persistance, **pas un transport WebRTC 30 images/s**. Les images voyagent via le serveur Windows déjà protégé par Tailscale (pas de service cloud obligatoire). La qualité et la latence réelles restent à tester sur Windows/Android. Le partage ne se fait jamais automatiquement par le bouton Webcam d'origine, et s'arrête lorsque le navigateur ou Android interrompt sa capture en arrière-plan.
+
+Ce mode ne synchronise **pas** la composition, les fichiers IndexedDB ou les agents Chronos : chaque appareil garde sa scène. Le bouton « Ajouter à ma scène LIVE » agit seulement sur la scène du navigateur concerné. Ne pas activer Funnel et ne pas ouvrir de port sur la box.
+
+**Actualiser les fichiers locaux** après publication de cette version : dans `%USERPROFILE%\olympus-mobile-test`, effectuer `git pull --ff-only` sur la branche `feat/olympus-mobile-preview-20261113` après avoir fermé les deux consoles de serveur, puis double-cliquer `projects\olympus-studio\LANCER_MOBILE.bat`. Les nouvelles routes ne seront pas présentes tant que les anciens processus Node.js tournent.
