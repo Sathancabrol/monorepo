@@ -52,3 +52,9 @@ Les fonctionnalités très coûteuses (génération temps réel photoréaliste, 
 - Fonctions pures `trimVideoClip`, `splitVideoClip`, `splitStoryboardAt` testées, sérialisation JSON stable.
 - Preuve : https://github.com/Sathancabrol/monorepo/actions/runs/43316401111 — **29/29 tests réussis** sur Node/Ubuntu.
 - Critère S04 **partiel** : export vidéo sans audio, durée source non contraignante, validation Chromium/Windows requise.
+
+## Suivi 2026-11-13 — session de consolidation S04
+
+- Correctif du champ « Durée » (même règle source que IN/OUT), test de régression et message d'erreur. Pas de nouvelle capacité audio.
+- Les critères S04 « sauvegarde/recharge et export A/V synchronisé » restent ouverts; v0.2.4 ne signifie pas une version complète.
+- Prochaine tranche : fixture E2E IndexedDB puis audio EDIT. Conserver l'éditeur non destructif et le mode local.
