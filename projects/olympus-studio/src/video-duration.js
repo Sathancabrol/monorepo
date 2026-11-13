@@ -58,3 +58,16 @@ export function trimWithinVideoDuration(clip, start, end, knownSourceDuration) {
   }
   return updated;
 }
+
+export function setClipDuration(clip, seconds, knownSourceDuration) {
+  const duration = Number(seconds);
+  if (!Number.isFinite(duration) || duration < 0.1 || duration > 3600) {
+    throw new Error('Durée invalide (0,1 à 3600 s)');
+  }
+  if (clip?.kind === 'video') {
+    const start = Number(clip.inPoint) || 0;
+    return trimWithinVideoDuration(clip, start, start + duration, knownSourceDuration);
+  }
+  if (clip?.kind === 'image') return { ...clip, duration };
+  throw new Error('Type de clip non pris en charge');
+}
