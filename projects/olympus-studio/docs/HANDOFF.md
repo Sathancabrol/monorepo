@@ -302,3 +302,9 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Nouvelle tranche : [commit 60988b03](https://github.com/Sathancabrol/monorepo/commit/60988b032e6c45762ceba146d34cce2dc74e561f) ajoute dans `tests/browser_edit_export_e2e.py` les opérations UI titre et réordonnancement de clips, leur annulation/rétablissement, avec comparaison des snapshots Portable, références médias et piste audio.
 - **Preuve actuelle :** écriture GitHub confirmée, **nouvelle CI non vérifiée**. Aucun test Windows ni écoute humaine; aucune fusion main ou modification hors Studio.
 - **Reprise exacte (S)** : inspecter le workflow CI au commit `60988b03` et corriger toute erreur du step Chromium. Si vert, tester le verrouillage des modifications pendant export EDIT (M) puis choisir la prochaine tâche READY (A05 benchmark FreeCut/OpenReelio ou A06 ASR) après vérification des critères A01–A04. 
+
+## Reprise 13 novembre 2026, 23 h — A04 isolation de l’historique entre projets
+
+- CI du checkpoint précédent `5bbacce9` : [run 43507408168](https://github.com/Sathancabrol/monorepo/actions/runs/43507408168) **success**. Cela couvre les tests titre/ordre A04 précédemment ajoutés.
+- Commit [719cf6f5](https://github.com/Sathancabrol/monorepo/commit/719cf6f58dc7cf925f6a03ee4e0d31b2a611fe3c) : scénario Chromium E2E étendu pour confirmer qu’après réimport du projet Portable l’historique Undo et Redo est vide; empêche de revenir à des états d’un projet précédent. Test écrit mais **CI de ce commit à confirmer**.
+- **Reprise exacte (S)** : contrôler la CI du commit `719cf6f5` (ou tête plus récente), lire les logs et réparer si rouge. **Puis (M)** : tester l’interdiction de modifier le montage pendant un export EDIT et décider si A04 peut passer en DONE pour Linux/Chromium (pas Windows). **Ensuite (M)** : A05 audit FreeCut/OpenReelio et ADR licences/format. Aucun test Windows/GTX, aucune fusion main, aucun autre projet modifié.
