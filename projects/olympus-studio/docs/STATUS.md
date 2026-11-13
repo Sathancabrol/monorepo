@@ -111,3 +111,10 @@ Le champ Durée constituait un contournement des bornes IN/OUT de v0.2.4 ; ce ch
 | Reprise autonome quotidienne | Automatisation mise à jour avec backlog séquentiel | Tâche `6af632ef3df88191a7ef46e372054ac4`, `docs/AUTONOMOUS_BACKLOG.md` |
 
 Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture/lecture du fichier exporté et vérification du codec/décalage. Une CI verte ne suffit pas.
+
+## Itération A02 — 13 novembre 2026, 04h
+
+- **Codé** : `tests/browser_indexeddb_e2e.py`, test Playwright Chromium sur **véritable origine HTTP** et serveur Node local. Il écrit un Blob vidéo synthétique dans IndexedDB, ferme la connexion, recharge la page, vérifie les octets, découpe réellement un clip en deux via `splitVideoClip`, confirme une seule référence `assetId`, et effectue un aller-retour Portable base64. Le test supprime son média temporaire à la fin.
+- **CI configurée** : `.github/workflows/olympus-studio-ci.yml` installe Playwright/Chromium et exécute le scénario en plus de `npm test` ; ceci n'est pas une preuve d'exécution tant que le nouveau run n'est pas vert.
+- **Preuve de code** : commits `d79772d7`, `b6a7788e`, `d688b9a7`. Le run précédent 43349763003 était vert, **avant ces modifications**.
+- **Limites** : pas de test d'export WebM sonore, pas de vraie vidéo décodable dans la fixture Blob, pas de Windows/GTX. A02 n'est pas DONE avant une CI verte et le test d'interface sauvegarde/reprise complet.
