@@ -142,3 +142,9 @@ Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture
 - Commit de code : [`16ef2e1d`](https://github.com/Sathancabrol/monorepo/commit/16ef2e1da3c5099eb5844f80a6f672f85684be8e). CI associée [`43376152256`](https://github.com/Sathancabrol/monorepo/actions/runs/43376152256) **en cours à la consultation**, donc ne pas déclarer A02 validée.
 - **Limites** : test Chromium Linux/HTTP automatisé, sans preuve Windows, ni sauvegarde du montage de clips par les boutons UI, ni export WebM audio audible. A01 et A02 restent ouverts.
 - **Reprise exacte (S)** : lire les étapes/logs de la CI `43376152256`; si échec, corriger d'abord le test ou le produit. Si succès, poursuivre A01/A03 (M) : fixture WebM A/V avec inspection du codec Opus, présence sonore et dérive; ne pas confondre présence de piste et qualité audio.
+
+### Correctif CI de la session — 13 novembre 2026, 07h
+
+- Diagnostic **confirmé par les logs** du run [43376152256](https://github.com/Sathancabrol/monorepo/actions/runs/43376152256) : 39/39 tests Node réussis, mais Playwright 1.56 ne peut installer Chromium sur l'image `ubuntu-latest` devenue Ubuntu 26.04 (`Playwright does not support chromium on ubuntu26.04-x64`). Ce n'est **pas** un échec démontré du test UI.
+- Correction du **workflow dédié seulement** : `runs-on: ubuntu-24.04` au lieu de `ubuntu-latest`, commit [`6837a003`](https://github.com/Sathancabrol/monorepo/commit/6837a00363daae6d865ab0018adf90074ff7568c). Cette image est une cible supportée par Playwright 1.56; attendre la CI du commit pour confirmer.
+- Prochaine action exacte (S) : lire le dernier job sur Ubuntu 24.04; si erreur du scénario UI, inspecter traceback et corriger. Ensuite A01/A03 (M) : fixture A/V Opus avec mesure de dérive. A02 reste ouverte jusqu'à CI verte.
