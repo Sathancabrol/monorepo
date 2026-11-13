@@ -1,6 +1,6 @@
 # OLYMPUS Studio — plan d'exécution autonome
 
-**Créé le 13/11/2026.** Registre prioritaire utilisé par la tâche ChatGPT « OLYMPUS Studio — développement » (ID `6af632ef3df88191a7ef46e372054ac4`) à 02:00 Europe/Paris, tous les jours. Chaque session dispose d'un temps fini : il ne s'agit **pas** d'un ordinateur qui travaille en continu.
+**Créé le 13/11/2026.** Registre prioritaire utilisé par la tâche ChatGPT « OLYMPUS Studio — développement » (ID `6af632ef3df88191a7ef46e372054ac4`) une fois par heure, heure Europe/Paris. Chaque session dispose d'un temps fini : il ne s'agit **pas** d'un ordinateur qui travaille en continu.
 
 Dépôt `Sathancabrol/monorepo` · branche `feat/olympus-studio-20261112` · uniquement `projects/olympus-studio/` et workflow CI dédié · PR #16 en brouillon · aucun merge dans main.
 
@@ -8,9 +8,9 @@ Dépôt `Sathancabrol/monorepo` · branche `feat/olympus-studio-20261112` · uni
 
 1. **Synchroniser avant toute écriture** : relire ce fichier, `HANDOFF.md`, `STATUS.md`, `SESSION_PLAN.md`, PR #16, issues #11–#17, dernier commit et exécution GitHub Actions.
 2. **Choisir automatiquement** la première tâche ouverte `READY` non couverte par un commit/test existant. Si impossible sans Windows/secret ou dépendance, indiquer `BLOCKED` et sauter vers le prochain `READY`; ne pas attendre « continue ».
-3. **Livrer une tranche verticale** (fonction utilisateur visible + code + test au minimum). Rester sur la branche isolée et utiliser SHA de fichier avant toute modification, pour réduire les conflits.
+3. **Livrer une tranche verticale** (fonction utilisateur visible + code + test au minimum). Dès qu'une tranche est terminée et validée, **enchaîner la suivante au cours du même run si ses ressources le permettent**; sinon enregistrer la prochaine action exacte pour l'exécution horaire suivante. Rester sur la branche isolée et utiliser SHA de fichier avant toute modification.
 4. **Tester réellement** : syntaxe → tests Node → GitHub Actions au dernier commit → navigateur si possible → statut exact et preuve. Si CI rouge, réparer **avant** la prochaine fonctionnalité.
-5. **Reporter** dans ce fichier, `STATUS.md` et `HANDOFF.md` les commits, résultats, limites et nouvelle première tâche. Mettre à jour l'issue liée. Une CI verte n'est ni un test Windows ni une garantie d'export A/V.
+5. **Reporter** dans ce fichier, `STATUS.md` et `HANDOFF.md` les commits, résultats, limites, taille relative S/M/L/XL et nouvelle première tâche. Mettre à jour l'issue liée. Une CI verte n'est ni un test Windows ni une garantie d'export A/V.
 6. Quand tous les critères de fin sont vérifiés, proposer une phase de recette finale; **ne jamais conclure « terminé » si les tests matériels et licences manquent.**
 
 ## Backlog priorisé — sélectionner par ordre, en sautant les blocages
@@ -49,4 +49,10 @@ Une seule interface Windows capable de créer et reprendre un projet avec média
 
 ## Reprise prévue
 
-**Prochaine session du 14/11/2026 à 02:00 Europe/Paris** : lire et vérifier l'état de A01 (piste audio EDIT). Si la CI est rouge, corriger. Sinon continuer A01 (test de lecture/export audiovisuel) et lancer A02. Ne pas répéter un correctif déjà livré.
+**Prochaine session planifiée dès le 13/11/2026 à 04:00 Europe/Paris, puis toutes les heures** : lire et vérifier A01 (audio EDIT). Si CI rouge, corriger; sinon chercher preuve d'export sonore A/V et reprendre A02 (IndexedDB) si A01 est bloquée. Chaque run doit préparer le prochain automatiquement. Ne pas répéter un correctif déjà livré.
+
+## Cadence et estimation de charge
+
+- Une session automatique démarre **au plus une fois par heure** et n'est pas une heure garantie de calcul ou de codage. Les travaux en cours sont repris depuis les checkpoints.
+- **Taille relative des tâches** et règle de progression : [WORK_ESTIMATES.md](WORK_ESTIMATES.md). Ne pas confondre poids du chantier, temps de passage et date de livraison.
+- Les tâches matérielles Windows restent dans les blocages; passer à une autre tâche READY sans attendre l'utilisateur.
