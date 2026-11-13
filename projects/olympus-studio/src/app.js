@@ -447,6 +447,7 @@ function panel(){
   for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
   const add=document.createElement('button');add.textContent='+ Clip';add.disabled=!eligible.length;
   add.onclick=async()=>{
+   if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant ajout de clip');
    const asset=state.assets.find(a=>a.id===select.value);if(!asset)return;
    const kind=asset.type.startsWith('video/')?'video':'image';
    add.disabled=true;status('Lecture des métadonnées '+asset.name+'…');
@@ -455,6 +456,8 @@ function panel(){
     if(!media)throw Error('Média absent du coffre');
     const measured=kind==='video'?await ensureVideoDuration(asset.id,media):null;
     const duration=kind==='video'?initialClipDuration(measured):5;
+    // Metadata loading is async; export might start before it resolves.
+    if(editorRecorder?.state==='recording')return status('Ajout différé : export EDIT en cours');
     const before=editSnapshot();state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration,inPoint:0}));commitEdit(before);
     state.editTime=0;state.editPlaying=false;panel();sync();
     status('Clip ajouté : '+duration.toFixed(2)+' s'+(kind==='video'&&measured===null?' · durée source inconnue':''));
