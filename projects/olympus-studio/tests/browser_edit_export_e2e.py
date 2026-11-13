@@ -114,7 +114,9 @@ def main():
                     # Audio is a library asset, not a LIVE visual layer. Check it in EDIT.
                     page.locator('[data-space="EDIT"]').first.click()
                     audio_choice = page.get_by_role("combobox", name="Choisir une piste audio")
-                    audio_choice.locator("option", has_text="synthetic-440hz.wav").wait_for()
+                    audio_choice.locator("option", has_text="synthetic-440hz.wav").wait_for(state="attached")
+                    # Native <option> is hidden in headless Chromium: wait for DOM attachment, not visibility.
+                    audio_choice.select_option(label="synthetic-440hz.wav")
                     page.get_by_role("button", name="+ Clip").click()
                     page.locator(".layer-row input[title='Durée en secondes']").first.wait_for()
                     duration = page.locator(".layer-row input[title='Durée en secondes']").first
