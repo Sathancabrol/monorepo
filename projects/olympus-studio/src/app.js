@@ -1,4 +1,5 @@
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
+import {validateEditAudioTrack, audioAtTimeline} from './edit-audio.js';
 import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from './video-duration.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
@@ -21,11 +22,11 @@ const spaces=[
 ];
 const newId=()=>Math.random().toString(36).slice(2,11);
 const baseScenes=()=>[{id:newId(),name:'Scène principale',layers:[{id:newId(),type:'text',name:'Titre',value:'OLYMPUS STUDIO',x:.12,y:.43,w:.74,h:.18,size:66,color:'#ffffff',visible:true},{id:newId(),type:'rect',name:'Accent',x:.12,y:.64,w:.24,h:.015,color:'#27c8c0',visible:true}]},{id:newId(),name:'Présentation',layers:[{id:newId(),type:'text',name:'Présentation',value:'Réunion augmentée',x:.09,y:.12,w:.82,h:.16,size:55,color:'#ffffff',visible:true}]}];
-const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],clips:[],editTime:0,editPlaying:false,editLast:0,captionsVisible:false,legacyV03:null,recording:false};
+const state={space:'LIVE',projectName:'Production sans titre',scenes:baseScenes(),activeScene:null,selected:null,transcript:[],assets:[],clips:[],editAudioTrack:null,editTime:0,editPlaying:false,editLast:0,captionsVisible:false,legacyV03:null,recording:false};
 const runtime=new Map();let webcamStream=null;let webcamVideo=null;let microphoneStream=null;let screenStream=null;let screenVideo=null;let recorder=null;let chunks=[];let recStarted=0;let lastCanvas=0;let obsOutput=false;let lastObsFrame=0;let sendingObs=false;let lastComfyJob=null;
 state.activeScene=state.scenes[0].id;
 const dbReady = openMediaDB().catch(() => null);
-const editMedia = new Map();const videoDurations = new Map();const videoDurationJobs = new Map();
+const editMedia = new Map();const editAudioGraph = new WeakMap();const videoDurations = new Map();const videoDurationJobs = new Map();
 let editorRecorder=null;
 function knownVideoDuration(assetId){return videoDurations.get(assetId)??null;}
 function updateVideoDurationHint(assetId, duration){
@@ -59,7 +60,7 @@ const selected=()=>scene().layers.find(l=>l.id===state.selected);
 function status(t){$('status').textContent=t;}
 function dl(name,blob){const a=document.createElement('a');const u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),10000);}
 function addLayer(layer){layer.id=newId();layer.visible=true;scene().layers.push(layer);state.selected=layer.id;sync();return layer;}
-function setSpace(key){if(key!=='EDIT'){state.editPlaying=false;if(editorRecorder?.state==='recording'){editorRecorder.stop();status('Export storyboard interrompu par changement d’espace');}}state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
+function setSpace(key){if(key!=='EDIT'){state.editPlaying=false;for(const [id,media] of editMedia){if(media?.tagName==='AUDIO')media.pause();}if(editorRecorder?.state==='recording'){editorRecorder.stop();status('Export storyboard interrompu par changement d’espace');}}state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
 function makeNav(){const root=$('navItems');spaces.forEach(([key,icon,label])=>{const b=document.createElement('button');b.dataset.space=key;b.innerHTML='<b aria-hidden="true">'+esc(icon)+'</b><span>'+key+'</span>';b.title=label;b.onclick=()=>setSpace(key);root.append(b);});}
 function sync(){
  $('stageLabel').textContent=scene().name+' · 1280 × 720';
@@ -116,6 +117,8 @@ async function loadEditAsset(assetId){
  }else if(record.type.startsWith('video/')){
   element=document.createElement('video');element.preload='metadata';element.muted=true;element.playsInline=true;element.src=url;
   ensureVideoDuration(assetId,element);
+ }else if(record.type.startsWith('audio/')){
+  element=document.createElement('audio');element.preload='metadata';element.src=url;
  }else return null;
  editMedia.set(assetId,element);return element;
 }
@@ -190,7 +193,7 @@ function draw(){
 function loop(t){if(t-lastCanvas>=32){draw();drawEditor(t);lastCanvas=t;}if(obsOutput&&t-lastObsFrame>=150&&!sendingObs){lastObsFrame=t;sendingObs=true;C.toBlob(async b=>{try{if(b)await fetch('/api/frame',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});}catch(e){status('Sortie OBS indisponible : '+e.message);}finally{sendingObs=false;}},'image/jpeg',.66);}requestAnimationFrame(loop);}
 function projectPayload(){
  const safe=state.scenes.map(s=>({id:s.id,name:s.name,layers:s.layers.map(l=>({...l,source:undefined}))}));
- return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,clips:state.clips,legacyV03:state.legacyV03,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
+ return {format:'olympus-studio-project',schema:2,projectName:state.projectName,activeScene:state.activeScene,scenes:safe,transcript:state.transcript,clips:state.clips,editAudioTrack:state.editAudioTrack,legacyV03:state.legacyV03,warning:'Les références média utilisent IndexedDB pour cette origine du navigateur; utilise Portable pour changer de PC.'};
 }
 function saveProject(){
  dl('olympus-project-'+Date.now()+'.json',new Blob([JSON.stringify(projectPayload(),null,2)],{type:'application/json'}));
@@ -200,7 +203,7 @@ async function savePortableProject(){
  const button=$('btnPortable');button.disabled=true;
  try{
   const db=await dbReady;
-  const refs=referencedAssetIds(state.scenes,state.clips);
+  const refs=referencedAssetIds(state.scenes,state.clips,state.editAudioTrack);
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
   const records=[];
   for(const id of refs){const record=await getMedia(db,id);if(!record)throw Error('Média absent du coffre : '+id);records.push(record);}
@@ -254,7 +257,8 @@ async function loadProject(file){
   const legacyClips=data.legacyV03?.edit?.clips;
   const candidates=Array.isArray(data.clips)?data.clips:Array.isArray(legacyClips)?legacyClips:[];
   state.clips=candidates.slice(0,1000).flatMap(c=>{try{return [validateClip(c)];}catch{return [];}});
-  state.editTime=0;state.editPlaying=false;editMedia.clear();videoDurations.clear();videoDurationJobs.clear();
+  try{state.editAudioTrack=data.editAudioTrack?validateEditAudioTrack(data.editAudioTrack):null;}catch{state.editAudioTrack=null;}
+  state.editTime=0;state.editPlaying=false;for(const media of editMedia.values()){if(media?.tagName==='AUDIO')media.pause();}editMedia.clear();videoDurations.clear();videoDurationJobs.clear();
   runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
   status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
@@ -263,16 +267,25 @@ async function addFiles(files){
  const db=await dbReady;
  let imported=0,failures=0;
  for(const file of files){
-  const type=file.type.startsWith('image/')?'image':file.type.startsWith('video/')?'video':null;
+  const type=file.type.startsWith('image/')?'image':file.type.startsWith('video/')?'video':file.type.startsWith('audio/')?'audio':null;
   if(!type)continue;
-  const layer=addLayer({type,name:file.name,sourceName:file.name,x:.15,y:.15,w:.7,h:.65});
-  if(db){try{await putMedia(db,{id:layer.id,name:file.name,type:file.type,blob:file});}catch{failures++;}}
+  const assetId=newId();
+  const layer=type==='audio'?null:addLayer({type,name:file.name,sourceName:file.name,x:.15,y:.15,w:.7,h:.65});
+  const id=layer?.id||assetId;
+  if(db){try{await putMedia(db,{id,name:file.name,type:file.type,blob:file});}catch{failures++;}}
   else failures++;
-  const url=localMediaURL(file);let media;
-  if(type==='image'){media=new Image();media.src=url;await new Promise(resolve=>{media.onload=resolve;media.onerror=resolve;});}
-  else{media=document.createElement('video');media.src=url;media.muted=true;media.loop=true;media.playsInline=true;media.autoplay=true;media.play().catch(()=>{});}
-  runtime.set(layer.id,media);
-  state.assets.push({name:file.name,type:file.type,id:layer.id,size:file.size});
+  const url=localMediaURL(file);
+  if(type==='image'){
+   const media=new Image();media.src=url;await new Promise(resolve=>{media.onload=resolve;media.onerror=resolve;});
+   runtime.set(id,media);
+  }else if(type==='video'){
+   const media=document.createElement('video');media.src=url;media.muted=true;media.loop=true;media.playsInline=true;media.autoplay=true;media.play().catch(()=>{});
+   runtime.set(id,media);
+  }else{
+   const media=document.createElement('audio');media.src=url;media.preload='metadata';
+   runtime.set(id,media);
+  }
+  state.assets.push({name:file.name,type:file.type,id,size:file.size});
   imported++;
  }
  sync();panel();status(imported+' média(s) importé(s)'+(failures?' · '+failures+' sans sauvegarde persistante':' · sauvegardés dans IndexedDB'));
