@@ -180,6 +180,10 @@ def main():
                     assert not errors, "JS errors before export: " + " | ".join(errors)
                     with page.expect_download(timeout=25000) as download_info:
                         page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
+                        # A04: adding a clip while MediaRecorder is active must not mutate the timeline.
+                        page.locator("#status").get_by_text("Export vidéo + piste audio en cours", exact=False).wait_for(timeout=10000)
+                        page.get_by_role("button", name="+ Clip").click()
+                        page.locator("#status").get_by_text("Arrêter export EDIT avant ajout de clip", exact=False).wait_for(timeout=5000)
                     download = download_info.value
                     assert download.suggested_filename.endswith(".webm")
                     output = Path(temp) / "studio-edit-export.webm"
@@ -187,6 +191,13 @@ def main():
                     assert output.stat().st_size > 1500
                     assert not errors, "JS errors during export: " + " | ".join(errors)
                     print("EDIT UI A/V export:", inspect_export(output))
+                    with page.expect_download(timeout=15000) as locked_info:
+                        page.locator("#btnPortable").click()
+                    locked_path = Path(temp) / "export-locked-project.json"
+                    locked_info.value.save_as(locked_path)
+                    locked = json.loads(locked_path.read_text(encoding="utf-8"))
+                    assert locked["clips"] == restored["clips"], "Export-time clip insertion mutated the project"
+                    assert locked["editAudioTrack"] == restored["editAudioTrack"]
                     # A02: split two segments of one real video source through EDIT,
                     # then round-trip Portable and verify deduplicated media.
                     video_path = Path(temp) / "synthetic-video.webm"
