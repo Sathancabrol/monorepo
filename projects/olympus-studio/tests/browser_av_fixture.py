@@ -117,7 +117,7 @@ def main():
                      "-map", "0:a:0", "-af", "volumedetect", "-f", "null", "-"],
                     capture_output=True, text=True, check=True, timeout=20,
                 )
-                match = re.search(r"mean_volume:\\s*(-?[\\d.]+) dB", volume.stderr)
+                match = re.search(r"mean_volume:\s*(-?[\d.]+) dB", volume.stderr)
                 assert match, "Decoded audio has no measurable volume"
                 mean_db = float(match.group(1))
                 assert -55 < mean_db < -3, ("Silent or clipped synthetic tone", mean_db)
