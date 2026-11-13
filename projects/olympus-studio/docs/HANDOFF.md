@@ -246,3 +246,9 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Correctif test `66c72186824a98c4cc33668f885481e757f44c68` : `wait_for(state="attached")` puis sélection explicite par label avant `Ajouter / remplacer piste`. Aucun code applicatif touché.
 - **À vérifier** : CI au dernier commit de cette branche; si rouge, lire les logs du job EDIT et corriger. Le vrai export EDIT WebM/Opus n'est pas encore validé. A01/A03 restent READY. Puis E2E reprise IndexedDB clips + piste audio (M), ensuite A04 undo/redo (M).
 - Aucun test Windows/GTX ni écoute humaine; aucun merge main, secret ou projet voisin modifié.
+
+## Reprise 13 novembre 2026, 15 h — vérification de la source audio EDIT
+
+- Dernière CI confirmée verte avant modification : [run 43430777046](https://github.com/Sathancabrol/monorepo/actions/runs/43430777046), associée au checkpoint `ea0118db`. L'échec antérieur `43421595781` correspond au test Playwright qui attendait un `<option>` visible; correctif déjà intégré.
+- Nouveau commit `1a23a96f94b92ccdb7f932137855227ab3eb30a2` : le test E2E du véritable export EDIT décode la piste Opus en PCM 8 kHz et vérifie par passages à zéro la fréquence du son synthétique attendu (440 Hz, tolérance 400–480 Hz). Ceci détecte une piste non silencieuse mais issue d'une mauvaise source. Pas de modification de l'éditeur ou des autres projets.
+- **CI du nouveau commit non encore confirmée**. Aucun test Windows/GTX effectué. Prochaine action S : consulter le run de `1a23a96f` et réparer toute erreur; si vert, A02/M : ajouter E2E de réouverture des clips et de la piste audio par l'interface, puis A04/M : undo/redo non destructif.
