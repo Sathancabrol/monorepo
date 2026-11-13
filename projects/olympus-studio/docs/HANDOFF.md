@@ -95,3 +95,19 @@ Ne pas confondre **plan de sessions** (`docs/SESSION_PLAN.md`) et **sessions eff
 3. Audit FreeCut/OpenReelio (licences et interchange), puis migration contrôlée du prototype v0.3 et ajout du module XR/Meeting.
 
 Aucun merge main; aucun accès à la tour, aucun nouveau logiciel tiers installé.
+
+## Checkpoint v0.2.4 — 13 novembre 2026
+
+- `src/video-duration.js` (nouveau) : durée réelle `HTMLVideoElement`, cas timeout/erreur, `initialClipDuration` et contrôle IN/OUT fondé sur métadonnées.
+- `src/app.js` : affiche la durée source, adapte le premier clip, refuse OUT au-delà du fichier quand la durée est connue. Anciennes coupes invalides signalées, jamais raccourcies sans accord.
+- `tests/video-duration.test.mjs` : métadonnées immédiates/asynchrones, rejet valeurs invalides et source-bounded trim.
+- `tests/browser_media_smoke.py` : smoke UI avec vidéo WebM 2 s, vérifié dans Chromium headless au cours de la session. Le test utilise les modules en mémoire car l'environnement de navigateur bloque toute navigation HTTP; il ne valide pas IndexedDB ni OBS/ComfyUI.
+- `docs/EDIT_TRIM.md` mis à jour. Tests `npm test` : 34/34 réussis en CI puis localement sur Node.js 22 au cours de la session, sous réserve de revérifier le dernier commit.
+- Sur GitHub branche dédiée uniquement; automatisation quotidienne à 02:00 Europe/Paris maintenue.
+
+### Trois priorités pour la prochaine session
+1. Tester la persistance IndexedDB et la sauvegarde/reprise du même clip scindé dans un navigateur avec vraie origine HTTP (Windows ou environnement autorisé), puis corriger les divergences.
+2. Ajouter un parcours audio EDIT cohérent : provenance, synchronisation des clips et export WebM A/V contrôlé (sans rompre LIVE).
+3. Comparer FreeCut / OpenReelio sur un exemple concret et choisir une stratégie d'intégration; poursuivre les passerelles X-Ray / Watchtower / Chronos.
+
+Aucun merge de `main` ni installation distante; les résultats de tests Chromium ne doivent pas être présentés comme essais matériels Windows.
