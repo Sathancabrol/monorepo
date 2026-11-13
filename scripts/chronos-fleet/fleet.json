@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "nodes": [
+    {"name": "tour-ollama", "tier": "agent", "priority": 10, "enabled": true,
+     "url": "http://127.0.0.1:11434/v1", "model": "qwen3:4b", "supports_tools": true, "timeout": 180},
+    {"name": "portable-ollama", "tier": "agent", "priority": 20, "enabled": false,
+     "url": "http://192.168.1.50:11434/v1", "private_network_confirmed": false,
+     "model": "qwen3:4b", "supports_tools": true, "timeout": 180},
+    {"name": "samsung-termux", "tier": "light", "priority": 10, "enabled": false,
+     "url": "http://192.168.1.51:8084/v1", "private_network_confirmed": false,
+     "model": "qwen2.5-0.5b", "supports_tools": false, "timeout": 150,
+     "api_key_env": "CRONOS_SAMSUNG_KEY"},
+    {"name": "redmi-termux", "tier": "light", "priority": 20, "enabled": false,
+     "url": "http://192.168.1.52:8085/v1", "private_network_confirmed": false,
+     "model": "qwen2.5-0.5b", "supports_tools": false, "timeout": 150,
+     "api_key_env": "CRONOS_REDMI_KEY"}
+  ]
+}
