@@ -98,3 +98,16 @@ Les métadonnées peuvent être inconnues ou invalides (ex. flux live, conteneur
 | E2E IndexedDB / export audio / Windows GPU | Non vérifié | Aucun accès matériel autorisé |
 
 Le champ Durée constituait un contournement des bornes IN/OUT de v0.2.4 ; ce chemin est désormais unifié. Revalider la CI du dernier commit avant toute publication de package.
+
+## v0.2.5 — 13 novembre 2026 — audio EDIT et suivi autonome
+
+| Fonction | État réel | Preuve |
+|---|---|---|
+| Import `audio/*` séparé de LIVE | Codé, test navigateur à confirmer | `index.html`, `src/app.js:addFiles` |
+| Une piste audio EDIT : départ / IN / volume / active | Codé, logique testée Node | `src/edit-audio.js`, `tests/edit-audio.test.mjs` |
+| Projet/portable incluent la piste audio | Code et test de références médias | `src/app.js:projectPayload`, `src/storyboard.js:referencedAssetIds` |
+| Export Canvas + MediaStreamDestination A/V | Codé, **pas encore validé sur sortie WebM réelle** | `src/app.js:attachAudioToEditorCapture` |
+| Import WAV Chromium | Scénario test ajouté, **exécution non confirmée** | `tests/browser_media_smoke.py` |
+| Reprise autonome quotidienne | Automatisation mise à jour avec backlog séquentiel | Tâche `6af632ef3df88191a7ef46e372054ac4`, `docs/AUTONOMOUS_BACKLOG.md` |
+
+Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture/lecture du fichier exporté et vérification du codec/décalage. Une CI verte ne suffit pas.
