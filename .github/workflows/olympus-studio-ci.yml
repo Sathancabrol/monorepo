@@ -41,6 +41,8 @@ jobs:
           node --check src/v03-migration.js
           node --check tests/v03-migration.test.mjs
           node --check src/storyboard.js
+          node --check src/edit-audio.js
+          node --check tests/edit-audio.test.mjs
           node --check src/video-duration.js
           node --check tests/video-duration.test.mjs
           python -m py_compile tests/browser_media_smoke.py
