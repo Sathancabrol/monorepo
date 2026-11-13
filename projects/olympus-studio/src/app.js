@@ -328,7 +328,7 @@ async function loadProject(file){
   const candidates=Array.isArray(data.clips)?data.clips:Array.isArray(legacyClips)?legacyClips:[];
   state.clips=candidates.slice(0,1000).flatMap(c=>{try{return [validateClip(c)];}catch{return [];}});
   try{state.editAudioTrack=data.editAudioTrack?validateEditAudioTrack(data.editAudioTrack):null;}catch{state.editAudioTrack=null;}
-  state.editTime=0;state.editPlaying=false;for(const media of editMedia.values()){if(media?.tagName==='AUDIO')media.pause();}editMedia.clear();videoDurations.clear();videoDurationJobs.clear();
+  editHistory=createEditHistory();state.editTime=0;state.editPlaying=false;for(const media of editMedia.values()){if(media?.tagName==='AUDIO')media.pause();}editMedia.clear();videoDurations.clear();videoDurationJobs.clear();
   runtime.clear();releaseMediaURLs();await initMediaLibrary();sync();panel();
   status('Projet chargé : calques reliés aux médias IndexedDB existants ('+(data.embeddedAssets?.length||0)+' intégrés)');
  }catch(e){status('Échec import : '+e.message);}
