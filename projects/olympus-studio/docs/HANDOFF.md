@@ -237,3 +237,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Dans le même run, la fixture Chromium synthétique séparée était **verte** : VP8 + Opus, audio décodé -19,5 dB, décalage début -0,021 s / fin -0,069 s; ce résultat ne valide PAS encore le bouton EDIT.
 - **À reprendre impérativement** : lire la CI au commit `7dbcb782` ou ultérieur; si rouge inspecter le job et corriger. Puis vérifier l'export EDIT A/V avec FFprobe et FFmpeg, avant de passer à la persistance IndexedDB des clips + piste audio.
 - Blocages : Windows/GTX/OBS/ComfyUI réels non accessibles. Estimation restante A03 : S à M selon nouveaux échecs; A02 audio E2E : M.
+
+
+## Checkpoint 13/11/2026 14h — CI rouge A03, sélecteur audio natif
+
+- CI du commit `be01a01b` : [run 43421595781](https://github.com/Sathancabrol/monorepo/actions/runs/43421595781) **failure** au step `Chromium EDIT export E2E`. Les étapes Node, HTTP/IndexedDB et fixture A/V synthétique réussissent.
+- Logs précis : l'option `<option>synthetic-440hz.wav</option>` existe (65 résolutions), mais Playwright `wait_for()` attend par défaut l'état `visible`; les options d'un `<select>` natif sont cachées pour Playwright. Ce n'est pas une preuve de défaut d'import audio.
+- Correctif test `66c72186824a98c4cc33668f885481e757f44c68` : `wait_for(state="attached")` puis sélection explicite par label avant `Ajouter / remplacer piste`. Aucun code applicatif touché.
+- **À vérifier** : CI au dernier commit de cette branche; si rouge, lire les logs du job EDIT et corriger. Le vrai export EDIT WebM/Opus n'est pas encore validé. A01/A03 restent READY. Puis E2E reprise IndexedDB clips + piste audio (M), ensuite A04 undo/redo (M).
+- Aucun test Windows/GTX ni écoute humaine; aucun merge main, secret ou projet voisin modifié.
