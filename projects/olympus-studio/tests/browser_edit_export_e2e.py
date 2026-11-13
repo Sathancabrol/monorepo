@@ -63,9 +63,28 @@ def inspect_export(path):
     import re
     match = re.search(r"mean_volume:\s*(-?[\d.]+) dB", result.stderr)
     assert match and -60 < float(match.group(1)) < -2, result.stderr[-1200:]
+    # Verify the actual exported signal, not merely a non-silent Opus track.
+    # A 440 Hz synthetic WAV is imported through EDIT; unexpected routing
+    # (e.g. system audio or silence) must fail the E2E assertion.
+    import array
+    pcm = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", str(path), "-map", "0:a:0",
+         "-ac", "1", "-ar", "8000", "-f", "s16le", "-"],
+        capture_output=True, check=True, timeout=30,
+    ).stdout
+    samples = array.array("h")
+    samples.frombytes(pcm)
+    assert len(samples) > 8000, ("Audio decoded too short", len(samples))
+    # Count positive-going zero crossings in the central 0.5 s, away from
+    # encoder priming and fade edges. At 8 kHz, 440 Hz yields ~220 crossings.
+    middle = len(samples) // 2
+    window = samples[middle-2000:middle+2000]
+    crossings = sum(a <= 0 < b for a, b in zip(window, window[1:]))
+    frequency_hz = crossings * 2  # 0.5 second window
+    assert 400 <= frequency_hz <= 480, ("Wrong exported audio frequency", frequency_hz)
     return {"video": video[0]["codec_name"], "audio": audio[0]["codec_name"],
             "start_offset_s": round(vs-aus, 3), "end_offset_s": round(ve-aue, 3),
-            "mean_db": float(match.group(1)), "bytes": path.stat().st_size}
+            "mean_db": float(match.group(1)), "tone_hz": frequency_hz, "bytes": path.stat().st_size}
 
 
 def main():
