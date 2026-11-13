@@ -59,6 +59,42 @@ def main():
                 context = browser.new_context()
                 page = context.new_page()
                 page.goto(f"http://127.0.0.1:{port}/", wait_until="load")
+                # Real UI path: import a tiny PNG through the file picker, then
+                # verify the persisted record after a full browser reload.
+                # This complements direct store API checks below.
+                import base64
+                png = base64.b64decode(
+                    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ"
+                    "AAAADUlEQVQIHWP4z8DwHwAFgAI/ScL/nwAAAABJRU5ErkJggg=="
+                )
+                page.locator("#fileMedia").set_input_files({
+                    "name": "olympus-ui-fixture.png",
+                    "mimeType": "image/png",
+                    "buffer": png,
+                })
+                page.get_by_text("olympus-ui-fixture.png", exact=True).first.wait_for(timeout=10000)
+                ui_asset = page.evaluate("""async () => {
+                  const store = await import('/src/media-store.js');
+                  const db = await store.openMediaDB();
+                  try {
+                    const assets = await store.listMedia(db);
+                    const item = assets.find(x=>x.name==='olympus-ui-fixture.png');
+                    if (!item) throw Error('UI import absent from IndexedDB');
+                    return {id:item.id,size:item.blob.size};
+                  } finally { db.close(); }
+                }""")
+                assert ui_asset["size"] == len(png)
+                page.reload(wait_until="load")
+                ui_check = page.evaluate("""async ({id,size}) => {
+                  const store = await import('/src/media-store.js');
+                  const db = await store.openMediaDB();
+                  try {
+                    const item = await store.getMedia(db,id);
+                    if (!item || item.blob.size!==size) throw Error('UI asset lost after reload');
+                    return true;
+                  } finally { await store.deleteMedia(db,id); db.close(); }
+                }""", ui_asset)
+                assert ui_check, "Le média importé via l'interface ne survit pas au rechargement"
                 result = page.evaluate("""async () => {
                   const store = await import('/src/media-store.js');
                   const storyboard = await import('/src/storyboard.js');
