@@ -386,9 +386,18 @@ function panel(){
    const duration=document.createElement('input');duration.type='number';duration.min='0.1';duration.max='3600';duration.step='0.1';duration.style.width='75px';
    duration.title='Durée en secondes';duration.value=String(clipDuration(clip));
    duration.onchange=()=>{
-    const n=Number(duration.value);if(!Number.isFinite(n)||n<.1||n>3600)return;
-    clip.duration=n;if(clip.kind==='video')clip.outPoint=(Number(clip.inPoint)||0)+n;
-    state.editPlaying=false;panel();
+    if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
+    const n=Number(duration.value);
+    if(!Number.isFinite(n)||n<.1||n>3600){status('Durée invalide (0,1 à 3600 s)');panel();return;}
+    try{
+     if(clip.kind==='video'){
+      const start=Number(clip.inPoint)||0;
+      state.clips[index]=trimWithinVideoDuration(clip,start,start+n,knownVideoDuration(clip.assetId));
+     }else state.clips[index]={...clip,duration:n};
+     state.editPlaying=false;state.editLast=0;
+     state.editTime=Math.min(state.editTime,Math.max(0,storyboardDuration(state.clips)-0.001));
+     panel();sync();status('Durée du clip mise à jour');
+    }catch(error){status('Durée refusée : '+error.message);panel();}
    };
    if(clip.kind==='video'){
     const inputTime=(caption,value,callback)=>{
