@@ -184,6 +184,11 @@ def main():
                         page.locator("#status").get_by_text("Export vidéo + piste audio en cours", exact=False).wait_for(timeout=10000)
                         page.get_by_role("button", name="+ Clip").click()
                         page.locator("#status").get_by_text("Arrêter export EDIT avant ajout de clip", exact=False).wait_for(timeout=5000)
+                        # The existing audio track must also be immutable while recording.
+                        # This exercises the real UI guard; a deferred-load race needs
+                        # a separate deterministic interception test.
+                        page.get_by_role("button", name="Ajouter / remplacer piste").click()
+                        page.locator("#status").get_by_text("Arrêter export EDIT avant modification de la piste", exact=False).wait_for(timeout=5000)
                     download = download_info.value
                     assert download.suggested_filename.endswith(".webm")
                     output = Path(temp) / "studio-edit-export.webm"
