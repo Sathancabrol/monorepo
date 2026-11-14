@@ -346,3 +346,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Livré : `src/edit-interchange.js` ajoute `validateEditInterchange` pour contrôler schéma/version, types, IDs uniques, segments contigus, durée totale, nombres finis et limite 24 h avant usage par un futur adaptateur. Retourne une copie limitée aux champs contractuels. Commit `7231f71f`.
 - Tests ajoutés : round-trip et champs inconnus ignorés, rejets de trous/chevauchements, doublons, durée incohérente et Infinity. Commit `e54e792e`. **Nouvelle CI non encore confirmée** ; pas d'exécution locale Node/Windows attestée dans cette session.
 - Reprise exacte (S) : contrôler CI du commit `e54e792e` ou tête suivante, réparer tout échec avant nouvelles fonctions. Puis (M) fixture déterministe de chargement audio différé pendant export ; ensuite (M–L) poursuivre l'ADR A05 avec API/format et mesure reproductible. Pas de fusion main, ni modification hors Studio. Windows/GTX/OBS réels restent bloqués.
+
+
+## Checkpoint 14/11/2026 05 h — cohérence des manifestes A05
+
+- Synchronisation : backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, tickets et workflow dédié consultés. CI du checkpoint précédent `e6b02dc3` : [run 43549460194](https://github.com/Sathancabrol/monorepo/actions/runs/43549460194) **success** (Linux, non Windows).
+- Défaut corrigé : `toEditInterchange` pouvait produire un manifeste de plus de 24 h que `validateEditInterchange` refusait ensuite; la génération passe désormais par la validation commune. Le validateur refuse aussi `sourceIn` non nul sur une image fixe, propriété réservée aux clips vidéo.
+- Code commit `11b2ead260c0569c98b7d1714290a352351dffda`; tests de limites 24 h et offset image commit `8729a1f82dc58f309f6d29991caef38f4987fed7`. **CI de ces commits à confirmer**; aucun test Node local attesté.
+- Reprise exacte : contrôler le run CI du dernier SHA (S), corriger si rouge; ensuite fixture déterministe de chargement audio différé pendant export (M), puis approfondir le benchmark API/format FreeCut/OpenReelio (M–L). Aucun test Windows, OBS, GTX, écoute humaine; aucun merge main.
