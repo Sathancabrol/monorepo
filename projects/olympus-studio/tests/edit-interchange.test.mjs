@@ -53,8 +53,14 @@ test('Interchange validation rejects gaps, overlaps, duplicates and nonfinite nu
 
 
 test('Generated interchange enforces the same 24-hour bound as imported manifests', () => {
-  assert.throws(() => toEditInterchange([{id:'long',assetId:'still',kind:'image',duration:86401}]), /limit/);
-  const valid = toEditInterchange([{id:'edge',assetId:'still',kind:'image',duration:86400}]);
+  // storyboard.clipDuration caps each individual clip at 10 hours.
+  // Exercise the 24-hour manifest limit with multiple valid clips.
+  const clips = [36000, 36000, 14401].map((duration, index) => ({
+    id: 'part-' + index, assetId: 'still', kind: 'image', duration,
+  }));
+  assert.throws(() => toEditInterchange(clips), /limit/);
+  const valid = toEditInterchange(clips.map((clip, index) =>
+    index === 2 ? {...clip, duration: 14400} : clip));
   assert.deepEqual(validateEditInterchange(valid),valid);
 });
 
