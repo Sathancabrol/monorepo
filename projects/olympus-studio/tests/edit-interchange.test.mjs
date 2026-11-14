@@ -115,3 +115,12 @@ test('Imported segments obey the same ten-hour per-clip bound as the storyboard'
   video.duration = 36001;
   assert.throws(() => validateEditInterchange(video), /segment/);
 });
+
+
+test('Imported interchange rejects array-shaped segments even with valid named fields', () => {
+  const valid = toEditInterchange([{id:'still',assetId:'photo',kind:'image',duration:2}]);
+  const invalid = structuredClone(valid);
+  invalid.segments[0] = Object.assign([], invalid.segments[0]);
+  assert.throws(() => validateEditInterchange(invalid), /segment/);
+  assert.deepEqual(validateEditInterchange(valid), valid);
+});
