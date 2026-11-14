@@ -55,7 +55,7 @@ export function validateEditInterchange(manifest) {
   let cursor = 0;
   const ids = new Set();
   const segments = manifest.segments.map(segment => {
-    if (!segment || typeof segment !== 'object' ||
+    if (!segment || typeof segment !== 'object' || Array.isArray(segment) ||
         !['image', 'video'].includes(segment.kind) ||
         typeof segment.clipId !== 'string' || !segment.clipId.trim() || segment.clipId.length > 256 ||
         typeof segment.assetId !== 'string' || !segment.assetId.trim() || segment.assetId.length > 256 ||
