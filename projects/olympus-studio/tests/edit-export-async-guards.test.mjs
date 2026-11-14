@@ -26,3 +26,22 @@ test('async video clip creation rechecks export state after metadata loading', (
   const mutation = body.indexOf('state.clips.push');
   assert.ok(awaited >= 0 && guard > awaited && mutation > guard);
 });
+
+test('all EDIT recording mutation guards also cover asynchronous preparation', () => {
+  const recordingGuard = "if(editorRecorder?.state==='recording')";
+  assert.equal(source.includes(recordingGuard), false, 'unguarded recording-only mutation remains');
+  const combined = "if(editorExportPreparing||editorRecorder?.state==='recording')";
+  assert.ok(source.split(combined).length - 1 >= 10, 'expected EDIT mutation guards');
+});
+test('async asset assignment checks preparation lock after await', () => {
+  for (const [start, end, mutation] of [
+    ['assign.onclick=async()=>{', 'audioPanel.append(audioSelect,assign)', 'state.editAudioTrack=validateEditAudioTrack'],
+    ['add.onclick=async()=>{', 'wrap.append(select,add)', 'state.clips.push'],
+  ]) {
+    const body = handler(start, end);
+    const awaitIndex = body.indexOf('await loadEditAsset(asset.id)');
+    const lockIndex = body.indexOf("if(editorExportPreparing||editorRecorder?.state==='recording')", awaitIndex);
+    const mutationIndex = body.indexOf(mutation);
+    assert.ok(awaitIndex >= 0 && lockIndex > awaitIndex && mutationIndex > lockIndex, start);
+  }
+});
