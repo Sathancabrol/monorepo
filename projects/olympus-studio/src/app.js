@@ -215,11 +215,14 @@ function drawEditor(now){
  // after a clip boundary while the separate audio track keeps advancing.
  if(editorRecorder?.state==='recording')editorVideoCaptureTrack?.requestFrame?.();
 }
+let editorExportPreparing=false;
 async function exportEditorWebM(){
  const canvas=$('editPreview'),total=storyboardDuration(state.clips);
  if(!canvas||!total)return status('Aucun clip à exporter');
  if(total>120)return status('Export de démonstration limité à 120 secondes');
- if(editorRecorder?.state==='recording')return status('Un export est déjà en cours');
+ if(editorExportPreparing||editorRecorder?.state==='recording')return status('Un export est déjà en cours');
+ editorExportPreparing=true;
+ const requestedAudio=state.editAudioTrack?{...state.editAudioTrack}:null;
  let stream=null;
  try{
   stream=canvas.captureStream(0);
@@ -230,10 +233,12 @@ async function exportEditorWebM(){
    editorVideoCaptureTrack=null;
   }
   let audioIncluded=false;
-  if(state.editAudioTrack?.enabled){
-   const audio=await loadEditAsset(state.editAudioTrack.assetId);
+  if(requestedAudio?.enabled){
+   const audio=await loadEditAsset(requestedAudio.assetId);
+   if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
    if(!audio||audio.tagName!=='AUDIO')throw new Error('Piste audio manquante : export interrompu');
-   await attachAudioToEditorCapture(stream,audio,state.editAudioTrack.volume);
+   await attachAudioToEditorCapture(stream,audio,requestedAudio.volume);
+   if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
    audioIncluded=true;
   }
   const mime=selectEditorWebMMime(audioIncluded, type=>MediaRecorder.isTypeSupported(type));
@@ -248,6 +253,7 @@ async function exportEditorWebM(){
    dl('olympus-storyboard-'+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
    status(audioIncluded?'WebM exporté avec piste son dédiée (synchronisation à valider sur Windows)':'Storyboard WebM exporté sans audio');
   };
+  if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
   state.editTime=0;state.editLast=0;state.editPlaying=true;
   editorRecorder.start(1000);
   editorVideoCaptureTrack?.requestFrame?.();
@@ -257,6 +263,8 @@ async function exportEditorWebM(){
   editorVideoCaptureTrack=null;
   state.editPlaying=false;
   status('Export storyboard impossible : '+e.message);
+ }finally{
+  editorExportPreparing=false;
  }
 }
 function draw(){
