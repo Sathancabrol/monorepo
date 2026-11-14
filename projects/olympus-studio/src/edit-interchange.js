@@ -61,7 +61,7 @@ export function validateEditInterchange(manifest) {
         typeof segment.assetId !== 'string' || !segment.assetId.trim() || segment.assetId.length > 256 ||
         typeof segment.title !== 'string' || segment.title.length > 4096 ||
         !finite(segment.timelineStart) || !finite(segment.duration) ||
-        !finite(segment.sourceIn) || segment.sourceIn < 0 ||
+        !finite(segment.sourceIn) || segment.sourceIn < 0 || segment.sourceIn > 86400 ||
         (segment.kind === 'video' && !Number.isFinite(segment.sourceIn + segment.duration)) ||
         (segment.kind === 'image' && segment.sourceIn !== 0) ||
         segment.duration <= 0 || segment.duration > 36000 ||
