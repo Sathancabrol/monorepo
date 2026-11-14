@@ -90,3 +90,26 @@ export function validateEditInterchange(manifest) {
     soundtrack: manifest.soundtrack == null ? null : validateEditAudioTrack(manifest.soundtrack),
   };
 }
+
+
+/**
+ * Reconstruct editable storyboard metadata from a validated interchange manifest.
+ * Media bytes remain in the local asset store; this function never opens paths.
+ * The returned objects are detached from the untrusted input.
+ */
+export function fromEditInterchange(manifest) {
+  const safe = validateEditInterchange(manifest);
+  const clips = safe.segments.map(segment => ({
+    id: segment.clipId,
+    assetId: segment.assetId,
+    kind: segment.kind,
+    title: segment.title,
+    duration: segment.duration,
+    inPoint: segment.kind === 'video' ? segment.sourceIn : 0,
+    outPoint: segment.kind === 'video' ? segment.sourceIn + segment.duration : 0,
+  }));
+  return {
+    clips,
+    audioTrack: safe.soundtrack,
+  };
+}
