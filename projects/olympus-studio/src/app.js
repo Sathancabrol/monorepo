@@ -34,6 +34,7 @@ function commitEdit(before){editHistory=recordEdit(editHistory,before,editSnapsh
 function travelEdit(direction){if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant annulation');const result=direction==='undo'?undoEdit(editHistory,editSnapshot()):redoEdit(editHistory,editSnapshot());editHistory=result.history;state.clips=result.snapshot.clips;state.editAudioTrack=result.snapshot.audioTrack;state.editTime=Math.min(state.editTime,storyboardDuration(state.clips));state.editPlaying=false;state.editLast=0;syncEditorAudio();panel();sync();status(direction==='undo'?'Montage annulé':'Montage rétabli');}
 const editMedia = new Map();const editAudioGraph = new WeakMap();const videoDurations = new Map();const videoDurationJobs = new Map();
 let editorRecorder=null;
+let editorVideoCaptureTrack=null;
 function knownVideoDuration(assetId){return videoDurations.get(assetId)??null;}
 function updateVideoDurationHint(assetId, duration){
  for(const element of document.querySelectorAll('[data-video-asset]')){
@@ -209,6 +210,10 @@ function drawEditor(now){
  const clock=$('editClock');if(clock)clock.textContent=editClock(state.editTime)+' / '+editClock(total);
  const play=$('editPlay');if(play)play.textContent=state.editPlaying?'Pause':'Lecture';
  syncEditorAudio();
+ // Request a fresh encoded frame after every completed storyboard draw. In
+ // headless Chromium, automatic canvas capture can stop producing video frames
+ // after a clip boundary while the separate audio track keeps advancing.
+ if(editorRecorder?.state==='recording')editorVideoCaptureTrack?.requestFrame?.();
 }
 async function exportEditorWebM(){
  const canvas=$('editPreview'),total=storyboardDuration(state.clips);
@@ -217,7 +222,13 @@ async function exportEditorWebM(){
  if(editorRecorder?.state==='recording')return status('Un export est déjà en cours');
  let stream=null;
  try{
-  stream=canvas.captureStream(24);
+  stream=canvas.captureStream(0);
+  editorVideoCaptureTrack=stream.getVideoTracks()[0];
+  if(typeof editorVideoCaptureTrack?.requestFrame!=='function'){
+   stream.getTracks().forEach(track=>track.stop());
+   stream=canvas.captureStream(24);
+   editorVideoCaptureTrack=null;
+  }
   let audioIncluded=false;
   if(state.editAudioTrack?.enabled){
    const audio=await loadEditAsset(state.editAudioTrack.assetId);
@@ -231,7 +242,7 @@ async function exportEditorWebM(){
   editorRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
   const captureStream=stream;
   editorRecorder.onstop=()=>{
-   captureStream.getTracks().forEach(t=>t.stop());state.editPlaying=false;
+   captureStream.getTracks().forEach(t=>t.stop());editorVideoCaptureTrack=null;state.editPlaying=false;
    const audio=state.editAudioTrack&&editMedia.get(state.editAudioTrack.assetId);
    if(audio?.tagName==='AUDIO')audio.pause();
    dl('olympus-storyboard-'+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
@@ -239,9 +250,11 @@ async function exportEditorWebM(){
   };
   state.editTime=0;state.editLast=0;state.editPlaying=true;
   editorRecorder.start(1000);
+  editorVideoCaptureTrack?.requestFrame?.();
   status(audioIncluded?'Export vidéo + piste audio en cours — conserver EDIT visible':'Export storyboard vidéo seule en cours');
  }catch(e){
   stream?.getTracks().forEach(t=>t.stop());
+  editorVideoCaptureTrack=null;
   state.editPlaying=false;
   status('Export storyboard impossible : '+e.message);
  }
