@@ -50,3 +50,17 @@ test('Interchange validation rejects gaps, overlaps, duplicates and nonfinite nu
   assert.throws(()=>validateEditInterchange({...original,duration:6}),/total duration/);
   assert.throws(()=>validateEditInterchange({...original,schema:'unknown'}),/schema/);
 });
+
+
+test('Generated interchange enforces the same 24-hour bound as imported manifests', () => {
+  assert.throws(() => toEditInterchange([{id:'long',assetId:'still',kind:'image',duration:86401}]), /limit/);
+  const valid = toEditInterchange([{id:'edge',assetId:'still',kind:'image',duration:86400}]);
+  assert.deepEqual(validateEditInterchange(valid),valid);
+});
+
+test('Imported image segments cannot specify a video-only source offset', () => {
+  const valid = toEditInterchange([{id:'still',assetId:'photo',kind:'image',duration:2}]);
+  const invalid = structuredClone(valid);
+  invalid.segments[0].sourceIn = 10;
+  assert.throws(() => validateEditInterchange(invalid), /segment/);
+});
