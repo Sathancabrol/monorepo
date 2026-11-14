@@ -45,3 +45,12 @@ test('async asset assignment checks preparation lock after await', () => {
     assert.ok(awaitIndex >= 0 && lockIndex > awaitIndex && mutationIndex > lockIndex, start);
   }
 });
+
+
+test('leaving EDIT during async preparation cannot dereference a missing recorder', () => {
+  const body = handler('function setSpace(key){', 'function renderTimeline()');
+  const guard = body.indexOf("state.space==='EDIT'&&editorExportPreparing");
+  const stop = body.indexOf('editorRecorder.stop()');
+  assert.ok(guard >= 0 && stop > guard, 'navigation must be blocked before stopping an uninitialized recorder');
+  assert.match(body.slice(guard, stop), /return status\(/, 'guard must exit before recorder access');
+});
