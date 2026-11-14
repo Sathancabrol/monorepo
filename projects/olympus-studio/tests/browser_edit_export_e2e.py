@@ -203,6 +203,14 @@ def main():
                     locked = json.loads(locked_path.read_text(encoding="utf-8"))
                     assert locked["clips"] == restored["clips"], "Export-time clip insertion mutated the project"
                     assert locked["editAudioTrack"] == restored["editAudioTrack"]
+                    # Export lock is temporary: editing must resume once recording stops.
+                    page.get_by_role("button", name="Ajouter / remplacer piste").click()
+                    page.locator("#status").get_by_text("Piste audio EDIT ajoutée", exact=False).wait_for(timeout=10000)
+                    after_unlock = portable_snapshot("post-export-audio-edit.json")
+                    assert after_unlock["editAudioTrack"] is not None
+                    assert after_unlock["editAudioTrack"]["assetId"] == restored["editAudioTrack"]["assetId"]
+                    assert after_unlock["clips"] == restored["clips"]
+
                     # A02: split two segments of one real video source through EDIT,
                     # then round-trip Portable and verify deduplicated media.
                     video_path = Path(temp) / "synthetic-video.webm"
