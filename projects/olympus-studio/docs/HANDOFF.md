@@ -376,3 +376,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Correctif `f888b7b9` : le validateur de manifestes d'échange rejette désormais les identifiants de clip/asset dépassant 256 caractères et les titres dépassant 4096 caractères. Réduit le risque de charge mémoire incontrôlée avec des métadonnées importées; ne résout jamais les identifiants comme chemins.
 - Tests `606d95ed` : cas invalides pour les trois champs, génération refusée et manifeste valide conservé. **CI du nouveau code à confirmer**, aucun test local Windows.
 - Reprise exacte : contrôler CI du dernier SHA, réparer tout échec en priorité (S). Ensuite test Chromium déterministe de résolution audio différée pendant export (M, 1–2 tranches), puis analyse concrète API/format FreeCut/OpenReelio (M–L). Blocages matériels OBS/GTX/Windows inchangés. PR #16 reste brouillon, aucune modification main ou projets voisins.
+
+
+## Reprise 2026-11-14 09:00 — normalisation des temps A05
+- Relecture du backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17 et workflow dédié. CI précédente au SHA `e1c2c287` : [run 43569388832](https://github.com/Sathancabrol/monorepo/actions/runs/43569388832) **success** (Linux/Chromium).
+- Défaut A05 : `validateEditInterchange` acceptait une variation inférieure à 1 ms entre segments mais retransmettait cette variation à un adaptateur, pouvant produire une micro-discontinuité. Le validateur conserve la tolérance d'import puis canonicalise `timelineStart` sur le cumul exact des durées.
+- Correctif `c0cf4154`; test `45f31bf0` : arrondi de 0,5 ms normalisé, entrée source non mutée, écart de 2 ms rejeté. **CI de ces nouveaux commits à confirmer**, aucune exécution Node locale ou Windows attestée.
+- Reprise exacte (S) : contrôler CI du dernier SHA, réparer tout échec. Ensuite (M) test Chromium déterministe d'un chargement audio différé pendant export; puis (M–L) audit concret FreeCut/OpenReelio. Blocages Windows/GTX/OBS inchangés; pas de merge main ni changement hors Studio.
