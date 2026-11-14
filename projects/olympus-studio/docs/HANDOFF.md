@@ -324,3 +324,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Tests de non-régression Node des gardes asynchrones audio et clip : `tests/edit-export-async-guards.test.mjs`, commits `29515508` et `9ec51163`. Test structurel de position des gardes, **pas** simulation d'une vraie course navigateur.
 - CI du nouveau code : **à vérifier**, ne pas déclarer ce correctif validé avant run vert. Blocages : OBS/Windows/GTX et test d'interleaving réel indisponibles ici.
 - Prochain sous-objectif **S–M (1 à 2 tranches)** : contrôler CI au dernier SHA; si verte, ajouter un scénario Chromium d'export en cours pendant résolution différée de l'audio, puis A05 ADR FreeCut/OpenReelio (M). Rester sur branche dédiée, aucun merge.
+
+## Checkpoint 14/11/2026 02 h — verrouillage audio pendant export EDIT
+
+- CI du checkpoint précédent `d7056ef9` : [run 43531642820](https://github.com/Sathancabrol/monorepo/actions/runs/43531642820) **success**, valide les tests structurels de gardes asynchrones sous Linux, pas une course réelle ni Windows.
+- Nouveau test E2E Chromium [bff96a7b](https://github.com/Sathancabrol/monorepo/commit/bff96a7b614965b054e13a6b23ade36d538a993f) : pendant l'export WebM/Opus réel, cliquer « Ajouter / remplacer piste », vérifier le refus explicite puis conserver l'assertion Portable clips/piste inchangés. Il couvre la garde immédiate UI, **pas** une résolution différée de `loadEditAsset`.
+- **CI du nouveau test : non confirmée**. Aucun test Windows/GTX/OBS réel, aucune écoute humaine. Pas de merge main ni modification hors Studio.
+- **Prochain sous-objectif S** : consulter le run du commit bff96a7b ou de cette tête; si rouge, diagnostiquer le step Chromium. **Puis M** : fixture déterministe avec chargement audio différé et démarrage de l'export entre invocation et résolution; contrôler que l'audio n'est pas remplacé. **Puis A05/M** : ADR FreeCut/OpenReelio avec licences et formats vérifiés.
