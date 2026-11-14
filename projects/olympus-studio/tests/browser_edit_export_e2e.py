@@ -178,6 +178,48 @@ def main():
                     page.locator('[aria-label="Audio Départ projet (s)"]').wait_for()
                     assert not errors, "JS errors after Portable reload: " + " | ".join(errors)
                     assert not errors, "JS errors before export: " + " | ".join(errors)
+                    # Deterministic preparation race: defer WebAudio resume after
+                    # IndexedDB media loading, before MediaRecorder is constructed.
+                    # No sleeps: a browser Promise gate marks the exact await.
+                    page.evaluate("""() => {
+                      window.__editResumeGate = {};
+                      const original = AudioContext.prototype.resume;
+                      AudioContext.prototype.resume = function() {
+                        const ctx = this;
+                        return new Promise((resolve, reject) => {
+                          window.__editResumeGate.release = () => {
+                            AudioContext.prototype.resume = original;
+                            original.call(ctx).then(resolve, reject);
+                          };
+                          window.__editResumeGate.waiting = true;
+                        });
+                      };
+                    }""")
+                    page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
+                    page.wait_for_function("window.__editResumeGate?.waiting === true", timeout=10000)
+                    page.get_by_role("button", name="+ Clip").click()
+                    page.locator("#status").get_by_text("Arrêter export EDIT avant ajout de clip", exact=False).wait_for()
+                    page.get_by_role("button", name="Ajouter / remplacer piste").click()
+                    page.locator("#status").get_by_text("Arrêter export EDIT avant modification de la piste", exact=False).wait_for()
+                    page.locator('[data-space="LIVE"]').first.click()
+                    page.locator("#status").get_by_text("Préparation export EDIT en cours", exact=False).wait_for()
+                    assert page.locator('[data-space="EDIT"]').first.get_attribute("class") is not None
+                    # Releasing the gate must allow the original export to finish,
+                    # with unchanged timeline and audible Opus output.
+                    with page.expect_download(timeout=25000) as delayed_info:
+                        page.evaluate("window.__editResumeGate.release()")
+                    delayed_path = Path(temp) / "delayed-preparation.webm"
+                    delayed_info.value.save_as(delayed_path)
+                    print("EDIT delayed WebAudio preparation:", inspect_export(delayed_path))
+                    assert not errors, "JS errors during delayed preparation: " + " | ".join(errors)
+                    with page.expect_download(timeout=15000) as gate_snapshot:
+                        page.locator("#btnPortable").click()
+                    gate_path = Path(temp) / "after-delayed-preparation.json"
+                    gate_snapshot.value.save_as(gate_path)
+                    gate_project = json.loads(gate_path.read_text(encoding="utf-8"))
+                    assert gate_project["clips"] == restored["clips"]
+                    assert gate_project["editAudioTrack"] == restored["editAudioTrack"]
+
                     with page.expect_download(timeout=25000) as download_info:
                         page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
                         # A04: adding a clip while MediaRecorder is active must not mutate the timeline.
