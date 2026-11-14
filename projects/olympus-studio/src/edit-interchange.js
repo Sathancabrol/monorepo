@@ -63,7 +63,7 @@ export function validateEditInterchange(manifest) {
         !finite(segment.timelineStart) || !finite(segment.duration) ||
         !finite(segment.sourceIn) || segment.sourceIn < 0 ||
         (segment.kind === 'image' && segment.sourceIn !== 0) ||
-        segment.duration <= 0 || segment.duration > 86400 ||
+        segment.duration <= 0 || segment.duration > 36000 ||
         Math.abs(segment.timelineStart - cursor) > 0.001 ||
         ids.has(segment.clipId)) {
       throw new Error('Invalid interchange segment');
