@@ -57,9 +57,9 @@ export function validateEditInterchange(manifest) {
   const segments = manifest.segments.map(segment => {
     if (!segment || typeof segment !== 'object' ||
         !['image', 'video'].includes(segment.kind) ||
-        typeof segment.clipId !== 'string' || !segment.clipId.trim() ||
-        typeof segment.assetId !== 'string' || !segment.assetId.trim() ||
-        typeof segment.title !== 'string' ||
+        typeof segment.clipId !== 'string' || !segment.clipId.trim() || segment.clipId.length > 256 ||
+        typeof segment.assetId !== 'string' || !segment.assetId.trim() || segment.assetId.length > 256 ||
+        typeof segment.title !== 'string' || segment.title.length > 4096 ||
         !finite(segment.timelineStart) || !finite(segment.duration) ||
         !finite(segment.sourceIn) || segment.sourceIn < 0 ||
         (segment.kind === 'image' && segment.sourceIn !== 0) ||
