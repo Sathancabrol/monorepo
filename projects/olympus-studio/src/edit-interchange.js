@@ -31,13 +31,13 @@ export function toEditInterchange(clips, audioTrack = null) {
   if (new Set(segments.map(s => s.clipId)).size !== segments.length) {
     throw new Error('Duplicate interchange clip IDs');
   }
-  return {
+  return validateEditInterchange({
     schema: 'olympus.edit.interchange.v1',
     timeUnit: 'seconds',
     duration: cursor,
     segments,
     soundtrack: audioTrack ? validateEditAudioTrack(audioTrack) : null,
-  };
+  });
 }
 
 /**
@@ -62,6 +62,7 @@ export function validateEditInterchange(manifest) {
         typeof segment.title !== 'string' ||
         !finite(segment.timelineStart) || !finite(segment.duration) ||
         !finite(segment.sourceIn) || segment.sourceIn < 0 ||
+        (segment.kind === 'image' && segment.sourceIn !== 0) ||
         segment.duration <= 0 || segment.duration > 86400 ||
         Math.abs(segment.timelineStart - cursor) > 0.001 ||
         ids.has(segment.clipId)) {
