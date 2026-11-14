@@ -31,7 +31,7 @@ const dbReady = openMediaDB().catch(() => null);
 let editHistory=createEditHistory();
 function editSnapshot(){return snapshotEdit(state.clips,state.editAudioTrack);}
 function commitEdit(before){editHistory=recordEdit(editHistory,before,editSnapshot());}
-function travelEdit(direction){if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant annulation');const result=direction==='undo'?undoEdit(editHistory,editSnapshot()):redoEdit(editHistory,editSnapshot());editHistory=result.history;state.clips=result.snapshot.clips;state.editAudioTrack=result.snapshot.audioTrack;state.editTime=Math.min(state.editTime,storyboardDuration(state.clips));state.editPlaying=false;state.editLast=0;syncEditorAudio();panel();sync();status(direction==='undo'?'Montage annulé':'Montage rétabli');}
+function travelEdit(direction){if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant annulation');const result=direction==='undo'?undoEdit(editHistory,editSnapshot()):redoEdit(editHistory,editSnapshot());editHistory=result.history;state.clips=result.snapshot.clips;state.editAudioTrack=result.snapshot.audioTrack;state.editTime=Math.min(state.editTime,storyboardDuration(state.clips));state.editPlaying=false;state.editLast=0;syncEditorAudio();panel();sync();status(direction==='undo'?'Montage annulé':'Montage rétabli');}
 const editMedia = new Map();const editAudioGraph = new WeakMap();const videoDurations = new Map();const videoDurationJobs = new Map();
 let editorRecorder=null;
 let editorVideoCaptureTrack=null;
@@ -67,7 +67,7 @@ const selected=()=>scene().layers.find(l=>l.id===state.selected);
 function status(t){$('status').textContent=t;}
 function dl(name,blob){const a=document.createElement('a');const u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),10000);}
 function addLayer(layer){layer.id=newId();layer.visible=true;scene().layers.push(layer);state.selected=layer.id;sync();return layer;}
-function setSpace(key){if(key!=='EDIT'){state.editPlaying=false;for(const [id,media] of editMedia){if(media?.tagName==='AUDIO')media.pause();}if(editorRecorder?.state==='recording'){editorRecorder.stop();status('Export storyboard interrompu par changement d’espace');}}state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
+function setSpace(key){if(key!=='EDIT'){state.editPlaying=false;for(const [id,media] of editMedia){if(media?.tagName==='AUDIO')media.pause();}if(editorExportPreparing||editorRecorder?.state==='recording'){editorRecorder.stop();status('Export storyboard interrompu par changement d’espace');}}state.space=key;const item=spaces.find(s=>s[0]===key);$('spaceTitle').textContent=item[0];$('spaceDesc').textContent=item[2];document.querySelectorAll('[data-space]').forEach(b=>b.classList.toggle('active',b.dataset.space===key));panel();sync();}
 function makeNav(){const root=$('navItems');spaces.forEach(([key,icon,label])=>{const b=document.createElement('button');b.dataset.space=key;b.innerHTML='<b aria-hidden="true">'+esc(icon)+'</b><span>'+key+'</span>';b.title=label;b.onclick=()=>setSpace(key);root.append(b);});}
 function sync(){
  $('stageLabel').textContent=scene().name+' · 1280 × 720';
@@ -186,7 +186,7 @@ function drawEditor(now){
  const context=canvas.getContext('2d'), total=storyboardDuration(state.clips);
  if(state.editPlaying && state.editLast)state.editTime+=(now-state.editLast)/1000;
  state.editLast=now;
- if(total>0&&state.editTime>=total){state.editTime=total;state.editPlaying=false;if(editorRecorder?.state==='recording')editorRecorder.stop();}
+ if(total>0&&state.editTime>=total){state.editTime=total;state.editPlaying=false;if(editorExportPreparing||editorRecorder?.state==='recording')editorRecorder.stop();}
  context.fillStyle='#081421';context.fillRect(0,0,canvas.width,canvas.height);
  const found=locateClip(state.clips,Math.min(state.editTime,Math.max(0,total-0.0001)));
  if(found){
@@ -213,7 +213,7 @@ function drawEditor(now){
  // Request a fresh encoded frame after every completed storyboard draw. In
  // headless Chromium, automatic canvas capture can stop producing video frames
  // after a clip boundary while the separate audio track keeps advancing.
- if(editorRecorder?.state==='recording')editorVideoCaptureTrack?.requestFrame?.();
+ if(editorExportPreparing||editorRecorder?.state==='recording')editorVideoCaptureTrack?.requestFrame?.();
 }
 let editorExportPreparing=false;
 async function exportEditorWebM(){
@@ -453,7 +453,7 @@ function panel(){
   const cutButton=document.createElement('button');cutButton.textContent='Diviser au curseur';
   cutButton.title='Scinder une vidéo en deux segments à la position courante de la timeline';
   cutButton.onclick=()=>{
-   if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
+   if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
    try{
     const before=editSnapshot();state.clips=splitStoryboardAt(state.clips,state.editTime,newId());commitEdit(before);
     state.editPlaying=false;state.editLast=0;panel();sync();
@@ -468,7 +468,7 @@ function panel(){
   for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
   const add=document.createElement('button');add.textContent='+ Clip';add.disabled=!eligible.length;
   add.onclick=async()=>{
-   if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant ajout de clip');
+   if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant ajout de clip');
    const asset=state.assets.find(a=>a.id===select.value);if(!asset)return;
    const kind=asset.type.startsWith('video/')?'video':'image';
    add.disabled=true;status('Lecture des métadonnées '+asset.name+'…');
@@ -478,7 +478,7 @@ function panel(){
     const measured=kind==='video'?await ensureVideoDuration(asset.id,media):null;
     const duration=kind==='video'?initialClipDuration(measured):5;
     // Metadata loading is async; export might start before it resolves.
-    if(editorRecorder?.state==='recording')return status('Ajout différé : export EDIT en cours');
+    if(editorExportPreparing||editorRecorder?.state==='recording')return status('Ajout différé : export EDIT en cours');
     const before=editSnapshot();state.clips.push(validateClip({id:newId(),assetId:asset.id,name:asset.name,kind,duration,inPoint:0}));commitEdit(before);
     state.editTime=0;state.editPlaying=false;panel();sync();
     status('Clip ajouté : '+duration.toFixed(2)+' s'+(kind==='video'&&measured===null?' · durée source inconnue':''));
@@ -496,12 +496,12 @@ function panel(){
   }
   const assign=document.createElement('button');assign.textContent='Ajouter / remplacer piste';assign.disabled=!audioFiles.length;
   assign.onclick=async()=>{
-   if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification de la piste');
+   if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification de la piste');
    const asset=state.assets.find(a=>a.id===audioSelect.value);if(!asset)return;
    try{
     const media=await loadEditAsset(asset.id);
     // Async loading may finish after export starts: never mutate the active export snapshot.
-    if(editorRecorder?.state==='recording')return status('Ajout piste différé : export EDIT en cours');
+    if(editorExportPreparing||editorRecorder?.state==='recording')return status('Ajout piste différé : export EDIT en cours');
     if(!media||media.tagName!=='AUDIO')throw Error('Média audio indisponible');
     if(state.editAudioTrack){
      const old=editMedia.get(state.editAudioTrack.assetId);
@@ -521,17 +521,17 @@ function panel(){
     control.setAttribute('aria-label','Audio '+label);
     if(field==='volume')control.max='1';
     control.onchange=()=>{
-     if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant réglage audio');
+     if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant réglage audio');
      try{const before=editSnapshot();state.editAudioTrack=validateEditAudioTrack({...state.editAudioTrack,[field]:Number(control.value)});commitEdit(before);panel();status('Réglage audio enregistré');}
      catch(error){status('Réglage audio refusé : '+error.message);panel();}
     };
     item.append(control);settings.append(item);
    }
    const mute=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=track.enabled;
-   cb.onchange=()=>{if(editorRecorder?.state==='recording'){cb.checked=track.enabled;return status('Arrêter export EDIT avant modification');}const before=editSnapshot();state.editAudioTrack={...track,enabled:cb.checked};commitEdit(before);syncEditorAudio();panel();};
+   cb.onchange=()=>{if(editorExportPreparing||editorRecorder?.state==='recording'){cb.checked=track.enabled;return status('Arrêter export EDIT avant modification');}const before=editSnapshot();state.editAudioTrack={...track,enabled:cb.checked};commitEdit(before);syncEditorAudio();panel();};
    mute.append(cb,document.createTextNode(' Activée'));settings.append(mute);
    const remove=document.createElement('button');remove.textContent='Retirer la piste audio';
-   remove.onclick=()=>{if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification');const old=editMedia.get(track.assetId);if(old?.tagName==='AUDIO')old.pause();const before=editSnapshot();state.editAudioTrack=null;commitEdit(before);panel();};
+   remove.onclick=()=>{if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant modification');const old=editMedia.get(track.assetId);if(old?.tagName==='AUDIO')old.pause();const before=editSnapshot();state.editAudioTrack=null;commitEdit(before);panel();};
    settings.append(remove);audioPanel.append(settings);
    loadEditAsset(track.assetId).catch(e=>status('Audio EDIT : '+e.message));
   }else{
@@ -547,7 +547,7 @@ function panel(){
    const duration=document.createElement('input');duration.type='number';duration.min='0.1';duration.max='3600';duration.step='0.1';duration.style.width='75px';
    duration.title='Durée en secondes';duration.value=String(clipDuration(clip));
    duration.onchange=()=>{
-    if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
+    if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
     const n=Number(duration.value);
     if(!Number.isFinite(n)||n<.1||n>3600){status('Durée invalide (0,1 à 3600 s)');panel();return;}
     try{
@@ -565,7 +565,7 @@ function panel(){
      control.onchange=callback;wrapper.append(control);return wrapper;
     };
     const updateTrim=(start,end)=>{
-     if(editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
+     if(editorExportPreparing||editorRecorder?.state==='recording')return status('Arrêter export EDIT avant une modification');
      try{
       const before=editSnapshot();state.clips[index]=trimWithinVideoDuration(clip,start,end,knownVideoDuration(clip.assetId));commitEdit(before);
       state.editPlaying=false;state.editLast=0;
