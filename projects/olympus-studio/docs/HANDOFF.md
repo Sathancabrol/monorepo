@@ -315,3 +315,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Correctif [54917430](https://github.com/Sathancabrol/monorepo/commit/5491743017c903ef723283990ad282380894da8d) : bloque `+ Clip` pendant l'export EDIT, y compris après l'attente asynchrone des métadonnées. Auparavant ce chemin de mutation n'était pas protégé, contrairement aux autres contrôles.
 - Test E2E [614caa7e](https://github.com/Sathancabrol/monorepo/commit/614caa7e12f6089f87bca81b253ae392139b3360) : clique `+ Clip` pendant l'export WebM/Opus, vérifie le refus et compare les clips et la piste audio dans l'export Portable suivant. **Nouvelle CI non encore confirmée**; pas de test Windows.
 - Reprise exacte : inspecter le run CI de la tête après checkpoint, corriger si rouge (S); puis vérifier les autres chemins de mutation asynchrones pendant export (M) et poursuivre A05 ADR FreeCut/OpenReelio (M). Blocages : GTX/OBS/Windows réels. Pas de merge main.
+
+
+## Checkpoint 14/11/2026 01 h — garde asynchrone piste audio EDIT
+
+- Dernier CI avant modification : [43524245622](https://github.com/Sathancabrol/monorepo/actions/runs/43524245622) **success**, SHA `2a43a0211a5d5bc9c48234f98b5151f999c2736d` (Chromium Linux, pas Windows).
+- Correction : le handler « Ajouter / remplacer piste » vérifiait l'export seulement avant `await loadEditAsset`, permettant une mutation après démarrage d'export. Nouvelle vérification après `await` avant la mutation, sans altérer les sources. Commit `9fbcc2e61c4c4c237397859b9f42562266ee5433`.
+- Tests de non-régression Node des gardes asynchrones audio et clip : `tests/edit-export-async-guards.test.mjs`, commits `29515508` et `9ec51163`. Test structurel de position des gardes, **pas** simulation d'une vraie course navigateur.
+- CI du nouveau code : **à vérifier**, ne pas déclarer ce correctif validé avant run vert. Blocages : OBS/Windows/GTX et test d'interleaving réel indisponibles ici.
+- Prochain sous-objectif **S–M (1 à 2 tranches)** : contrôler CI au dernier SHA; si verte, ajouter un scénario Chromium d'export en cours pendant résolution différée de l'audio, puis A05 ADR FreeCut/OpenReelio (M). Rester sur branche dédiée, aucun merge.
