@@ -87,3 +87,18 @@ test('Interchange rejects oversized untrusted identifiers and titles', () => {
   ]), /segment/);
   assert.deepEqual(validateEditInterchange(valid), valid);
 });
+
+test('Interchange normalizes sub-millisecond timeline rounding for downstream adapters', () => {
+  const valid = toEditInterchange([
+    {id:'a',assetId:'asset',kind:'image',duration:1.25},
+    {id:'b',assetId:'asset',kind:'image',duration:2.5},
+  ]);
+  const rounded = structuredClone(valid);
+  rounded.segments[1].timelineStart += 0.0005;
+  const normalized = validateEditInterchange(rounded);
+  assert.equal(normalized.segments[1].timelineStart, 1.25);
+  assert.equal(rounded.segments[1].timelineStart, 1.2505);
+  assert.deepEqual(normalized, valid);
+  rounded.segments[1].timelineStart = 1.252;
+  assert.throws(() => validateEditInterchange(rounded), /segment/);
+});
