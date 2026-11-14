@@ -389,3 +389,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Écart réel : `validateEditInterchange` acceptait un segment importé jusqu'à 86400 s, mais `storyboard.clipDuration` limite chaque clip à 36000 s. Correctif `ad3001ca` : borne importée à 36000 s, limite globale 86400 s inchangée. Test de frontière 36000/36001 pour image et vidéo ajouté par `97827f24`.
 - **Nouvelle CI au SHA de test à confirmer**; aucun test local Node/Windows déclaré. Ne pas fermer A05, A01 ou A03.
 - Reprise exacte : (S) inspecter la CI du dernier SHA, réparer si rouge; (M, 1–2 tranches) test Chromium déterministe de chargement audio asynchrone pendant export; (M–L) audit FreeCut/OpenReelio sur formats et API. Aucun merge main ni changement hors Studio.
+
+
+## Reprise 2026-11-14 11:00 — robustesse manifeste A05
+- Documents de reprise et workflow dédié consultés. Dernière CI confirmée dans checkpoint antérieur : run 43574091154 (success Linux/Chromium sur d1b7127e). Statut CI des nouveaux commits non vérifié : inconnu.
+- Correctif A05 : rejet des segments de manifeste ayant une forme de tableau JavaScript, même avec propriétés nommées. Commit d4beaa3a ; test de régression 1227be92. Aucun test Node, Chromium ou Windows exécuté ici.
+- Prochaine reprise : S vérifier CI au dernier SHA et réparer si rouge ; M test Chromium déterministe de chargement audio différé pendant export EDIT ; M–L audit FreeCut/OpenReelio. A01/A02/A05 ouverts.
+- Périmètre : branche dédiée, Studio uniquement, pas de merge main, GTX/OBS non testés.
