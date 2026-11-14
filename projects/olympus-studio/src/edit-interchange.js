@@ -39,3 +39,53 @@ export function toEditInterchange(clips, audioTrack = null) {
     soundtrack: audioTrack ? validateEditAudioTrack(audioTrack) : null,
   };
 }
+
+/**
+ * Validate an untrusted interchange document before handing it to an adapter.
+ * This is metadata only: never resolve asset IDs as filesystem paths.
+ */
+export function validateEditInterchange(manifest) {
+  if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest) ||
+      manifest.schema !== 'olympus.edit.interchange.v1' ||
+      manifest.timeUnit !== 'seconds' || !Array.isArray(manifest.segments) ||
+      manifest.segments.length > 10000) {
+    throw new Error('Invalid interchange schema');
+  }
+  const finite = value => typeof value === 'number' && Number.isFinite(value);
+  let cursor = 0;
+  const ids = new Set();
+  const segments = manifest.segments.map(segment => {
+    if (!segment || typeof segment !== 'object' ||
+        !['image', 'video'].includes(segment.kind) ||
+        typeof segment.clipId !== 'string' || !segment.clipId.trim() ||
+        typeof segment.assetId !== 'string' || !segment.assetId.trim() ||
+        typeof segment.title !== 'string' ||
+        !finite(segment.timelineStart) || !finite(segment.duration) ||
+        !finite(segment.sourceIn) || segment.sourceIn < 0 ||
+        segment.duration <= 0 || segment.duration > 86400 ||
+        Math.abs(segment.timelineStart - cursor) > 0.001 ||
+        ids.has(segment.clipId)) {
+      throw new Error('Invalid interchange segment');
+    }
+    ids.add(segment.clipId);
+    cursor += segment.duration;
+    if (!Number.isFinite(cursor) || cursor > 86400) {
+      throw new Error('Interchange duration exceeds limit');
+    }
+    return {
+      clipId: segment.clipId, assetId: segment.assetId, kind: segment.kind,
+      timelineStart: segment.timelineStart, duration: segment.duration,
+      sourceIn: segment.sourceIn, title: segment.title,
+    };
+  });
+  if (!finite(manifest.duration) || Math.abs(manifest.duration - cursor) > 0.001) {
+    throw new Error('Invalid interchange total duration');
+  }
+  return {
+    schema: 'olympus.edit.interchange.v1',
+    timeUnit: 'seconds',
+    duration: cursor,
+    segments,
+    soundtrack: manifest.soundtrack == null ? null : validateEditAudioTrack(manifest.soundtrack),
+  };
+}
