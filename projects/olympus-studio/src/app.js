@@ -479,6 +479,8 @@ function panel(){
    const asset=state.assets.find(a=>a.id===audioSelect.value);if(!asset)return;
    try{
     const media=await loadEditAsset(asset.id);
+    // Async loading may finish after export starts: never mutate the active export snapshot.
+    if(editorRecorder?.state==='recording')return status('Ajout piste différé : export EDIT en cours');
     if(!media||media.tagName!=='AUDIO')throw Error('Média audio indisponible');
     if(state.editAudioTrack){
      const old=editMedia.get(state.editAudioTrack.assetId);
