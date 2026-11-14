@@ -70,3 +70,20 @@ test('Imported image segments cannot specify a video-only source offset', () => 
   invalid.segments[0].sourceIn = 10;
   assert.throws(() => validateEditInterchange(invalid), /segment/);
 });
+
+test('Interchange rejects oversized untrusted identifiers and titles', () => {
+  const valid = toEditInterchange([{id:'clip',assetId:'photo',kind:'image',duration:2,title:'ok'}]);
+  for (const [field, value] of [
+    ['clipId', 'c'.repeat(257)],
+    ['assetId', 'a'.repeat(257)],
+    ['title', 't'.repeat(4097)],
+  ]) {
+    const invalid = structuredClone(valid);
+    invalid.segments[0][field] = value;
+    assert.throws(() => validateEditInterchange(invalid), /segment/);
+  }
+  assert.throws(() => toEditInterchange([
+    {id:'clip',assetId:'photo',kind:'image',duration:2,title:'t'.repeat(4097)},
+  ]), /segment/);
+  assert.deepEqual(validateEditInterchange(valid), valid);
+});
