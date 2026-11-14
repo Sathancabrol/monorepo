@@ -396,3 +396,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Correctif A05 : rejet des segments de manifeste ayant une forme de tableau JavaScript, même avec propriétés nommées. Commit d4beaa3a ; test de régression 1227be92. Aucun test Node, Chromium ou Windows exécuté ici.
 - Prochaine reprise : S vérifier CI au dernier SHA et réparer si rouge ; M test Chromium déterministe de chargement audio différé pendant export EDIT ; M–L audit FreeCut/OpenReelio. A01/A02/A05 ouverts.
 - Périmètre : branche dédiée, Studio uniquement, pas de merge main, GTX/OBS non testés.
+
+## Reprise 2026-11-14 12:00 — A05 import retour vers storyboard
+- Synchronisation préalable : backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17, workflow dédié et dernier run consultés. CI précédente [43583188581](https://github.com/Sathancabrol/monorepo/actions/runs/43583188581) **success** au SHA `2d4e52ff` (Linux/Chromium).
+- Nouveau code A05 : `fromEditInterchange()` valide le manifeste puis reconstruit les clips éditables (IN/OUT, ordre, identifiants, titres, assets partagés) et la piste sonore sans toucher aux fichiers source. Correctif complémentaire : rejet des offsets vidéo dont l'addition avec la durée déborde en Infini. Commits `6d0e252c`, `b3af4334`.
+- Tests ajoutés : aller-retour manifeste → clips → manifeste, deux segments d'un même asset, piste audio, absence de mutation et rejet du débordement. Commit `1ef9d947`.
+- **Validation des nouveaux commits : en attente**. Pas de Node local : accès réseau au dépôt indisponible dans le conteneur; ne pas annoncer de test exécuté. CI au dernier SHA à vérifier. Aucun Windows/GTX/OBS testé.
+- **Reprise exacte S** : consulter le run CI de `1ef9d947` ou du checkpoint; réparer tout échec. **Puis M** : test Chromium déterministe de course chargement audio différé/export EDIT. **Puis M** : intégrer explicitement l'import du manifeste dans l'interface avec prévisualisation et validation des assets manquants (sans accès aux chemins). A05 demeure READY, PR #16 brouillon.
+- Périmètre strict : uniquement Studio et branche dédiée; aucun merge main ni autre projet.
