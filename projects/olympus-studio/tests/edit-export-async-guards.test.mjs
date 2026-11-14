@@ -20,7 +20,7 @@ test('async audio assignment rechecks export state after media loading', () => {
   assert.ok(awaited >= 0 && guard > awaited && mutation > guard);
 });
 test('async video clip creation rechecks export state after metadata loading', () => {
-  const body = handler('add.onclick=async()=>{', 'select.append');
+  const body = handler('add.onclick=async()=>{', 'wrap.append(select,add)');
   const awaited = body.indexOf('await ensureVideoDuration(asset.id,media)');
   const guard = body.indexOf("editorRecorder?.state==='recording'", awaited);
   const mutation = body.indexOf('state.clips.push');
