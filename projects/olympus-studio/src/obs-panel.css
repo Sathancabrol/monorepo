@@ -1,0 +1,11 @@
+/* Compact dock: OBS remains a separate local process, controlled inside Studio. */
+.obs-panel{display:flex;flex-direction:column;gap:9px}
+.obs-hint{font-size:11px;color:#8daabe;line-height:1.5}
+.obs-field{display:flex;flex-direction:column;gap:5px;font-size:11px;color:#b6c9d9}
+.obs-field input,.obs-field select{width:100%;min-width:0;padding:8px 9px}
+.obs-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.obs-buttons button{font-size:11px;flex:1;min-width:88px}
+.obs-feedback,.obs-recstate{font-size:11px;color:#6fe0d1;line-height:1.5;overflow-wrap:anywhere}
+.obs-feedback.obs-error{color:#efaa9f}
+.obs-connected{display:flex;flex-direction:column;gap:8px}
+.obs-connected[hidden]{display:none}

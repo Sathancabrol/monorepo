@@ -1,0 +1,82 @@
+name: OLYMPUS Studio — smoke tests
+on:
+  push:
+    branches:
+      - feat/olympus-studio-20261112
+    paths:
+      - 'projects/olympus-studio/**'
+      - '.github/workflows/olympus-studio-ci.yml'
+  pull_request:
+    paths:
+      - 'projects/olympus-studio/**'
+      - '.github/workflows/olympus-studio-ci.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: olympus-studio-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: projects/olympus-studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static parse
+        run: |
+          node --check server.mjs
+          node --check src/app.js
+          node --check src/media-store.js
+          node --check tests/media-store.test.mjs
+          node --check src/meeting-utils.js
+          node --check tests/meeting-utils.test.mjs
+          node --check src/v03-migration.js
+          node --check tests/v03-migration.test.mjs
+          node --check src/storyboard.js
+          node --check src/edit-audio.js
+          node --check src/edit-history.js
+          node --check tests/edit-history.test.mjs
+          node --check src/editor-export.js
+          node --check tests/editor-export.test.mjs
+          node --check tests/edit-audio.test.mjs
+          node --check src/video-duration.js
+          node --check tests/video-duration.test.mjs
+          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py tests/browser_av_fixture.py tests/browser_edit_export_e2e.py
+          node --check tests/storyboard.test.mjs
+          node --check src/obs-client.js
+          node --check src/obs-panel.js
+          node --check tests/obs-client.test.mjs
+          node --check tests/smoke.test.mjs
+      - name: API smoke tests
+        run: npm test
+      - name: Chromium E2E — HTTP, IndexedDB, portable
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          python tests/browser_indexeddb_e2e.py
+      - name: Chromium A/V fixture — Opus via ffprobe
+        run: |
+          command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+          python tests/browser_av_fixture.py
+      - name: Chromium EDIT export E2E — bouton réel, WebM Opus et ffprobe
+        run: |
+          python tests/browser_edit_export_e2e.py
+      - name: Pack Windows preview (Node.js requis)
+        run: |
+          zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
+          unzip -t olympus-studio-preview.zip | tail -1
+      - name: Publier le paquet de test
+        uses: actions/upload-artifact@v4
+        with:
+          name: olympus-studio-preview
+          path: projects/olympus-studio/olympus-studio-preview.zip
+          retention-days: 14
+          if-no-files-found: error
