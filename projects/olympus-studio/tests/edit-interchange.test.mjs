@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { toEditInterchange } from '../src/edit-interchange.js';
+import { toEditInterchange, validateEditInterchange } from '../src/edit-interchange.js';
 
 test('Interchange preserves shared source, split positions and independent audio', () => {
   const clips = [
@@ -25,4 +25,28 @@ test('Interchange rejects invalid timing and duplicate IDs', () => {
   assert.throws(()=>toEditInterchange([{id:'x',assetId:'v',kind:'video',inPoint:2,outPoint:1}]),/timing/);
   assert.throws(()=>toEditInterchange([{id:'x',assetId:'v',kind:'video',inPoint:2,outPoint:4},{id:'x',assetId:'w',kind:'image',duration:1}]),/Duplicate/);
   assert.throws(()=>toEditInterchange([{id:'x',assetId:'',kind:'image',duration:1}]),/clip/);
+});
+
+test('Interchange validation accepts a round trip and removes unknown properties', () => {
+  const original = toEditInterchange([{id:'one',assetId:'asset',kind:'image',duration:2,title:'Hi'}]);
+  const parsed = validateEditInterchange({...original, unexpected:'ignored'});
+  assert.deepEqual(parsed,original);
+  assert.equal(Object.hasOwn(parsed,'unexpected'),false);
+});
+test('Interchange validation rejects gaps, overlaps, duplicates and nonfinite numbers', () => {
+  const original = toEditInterchange([
+    {id:'one',assetId:'asset',kind:'image',duration:2},
+    {id:'two',assetId:'asset',kind:'image',duration:3},
+  ]);
+  const changed = (field,value,index=1) => {
+    const copy = structuredClone(original);
+    copy.segments[index][field] = value;
+    return copy;
+  };
+  assert.throws(()=>validateEditInterchange(changed('timelineStart',2.5)),/segment/);
+  assert.throws(()=>validateEditInterchange(changed('timelineStart',1.5)),/segment/);
+  assert.throws(()=>validateEditInterchange(changed('clipId','one')),/segment/);
+  assert.throws(()=>validateEditInterchange(changed('duration',Infinity)),/segment/);
+  assert.throws(()=>validateEditInterchange({...original,duration:6}),/total duration/);
+  assert.throws(()=>validateEditInterchange({...original,schema:'unknown'}),/schema/);
 });
