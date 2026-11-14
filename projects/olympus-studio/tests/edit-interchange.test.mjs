@@ -102,3 +102,16 @@ test('Interchange normalizes sub-millisecond timeline rounding for downstream ad
   rounded.segments[1].timelineStart = 1.252;
   assert.throws(() => validateEditInterchange(rounded), /segment/);
 });
+
+test('Imported segments obey the same ten-hour per-clip bound as the storyboard', () => {
+  const valid = toEditInterchange([{id:'still',assetId:'photo',kind:'image',duration:36000}]);
+  assert.deepEqual(validateEditInterchange(valid), valid);
+  const oversized = structuredClone(valid);
+  oversized.segments[0].duration = 36001;
+  oversized.duration = 36001;
+  assert.throws(() => validateEditInterchange(oversized), /segment/);
+  const video = toEditInterchange([{id:'video',assetId:'movie',kind:'video',inPoint:0,outPoint:36000}]);
+  video.segments[0].duration = 36001;
+  video.duration = 36001;
+  assert.throws(() => validateEditInterchange(video), /segment/);
+});
