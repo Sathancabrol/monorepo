@@ -362,3 +362,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Tests locaux Windows : non réalisés. CI au commit correctif : à confirmer avant de déclarer vert.
 - Prochaine tâche READY : si CI rouge, réparer d'abord ; sinon test Chromium déterministe de course chargement audio différé/export (M, ~1–2 tranches), puis audit A05 des formats externes (M).
 - Branch scope : `feat/olympus-studio-20261112`, dossier Studio uniquement ; PR #16 brouillon, aucun merge.
+
+
+## Reprise 2026-11-14 07:00 — retour à l'édition après export
+- CI du checkpoint précédent `f7fe2b29` : [run 43559514421](https://github.com/Sathancabrol/monorepo/actions/runs/43559514421) **success** (Ubuntu/Chromium, pas Windows). Correction de la limite globale 24 h confirmée.
+- Nouvelle régression E2E : après export WebM/Opus et vérification du verrouillage, le bouton « Ajouter / remplacer piste » doit redevenir utilisable. Le test exporte le projet Portable après déverrouillage et vérifie que la piste reste liée au même média et que les clips sont inchangés. Commits `89643651`, `fe199375` (correction d'une référence à un helper déclaré plus loin).
+- **Nouvelle CI au commit fe199375 : à confirmer.** Ce test ne reproduit toujours pas la course déterministe de chargement audio différé; aucun test Windows/GTX/OBS ni écoute humaine.
+- **Prochain sous-objectif S :** inspecter CI au dernier SHA et corriger si rouge. **Puis M :** test Chromium déterministe où un chargement audio reste suspendu pendant que l'export démarre, puis se résout; vérifier que la piste du montage ne change pas. **Puis M–L :** analyse A05 des formats/API FreeCut/OpenReelio. Pas de fusion main ni modification des projets voisins.
