@@ -148,6 +148,10 @@ test('Interchange import rejects overflowing video source offsets', () => {
   const valid = toEditInterchange([{id:'v',assetId:'movie',kind:'video',inPoint:0,outPoint:2}]);
   const invalid = structuredClone(valid);
   invalid.segments[0].sourceIn = Number.MAX_VALUE;
+  invalid.segments[0].duration = Number.MAX_VALUE;
+  invalid.duration = Number.MAX_VALUE;
+  // MAX_VALUE + 2 is still MAX_VALUE after IEEE-754 rounding;
+  // two MAX_VALUE operands actually overflow to Infinity.
   assert.throws(() => fromEditInterchange(invalid), /segment/);
   assert.deepEqual(fromEditInterchange(valid).clips.map(c=>c.outPoint), [2]);
 });
