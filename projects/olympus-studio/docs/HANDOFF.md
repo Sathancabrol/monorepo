@@ -354,3 +354,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Défaut corrigé : `toEditInterchange` pouvait produire un manifeste de plus de 24 h que `validateEditInterchange` refusait ensuite; la génération passe désormais par la validation commune. Le validateur refuse aussi `sourceIn` non nul sur une image fixe, propriété réservée aux clips vidéo.
 - Code commit `11b2ead260c0569c98b7d1714290a352351dffda`; tests de limites 24 h et offset image commit `8729a1f82dc58f309f6d29991caef38f4987fed7`. **CI de ces commits à confirmer**; aucun test Node local attesté.
 - Reprise exacte : contrôler le run CI du dernier SHA (S), corriger si rouge; ensuite fixture déterministe de chargement audio différé pendant export (M), puis approfondir le benchmark API/format FreeCut/OpenReelio (M–L). Aucun test Windows, OBS, GTX, écoute humaine; aucun merge main.
+
+
+## Reprise 2026-11-14 06:00 — réparation CI A05
+- Dernier run rouge avant correctif : https://github.com/Sathancabrol/monorepo/actions/runs/43554633813 (51/52 tests Node, Chromium non exécuté). Échec exact : test « Generated interchange enforces the same 24-hour bound » attendait une exception pour un seul clip image de 86401 s, alors que `clipDuration()` plafonne chaque clip à 36000 s.
+- Correctif test livré : commit `9afb372ac359b50e49df17b1803d2aaf9cd0a2e3`. Le scénario utilise désormais trois clips (36000 + 36000 + 14401 s) pour franchir 24 h et vérifie la frontière à 86400 s. Pas de changement du comportement produit.
+- Tests locaux Windows : non réalisés. CI au commit correctif : à confirmer avant de déclarer vert.
+- Prochaine tâche READY : si CI rouge, réparer d'abord ; sinon test Chromium déterministe de course chargement audio différé/export (M, ~1–2 tranches), puis audit A05 des formats externes (M).
+- Branch scope : `feat/olympus-studio-20261112`, dossier Studio uniquement ; PR #16 brouillon, aucun merge.
