@@ -1,4 +1,6 @@
 import { createEditHistory, snapshotEdit, recordEdit, undoEdit, redoEdit } from './edit-history.js';
+import { fromEditInterchange } from './edit-interchange.js';
+import { inspectEditInterchangeAssets } from './edit-interchange-assets.js';
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
 import {validateEditAudioTrack, audioAtTimeline} from './edit-audio.js';
 import {selectEditorWebMMime} from './editor-export.js';
@@ -463,6 +465,42 @@ function panel(){
   const undo=document.createElement('button');undo.id='editUndo';undo.textContent='Annuler';undo.disabled=!editHistory.past.length;undo.onclick=()=>travelEdit('undo');
   const redo=document.createElement('button');redo.id='editRedo';redo.textContent='Rétablir';redo.disabled=!editHistory.future.length;redo.onclick=()=>travelEdit('redo');
   controls.append(play,seek,clock,cutButton,undo,redo,exportButton);
+  const importManifest=document.createElement('button');importManifest.id='editImportManifest';importManifest.textContent='Importer manifeste EDIT';
+  const manifestFile=document.createElement('input');manifestFile.id='editManifestFile';manifestFile.type='file';manifestFile.accept='.json,application/json';manifestFile.hidden=true;
+  importManifest.onclick=()=>{if(editorExportPreparing||editorRecorder?.state==='recording')return status('Attendre la fin de l’export EDIT');manifestFile.click();};
+  manifestFile.onchange=async()=>{
+   const file=manifestFile.files?.[0];manifestFile.value='';if(!file)return;
+   if(editorExportPreparing||editorRecorder?.state==='recording')return status('Import refusé pendant export EDIT');
+   try{
+    if(file.size>2*1024*1024)throw Error('Manifeste supérieur à 2 Mo');
+    const manifest=JSON.parse(await file.text());
+    const db=await dbReady;
+    if(!db)throw Error('Coffre IndexedDB indisponible');
+    const preflight=inspectEditInterchangeAssets(manifest,state.assets.map(a=>a.id));
+    const missing=[...preflight.missingAssetIds];
+    for(const id of preflight.referencedAssetIds){
+     if(missing.includes(id))continue;
+     if(!await getMedia(db,id))missing.push(id);
+    }
+    if(missing.length)throw Error('Médias absents du coffre ('+missing.length+') : '+missing.slice(0,5).join(', '));
+    const restored=fromEditInterchange(manifest);
+    for(const clip of restored.clips){
+     const asset=state.assets.find(a=>a.id===clip.assetId);
+     if(!asset||!String(asset.type).startsWith(clip.kind+'/'))throw Error('Type média incompatible : '+clip.assetId);
+    }
+    if(restored.audioTrack){
+     const asset=state.assets.find(a=>a.id===restored.audioTrack.assetId);
+     if(!asset||!String(asset.type).startsWith('audio/'))throw Error('Piste audio incompatible');
+    }
+    if(editorExportPreparing||editorRecorder?.state==='recording')throw Error('Export démarré pendant la préparation de l’import');
+    const before=editSnapshot();
+    state.clips=restored.clips;state.editAudioTrack=restored.audioTrack;
+    state.editTime=0;state.editPlaying=false;state.editLast=0;
+    commitEdit(before);syncEditorAudio();panel();sync();
+    status('Manifeste EDIT importé : '+restored.clips.length+' clip(s), sources locales conservées');
+   }catch(error){status('Import EDIT refusé, montage inchangé : '+error.message);}
+  };
+  controls.append(importManifest,manifestFile);
   const select=document.createElement('select');select.setAttribute('aria-label','Choisir un média du coffre');
   const eligible=state.assets.filter(a=>String(a.type).startsWith('image/')||String(a.type).startsWith('video/'));
   for(const asset of eligible){const option=document.createElement('option');option.value=asset.id;option.textContent=asset.name;select.append(option);}
