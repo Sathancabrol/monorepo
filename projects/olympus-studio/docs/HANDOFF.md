@@ -369,3 +369,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Nouvelle régression E2E : après export WebM/Opus et vérification du verrouillage, le bouton « Ajouter / remplacer piste » doit redevenir utilisable. Le test exporte le projet Portable après déverrouillage et vérifie que la piste reste liée au même média et que les clips sont inchangés. Commits `89643651`, `fe199375` (correction d'une référence à un helper déclaré plus loin).
 - **Nouvelle CI au commit fe199375 : à confirmer.** Ce test ne reproduit toujours pas la course déterministe de chargement audio différé; aucun test Windows/GTX/OBS ni écoute humaine.
 - **Prochain sous-objectif S :** inspecter CI au dernier SHA et corriger si rouge. **Puis M :** test Chromium déterministe où un chargement audio reste suspendu pendant que l'export démarre, puis se résout; vérifier que la piste du montage ne change pas. **Puis M–L :** analyse A05 des formats/API FreeCut/OpenReelio. Pas de fusion main ni modification des projets voisins.
+
+
+## Reprise 2026-11-14 08:00 — limites des métadonnées A05
+- Synchronisation backlog, STATUS, SESSION_PLAN, HANDOFF, PR #16, issues #11–#17, commits et workflow dédié. Dernière CI vérifiée : [43564140051](https://github.com/Sathancabrol/monorepo/actions/runs/43564140051) **success** sur `5378757b` (Linux/Chromium).
+- Correctif `f888b7b9` : le validateur de manifestes d'échange rejette désormais les identifiants de clip/asset dépassant 256 caractères et les titres dépassant 4096 caractères. Réduit le risque de charge mémoire incontrôlée avec des métadonnées importées; ne résout jamais les identifiants comme chemins.
+- Tests `606d95ed` : cas invalides pour les trois champs, génération refusée et manifeste valide conservé. **CI du nouveau code à confirmer**, aucun test local Windows.
+- Reprise exacte : contrôler CI du dernier SHA, réparer tout échec en priorité (S). Ensuite test Chromium déterministe de résolution audio différée pendant export (M, 1–2 tranches), puis analyse concrète API/format FreeCut/OpenReelio (M–L). Blocages matériels OBS/GTX/Windows inchangés. PR #16 reste brouillon, aucune modification main ou projets voisins.
