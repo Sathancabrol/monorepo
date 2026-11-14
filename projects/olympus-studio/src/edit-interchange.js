@@ -62,6 +62,7 @@ export function validateEditInterchange(manifest) {
         typeof segment.title !== 'string' || segment.title.length > 4096 ||
         !finite(segment.timelineStart) || !finite(segment.duration) ||
         !finite(segment.sourceIn) || segment.sourceIn < 0 ||
+        (segment.kind === 'video' && !Number.isFinite(segment.sourceIn + segment.duration)) ||
         (segment.kind === 'image' && segment.sourceIn !== 0) ||
         segment.duration <= 0 || segment.duration > 36000 ||
         Math.abs(segment.timelineStart - cursor) > 0.001 ||
