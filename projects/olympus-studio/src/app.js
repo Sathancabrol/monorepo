@@ -217,7 +217,18 @@ function drawEditor(now){
  // Request a fresh encoded frame after every completed storyboard draw. In
  // headless Chromium, automatic canvas capture can stop producing video frames
  // after a clip boundary while the separate audio track keeps advancing.
- if(editorExportPreparing||editorRecorder?.state==='recording')editorVideoCaptureTrack?.requestFrame?.();
+ if(editorExportPreparing||editorRecorder?.state==='recording'){
+  // A static image can be coalesced by Chromium's encoder even when
+  // requestFrame() is called. Change a small corner marker every frame so
+  // the encoded video track continues through the full audio timeline.
+  // This is capture-only and does not affect the saved storyboard.
+  if(editorRecorder?.state==='recording'){
+   const marker=Math.floor(now/32)%2;
+   context.fillStyle=marker?'#172638':'#263748';
+   context.fillRect(canvas.width-8,canvas.height-8,8,8);
+  }
+  editorVideoCaptureTrack?.requestFrame?.();
+ }
 }
 let editorExportPreparing=false;
 async function exportEditorWebM(){
