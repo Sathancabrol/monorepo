@@ -383,3 +383,9 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Défaut A05 : `validateEditInterchange` acceptait une variation inférieure à 1 ms entre segments mais retransmettait cette variation à un adaptateur, pouvant produire une micro-discontinuité. Le validateur conserve la tolérance d'import puis canonicalise `timelineStart` sur le cumul exact des durées.
 - Correctif `c0cf4154`; test `45f31bf0` : arrondi de 0,5 ms normalisé, entrée source non mutée, écart de 2 ms rejeté. **CI de ces nouveaux commits à confirmer**, aucune exécution Node locale ou Windows attestée.
 - Reprise exacte (S) : contrôler CI du dernier SHA, réparer tout échec. Ensuite (M) test Chromium déterministe d'un chargement audio différé pendant export; puis (M–L) audit concret FreeCut/OpenReelio. Blocages Windows/GTX/OBS inchangés; pas de merge main ni changement hors Studio.
+
+## Reprise 2026-11-14 10:00 — alignement limite clip A05
+- Synchronisation : AUTONOMOUS_BACKLOG, HANDOFF, STATUS, SESSION_PLAN et issues #11–#17 relus; dernière CI vérifiée sur checkpoint précédent `d1b7127e` : [run 43574091154](https://github.com/Sathancabrol/monorepo/actions/runs/43574091154), **success** Linux/Chromium. Aucun essai Windows.
+- Écart réel : `validateEditInterchange` acceptait un segment importé jusqu'à 86400 s, mais `storyboard.clipDuration` limite chaque clip à 36000 s. Correctif `ad3001ca` : borne importée à 36000 s, limite globale 86400 s inchangée. Test de frontière 36000/36001 pour image et vidéo ajouté par `97827f24`.
+- **Nouvelle CI au SHA de test à confirmer**; aucun test local Node/Windows déclaré. Ne pas fermer A05, A01 ou A03.
+- Reprise exacte : (S) inspecter la CI du dernier SHA, réparer si rouge; (M, 1–2 tranches) test Chromium déterministe de chargement audio asynchrone pendant export; (M–L) audit FreeCut/OpenReelio sur formats et API. Aucun merge main ni changement hors Studio.
