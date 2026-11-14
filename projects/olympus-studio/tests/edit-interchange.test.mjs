@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { toEditInterchange, validateEditInterchange } from '../src/edit-interchange.js';
+import { toEditInterchange, validateEditInterchange, fromEditInterchange } from '../src/edit-interchange.js';
 
 test('Interchange preserves shared source, split positions and independent audio', () => {
   const clips = [
@@ -123,4 +123,31 @@ test('Imported interchange rejects array-shaped segments even with valid named f
   invalid.segments[0] = Object.assign([], invalid.segments[0]);
   assert.throws(() => validateEditInterchange(invalid), /segment/);
   assert.deepEqual(validateEditInterchange(valid), valid);
+});
+
+test('Interchange reconstructs split clips and soundtrack without mutating input', () => {
+  const originalClips = [
+    {id:'left',assetId:'movie',kind:'video',inPoint:2,outPoint:3,title:'L'},
+    {id:'right',assetId:'movie',kind:'video',inPoint:3,outPoint:5,title:'R'},
+    {id:'still',assetId:'image',kind:'image',duration:1.5,title:'Photo'},
+  ];
+  const soundtrack = {assetId:'audio',offset:0.5,inPoint:1,volume:0.4,enabled:true};
+  const manifest = toEditInterchange(originalClips, soundtrack);
+  const snapshot = JSON.stringify(manifest);
+  const restored = fromEditInterchange(manifest);
+  assert.deepEqual(restored.clips.map(c => c.assetId), ['movie','movie','image']);
+  assert.deepEqual(restored.clips.map(c => c.inPoint), [2,3,0]);
+  assert.deepEqual(restored.clips.map(c => c.outPoint), [3,5,0]);
+  assert.equal(restored.audioTrack.assetId,'audio');
+  assert.deepEqual(toEditInterchange(restored.clips, restored.audioTrack), manifest);
+  restored.clips[0].title = 'Changed';
+  assert.equal(JSON.stringify(manifest), snapshot);
+});
+
+test('Interchange import rejects overflowing video source offsets', () => {
+  const valid = toEditInterchange([{id:'v',assetId:'movie',kind:'video',inPoint:0,outPoint:2}]);
+  const invalid = structuredClone(valid);
+  invalid.segments[0].sourceIn = Number.MAX_VALUE;
+  assert.throws(() => fromEditInterchange(invalid), /segment/);
+  assert.deepEqual(fromEditInterchange(valid).clips.map(c=>c.outPoint), [2]);
 });
