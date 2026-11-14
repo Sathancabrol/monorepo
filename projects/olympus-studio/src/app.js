@@ -177,7 +177,7 @@ async function attachAudioToEditorCapture(stream, audio, volume){
  }
  graph.gain.gain.value=volume;
  audio.volume=1;
- if(graph.context.state==='suspended')await graph.context.resume();
+ // Await resume even when already running: an export must not bypass the\n // readiness barrier if the browser reports an active context prematurely.\n await graph.context.resume();
  const track=graph.destination.stream.getAudioTracks()[0];
  if(!track)throw new Error('Piste audio de capture indisponible');
  stream.addTrack(track.clone());
