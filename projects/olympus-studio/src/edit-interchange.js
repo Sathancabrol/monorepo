@@ -75,7 +75,7 @@ export function validateEditInterchange(manifest) {
     }
     return {
       clipId: segment.clipId, assetId: segment.assetId, kind: segment.kind,
-      timelineStart: segment.timelineStart, duration: segment.duration,
+      timelineStart: cursor - segment.duration, duration: segment.duration,
       sourceIn: segment.sourceIn, title: segment.title,
     };
   });
