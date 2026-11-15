@@ -54,7 +54,25 @@ def inspect_export(path):
     assert 1.0 < ve - vs < 4, (vs, ve)
     assert 1.0 < aue - aus < 4, (aus, aue)
     assert abs(vs - aus) < 0.6, ("A/V start mismatch", vs, aus)
-    assert abs(ve - aue) < 0.6, ("A/V end mismatch", {"video_end": ve, "audio_end": aue, "video_packets": sum(p.get("stream_index") == video[0]["index"] for p in packets), "audio_packets": sum(p.get("stream_index") == audio[0]["index"] for p in packets), "video_tail": [(p.get("pts_time"), p.get("duration_time")) for p in packets if p.get("stream_index") == video[0]["index"]][-8:], "audio_tail": [(p.get("pts_time"), p.get("duration_time")) for p in packets if p.get("stream_index") == audio[0]["index"]][-8:]})
+    # Diagnose missing video frames without relaxing the A/V synchronization gate.
+    video_pts = sorted(float(p["pts_time"]) for p in packets
+                       if p.get("stream_index") == video[0]["index"]
+                       and "pts_time" in p)
+    gaps = sorted((round(b-a, 3) for a, b in zip(video_pts, video_pts[1:])),
+                  reverse=True)
+    diagnostics = {
+        "video_end": round(ve, 3), "audio_end": round(aue, 3),
+        "end_delta_s": round(ve-aue, 3),
+        "video_packets": len(video_pts),
+        "audio_packets": sum(p.get("stream_index") == audio[0]["index"] for p in packets),
+        "video_first_pts": video_pts[:5],
+        "video_last_pts": video_pts[-5:],
+        "largest_video_pts_gaps_s": gaps[:8],
+        "video_stream_duration": video[0].get("duration"),
+        "audio_stream_duration": audio[0].get("duration"),
+    }
+    print("EDIT A/V packet timing:", json.dumps(diagnostics), flush=True)
+    assert abs(ve - aue) < 0.6, ("A/V end mismatch", diagnostics)
     result = subprocess.run(
         ["ffmpeg", "-hide_banner", "-nostats", "-i", str(path),
          "-map", "0:a:0", "-af", "volumedetect", "-f", "null", "-"],
