@@ -284,10 +284,20 @@ async function exportEditorWebM(){
   const chunks=[];
   editorRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
   const captureStream=stream;
+  let recorderFailed=false;
+  editorRecorder.onerror=event=>{
+   recorderFailed=true;
+   status('Export storyboard impossible : erreur MediaRecorder'+(event?.error?.message?' — '+event.error.message:''));
+   if(editorRecorder?.state==='recording')editorRecorder.stop();
+  };
   editorRecorder.onstop=()=>{
    captureStream.getTracks().forEach(t=>t.stop());editorVideoCaptureTrack=null;state.editPlaying=false;
    const audio=state.editAudioTrack&&editMedia.get(state.editAudioTrack.assetId);
    if(audio?.tagName==='AUDIO')audio.pause();
+   if(recorderFailed||!chunks.length){
+    status('Export storyboard impossible : aucun fichier valide produit');
+    return;
+   }
    dl('olympus-storyboard-'+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
    status(audioIncluded?'WebM exporté avec piste son dédiée (synchronisation à valider sur Windows)':'Storyboard WebM exporté sans audio');
   };
