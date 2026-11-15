@@ -23,9 +23,9 @@ test('Capture EDIT: marqueur change à chaque image, indépendamment du temps RA
   const { readFile } = await import('node:fs/promises');
   const source = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
   assert.match(source, /let editorCaptureFrame=0;/);
-  assert.match(source, /const marker=\(\+\+editorCaptureFrame\)%2;/);
+  assert.match(source, /const marker=\+\+editorCaptureFrame;/);
   assert.doesNotMatch(source, /const marker=Math\.floor\(now\/32\)%2;/);
-  const nextMarker = (() => { let frame = 0; return () => (++frame) % 2; })();
+  const nextMarker = (() => { let frame = 0; return () => ++frame; })();
   const repeatedTimestamp = [320, 320, 320, 320];
-  assert.deepEqual(repeatedTimestamp.map(() => nextMarker()), [1, 0, 1, 0]);
+  assert.deepEqual(repeatedTimestamp.map(() => nextMarker()), [1, 2, 3, 4]);
 });
