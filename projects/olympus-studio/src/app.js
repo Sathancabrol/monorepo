@@ -192,7 +192,8 @@ function drawEditor(now){
  const context=canvas.getContext('2d'), total=storyboardDuration(state.clips);
  if(state.editPlaying && state.editLast)state.editTime+=(now-state.editLast)/1000;
  state.editLast=now;
- if(total>0&&state.editTime>=total){state.editTime=total;state.editPlaying=false;if(editorExportPreparing||editorRecorder?.state==='recording')editorRecorder.stop();}
+ const reachedEnd=total>0&&state.editTime>=total;
+ if(reachedEnd){state.editTime=total;state.editPlaying=false;}
  context.fillStyle='#081421';context.fillRect(0,0,canvas.width,canvas.height);
  const found=locateClip(state.clips,Math.min(state.editTime,Math.max(0,total-0.0001)));
  if(found){
@@ -237,6 +238,9 @@ function drawEditor(now){
   }
   editorVideoCaptureTrack?.requestFrame?.();
  }
+ // Do not stop MediaRecorder before drawing/requesting the final frame.
+ // A/V tails otherwise depend on the penultimate capture timestamp.
+ if(reachedEnd&&editorRecorder?.state==='recording')editorRecorder.stop();
 }
 let editorExportPreparing=false;
 async function exportEditorWebM(){
