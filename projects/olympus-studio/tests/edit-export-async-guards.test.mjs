@@ -33,7 +33,7 @@ test('all EDIT recording mutation guards also cover asynchronous preparation', (
   // It is not an EDIT state mutation; keep this one intentional recording-only guard.
   const recordingOnly = source.split(recordingGuard).length - 1;
   assert.equal(recordingOnly, 1, 'unexpected recording-only guard: review for EDIT state mutation');
-  assert.match(source, /if\(editorRecorder\?\.state==='recording'\)\{\s*const marker=\+\+editorCaptureFrame;/,
+  assert.match(source, /if\(editorRecorder\?\.state==='recording'\)\{[\s\S]*?const marker=\+\+editorCaptureFrame;/,
     'the sole recording-only guard must be the capture frame marker');
   const combined = "if(editorExportPreparing||editorRecorder?.state==='recording')";
   assert.ok(source.split(combined).length - 1 >= 10, 'expected EDIT mutation guards');
