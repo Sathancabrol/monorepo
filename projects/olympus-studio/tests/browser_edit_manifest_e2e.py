@@ -171,6 +171,18 @@ def main():
                     after_export = portable(page, folder, "after-concurrent-export.json")
                     assert after_export["clips"] == imported["clips"], "Import mutated EDIT during export"
                     assert after_export["editAudioTrack"] == imported["editAudioTrack"]
+                    # Rejected concurrent import must not push a history entry:
+                    # the next undo must reach the pre-import baseline directly.
+                    page.locator("#editUndo").click()
+                    page.locator("#status").get_by_text("Montage annulé", exact=False).wait_for()
+                    assert portable(page, folder, "undo-concurrent-rejection.json")["clips"] == baseline["clips"], (
+                        "Rejected concurrent manifest inserted an undo history entry"
+                    )
+                    page.locator("#editRedo").click()
+                    page.locator("#status").get_by_text("Montage rétabli", exact=False).wait_for()
+                    assert portable(page, folder, "redo-concurrent-rejection.json")["clips"] == imported["clips"], (
+                        "Redo after rejected concurrent manifest did not restore the timeline"
+                    )
                     # Once MediaRecorder stops, a fresh manifest must be accepted.
                     # This detects a stale export lock and verifies that undo/redo
                     # remain usable after a rejected concurrent import.
