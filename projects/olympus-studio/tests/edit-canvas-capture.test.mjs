@@ -11,7 +11,8 @@ test('EDIT redraw changes capture-only pixels before requesting a video frame', 
  assert.ok(start>=0 && end>start);
  const draw=source.slice(start,end);
  assert.match(draw,/editorRecorder\?\.state==='recording'/);
- assert.match(draw,/Math\.floor\(now\/32\)%2/);
+ assert.match(draw,/const marker=\(\+\+editorCaptureFrame\)%2/);
+ assert.doesNotMatch(draw,/Math\.floor\(now\/32\)%2/, 'capture marker must not alias on repeated timestamps');
  assert.match(draw,/context\.fillRect\(canvas\.width-8,canvas\.height-8,8,8\)/);
  assert.ok(draw.indexOf('context.fillRect(canvas.width-8') < draw.indexOf('editorVideoCaptureTrack?.requestFrame?.()'));
 });
