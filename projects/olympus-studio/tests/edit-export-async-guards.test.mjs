@@ -30,11 +30,12 @@ test('async video clip creation rechecks export state after metadata loading', (
 test('all EDIT recording mutation guards also cover asynchronous preparation', () => {
   const recordingGuard = "if(editorRecorder?.state==='recording')";
   // The capture-only animated pixel must run while recording, not during preparation.
-  // It is not an EDIT state mutation; keep this one intentional recording-only guard.
+  // MediaRecorder.onerror may also stop a live recorder without changing EDIT state.
   const recordingOnly = source.split(recordingGuard).length - 1;
-  assert.equal(recordingOnly, 1, 'unexpected recording-only guard: review for EDIT state mutation');
+  assert.equal(recordingOnly, 2, 'unexpected recording-only guard: review for EDIT state mutation');
+  assert.match(source, /editorRecorder\.onerror=event=>\{[\s\S]*?if\(editorRecorder\?\.state==='recording'\)editorRecorder\.stop\(\);/, 'error handler must stop only an active recorder');
   assert.match(source, /if\(editorRecorder\?\.state==='recording'\)\{[\s\S]*?const marker=\+\+editorCaptureFrame;/,
-    'the sole recording-only guard must be the capture frame marker');
+    'capture frame marker must remain recording-only');
   const combined = "if(editorExportPreparing||editorRecorder?.state==='recording')";
   assert.ok(source.split(combined).length - 1 >= 10, 'expected EDIT mutation guards');
 });
