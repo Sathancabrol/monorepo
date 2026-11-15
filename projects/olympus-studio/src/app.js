@@ -225,9 +225,15 @@ function drawEditor(now){
   // the encoded video track continues through the full audio timeline.
   // This is capture-only and does not affect the saved storyboard.
   if(editorRecorder?.state==='recording'){
-   const marker=(++editorCaptureFrame)%2;
-   context.fillStyle=marker?'#172638':'#263748';
-   context.fillRect(canvas.width-8,canvas.height-8,8,8);
+   // Encode a distinct 24-bit frame counter into capture-only pixels.
+   // A two-colour toggle can alias when the browser skips an even number
+   // of draws; the counter makes nonconsecutive samples distinguishable.
+   const marker=++editorCaptureFrame;
+   for(let channel=0;channel<3;channel++){
+    const value=(marker >>> (channel*8)) & 255;
+    context.fillStyle='rgb('+value+','+(255-value)+','+((value+85)%256)+')';
+    context.fillRect(canvas.width-24+channel*8,canvas.height-8,8,8);
+   }
   }
   editorVideoCaptureTrack?.requestFrame?.();
  }
