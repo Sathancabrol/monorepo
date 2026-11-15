@@ -188,6 +188,23 @@ def main():
                     page.locator("#editRedo").click()
                     page.locator("#status").get_by_text("Montage rétabli", exact=False).wait_for()
                     assert portable(page, folder, "redo-after-export.json")["clips"] == accepted_after_export["clips"]
+                    # A malformed manifest after an export must not corrupt the
+                    # recovered editor or insert a spurious undo history entry.
+                    malformed_after_export = json.loads(json.dumps(post_export_manifest))
+                    malformed_after_export["segments"][0]["assetId"] = "missing-after-export"
+                    upload_manifest(page, malformed_after_export)
+                    page.locator("#status").get_by_text(
+                        "Import EDIT refusé, montage inchangé", exact=False
+                    ).wait_for()
+                    assert portable(page, folder, "invalid-after-export.json")["clips"] == accepted_after_export["clips"]
+                    page.locator("#editUndo").click()
+                    page.locator("#status").get_by_text("Montage annulé", exact=False).wait_for()
+                    assert portable(page, folder, "undo-invalid-after-export.json")["clips"] == imported["clips"], (
+                        "Rejected post-export import created an undo entry"
+                    )
+                    page.locator("#editRedo").click()
+                    page.locator("#status").get_by_text("Montage rétabli", exact=False).wait_for()
+                    assert portable(page, folder, "redo-invalid-after-export.json")["clips"] == accepted_after_export["clips"]
                     # Reload destroys all in-memory EDIT state. Re-import the
                     # actual portable download, then verify media and timeline
                     # from a fresh page/IndexedDB connection.
