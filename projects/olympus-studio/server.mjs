@@ -3,6 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { join, resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import net from 'node:net';
+import { integrationSnapshot } from './src/integration-registry.js';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
@@ -51,6 +52,10 @@ async function handle(req,res){
   catch(e){return json(res,413,{error:String(e.message)});}
  }
 
+ if(req.method==='GET'&&url.pathname==='/api/integrations'){
+  const [obs,comfyui]=await Promise.all([tcpCheck(4455),comfyCheck()]);
+  return json(res,200,{local:true,spaces:integrationSnapshot({obs,comfyui}),note:'Port joignable ≠ intégration validée; aucun moteur démarré automatiquement'});
+ }
  if(req.method==='GET'&&url.pathname==='/api/health'){const [obs,comfy]=await Promise.all([tcpCheck(4455),comfyCheck()]);return json(res,200,{ok:true,local:true,services:{obs:{port:4455,reachable:obs,controlled:false},comfyui:{port:8188,reachable:comfy}},note:'Disponibilité réseau ≠ moteur configuré ou vérifié'});}
  if(req.method==='POST'&&url.pathname==='/api/comfy/queue'){
    let data;try{data=await bodyJson(req);}catch(e){return json(res,400,{error:'JSON invalide ou trop volumineux'});}
