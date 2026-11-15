@@ -49,7 +49,7 @@ def main():
                     downloads = []
                     page.on("pageerror", lambda error: errors.append(str(error)))
                     page.on("download", lambda download: downloads.append(download.suggested_filename))
-                    page.add_init_script("""() => {
+                    page.add_init_script("""(() => {
                         const Native = window.MediaRecorder;
                         window.__stoppedCaptureTracks = 0;
                         const nativeStop = MediaStreamTrack.prototype.stop;
@@ -76,7 +76,7 @@ def main():
                                 return recorder;
                             }
                         });
-                    }""")
+                    })()""")
                     page.goto(f"http://127.0.0.1:{port}/", wait_until="load")
                     page.wait_for_function(
                         "document.querySelectorAll('#navItems [data-space]').length===12"
