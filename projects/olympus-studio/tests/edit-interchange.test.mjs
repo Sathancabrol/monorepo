@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { validateClip } from '../src/storyboard.js';
 import { toEditInterchange, validateEditInterchange, fromEditInterchange } from '../src/edit-interchange.js';
 
 test('Interchange preserves shared source, split positions and independent audio', () => {
@@ -154,4 +155,13 @@ test('Interchange import rejects overflowing video source offsets', () => {
   // two MAX_VALUE operands actually overflow to Infinity.
   assert.throws(() => fromEditInterchange(invalid), /segment/);
   assert.deepEqual(fromEditInterchange(valid).clips.map(c=>c.outPoint), [2]);
+});
+
+
+test('Imported EDIT clips remain stable after project load normalization', () => {
+  const manifest = toEditInterchange([{id:'still',assetId:'photo',kind:'image',duration:3,title:'Imported fixture'}]);
+  const imported = fromEditInterchange(manifest).clips.map(validateClip);
+  assert.deepEqual(imported.map(validateClip), imported);
+  assert.equal(imported[0].name, 'Clip');
+  assert.equal(imported[0].title, 'Imported fixture');
 });
