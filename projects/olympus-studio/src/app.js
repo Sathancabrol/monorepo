@@ -514,7 +514,7 @@ function panel(){
     }
     if(editorExportPreparing||editorRecorder?.state==='recording')throw Error('Export démarré pendant la préparation de l’import');
     const before=editSnapshot();
-    state.clips=restored.clips;state.editAudioTrack=restored.audioTrack;
+    state.clips=restored.clips.map(validateClip);state.editAudioTrack=restored.audioTrack;
     state.editTime=0;state.editPlaying=false;state.editLast=0;
     commitEdit(before);syncEditorAudio();panel();sync();
     status('Manifeste EDIT importé : '+restored.clips.length+' clip(s), sources locales conservées');
