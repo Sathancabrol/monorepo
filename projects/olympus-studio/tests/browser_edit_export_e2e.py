@@ -197,6 +197,33 @@ def main():
                     }""")
                     page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
                     page.wait_for_function("window.__editResumeGate?.waiting === true", timeout=10000)
+                    # Valid interchange import must be rejected while WebAudio
+                    # preparation is suspended, before MediaRecorder exists.
+                    # This exercises the asynchronous lock rather than the
+                    # already-covered active recording lock.
+                    gated_manifest = {
+                        "schema": "olympus.edit.interchange.v1",
+                        "timeUnit": "seconds",
+                        "duration": 2.5,
+                        "segments": [{
+                            "clipId": "should-not-import-during-preparation",
+                            "assetId": clip_before["assetId"],
+                            "kind": "image",
+                            "timelineStart": 0,
+                            "duration": 2.5,
+                            "sourceIn": 0,
+                            "title": "Concurrent import must be rejected",
+                        }],
+                        "soundtrack": None,
+                    }
+                    page.locator("#editManifestFile").set_input_files({
+                        "name": "concurrent-edit.json",
+                        "mimeType": "application/json",
+                        "buffer": json.dumps(gated_manifest).encode("utf-8"),
+                    })
+                    page.locator("#status").get_by_text(
+                        "Import refusé pendant export EDIT", exact=False
+                    ).wait_for()
                     page.get_by_role("button", name="+ Clip").click()
                     page.locator("#status").get_by_text("Arrêter export EDIT avant ajout de clip", exact=False).wait_for()
                     page.get_by_role("button", name="Ajouter / remplacer piste").click()
