@@ -240,9 +240,21 @@ function drawEditor(now){
  }
  // Do not stop MediaRecorder before drawing/requesting the final frame.
  // A/V tails otherwise depend on the penultimate capture timestamp.
- if(reachedEnd&&editorRecorder?.state==='recording')editorRecorder.stop();
+ if(reachedEnd&&editorRecorder?.state==='recording'&&!editorExportFinalizing){
+  // Let Chromium consume the terminal canvas frame before closing the muxer.
+  // requestFrame() is asynchronous: stop() in the same task can discard it.
+  editorExportFinalizing=true;
+  const recorder=editorRecorder;
+  requestAnimationFrame(()=>{
+   if(recorder.state==='recording'){
+    editorVideoCaptureTrack?.requestFrame?.();
+    setTimeout(()=>{if(recorder.state==='recording')recorder.stop();editorExportFinalizing=false;},120);
+   }else editorExportFinalizing=false;
+  });
+ }
 }
 let editorExportPreparing=false;
+let editorExportFinalizing=false;
 async function exportEditorWebM(){
  const canvas=$('editPreview'),total=storyboardDuration(state.clips);
  if(!canvas||!total)return status('Aucun clip à exporter');
@@ -280,6 +292,7 @@ async function exportEditorWebM(){
    status(audioIncluded?'WebM exporté avec piste son dédiée (synchronisation à valider sur Windows)':'Storyboard WebM exporté sans audio');
   };
   if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
+  editorExportFinalizing=false;
   state.editTime=0;state.editLast=0;state.editPlaying=true;
   editorRecorder.start(1000);
   editorVideoCaptureTrack?.requestFrame?.();
