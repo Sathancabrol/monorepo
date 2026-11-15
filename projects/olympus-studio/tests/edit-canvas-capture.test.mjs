@@ -25,6 +25,6 @@ test('EDIT export uses paced canvas capture instead of manual-only frames', () =
  const end=source.indexOf('function draw(){',start);
  assert.ok(start>=0 && end>start);
  const exportBody=source.slice(start,end);
- assert.match(exportBody,/stream=canvas\\.captureStream\\(24\\)/);
- assert.doesNotMatch(exportBody,/canvas\\.captureStream\\(0\\)/);
+ assert.ok(exportBody.includes('stream=canvas.captureStream(24)'), 'paced 24 fps capture must be enabled');
+ assert.ok(!exportBody.includes('canvas.captureStream(0)'), 'manual-only capture must not regress');
 });
