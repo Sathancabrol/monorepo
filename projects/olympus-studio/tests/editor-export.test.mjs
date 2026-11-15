@@ -36,7 +36,7 @@ test('EDIT termine la capture après avoir dessiné et demandé la dernière ima
   const source = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
   const draw = source.slice(source.indexOf('function drawEditor(now){'), source.indexOf('let editorExportPreparing=false;'));
   const end = draw.indexOf('const reachedEnd=total>0&&state.editTime>=total;');
-  const frame = draw.lastIndexOf('editorVideoCaptureTrack?.requestFrame?.();');
+  const frame = draw.indexOf('editorVideoCaptureTrack?.requestFrame?.();');
   const stop = draw.indexOf("if(reachedEnd&&editorRecorder?.state==='recording'&&!editorExportFinalizing){");
   assert.ok(end>=0 && frame>end && stop>frame, 'stop doit suivre le dessin et la demande de trame finale');
   assert.doesNotMatch(draw.slice(0, frame), /editorRecorder\.stop\(\)/);
