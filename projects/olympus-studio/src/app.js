@@ -230,10 +230,14 @@ function drawEditor(now){
    // A two-colour toggle can alias when the browser skips an even number
    // of draws; the counter makes nonconsecutive samples distinguishable.
    const marker=++editorCaptureFrame;
-   for(let channel=0;channel<3;channel++){
-    const value=(marker >>> (channel*8)) & 255;
-    context.fillStyle='rgb('+value+','+(255-value)+','+((value+85)%256)+')';
-    context.fillRect(canvas.width-24+channel*8,canvas.height-8,8,8);
+   // Give the encoder a substantial changing region: a tiny 24x8 marker
+   // was frequently coalesced in Chromium even with requestFrame() calls.
+   // The pattern is restricted to the export canvas, never saved in source media.
+   for(let tile=0;tile<64;tile++){
+    const x=tile%8,y=Math.floor(tile/8);
+    const value=(marker*37+x*71+y*43+(x*y*17))&255;
+    context.fillStyle='rgb('+value+','+((value*3+71)&255)+','+((value*7+19)&255)+')';
+    context.fillRect(canvas.width-96+x*12,canvas.height-96+y*12,12,12);
    }
   }
   editorVideoCaptureTrack?.requestFrame?.();
