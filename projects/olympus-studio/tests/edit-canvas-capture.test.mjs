@@ -12,12 +12,12 @@ test('EDIT redraw changes capture-only pixels before requesting a video frame', 
  const draw=source.slice(start,end);
  assert.match(draw,/editorRecorder\?\.state==='recording'/);
  assert.match(draw,/const marker=\+\+editorCaptureFrame/);
- assert.match(draw,/for\(let channel=0;channel<3;channel\+\+\)/);
- assert.match(draw,/marker >>> \(channel\*8\)/);
+ assert.match(draw,/for\(let tile=0;tile<64;tile\+\+\)/);
+ assert.match(draw,/const value=\(marker\*37\+x\*71\+y\*43\+\(x\*y\*17\)\)&255/);
  assert.doesNotMatch(draw,/\(\+\+editorCaptureFrame\)%2/, 'two-state marker aliases after dropped frames');
  assert.doesNotMatch(draw,/Math\.floor\(now\/32\)%2/, 'capture marker must not alias on repeated timestamps');
- assert.match(draw,/context\.fillRect\(canvas\.width-24\+channel\*8,canvas\.height-8,8,8\)/);
- assert.ok(draw.indexOf('context.fillRect(canvas.width-24+channel*8') < draw.indexOf('editorVideoCaptureTrack?.requestFrame?.()'));
+ assert.match(draw,/context\.fillRect\(canvas\.width-96\+x\*12,canvas\.height-96\+y\*12,12,12\)/);
+ assert.ok(draw.indexOf('context.fillRect(canvas.width-96+x*12') < draw.indexOf('editorVideoCaptureTrack?.requestFrame?.()'));
 });
 
 // The browser encoder may coalesce requestFrame() samples under load.
