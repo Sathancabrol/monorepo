@@ -60,3 +60,16 @@ test('Le module audio EDIT est servi localement mais le serveur reste fermé aux
  const protectedFile=await fetch(base+'/docs/AUTONOMOUS_BACKLOG.md');
  assert.equal(protectedFile.status,403);
 });
+
+test('Contrats des 12 espaces : inventaire local sans faux positifs de disponibilité',async()=>{
+ const r=await fetch(base+'/api/integrations');assert.equal(r.status,200);
+ const j=await r.json();assert.equal(j.local,true);assert.equal(j.spaces.length,12);
+ assert.equal(new Set(j.spaces.map(s=>s.space)).size,12);
+ for(const s of j.spaces){
+  assert.ok(s.engine&&s.transport&&s.contract&&s.status);
+  assert.equal(s.operationallyVerified,false);
+  assert.ok(s.reachable===null||typeof s.reachable==='boolean');
+ }
+ assert.equal(j.spaces.find(s=>s.space==='EDIT').status,'intermittent-av');
+ assert.equal(j.spaces.find(s=>s.space==='XR').status,'not-integrated');
+});
