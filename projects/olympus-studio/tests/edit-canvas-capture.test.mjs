@@ -16,3 +16,15 @@ test('EDIT redraw changes capture-only pixels before requesting a video frame', 
  assert.match(draw,/context\.fillRect\(canvas\.width-8,canvas\.height-8,8,8\)/);
  assert.ok(draw.indexOf('context.fillRect(canvas.width-8') < draw.indexOf('editorVideoCaptureTrack?.requestFrame?.()'));
 });
+
+// The browser encoder may coalesce requestFrame() samples under load.
+// A paced stream is required as a fallback for uninterrupted A/V timestamps.
+test('EDIT export uses paced canvas capture instead of manual-only frames', () => {
+ const source=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ const start=source.indexOf('async function exportEditorWebM()');
+ const end=source.indexOf('function draw(){',start);
+ assert.ok(start>=0 && end>start);
+ const exportBody=source.slice(start,end);
+ assert.match(exportBody,/stream=canvas\\.captureStream\\(24\\)/);
+ assert.doesNotMatch(exportBody,/canvas\\.captureStream\\(0\\)/);
+});
