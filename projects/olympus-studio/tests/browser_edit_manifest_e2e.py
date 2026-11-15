@@ -153,6 +153,24 @@ def main():
                     page.locator("#status").get_by_text("Montage rétabli", exact=False).wait_for()
                     redone = portable(page, folder, "redo.json")
                     assert redone["clips"] == imported["clips"]
+                    # Concurrency: reject a valid manifest while MediaRecorder is
+                    # active. A rejected import must not mutate timeline/history
+                    # or interrupt the ongoing export.
+                    with page.expect_download(timeout=25000) as active_export:
+                        page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
+                        page.locator("#status").get_by_text(
+                            "Export storyboard vidéo seule en cours", exact=False
+                        ).wait_for()
+                        upload_manifest(page, manifest)
+                        page.locator("#status").get_by_text(
+                            "Import refusé pendant export EDIT", exact=False
+                        ).wait_for()
+                    active_path = folder / "concurrent-export.webm"
+                    active_export.value.save_as(active_path)
+                    assert active_path.stat().st_size > 0, "Concurrent import interrupted WebM export"
+                    after_export = portable(page, folder, "after-concurrent-export.json")
+                    assert after_export["clips"] == imported["clips"], "Import mutated EDIT during export"
+                    assert after_export["editAudioTrack"] == imported["editAudioTrack"]
                     # Reload destroys all in-memory EDIT state. Re-import the
                     # actual portable download, then verify media and timeline
                     # from a fresh page/IndexedDB connection.
