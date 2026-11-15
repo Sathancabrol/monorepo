@@ -54,7 +54,7 @@ def inspect_export(path):
     assert 1.0 < ve - vs < 4, (vs, ve)
     assert 1.0 < aue - aus < 4, (aus, aue)
     assert abs(vs - aus) < 0.6, ("A/V start mismatch", vs, aus)
-    assert abs(ve - aue) < 0.6, ("A/V end mismatch", ve, aue)
+    assert abs(ve - aue) < 0.6, ("A/V end mismatch", {"video_end": ve, "audio_end": aue, "video_packets": sum(p.get("stream_index") == video[0]["index"] for p in packets), "audio_packets": sum(p.get("stream_index") == audio[0]["index"] for p in packets), "video_tail": [(p.get("pts_time"), p.get("duration_time")) for p in packets if p.get("stream_index") == video[0]["index"]][-8:], "audio_tail": [(p.get("pts_time"), p.get("duration_time")) for p in packets if p.get("stream_index") == audio[0]["index"]][-8:]})
     result = subprocess.run(
         ["ffmpeg", "-hide_banner", "-nostats", "-i", str(path),
          "-map", "0:a:0", "-af", "volumedetect", "-f", "null", "-"],
