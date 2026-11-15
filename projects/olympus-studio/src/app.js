@@ -242,13 +242,12 @@ async function exportEditorWebM(){
  const requestedAudio=state.editAudioTrack?{...state.editAudioTrack}:null;
  let stream=null;
  try{
-  stream=canvas.captureStream(0);
+  // Keep a paced capture alive even if Chromium drops explicit requestFrame()
+  // calls under WebAudio/MediaRecorder load. Manual frames remain an extra
+  // hint, not the sole source of video timestamps.
+  stream=canvas.captureStream(24);
   editorVideoCaptureTrack=stream.getVideoTracks()[0];
-  if(typeof editorVideoCaptureTrack?.requestFrame!=='function'){
-   stream.getTracks().forEach(track=>track.stop());
-   stream=canvas.captureStream(24);
-   editorVideoCaptureTrack=null;
-  }
+  if(typeof editorVideoCaptureTrack?.requestFrame!=='function')editorVideoCaptureTrack=null;
   let audioIncluded=false;
   if(requestedAudio?.enabled){
    const audio=await loadEditAsset(requestedAudio.assetId);
