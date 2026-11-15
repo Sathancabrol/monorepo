@@ -37,6 +37,8 @@ function travelEdit(direction){if(editorExportPreparing||editorRecorder?.state==
 const editMedia = new Map();const editAudioGraph = new WeakMap();const videoDurations = new Map();const videoDurationJobs = new Map();
 let editorRecorder=null;
 let editorVideoCaptureTrack=null;
+// Monotonic frame marker: wall-clock parity can alias at ~32 ms RAF intervals.
+let editorCaptureFrame=0;
 function knownVideoDuration(assetId){return videoDurations.get(assetId)??null;}
 function updateVideoDurationHint(assetId, duration){
  for(const element of document.querySelectorAll('[data-video-asset]')){
@@ -223,7 +225,7 @@ function drawEditor(now){
   // the encoded video track continues through the full audio timeline.
   // This is capture-only and does not affect the saved storyboard.
   if(editorRecorder?.state==='recording'){
-   const marker=Math.floor(now/32)%2;
+   const marker=(++editorCaptureFrame)%2;
    context.fillStyle=marker?'#172638':'#263748';
    context.fillRect(canvas.width-8,canvas.height-8,8,8);
   }
