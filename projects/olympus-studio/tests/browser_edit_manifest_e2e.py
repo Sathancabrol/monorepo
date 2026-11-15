@@ -153,6 +153,22 @@ def main():
                     page.locator("#status").get_by_text("Montage rétabli", exact=False).wait_for()
                     redone = portable(page, folder, "redo.json")
                     assert redone["clips"] == imported["clips"]
+                    # Reload destroys all in-memory EDIT state. Re-import the
+                    # actual portable download, then verify media and timeline
+                    # from a fresh page/IndexedDB connection.
+                    page.reload(wait_until="load")
+                    page.wait_for_function(
+                        "document.querySelectorAll('#navItems [data-space]').length===12"
+                    )
+                    page.locator("#fileProject").set_input_files(str(folder / "redo.json"))
+                    page.locator("#status").get_by_text(
+                        "Projet chargé", exact=False
+                    ).wait_for()
+                    restored = portable(page, folder, "restored-after-navigation.json")
+                    assert restored["clips"] == imported["clips"], "EDIT timeline lost on navigation"
+                    assert restored["editAudioTrack"] == imported["editAudioTrack"]
+                    assert len(restored["embeddedAssets"]) == 1
+                    assert restored["embeddedAssets"][0]["id"] == asset
                     assert not errors, "JavaScript errors: " + " | ".join(errors)
                     print("EDIT manifest HTTP/IndexedDB + rejection + undo/redo OK")
                 finally:
