@@ -545,3 +545,9 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Correctifs tests poussés : `5b0a66f4` attend les trois blocs RGB, `24c15ecf` attend le compteur monotone, `9eb90170` tolère les commentaires entre garde recording et compteur. **Aucun code applicatif modifié**; ces assertions n'établissent pas la synchronisation A/V.
 - **CI du dernier commit à confirmer**; pas de test Node local, pas de Chromium ni Windows/GTX. Ne pas annoncer A01/A03 terminées.
 - **Prochaine action S** : vérifier le run CI du HEAD; si Node rouge corriger les assertions; si E2E A/V rouge, analyser FFprobe et envisager un export déterministe plutôt que multiplier les marqueurs Canvas. Puis **M (1–2 tranches)** : import EDIT/IndexedDB concurrent et reprise navigation. PR #16 reste en brouillon, aucun merge main ni projet voisin.
+
+
+## Reprise 2026-11-15 09h Europe/Paris — CI verte, récupération EDIT après navigation
+- HEAD initial `7277a2d0`; [CI 43687808793](https://github.com/Sathancabrol/monorepo/actions/runs/43687808793) **success** au même SHA. Les précédents runs annulés ne sont pas des échecs. Cette validation couvre le workflow Studio, notamment les tests Chromium et A/V tels que configurés, sans preuve Windows.
+- Incrément [d9d4b9b5](https://github.com/Sathancabrol/monorepo/commit/d9d4b9b5b84d0c6e894dde20155148763c727aa9) : le test `browser_edit_manifest_e2e.py` recharge la page après undo/redo, importe le vrai Portable exporté, puis vérifie timeline, piste audio et média embarqué. Test **poussé, non encore exécuté/validé sur ce commit**.
+- **Reprise S** : vérifier CI du HEAD après ce test; si rouge, lire logs et réparer. **Ensuite M** : couvrir import manifeste pendant préparation export et restauration des médias après navigation; puis **M–L** : ADR FreeCut/OpenReelio. Ne pas déclarer Windows/OBS réel validés. PR #16 brouillon, aucun merge main.
