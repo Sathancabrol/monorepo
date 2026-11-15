@@ -171,6 +171,23 @@ def main():
                     after_export = portable(page, folder, "after-concurrent-export.json")
                     assert after_export["clips"] == imported["clips"], "Import mutated EDIT during export"
                     assert after_export["editAudioTrack"] == imported["editAudioTrack"]
+                    # Once MediaRecorder stops, a fresh manifest must be accepted.
+                    # This detects a stale export lock and verifies that undo/redo
+                    # remain usable after a rejected concurrent import.
+                    post_export_manifest = json.loads(json.dumps(manifest))
+                    post_export_manifest["segments"][0]["title"] = "Accepted after export"
+                    upload_manifest(page, post_export_manifest)
+                    page.locator("#status").get_by_text(
+                        "Manifeste EDIT importé", exact=False
+                    ).wait_for()
+                    accepted_after_export = portable(page, folder, "accepted-after-export.json")
+                    assert accepted_after_export["clips"][0]["title"] == "Accepted after export"
+                    page.locator("#editUndo").click()
+                    page.locator("#status").get_by_text("Montage annulé", exact=False).wait_for()
+                    assert portable(page, folder, "undo-after-export.json")["clips"] == imported["clips"]
+                    page.locator("#editRedo").click()
+                    page.locator("#status").get_by_text("Montage rétabli", exact=False).wait_for()
+                    assert portable(page, folder, "redo-after-export.json")["clips"] == accepted_after_export["clips"]
                     # Reload destroys all in-memory EDIT state. Re-import the
                     # actual portable download, then verify media and timeline
                     # from a fresh page/IndexedDB connection.
