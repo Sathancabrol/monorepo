@@ -220,6 +220,31 @@ def main():
                     assert gate_project["clips"] == restored["clips"]
                     assert gate_project["editAudioTrack"] == restored["editAudioTrack"]
 
+                    # Diagnostic-only capture telemetry: distinguish a stalled Canvas
+                    # producer from a MediaRecorder encoder dropping valid frames.
+                    # Never change the capture stream, its frame rate or the assertions.
+                    page.evaluate("""() => {
+                      window.__editCaptureTrace = {requests: [], starts: [], stops: []};
+                      const canvas = document.querySelector('#editPreview');
+                      const capture = canvas.captureStream.bind(canvas);
+                      canvas.captureStream = (...args) => {
+                        const stream = capture(...args);
+                        const trace = window.__editCaptureTrace;
+                        trace.starts.push({at: performance.now(), fps: args[0]});
+                        const track = stream.getVideoTracks()[0];
+                        if (track && typeof track.requestFrame === 'function') {
+                          const original = track.requestFrame.bind(track);
+                          track.requestFrame = () => {
+                            trace.requests.push(performance.now());
+                            return original();
+                          };
+                        }
+                        track?.addEventListener('ended', () => {
+                          trace.stops.push(performance.now());
+                        });
+                        return stream;
+                      };
+                    }""")
                     with page.expect_download(timeout=25000) as download_info:
                         page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
                         # A04: adding a clip while MediaRecorder is active must not mutate the timeline.
@@ -237,7 +262,22 @@ def main():
                     download.save_as(output)
                     assert output.stat().st_size > 1500
                     assert not errors, "JS errors during export: " + " | ".join(errors)
-                    print("EDIT UI A/V export:", inspect_export(output))
+                    try:
+                        print("EDIT UI A/V export:", inspect_export(output))
+                    except AssertionError:
+                        trace = page.evaluate("""() => {
+                          const t = window.__editCaptureTrace || {};
+                          const req = t.requests || [];
+                          const gaps = req.slice(1).map((v, i) => v - req[i]);
+                          return {starts: t.starts, stops: t.stops,
+                                  request_count: req.length,
+                                  request_span_ms: req.length > 1 ? req.at(-1) - req[0] : 0,
+                                  max_request_gap_ms: gaps.length ? Math.max(...gaps) : null,
+                                  first_requests: req.slice(0, 5),
+                                  last_requests: req.slice(-5)};
+                        }""")
+                        print("EDIT Canvas capture diagnostic:", trace, flush=True)
+                        raise
                     with page.expect_download(timeout=15000) as locked_info:
                         page.locator("#btnPortable").click()
                     locked_path = Path(temp) / "export-locked-project.json"
