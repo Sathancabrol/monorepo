@@ -53,3 +53,12 @@ test('EDIT ne télécharge jamais un export vide ou signalé en erreur par Media
   assert.match(exportCode, /if\(recorderFailed\|\|!chunks\.length\)\{/);
   assert.ok(exportCode.indexOf('if(recorderFailed||!chunks.length)') < exportCode.indexOf("dl('olympus-storyboard-"), 'garde avant téléchargement');
 });
+
+test('Capture EDIT: zone animée suffisamment grande pour limiter la coalescence VP8', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const source = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
+  const draw = source.slice(source.indexOf('function drawEditor(now){'), source.indexOf('let editorExportPreparing=false;'));
+  assert.match(draw, /for\(let tile=0;tile<64;tile\+\+\)/);
+  assert.match(draw, /canvas\.width-96\+x\*12,canvas\.height-96\+y\*12,12,12/);
+  assert.match(draw, /const marker=\+\+editorCaptureFrame;/);
+});
