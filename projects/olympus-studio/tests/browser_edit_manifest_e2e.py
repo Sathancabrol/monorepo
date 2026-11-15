@@ -122,12 +122,28 @@ def main():
                     page.evaluate("""async id => {
                         const m = await import('/src/media-store.js');
                         const db = await m.openMediaDB();
-                        try { await m.deleteMedia(db, id); } finally { db.close(); }
+                        try {
+                            window.__manifestDeletedRecord = await m.getMedia(db, id);
+                            if (!window.__manifestDeletedRecord) throw Error('Fixture missing before deletion');
+                            await m.deleteMedia(db, id);
+                        } finally { db.close(); }
                     }""", asset)
                     upload_manifest(page, manifest)
                     page.locator("#status").get_by_text(
                         "Import EDIT refusé, montage inchangé", exact=False
                     ).wait_for()
+                    # Portable export cannot embed a deleted media blob. Restore the
+                    # exact IndexedDB record before checking unchanged clips;
+                    # the rejected manifest must not have recreated it.
+                    page.evaluate("""async id => {
+                        const m = await import('/src/media-store.js');
+                        const db = await m.openMediaDB();
+                        try {
+                            if (await m.getMedia(db, id)) throw Error('Rejected import restored deleted asset');
+                            await m.putMedia(db, window.__manifestDeletedRecord);
+                            delete window.__manifestDeletedRecord;
+                        } finally { db.close(); }
+                    }""", asset)
                     assert portable(page, folder, "after-deletion.json")["clips"] == imported["clips"]
                     page.locator("#editUndo").click()
                     page.locator("#status").get_by_text("Montage annulé", exact=False).wait_for()
