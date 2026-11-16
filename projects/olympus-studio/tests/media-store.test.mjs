@@ -54,3 +54,14 @@ test('Portabilité : restauration refuse identifiants et noms vides', () => {
   for (const name of ['', '  ']) assert.throws(() => importPortableAsset({ ...base, name }), /invalide/);
   assert.equal(importPortableAsset(base).blob.size, 3);
 });
+
+
+test('Portabilité : export refuse noms absents ou blancs, cohérent avec import', async () => {
+  const blob = new Blob([new Uint8Array([1, 2, 3])], { type: 'image/png' });
+  for (const name of [undefined, '', '  ']) {
+    await assert.rejects(exportPortableAssets([{ id: 'a', name, type: 'image/png', blob }]), /export incomplet refusé/);
+  }
+  await assert.rejects(exportPortableAssets([{ id: '  ', name: 'valid.png', type: 'image/png', blob }]), /export incomplet refusé/);
+  const archive = await exportPortableAssets([{ id: 'a', name: 'valid.png', type: 'image/png', blob }]);
+  assert.equal(importPortableAsset(archive[0]).name, 'valid.png');
+});
