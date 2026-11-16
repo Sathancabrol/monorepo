@@ -124,3 +124,15 @@ test('Portable : lecture groupée dans une seule transaction, ordre préservé e
   assert.equal(fixture.count(), 2);
   await assert.rejects(getMediaBatch(fixture.db, ['']), /invalides/);
 });
+
+
+test('Portable : progression uniquement après encodage réussi, jamais après échec', async () => {
+  const progress = [];
+  const record = id => ({ id, name: id+'.png', type: 'image/png', blob: new Blob([new Uint8Array([1,2,3])]) });
+  const result = await exportPortableAssets([record('a'), record('b')], PORTABLE_LIMIT, (done,total) => progress.push([done,total]));
+  assert.equal(result.length, 2);
+  assert.deepEqual(progress, [[1,2],[2,2]]);
+  progress.length = 0;
+  await assert.rejects(exportPortableAssets([record('a'), null], PORTABLE_LIMIT, (done,total) => progress.push([done,total])), /incomplet/);
+  assert.deepEqual(progress, [[1,2]]);
+});
