@@ -115,3 +115,11 @@ export function mediaLayerUsable(record, layer) {
   if (!record || !layer) return false;
   return record.id === (layer.assetId || layer.id) && typeof record.type === 'string' && (layer.type === 'image' && record.type.startsWith('image/') || layer.type === 'video' && record.type.startsWith('video/'));
 }
+
+// A Portable export is asynchronous. Capture one coherent immutable-in-practice
+// project snapshot before the first await, including nested clip and layer data.
+export function snapshotPortableProject(payload, referencedIds) {
+  const project = structuredClone(payload);
+  const ids = referencedIds(project.scenes, project.clips, project.editAudioTrack);
+  return { project, ids };
+}
