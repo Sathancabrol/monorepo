@@ -38,3 +38,12 @@ test('Portabilité : refuse un média manquant plutôt que produire une archive 
   await assert.rejects(exportPortableAssets([good, null]), /export incomplet refusé/);
   await assert.rejects(exportPortableAssets([good, { id: '', name: 'empty.png', blob: good.blob }]), /export incomplet refusé/);
 });
+
+
+test('Portabilité : deux références du même identifiant ne peuvent pas créer une archive ambiguë', async () => {
+  const blob = new Blob([new Uint8Array([1, 2, 3])], { type: 'image/png' });
+  const first = { id: 'shared', name: 'first.png', type: 'image/png', blob };
+  const second = { id: 'shared', name: 'second.png', type: 'image/png', blob };
+  await assert.rejects(exportPortableAssets([first, second]), /dupliqué/);
+  assert.equal((await exportPortableAssets([first])).length, 1);
+});
