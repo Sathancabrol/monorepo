@@ -756,7 +756,7 @@ function panel(){
       const response=await fetch('/api/integrations',{cache:'no-store'});
       if(!response.ok)throw new Error('HTTP '+response.status);
       const payload=await response.json();
-      const integrations=Array.isArray(payload)?payload:payload.integrations;
+      const integrations=Array.isArray(payload)?payload:payload.spaces;
       if(!Array.isArray(integrations)||integrations.length!==12)throw new Error('Registre incomplet ou invalide');
       for(const item of integrations){
         const node=document.createElement('article');node.className='mini-card';
