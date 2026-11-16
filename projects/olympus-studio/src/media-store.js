@@ -85,7 +85,7 @@ function bytesFromB64(data) {
   return output;
 }
 
-export async function exportPortableAssets(records, maxBytes = PORTABLE_LIMIT) {
+export async function exportPortableAssets(records, maxBytes = PORTABLE_LIMIT, onProgress = null) {
   if (!Array.isArray(records)) throw new Error('Liste de médias invalide');
   const total = records.reduce((sum, r) => sum + (r?.blob?.size ?? 0), 0);
   if (total > maxBytes) throw new Error('Projet portable limité à ' + Math.round(maxBytes / 1048576) + ' Mo de médias');
@@ -97,6 +97,7 @@ export async function exportPortableAssets(records, maxBytes = PORTABLE_LIMIT) {
     seenIds.add(record.id);
     const bytes = new Uint8Array(await record.blob.arrayBuffer());
     exported.push({ id: String(record.id), name: String(record.name), type: String(record.type || record.blob.type || 'application/octet-stream'), size: bytes.length, data_b64: b64(bytes) });
+    if (typeof onProgress === 'function') onProgress(exported.length, records.length);
   }
   return exported;
 }
