@@ -21,7 +21,7 @@ export function selectComfyOutput(history,id,index){
  if(!item)throw Error('Sortie introuvable');
  const filename=item.filename,subfolder=item.subfolder??'',type=item.type??'output';
  if(!/^[^\\/\x00-\x1f]{1,180}$/.test(filename)||filename==='.'||filename==='..'||filename.includes('..'))throw Error('Nom de fichier interdit');
- if(typeof subfolder!=='string'||subfolder.length>180||subfolder.startsWith('/')||subfolder.includes('\\')||subfolder.split('/').some(s=>s==='.'||s==='..'||!s||/[\x00-\x1f]/.test(s)))throw Error('Sous-dossier interdit');
+ if(typeof subfolder!=='string'||subfolder.length>180||subfolder.startsWith('/')||subfolder.includes('\\')||(subfolder?subfolder.split('/'):[]).some(s=>s==='.'||s==='..'||!s||/[\x00-\x1f]/.test(s)))throw Error('Sous-dossier interdit');
  if(type!=='output')throw Error('Seules les sorties finales sont autorisées');
  const ext=filename.split('.').pop().toLowerCase(),mime=MIME[ext];
  if(!mime)throw Error('Format de sortie non autorisé');
