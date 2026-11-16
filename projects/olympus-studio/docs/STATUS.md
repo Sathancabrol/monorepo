@@ -205,3 +205,9 @@ Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture
 - Implémenté : passerelle locale contrôlée pour importer des sorties de jobs ComfyUI terminés vers IndexedDB, avec UI GENERATE et validation chemin/extension/signature/taille (25 MiB max). Tests unitaires et HTTP négatifs ajoutés.
 - Preuve avant modifications : CI 43789453862 verte sur cdeee0a4. CI nouvelle 43795914408 en attente à la lecture; aucune validation ComfyUI réelle ou Windows. Les tests bout-en-bout avec faux ComfyUI et clic UI restent à faire.
 - Priorités : réparer CI si rouge; E2E ComfyUI→LIBRARY; stabiliser export EDIT A/V par approche déterministe; recette Windows bloquée.
+
+
+## 16/11/2026 06h — ComfyUI E2E navigateur, A/V CI rouge
+- Scénario Chromium `tests/browser_comfy_import_e2e.py` ajouté au CI dédié : ComfyUI simulé, envoi job depuis GENERATE, import résultat PNG, vérification IndexedDB et persistance après reload. **Codé mais exécution CI non confirmée**. Commits `10f9c173`, `7f32a7ed`, `0c1e42ee`, `fb029d4b`, `8384546c`.
+- CI précédente [43801892878](https://github.com/Sathancabrol/monorepo/actions/runs/43801892878) rouge : export EDIT vidéo 2,002 s / audio 2,678 s, décalage 676 ms; les étapes après export n'ont pas tourné. Ne pas assouplir le seuil; priorité au rendu déterministe.
+- ComfyUI réel, Windows, GPU GTX 1060/1650 et recette alpha restent non validés. Reprise détaillée dans HANDOFF.
