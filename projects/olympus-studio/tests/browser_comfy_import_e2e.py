@@ -59,8 +59,10 @@ def main():
         mock = ThreadingHTTPServer(("127.0.0.1", 8188), MockComfy)
     except OSError as exc:
         if getattr(exc, "errno", None) in (98, 10048):
-            print("SKIP: ComfyUI port 8188 already occupied; do not interfere")
-            return
+            raise RuntimeError(
+                "ComfyUI mock E2E cannot bind 127.0.0.1:8188: port occupied; "
+                "test must fail rather than report a false green"
+            ) from exc
         raise
     thread = threading.Thread(target=mock.serve_forever, daemon=True)
     thread.start()
