@@ -7,7 +7,7 @@ import {selectEditorWebMMime} from './editor-export.js';
 import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from './video-duration.js';
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
-import { openMediaDB, putMedia, getMedia, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
+import { openMediaDB, putMedia, getMedia, getMediaBatch, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable } from './media-store.js';
 const $=id=>document.getElementById(id);
 const C=$('stage'),ctx=C.getContext('2d');
 const spaces=[
@@ -349,8 +349,7 @@ async function savePortableProject(){
   const db=await dbReady;
   const refs=referencedAssetIds(state.scenes,state.clips,state.editAudioTrack);
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
-  const records=[];
-  for(const id of refs){const record=await getMedia(db,id);if(!record)throw Error('Média absent du coffre : '+id);records.push(record);}
+  const records=await getMediaBatch(db,refs);
   const embeddedAssets=await exportPortableAssets(records);
   const payload={...projectPayload(),portable:true,embeddedAssets};
   dl('olympus-portable-'+Date.now()+'.json',new Blob([JSON.stringify(payload)],{type:'application/json'}));
