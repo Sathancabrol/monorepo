@@ -63,7 +63,7 @@ export async function exportPortableAssets(records, maxBytes = PORTABLE_LIMIT) {
   if (total > maxBytes) throw new Error('Projet portable limité à ' + Math.round(maxBytes / 1048576) + ' Mo de médias');
   const exported = [];
   for (const record of records) {
-    if (!record || !(record.blob instanceof Blob)) continue;
+    if (!record || typeof record.id !== 'string' || !record.id || !(record.blob instanceof Blob)) throw new Error('Média portable invalide : export incomplet refusé');
     const bytes = new Uint8Array(await record.blob.arrayBuffer());
     exported.push({ id: String(record.id), name: String(record.name), type: String(record.type || record.blob.type || 'application/octet-stream'), size: bytes.length, data_b64: b64(bytes) });
   }
