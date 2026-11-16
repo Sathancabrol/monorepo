@@ -74,7 +74,7 @@ export async function exportPortableAssets(records, maxBytes = PORTABLE_LIMIT) {
 }
 
 export function importPortableAsset(asset, maxBytes = PORTABLE_LIMIT) {
-  if (!asset || typeof asset.id !== 'string' || typeof asset.name !== 'string' || typeof asset.data_b64 !== 'string') throw new Error('Entrée de média portable invalide');
+  if (!asset || typeof asset.id !== 'string' || !asset.id.trim() || typeof asset.name !== 'string' || !asset.name.trim() || typeof asset.data_b64 !== 'string') throw new Error('Entrée de média portable invalide');
   if (asset.data_b64.length > Math.ceil(maxBytes / 3) * 4 + 4) throw new Error('Média portable trop volumineux');
   const bytes = bytesFromB64(asset.data_b64);
   if (bytes.length > maxBytes || (Number.isInteger(asset.size) && bytes.length !== asset.size)) throw new Error('Taille du média portable incohérente');
