@@ -444,8 +444,19 @@ def main():
                     print("EDIT audio undo/redo UI: volume restored and redo invalidated")
                     assert not errors, "JS errors during undo/redo: " + " | ".join(errors)
                     print("EDIT undo/redo UI: split restored, audio and source preserved")
-                    with page.expect_download(timeout=15000) as split_info:
-                        page.locator("#btnPortable").click()
+                    # Portable serializes multiple media Blobs asynchronously.
+                    # On failure report application status, not only a timeout.
+                    try:
+                        with page.expect_download(timeout=30000) as split_info:
+                            page.locator("#btnPortable").click()
+                    except Exception as exc:
+                        status_text = page.locator("#status").inner_text(timeout=5000)
+                        button_disabled = page.locator("#btnPortable").is_disabled()
+                        raise AssertionError(
+                            f"Portable download missing after split/undo/redo: "
+                            f"status={status_text!r}, busy={button_disabled}, "
+                            f"js_errors={errors!r}"
+                        ) from exc
                     split_path = Path(temp) / "split-portable.json"
                     split_info.value.save_as(split_path)
                     split_project = json.loads(split_path.read_text(encoding="utf-8"))
