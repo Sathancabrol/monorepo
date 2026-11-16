@@ -65,3 +65,20 @@ test('Portabilité : export refuse noms absents ou blancs, cohérent avec import
   const archive = await exportPortableAssets([{ id: 'a', name: 'valid.png', type: 'image/png', blob }]);
   assert.equal(importPortableAsset(archive[0]).name, 'valid.png');
 });
+
+// A split timeline references one binary twice; Portable must embed it exactly once.
+test('Portable : deux segments partageant une source conservent les octets sans doublon', async () => {
+  const { referencedAssetIds } = await import('../src/storyboard.js');
+  const bytes = Uint8Array.from({ length: 150003 }, (_, i) => (i * 17) % 251);
+  const blob = new Blob([bytes], { type: 'video/webm' });
+  const clips = [
+    { id: 'clip-a', assetId: 'shared-video', kind: 'video', inPoint: 0, outPoint: 1 },
+    { id: 'clip-b', assetId: 'shared-video', kind: 'video', inPoint: 1, outPoint: 2 }
+  ];
+  const refs = referencedAssetIds([], clips, null);
+  assert.deepEqual(refs, ['shared-video']);
+  const archive = await exportPortableAssets(refs.map(id => ({ id, name: 'source.webm', type: 'video/webm', blob })));
+  assert.equal(archive.length, 1);
+  const restored = importPortableAsset(archive[0]);
+  assert.deepEqual(new Uint8Array(await restored.blob.arrayBuffer()), bytes);
+});
