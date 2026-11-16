@@ -73,3 +73,9 @@ test('Contrats des 12 espaces : inventaire local sans faux positifs de disponibi
  assert.equal(j.spaces.find(s=>s.space==='EDIT').status,'intermittent-av');
  assert.equal(j.spaces.find(s=>s.space==='XR').status,'not-integrated');
 });
+
+test('ComfyUI output rejects arbitrary job identifiers and indexes before upstream',async()=>{
+ for(const query of ['prompt_id=../../secret&index=0','prompt_id=12345678-1234-4234-8234-123456789abc&index=../../etc','prompt_id=12345678-1234-4234-8234-123456789abc&index=-1']){
+  const r=await fetch(base+'/api/comfy/output?'+query);assert.equal(r.status,400);
+ }
+});
