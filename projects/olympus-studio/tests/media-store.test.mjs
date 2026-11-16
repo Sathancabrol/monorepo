@@ -47,3 +47,10 @@ test('Portabilité : deux références du même identifiant ne peuvent pas crée
   await assert.rejects(exportPortableAssets([first, second]), /dupliqué/);
   assert.equal((await exportPortableAssets([first])).length, 1);
 });
+
+test('Portabilité : restauration refuse identifiants et noms vides', () => {
+  const base = { id: 'asset', name: 'photo.png', type: 'image/png', data_b64: 'AQID', size: 3 };
+  for (const id of ['', '  ']) assert.throws(() => importPortableAsset({ ...base, id }), /invalide/);
+  for (const name of ['', '  ']) assert.throws(() => importPortableAsset({ ...base, name }), /invalide/);
+  assert.equal(importPortableAsset(base).blob.size, 3);
+});
