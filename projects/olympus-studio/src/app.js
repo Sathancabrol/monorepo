@@ -349,8 +349,11 @@ async function savePortableProject(){
   const db=await dbReady;
   const refs=referencedAssetIds(state.scenes,state.clips,state.editAudioTrack);
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
+  status('Export portable : lecture de '+refs.length+' média(s)…');
   const records=await getMediaBatch(db,refs);
-  const embeddedAssets=await exportPortableAssets(records);
+  const embeddedAssets=await exportPortableAssets(records,undefined,(done,total)=>{
+   status('Export portable : encodage '+done+'/'+total+' média(s)');
+  });
   const payload={...projectPayload(),portable:true,embeddedAssets};
   dl('olympus-portable-'+Date.now()+'.json',new Blob([JSON.stringify(payload)],{type:'application/json'}));
   status('Projet portable exporté : '+embeddedAssets.length+' média(s) intégré(s)');
