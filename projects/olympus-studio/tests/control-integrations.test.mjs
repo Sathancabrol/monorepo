@@ -13,5 +13,6 @@ test('CONTROL renders all 12 server-provided integration contracts without HTML 
   assert.match(source, /probe\.textContent=/);
   assert.match(source, /button\.disabled=true/);
   assert.match(source, /finally\{button\.disabled=false/);
-  assert.doesNotMatch(source.slice(source.indexOf("else if(state.space==='CONTROL')"),  source.includes("else if(state.space==='LIBRARY')") ? /innerHTML\s*=.*item\.engine/ : /innerHTML\s*=.*item\.engine/);
+  const controlSource = source.slice(source.indexOf("else if(state.space==='CONTROL')"));
+  assert.doesNotMatch(controlSource, /innerHTML\s*=.*item\.engine/);
 });
