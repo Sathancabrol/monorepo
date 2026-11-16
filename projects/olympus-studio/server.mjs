@@ -4,6 +4,7 @@ import { join, resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import net from 'node:net';
 import { integrationSnapshot } from './src/integration-registry.js';
+import { selectComfyOutput, validComfyBytes, MAX_COMFY_BYTES } from './src/comfy-output.js';
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
@@ -85,6 +86,32 @@ async function handle(req,res){
    const status=info.status_str==='error'?'failed':info.completed===true?'completed':'known';
    return json(res,200,{prompt_id:id,status,outputs:outputs.slice(0,250)});
   }catch(e){return json(res,502,{error:'Suivi ComfyUI indisponible',detail:String(e.message).slice(0,140)});}
+ }
+ if(req.method==='GET'&&url.pathname==='/api/comfy/output'){
+  const id=url.searchParams.get('prompt_id')||'';
+  const rawIndex=url.searchParams.get('index')||'';
+  if(!/^[0-9a-f-]{36}$/i.test(id)||!/^(0|[1-9][0-9]{0,2})$/.test(rawIndex))return json(res,400,{error:'Identifiant ou index invalide'});
+  try{
+   const historyResponse=await fetch('http://127.0.0.1:8188/history/'+encodeURIComponent(id),{signal:AbortSignal.timeout(5000)});
+   if(!historyResponse.ok)return json(res,502,{error:'Historique ComfyUI inaccessible'});
+   const selected=selectComfyOutput(await historyResponse.json(),id,Number(rawIndex));
+   const params=new URLSearchParams({filename:selected.filename,subfolder:selected.subfolder,type:selected.type});
+   const upstream=await fetch('http://127.0.0.1:8188/view?'+params,{signal:AbortSignal.timeout(10000)});
+   if(!upstream.ok)return json(res,502,{error:'Fichier ComfyUI indisponible'});
+   const length=Number(upstream.headers.get('content-length')||0);
+   if(length>MAX_COMFY_BYTES)return json(res,413,{error:'Sortie trop volumineuse'});
+   const chunks=[];let size=0;
+   if(!upstream.body)return json(res,502,{error:'Réponse vide'});
+   for await(const chunk of upstream.body){
+    size+=chunk.length;
+    if(size>MAX_COMFY_BYTES){await upstream.body.cancel().catch(()=>{});return json(res,413,{error:'Sortie trop volumineuse'});}
+    chunks.push(chunk);
+   }
+   const bytes=Buffer.concat(chunks);
+   if(!validComfyBytes(bytes,selected.mime))return json(res,415,{error:'Signature média non conforme'});
+   res.writeHead(200,{'Content-Type':selected.mime,'Content-Length':bytes.length,'Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(selected.filename),'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+   return res.end(bytes);
+  }catch(e){return json(res,502,{error:'Import ComfyUI refusé',detail:String(e.message).slice(0,160)});}
  }
  if(req.method!=='GET'&&req.method!=='HEAD')return json(res,405,{error:'Méthode interdite'});
  const pathname=url.pathname==='/'?'/index.html':decodeURIComponent(url.pathname);
