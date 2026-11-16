@@ -23,7 +23,11 @@ export function assessStreams(probe, maxDrift = 0.6) {
       const d = Number(p.duration_time ?? 0);
       return { t, end: t + d };
     }).filter(p => Number.isFinite(p.t) && Number.isFinite(p.end) && p.t >= 0);
-    if (spans.length) return { start: Math.min(...spans.map(p => p.t)), end: Math.max(...spans.map(p => p.end)) };
+    if (spans.length) {
+      let start = Infinity, end = -Infinity;
+      for (const span of spans) { start = Math.min(start, span.t); end = Math.max(end, span.end); }
+      return { start, end };
+    }
     if (stream.start_time == null || stream.duration == null) return null;
     const start = Number(stream.start_time), duration = Number(stream.duration);
     if (!Number.isFinite(start) || !Number.isFinite(duration) || start < 0 || duration <= 0) return null;
