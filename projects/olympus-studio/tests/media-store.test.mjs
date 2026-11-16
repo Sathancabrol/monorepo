@@ -136,3 +136,24 @@ test('Portable : progression uniquement après encodage réussi, jamais après �
   await assert.rejects(exportPortableAssets([record('a'), null], PORTABLE_LIMIT, (done,total) => progress.push([done,total])), /incomplet/);
   assert.deepEqual(progress, [[1,2]]);
 });
+
+// Regression: edits made while IndexedDB/Blob encoding is pending must not
+// change the timeline of the Portable archive or introduce unembedded assets.
+test('Portable : snapshot cohérent malgré mutations EDIT pendant export asynchrone', async () => {
+  const { snapshotPortableProject } = await import('../src/media-store.js');
+  const { referencedAssetIds } = await import('../src/storyboard.js');
+  const current = {
+    scenes: [{ id: 'scene', layers: [] }],
+    clips: [{ id: 'clip', kind: 'video', assetId: 'source-a', inPoint: 0, outPoint: 2, title: 'Avant' }],
+    editAudioTrack: null
+  };
+  const { project, ids } = snapshotPortableProject(current, referencedAssetIds);
+  current.clips[0].assetId = 'source-b';
+  current.clips[0].title = 'Après';
+  current.clips.push({ id: 'second', kind: 'video', assetId: 'source-c', inPoint: 0, outPoint: 1 });
+  assert.deepEqual(ids, ['source-a']);
+  assert.equal(project.clips.length, 1);
+  assert.equal(project.clips[0].assetId, 'source-a');
+  assert.equal(project.clips[0].title, 'Avant');
+  assert.deepEqual(referencedAssetIds(project.scenes, project.clips, project.editAudioTrack), ids);
+});
