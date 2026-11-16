@@ -99,17 +99,17 @@ def main():
                     const req=indexedDB.open('olympus-studio-assets');
                     req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);
                   });
-                  const tx=db.transaction('assets','readonly'); const items=await new Promise((resolve,reject)=>{const q=tx.objectStore('assets').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);}); db.close(); const entry=items.find(x=>x.name==='comfy-fixture.png'||x.filename==='comfy-fixture.png'); return {count:items.length,entry:entry?{size:entry.blob?.size,type:entry.blob?.type}:null};
+                  const tx=db.transaction('assets','readonly'); const items=await new Promise((resolve,reject)=>{const q=tx.objectStore('assets').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);}); db.close(); const entry=items.find(x=>x.name==='comfy-fixture.png'||x.filename==='comfy-fixture.png'); return {count:items.length,entry:entry?{size:entry.blob?.size,type:entry.blob?.type,bytes:Array.from(new Uint8Array(await entry.blob.arrayBuffer()))}:null};
                 }""")
-                assert data["entry"] and data["entry"]["size"] == len(PNG), ("IndexedDB output missing or wrong bytes", data)
+                assert data["entry"] and data["entry"]["size"] == len(PNG) and data["entry"]["type"] == "image/png" and bytes(data["entry"]["bytes"]) == PNG, ("IndexedDB output missing, MIME or bytes differ", data)
                 page.reload()
                 persisted = page.evaluate("""async () => {
                   const db = await new Promise((resolve,reject)=>{const r=indexedDB.open('olympus-studio-assets');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
                   const tx=db.transaction('assets','readonly');
                   const rows=await new Promise((resolve,reject)=>{const q=tx.objectStore('assets').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
-                  db.close();return rows.map(r=>({name:r.name,size:r.blob?.size}));
+                  db.close();return await Promise.all(rows.map(async r=>({name:r.name,size:r.blob?.size,bytes:r.blob?Array.from(new Uint8Array(await r.blob.arrayBuffer())):[]})));
                 }""")
-                assert any(x["name"] == "comfy-fixture.png" and x["size"] == len(PNG) for x in persisted), persisted
+                assert any(x["name"] == "comfy-fixture.png" and x["size"] == len(PNG) and bytes(x["bytes"]) == PNG for x in persisted), persisted
                 assert not errors, errors
                 print("ComfyUI GENERATE -> LIBRARY Chromium E2E: PASS (mock server, reload, IndexedDB)")
             finally:
