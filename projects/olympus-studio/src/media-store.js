@@ -36,6 +36,34 @@ export function putMedia(db, media) {
   return storeRequest(db, 'readwrite', store => store.put(record));
 }
 export function getMedia(db, id) { return storeRequest(db, 'readonly', store => store.get(id)); }
+export function getMediaBatch(db, ids) {
+  if (!Array.isArray(ids) || ids.some(id => typeof id !== 'string' || !id.trim())) {
+    return Promise.reject(new Error('Références médias invalides'));
+  }
+  if (ids.length === 0) return Promise.resolve([]);
+  // One IndexedDB transaction for the whole snapshot, instead of N serialized
+  // transactions. Missing records fail closed before any Portable download.
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('assets', 'readonly');
+    const records = new Array(ids.length);
+    let failed = false;
+    ids.forEach((id, index) => {
+      const request = tx.objectStore('assets').get(id);
+      request.onsuccess = () => {
+        if (request.result === undefined) {
+          failed = true;
+          try { tx.abort(); } catch {}
+          return;
+        }
+        records[index] = request.result;
+      };
+    });
+    tx.oncomplete = () => resolve(records);
+    tx.onabort = () => reject(new Error(failed ? 'Média absent du coffre IndexedDB' : 'Lecture groupée IndexedDB annulée'));
+    tx.onerror = () => reject(tx.error || new Error('Lecture groupée IndexedDB impossible'));
+  });
+}
+
 export function listMedia(db) { return storeRequest(db, 'readonly', store => store.getAll()); }
 export function deleteMedia(db, id) { return storeRequest(db, 'readwrite', store => store.delete(id)); }
 
