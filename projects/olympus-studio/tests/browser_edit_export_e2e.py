@@ -370,10 +370,25 @@ def main():
                     # The split must undo to one video clip and redo to two while
                     # preserving the original source asset and audio track.
                     def portable_snapshot(filename):
-                        with page.expect_download(timeout=15000) as snapshot_info:
-                            page.locator("#btnPortable").click()
+                        # Measure every UI export, not just the final snapshot.
+                        # A missing download must report the last app status and
+                        # whether the asynchronous export still owns its button.
+                        started = time.monotonic()
+                        try:
+                            with page.expect_download(timeout=30000) as snapshot_info:
+                                page.locator("#btnPortable").click()
+                        except Exception as exc:
+                            elapsed = time.monotonic() - started
+                            status_text = page.locator("#status").inner_text(timeout=5000)
+                            busy = page.locator("#btnPortable").is_disabled()
+                            raise AssertionError(
+                                f"Portable {filename} failed after {elapsed:.2f}s: "
+                                f"status={status_text!r}, busy={busy}, js_errors={errors!r}"
+                            ) from exc
+                        elapsed = time.monotonic() - started
                         target = Path(temp) / filename
                         snapshot_info.value.save_as(target)
+                        print(f"Portable {filename}: download started after {elapsed:.2f}s", flush=True)
                         return json.loads(target.read_text(encoding="utf-8"))
 
                     page.locator("#editUndo").wait_for(state="visible")
