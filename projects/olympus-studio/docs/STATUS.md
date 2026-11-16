@@ -200,3 +200,8 @@ Ne déclarer la piste A/V fonctionnelle en conditions réelles qu'après capture
 - Correctif test `66c72186824a98c4cc33668f885481e757f44c68` : `wait_for(state="attached")` puis sélection explicite par label avant `Ajouter / remplacer piste`. Aucun code applicatif touché.
 - **À vérifier** : CI au dernier commit de cette branche; si rouge, lire les logs du job EDIT et corriger. Le vrai export EDIT WebM/Opus n'est pas encore validé. A01/A03 restent READY. Puis E2E reprise IndexedDB clips + piste audio (M), ensuite A04 undo/redo (M).
 - Aucun test Windows/GTX ni écoute humaine; aucun merge main, secret ou projet voisin modifié.
+
+## 16/11/2026 04h — Intégration ComfyUI → LIBRARY
+- Implémenté : passerelle locale contrôlée pour importer des sorties de jobs ComfyUI terminés vers IndexedDB, avec UI GENERATE et validation chemin/extension/signature/taille (25 MiB max). Tests unitaires et HTTP négatifs ajoutés.
+- Preuve avant modifications : CI 43789453862 verte sur cdeee0a4. CI nouvelle 43795914408 en attente à la lecture; aucune validation ComfyUI réelle ou Windows. Les tests bout-en-bout avec faux ComfyUI et clic UI restent à faire.
+- Priorités : réparer CI si rouge; E2E ComfyUI→LIBRARY; stabiliser export EDIT A/V par approche déterministe; recette Windows bloquée.
