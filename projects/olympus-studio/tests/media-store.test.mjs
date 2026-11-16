@@ -30,3 +30,11 @@ test('Association calque et média stricte', () => {
   assert.equal(mediaLayerUsable(asset, { id:'layer-xyz', type:'image' }), false);
   assert.equal(mediaLayerUsable(asset, { id:'layer-123', type:'video' }), false);
 });
+
+// An invalid record must never yield a seemingly complete portable archive.
+test('Portabilité : refuse un média manquant plutôt que produire une archive partielle', async () => {
+  const good = { id: 'valid', name: 'valid.png', type: 'image/png', blob: new Blob([new Uint8Array([1, 2, 3])], { type: 'image/png' }) };
+  await assert.rejects(exportPortableAssets([good, { id: 'missing-blob', name: 'lost.png' }]), /export incomplet refusé/);
+  await assert.rejects(exportPortableAssets([good, null]), /export incomplet refusé/);
+  await assert.rejects(exportPortableAssets([good, { id: '', name: 'empty.png', blob: good.blob }]), /export incomplet refusé/);
+});
