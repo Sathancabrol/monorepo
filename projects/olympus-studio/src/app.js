@@ -746,7 +746,31 @@ function panel(){
   const gesture=document.createElement('button');gesture.textContent='Simuler claquement de doigts';gesture.onclick=()=>{scene().layers.filter(l=>l.name.startsWith('XR ·')).forEach(l=>l.visible=!l.visible);sync();status('Geste simulé : couches XR basculées');};wrap.append(gesture);
  }
  else if(state.space==='CONTROL'){
-  const button=document.createElement('button');button.textContent='Actualiser diagnostic';const pre=document.createElement('pre');pre.className='muted';pre.textContent='Vérifie seulement les ports locaux : pas de contrôle OBS ni de test des modèles.';button.onclick=async()=>{pre.textContent=JSON.stringify(await health(),null,2);};wrap.append(button);el.append(pre);
+  const button=document.createElement('button');button.textContent='Actualiser les 12 intégrations';
+  const summary=document.createElement('p');summary.className='notice';summary.textContent='Diagnostic local en lecture seule. Un port accessible ne prouve pas une intégration fonctionnelle.';
+  const cards=document.createElement('div');cards.className='cards';
+  const detail=document.createElement('pre');detail.className='muted';
+  async function refreshIntegrations(){
+    button.disabled=true;cards.replaceChildren();detail.textContent='Interrogation des contrats locaux…';
+    try{
+      const response=await fetch('/api/integrations',{cache:'no-store'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      const payload=await response.json();
+      const integrations=Array.isArray(payload)?payload:payload.integrations;
+      if(!Array.isArray(integrations)||integrations.length!==12)throw new Error('Registre incomplet ou invalide');
+      for(const item of integrations){
+        const node=document.createElement('article');node.className='mini-card';
+        const heading=document.createElement('h3');heading.textContent=String(item.space||'Espace inconnu')+' · '+String(item.engine||'Moteur inconnu');
+        const description=document.createElement('p');description.textContent=String(item.contract||'')+' · '+String(item.status||'non évalué');
+        const probe=document.createElement('p');probe.textContent=item.reachable===true?'Port accessible — fonctionnement non vérifié':item.reachable===false?'Port inaccessible':'Pas de sonde disponible';
+        node.append(heading,description,probe);cards.append(node);
+      }
+      detail.textContent='12 contrats affichés · aucune commande externe exécutée';
+    }catch(error){detail.textContent='Diagnostic indisponible : '+error.message;}
+    finally{button.disabled=false;}
+  }
+  button.onclick=refreshIntegrations;wrap.append(button);el.append(summary,cards,detail);
+  void refreshIntegrations();
  }
  else if(state.space==='LIBRARY'){
   const info=document.createElement('p');info.className='notice';info.textContent='Bibliothèque de session. Les fichiers ne sont pas sauvegardés dans le JSON; conserver les originaux.';el.append(info);
