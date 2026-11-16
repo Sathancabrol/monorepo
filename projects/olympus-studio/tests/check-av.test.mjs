@@ -34,3 +34,17 @@ test('A/V: codec vidéo incompatible rejeté', () =>
     {codec_type:'video',codec_name:'h264',start_time:'0',duration:'2'},
     {codec_type:'audio',codec_name:'opus',start_time:'0',duration:'2'}
   ]}), /Codec vidéo/));
+
+test('A/V: longues captures FFprobe sans dépassement de pile', () => {
+  const packets = [];
+  for (let i = 0; i < 150000; i++) {
+    packets.push({stream_index:0,pts_time:String(i * 0.02),duration_time:'0.02'});
+    packets.push({stream_index:1,pts_time:String(i * 0.02),duration_time:'0.02'});
+  }
+  const result = assessStreams({format:{format_name:'matroska,webm'},streams:[
+    {index:0,codec_type:'video',codec_name:'vp8'},
+    {index:1,codec_type:'audio',codec_name:'opus'}
+  ],packets});
+  assert.equal(result.startDrift, 0);
+  assert.equal(result.endDrift, 0);
+});
