@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | LIVE | OBS Studio | `obs-client.js` WebSocket v5; scène/REC/événements | mock Node | OBS réel Windows |
 | EDIT | Storyboard Studio, MediaRecorder; FFmpeg candidat | clips + assetId → WebM VP8/Opus | E2E Chromium intermittent | sortie A/V déterministe |
-| GENERATE | ComfyUI | `/api/comfy/queue`, `/api/comfy/job`; workflow → prompt_id → outputs | HTTP mock | import sécurisé des fichiers produits |
+| GENERATE | ComfyUI | `/api/comfy/queue`, `/api/comfy/job`; workflow → prompt_id → outputs | HTTP + Chromium E2E avec ComfyUI simulé, import PNG et IndexedDB | ComfyUI réel / GPU non testés |
 | XR | X-Ray Mirror / MediaPipe | horodatage pose/gestes → bus d'événements | non intégré | adaptateur réel, licence et version |
 | AUDIO | WebAudio / Sherpa-ONNX | PCM/WAV → piste/segments | piste EDIT partielle | mixage/ASR et service local |
 | MEETING | VoiceStudio Sherpa-ONNX | audio → SRT/transcription | SRT manuel testé | liaison service locale, FR/EN |
@@ -32,3 +32,10 @@
 - Publier paquet alpha et procédure de lancement, distinguer démontré/non démontré. Windows/OBS réel bloqués sans machine.
 
 Références existantes à étudier, **sans présumer intégration** : https://github.com/walterlow/freecut (licence déclarée MIT dans issue #12, à revérifier), https://github.com/openreelio/openreelio (licence déclarée MIT, pré-alpha), https://github.com/VelornLabs/velorn (GPL-3.0 déclarée), https://github.com/colmap/colmap, https://github.com/comfyanonymous/ComfyUI, https://github.com/obsproject/obs-studio.
+
+## Contrôle du 16/11/2026, 15 h (Paris)
+
+- PR #16 : HEAD `ff7f94937039118c5a47cf57fbb957ede6eb1501`, toujours draft.
+- CI GitHub Actions [43875052510](https://github.com/Sathancabrol/monorepo/actions/runs/43875052510) : **completed / success** sur ce HEAD (état du run confirmé par API ; logs de chaque step non relus ici). Ce résultat valide le workflow, pas Windows/GTX ni la reproductibilité du timing A/V.
+- Correction documentaire : l'import ComfyUI simulé → LIBRARY/IndexedDB est déjà couvert par un E2E Chromium ; ne plus le décrire comme absent. Le test ComfyUI réel reste à faire.
+- Prochaine tâche P0 : diagnostiquer l'intermittence du téléchargement Portable après undo/redo et répéter l'export A/V ; ensuite fallback FFmpeg déterministe ou limitation alpha documentée. Éviter les nouveaux tests défensifs redondants.
