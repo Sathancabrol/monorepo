@@ -700,3 +700,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `b1b56daf` : le test Chromium `browser_comfy_import_e2e.py` vérifie désormais **les octets exacts du PNG** et le MIME `image/png` dans IndexedDB, puis de nouveau les octets après rechargement. Le test précédent ne comparait que la taille, susceptible de masquer une corruption de même longueur.
 - CI du commit `b1b56daf` **non encore confirmée**; inspecter les nouveaux jobs et réparer immédiatement tout échec. Aucun essai sur ComfyUI réel, Windows, GTX 1060/1650.
 - **Prochaine tâche P0 M–L** : fiabiliser l'export A/V EDIT par un rendu à timestamps déterministes ou un fallback FFmpeg local avec détection de dépendance et refus explicite si indisponible; ne pas relever le seuil de dérive. **Ensuite P1 M** : finaliser packaging alpha et procédure de lancement Windows, avec matrice des fonctionnalités réellement démontrées. Échéance 18 novembre.
+
+
+## 16/11/2026 08h — garde-fou E2E ComfyUI
+
+- CI de référence [43807993303](https://github.com/Sathancabrol/monorepo/actions/runs/43807993303) : job `smoke` **success** sur le code de cette exécution antérieure. Elle ne prouve ni Windows ni ComfyUI réel.
+- Correctif test `394c62ee` : `browser_comfy_import_e2e.py` échoue explicitement lorsque le port mock 8188 est occupé, au lieu de renvoyer un faux `SKIP` pouvant laisser une CI verte sans test. Ne jamais interférer avec un ComfyUI déjà actif.
+- **CI du commit correctif : à vérifier** au prochain passage. Aucune preuve d'exécution locale Windows/GTX; aucune prétention d'avoir résolu la dérive A/V EDIT.
+- **Reprise S** : contrôler le run du dernier HEAD et ses logs; si rouge, corriger avant toute autre intégration. **Puis M–L** : rendre l'export EDIT A/V déterministe (timestamps, encoder FFmpeg local en fallback si disponible) sans assouplir le seuil de 600 ms, tester par vrai E2E. **Puis M** : recette alpha et paquet téléchargeable documenté.
