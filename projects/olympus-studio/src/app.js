@@ -733,6 +733,25 @@ function panel(){
       if(!r.ok)throw Error(data.error||'Erreur ComfyUI');
       const names=(data.outputs||[]).map(item=>item.kind+' : '+item.filename);
       result.textContent='Job : '+data.prompt_id+'\nÉtat : '+data.status+'\nFichiers produits : '+names.length+(names.length?'\n'+names.join('\n'):'');
+      wrap.querySelectorAll('[data-comfy-output]').forEach(node=>node.remove());
+      if(data.status==='completed')(data.outputs||[]).forEach((item,index)=>{
+        const button=document.createElement('button');
+        button.dataset.comfyOutput=String(index);
+        button.textContent='Importer dans LIBRARY : '+item.filename;
+        button.onclick=async()=>{
+          button.disabled=true;
+          try{
+            const response=await fetch('/api/comfy/output?prompt_id='+encodeURIComponent(data.prompt_id)+'&index='+index);
+            if(!response.ok){const error=await response.json();throw Error(error.error||'Import impossible');}
+            const blob=await response.blob();
+            const filename=String(item.filename||'comfy-output').split(/[\\/]/).pop();
+            await addFiles([new File([blob],filename,{type:blob.type})]);
+            status('Résultat ComfyUI importé dans LIBRARY : '+filename);
+          }catch(error){status('Import ComfyUI : '+error.message);}
+          finally{button.disabled=false;}
+        };
+        wrap.append(button);
+      });
       status(data.status==='completed'?'Génération terminée, fichiers sur ComfyUI local':'Suivi ComfyUI : '+data.status);
     }catch(e){result.textContent='Suivi impossible : '+e.message;}
     finally{check.disabled=false;}
