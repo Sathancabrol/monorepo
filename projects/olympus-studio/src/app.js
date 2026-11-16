@@ -346,10 +346,10 @@ function saveProject(){
 async function savePortableProject(){
  const button=$('btnPortable');button.disabled=true;
  try{
-  const db=await dbReady;
-  // Freeze the project before awaiting IndexedDB/Blob reads: EDIT may change
-  // during encoding, but the embedded media and timeline must match.
+  // Capture before the FIRST await, including an IndexedDB open that may still
+  // be pending. Otherwise a user edit during dbReady changes the snapshot.
   const { project, ids: refs }=snapshotPortableProject(projectPayload(),referencedAssetIds);
+  const db=await dbReady;
   if(refs.length&&!db)throw Error('IndexedDB indisponible; impossible de créer une archive complète');
   status('Export portable : lecture de '+refs.length+' média(s)…');
   const records=await getMediaBatch(db,refs);
