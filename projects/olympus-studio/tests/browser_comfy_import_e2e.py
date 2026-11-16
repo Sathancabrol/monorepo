@@ -102,8 +102,13 @@ def main():
                 }""")
                 assert data["entry"] and data["entry"]["size"] == len(PNG), ("IndexedDB output missing or wrong bytes", data)
                 page.reload()
-                page.locator('[data-space="LIBRARY"]').first.click()
-                page.get_by_text("comfy-fixture.png", exact=True).first.wait_for(timeout=10000)
+                persisted = page.evaluate("""async () => {
+                  const db = await new Promise((resolve,reject)=>{const r=indexedDB.open('olympus-studio-assets');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+                  const tx=db.transaction('assets','readonly');
+                  const rows=await new Promise((resolve,reject)=>{const q=tx.objectStore('assets').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
+                  db.close();return rows.map(r=>({name:r.name,size:r.blob?.size}));
+                }""")
+                assert any(x["name"] == "comfy-fixture.png" and x["size"] == len(PNG) for x in persisted), persisted
                 assert not errors, errors
                 print("ComfyUI GENERATE -> LIBRARY Chromium E2E: PASS (mock server, reload, IndexedDB)")
             finally:
