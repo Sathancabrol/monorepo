@@ -87,6 +87,7 @@ def main():
                 page.goto(f"http://127.0.0.1:{port}/")
                 page.wait_for_function("document.querySelectorAll('#navItems [data-space]').length === 12")
                 page.locator('[data-space="GENERATE"]').first.click()
+                page.locator("#workflow").fill('{"3":{"class_type":"SyntheticFixture","inputs":{}}}')
                 page.get_by_role("button", name="Envoyer à ComfyUI local").click()
                 page.get_by_role("button", name="Vérifier le dernier job").click()
                 page.locator('[data-comfy-output="0"]').wait_for()
