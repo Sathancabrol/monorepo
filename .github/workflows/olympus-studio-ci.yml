@@ -33,6 +33,8 @@ jobs:
       - name: Static parse
         run: |
           node --check server.mjs
+          node --check src/comfy-output.js
+          node --check tests/comfy-output.test.mjs
           node --check src/app.js
           node --check src/media-store.js
           node --check tests/media-store.test.mjs
