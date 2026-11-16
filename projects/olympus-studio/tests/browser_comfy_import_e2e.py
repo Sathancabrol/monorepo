@@ -95,12 +95,12 @@ def main():
                 page.get_by_text("comfy-fixture.png", exact=True).first.wait_for()
                 data = page.evaluate("""async () => {
                   const db = await new Promise((resolve,reject) => {
-                    const req=indexedDB.open('olympus-studio-media');
+                    const req=indexedDB.open('olympus-studio-assets');
                     req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error);
                   });
-                  const stores=Array.from(db.objectStoreNames); db.close(); return stores;
+                  const tx=db.transaction('assets','readonly'); const items=await new Promise((resolve,reject)=>{const q=tx.objectStore('assets').getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);}); db.close(); const entry=items.find(x=>x.name==='comfy-fixture.png'||x.filename==='comfy-fixture.png'); return {count:items.length,entry:entry?{size:entry.blob?.size,type:entry.blob?.type}:null};
                 }""")
-                assert data, "IndexedDB media store absent"
+                assert data["entry"] and data["entry"]["size"] == len(PNG), ("IndexedDB output missing or wrong bytes", data)
                 page.reload()
                 page.locator('[data-space="LIBRARY"]').first.click()
                 page.get_by_text("comfy-fixture.png", exact=True).first.wait_for(timeout=10000)
