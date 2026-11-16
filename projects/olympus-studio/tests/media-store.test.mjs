@@ -82,3 +82,45 @@ test('Portable : deux segments partageant une source conservent les octets sans 
   const restored = importPortableAsset(archive[0]);
   assert.deepEqual(new Uint8Array(await restored.blob.arrayBuffer()), bytes);
 });
+
+
+test('Portable : lecture groupée dans une seule transaction, ordre préservé et échec si média absent', async () => {
+  const { getMediaBatch } = await import('../src/media-store.js');
+  const makeDB = (values) => {
+    let count = 0;
+    const db = {
+      transaction() {
+        count++;
+        const tx = {
+          objectStore() {
+            return { get(id) {
+              const req = {};
+              queueMicrotask(() => {
+                if (tx.aborted) return;
+                req.result = values.get(id);
+                req.onsuccess();
+                if (--pending === 0 && !tx.aborted) tx.oncomplete();
+              });
+              pending++;
+              return req;
+            } };
+          },
+          abort() {
+            tx.aborted = true;
+            queueMicrotask(() => tx.onabort());
+          }
+        };
+        let pending = 0;
+        return tx;
+      }
+    };
+    return { db, count: () => count };
+  };
+  const fixture = makeDB(new Map([['a', { id: 'a' }], ['b', { id: 'b' }]]));
+  assert.deepEqual((await getMediaBatch(fixture.db, ['b', 'a'])).map(x => x.id), ['b', 'a']);
+  assert.equal(fixture.count(), 1);
+  await assert.rejects(getMediaBatch(fixture.db, ['a', 'missing']), /absent/);
+  assert.deepEqual(await getMediaBatch(fixture.db, []), []);
+  assert.equal(fixture.count(), 2);
+  await assert.rejects(getMediaBatch(fixture.db, ['']), /invalides/);
+});
