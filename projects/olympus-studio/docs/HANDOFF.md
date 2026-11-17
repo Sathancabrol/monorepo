@@ -951,3 +951,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **CI du nouveau HEAD : non confirmée** (recherche de runs liés au commit : liste vide lors du contrôle). Aucun test local Chromium/Windows effectué pendant cette reprise. Dernière CI verte vérifiée au checkpoint précédent : run 44143759100 sur ancien HEAD; ne pas l'attribuer au nouveau code.
 - **Prochain P0 (S)** : consulter le run CI de `37fd9d46` puis du checkpoint; si rouge, lire les logs et corriger. **Ensuite P0 (M)** : vérifier la fabrication et l'ouverture du ZIP alpha, sauvegarde/restauration Portable, A/V EDIT avec secours FFmpeg documenté; dresser matrice source→adaptateur→I/O→preuve pour 12 espaces sans confondre présence et intégration.
 - **Restant alpha estimé L**, export MediaRecorder intermittent, recette Windows/GTX/OBS réel bloquée. Aucun merge main, aucune modification d'autre projet, aucun secret.
+
+
+## Reprise 17/11/2026 ~22h Paris — matrice intégration alpha
+- Relecture des quatre documents de pilotage, PR #16, issues #11–#17, workflow dédié et `src/app.js`; PR #16 toujours brouillon, HEAD initial `18c9c4ba`.
+- Livraison `913ddea6` : `docs/INTEGRATION_MATRIX_ALPHA.md`, inventaire des 12 espaces avec sources réutilisées, adaptateurs et contrats I/O existants, preuves et lacunes. Les licences/versions des distributions externes sont explicitement à vérifier; aucune intégration non testée n'est annoncée comme fonctionnelle.
+- Aucun test local ou Windows exécuté pendant cette reprise; CI du nouveau HEAD non vérifiée. Dernière CI verte historiquement vérifiée : run 44143759100 sur ancien commit, ne pas l'attribuer à cette livraison.
+- Prochain P0 S : vérifier CI du HEAD `913ddea6` puis checkpoint; si rouge inspecter logs/artefacts. Ensuite P0 M : vérifier ZIP alpha, lancement HTTP, parcours 12 espaces, Portable et export EDIT A/V; limiter MediaRecorder et documenter fallback. Restant alpha L; Windows/GTX/OBS réel bloqués. Aucun merge main ni autre projet modifié.
