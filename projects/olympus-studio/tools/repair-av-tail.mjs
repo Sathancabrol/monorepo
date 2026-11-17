@@ -32,6 +32,12 @@ export function repairArgs(input,output,pad,audioEnd){
  if(!Number.isFinite(audioEnd)||audioEnd<=0||!Number.isFinite(pad)||pad<=0)throw Error('Invalid repair duration');
  return ['-hide_banner','-nostdin','-n','-i',input,'-filter:v',`tpad=stop_mode=clone:stop_duration=${pad.toFixed(3)},fps=24`,'-c:v','libvpx','-b:v','1M','-c:a','libopus','-t',String(audioEnd),output];
 }
+export function verifyRepair(videoEnd,audioEnd,tolerance=0.2) {
+ if(!Number.isFinite(videoEnd)||!Number.isFinite(audioEnd)||videoEnd<=0||audioEnd<=0)throw Error('Invalid repaired stream timestamps');
+ const drift=Math.abs(videoEnd-audioEnd);
+ if(drift>tolerance)throw Error('Repaired A/V drift exceeds '+tolerance+'s: '+drift.toFixed(3)+'s');
+ return {videoEnd,audioEnd,drift};
+}
 function main(){
  const [inputArg,outputArg]=process.argv.slice(2);
  if(!inputArg||!outputArg)throw Error('Usage: node tools/repair-av-tail.mjs input.webm output.webm');
@@ -49,7 +55,14 @@ function main(){
  if(!p.needed)throw Error('No missing video tail detected; no repair performed');
  // Freeze the last frame to cover missing timestamps. Does not reconstruct motion.
  run('ffmpeg',repairArgs(input,output,p.gap,audioEnd));
- process.stdout.write(JSON.stringify({input,output,videoEnd,audioEnd,paddedSeconds:p.gap,warning:'Frozen final frame; motion not recovered'})+'\n');
+ // Do not report success merely because FFmpeg exited 0. Check actual output packets.
+ const repaired=JSON.parse(run('ffprobe',['-v','error','-show_packets','-show_streams','-of','json',output]));
+ const rv=repaired.streams.find(s=>s.codec_type==='video'),ra=repaired.streams.find(s=>s.codec_type==='audio');
+ if(!rv||!ra)throw Error('Repaired file lacks a video or audio stream');
+ const rvEnd=streamEnd({packets:(repaired.packets||[]).filter(p=>p.stream_index===rv.index)});
+ const raEnd=streamEnd({packets:(repaired.packets||[]).filter(p=>p.stream_index===ra.index)});
+ const verified=verifyRepair(rvEnd,raEnd);
+ process.stdout.write(JSON.stringify({input,output,videoEnd,audioEnd,paddedSeconds:p.gap,verified,warning:'Frozen final frame; motion not recovered'})+'\\n');
 }
 // Compare canonical file URLs: manual file:// concatenation fails on Windows drives,
 // spaces, and relative script paths (including the documented CLI invocation).
