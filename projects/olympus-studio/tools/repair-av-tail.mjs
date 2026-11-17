@@ -3,6 +3,7 @@
 // Requires existing FFmpeg + FFprobe; never overwrites the input.
 import { spawnSync } from 'node:child_process';
 import { resolve, extname } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
 
 function run(command,args) {
@@ -50,6 +51,8 @@ function main(){
  run('ffmpeg',repairArgs(input,output,p.gap,audioEnd));
  process.stdout.write(JSON.stringify({input,output,videoEnd,audioEnd,paddedSeconds:p.gap,warning:'Frozen final frame; motion not recovered'})+'\n');
 }
-if(import.meta.url===new URL('file://'+process.argv[1]).href){
+// Compare canonical file URLs: manual file:// concatenation fails on Windows drives,
+// spaces, and relative script paths (including the documented CLI invocation).
+if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
  try{main()}catch(e){console.error(e.message);process.exitCode=1}
 }
