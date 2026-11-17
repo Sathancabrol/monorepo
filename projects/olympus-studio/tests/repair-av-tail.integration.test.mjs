@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 function run(command, args) {
   const result = spawnSync(command, args, { encoding: 'utf8', timeout: 120000, maxBuffer: 16 * 1024 * 1024 });
@@ -22,7 +23,7 @@ function ends(path) {
   for (const stream of streams) {
     const packets = json.packets.filter(p => p.stream_index === stream.index);
     assert.ok(packets.length > 0, `missing ${stream.codec_type} packets`);
-    result[stream.codec_type] = Math.max(...packets.map(p => Number(p.pts_time) + Number(p.duration_time || 0)));
+    result[stream.codec_type] = packets.reduce((max, p) => Math.max(max, Number(p.pts_time) + Number(p.duration_time || 0)), 0);
   }
   return result;
 }
@@ -43,7 +44,7 @@ test('repair-av-tail repairs a real short-video/long-audio WebM without touching
     const before = ends(input);
     assert.ok(before.audio - before.video > 0.7, JSON.stringify(before));
     const repaired = spawnSync(process.execPath, ['tools/repair-av-tail.mjs',input,output], {
-      encoding: 'utf8', timeout: 120000, cwd: new URL('..', import.meta.url).pathname
+      encoding: 'utf8', timeout: 120000, cwd: fileURLToPath(new URL('..', import.meta.url))
     });
     assert.equal(repaired.status, 0, repaired.stderr);
     const after = ends(output);
