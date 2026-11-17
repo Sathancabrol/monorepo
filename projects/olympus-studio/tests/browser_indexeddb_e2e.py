@@ -66,6 +66,25 @@ def main():
                 assert module_response.status == 200, "Main UI dependency video-duration.js is not served"
                 page.wait_for_function("document.querySelectorAll('#navItems [data-space]').length === 12", timeout=10000)
                 assert not js_errors, "JavaScript initialization errors: " + " | ".join(js_errors)
+                # Alpha release gate: all twelve workspaces must be reachable through
+                # the same real UI, with no module error or navigation regression.
+                expected_spaces = [
+                    "LIVE", "EDIT", "GENERATE", "XR", "AUDIO", "MEETING",
+                    "CAPTURE", "CINEMA", "AUTOMATE", "GRAPHICS", "LIBRARY", "CONTROL",
+                ]
+                actual_spaces = page.locator("#navItems [data-space]").evaluate_all(
+                    "(nodes) => nodes.map(node => node.dataset.space)"
+                )
+                assert actual_spaces == expected_spaces, f"Workspace registry mismatch: {actual_spaces}"
+                for space in expected_spaces:
+                    page.locator(f'#navItems [data-space="{space}"]').click()
+                    assert page.locator("#spaceTitle").inner_text() == space, f"{space} did not activate"
+                    assert page.locator(f'#navItems [data-space="{space}"]').get_attribute("class") is not None
+                    assert page.locator(f'#navItems [data-space="{space}"]').evaluate(
+                        "(node) => node.classList.contains('active')"
+                    ), f"{space} missing active navigation state"
+                page.locator('#navItems [data-space="LIVE"]').click()
+                assert not js_errors, "Workspace navigation errors: " + " | ".join(js_errors)
                 # Real UI path: import a tiny PNG through the file picker, then
                 # verify the persisted record after a full browser reload.
                 # This complements direct store API checks below.
