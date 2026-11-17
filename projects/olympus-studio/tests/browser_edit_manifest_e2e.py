@@ -5,6 +5,7 @@ Run: python tests/browser_edit_manifest_e2e.py
 import base64
 import json
 import os
+import shutil
 from pathlib import Path
 import socket
 import subprocess
@@ -49,6 +50,11 @@ def portable(page, folder, name):
         (folder / f"{name}.failure.json").write_text(
             json.dumps(diagnostic, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+        evidence_dir = os.environ.get("OLYMPUS_MANIFEST_EVIDENCE_DIR")
+        if evidence_dir:
+            target = Path(evidence_dir)
+            target.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(folder / f"{name}.failure.json", target / f"{name}.failure.json")
         print("PORTABLE FAILURE:", json.dumps(diagnostic, ensure_ascii=False), flush=True)
         raise
 
