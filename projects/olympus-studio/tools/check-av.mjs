@@ -47,7 +47,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const file = process.argv[2];
   if (!file) { console.error('Usage: node tools/check-av.mjs <export.webm>'); process.exitCode = 2; }
   else {
-    const run = spawnSync('ffprobe', ['-v','error','-show_streams','-show_packets','-show_format','-of','json',file], { encoding:'utf8', timeout:30000, maxBuffer:4*1024*1024 });
+    const run = spawnSync('ffprobe', ['-v','error','-show_streams','-show_packets','-show_format','-of','json',file], { encoding:'utf8', timeout:120000, maxBuffer:128*1024*1024 });
     try {
       if (run.error || run.status !== 0) throw Error(run.error?.message || run.stderr || 'ffprobe indisponible');
       console.log(JSON.stringify(assessStreams(JSON.parse(run.stdout)),null,2));
