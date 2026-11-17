@@ -30,7 +30,7 @@ export function streamEnd(stream) {
 }
 export function repairArgs(input,output,pad,audioEnd){
  if(!Number.isFinite(audioEnd)||audioEnd<=0||!Number.isFinite(pad)||pad<=0)throw Error('Invalid repair duration');
- return ['-hide_banner','-nostdin','-n','-i',input,'-filter:v',`tpad=stop_mode=clone:stop_duration=${pad.toFixed(3)},fps=24`,'-c:v','libvpx','-b:v','1M','-c:a','libopus','-t',String(audioEnd),output];
+ return ['-hide_banner','-nostdin','-n','-i',input,'-map','0:v:0','-map','0:a:0','-filter:v',`tpad=stop_mode=clone:stop_duration=${pad.toFixed(3)},fps=24`,'-c:v','libvpx','-b:v','1M','-c:a','libopus','-t',String(audioEnd),output];
 }
 export function verifyRepair(videoEnd,audioEnd,tolerance=0.2) {
  if(!Number.isFinite(videoEnd)||!Number.isFinite(audioEnd)||videoEnd<=0||audioEnd<=0)throw Error('Invalid repaired stream timestamps');
@@ -53,7 +53,7 @@ function main(){
  const audioEnd=streamEnd({packets:packets.filter(p=>p.stream_index===audio.index)});
  const p=plan(videoEnd,audioEnd);
  if(!p.needed)throw Error('No missing video tail detected; no repair performed');
- // Freeze the last frame to cover missing timestamps. Does not reconstruct motion.
+ // Select the first video and audio streams explicitly: FFmpeg's automatic stream\n // selection can silently choose a different track when multiple are present.\n // Freeze the last frame to cover missing timestamps. Does not reconstruct motion.
  run('ffmpeg',repairArgs(input,output,p.gap,audioEnd));
  // Do not report success merely because FFmpeg exited 0. Check actual output packets.
  const repaired=JSON.parse(run('ffprobe',['-v','error','-show_packets','-show_streams','-of','json',output]));
