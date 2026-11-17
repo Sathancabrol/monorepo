@@ -71,8 +71,18 @@ jobs:
           command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
           python tests/browser_av_fixture.py
       - name: Chromium EDIT export E2E — bouton réel, WebM Opus et ffprobe
+        env:
+          OLYMPUS_SYNTHETIC_EVIDENCE_DIR: ${{ runner.temp }}/olympus-av-evidence
         run: |
           python tests/browser_edit_export_e2e.py
+      - name: Conserver la preuve synthétique A/V si E2E échoue
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: olympus-av-desync-evidence
+          path: ${{ runner.temp }}/olympus-av-evidence/
+          retention-days: 7
+          if-no-files-found: ignore
       - name: Chromium EDIT manifest import — IndexedDB, atomicity, undo/redo
         run: python tests/browser_edit_manifest_e2e.py
       - name: Chromium EDIT MediaRecorder error — no partial download
