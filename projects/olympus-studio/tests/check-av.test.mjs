@@ -58,11 +58,11 @@ test('A/V CLI: ffprobe JSON > 4 MiB reste analysable', async (t) => {
   const dir = mkdtempSync(join(tmpdir(), 'olympus-ffprobe-'));
   try {
     const fake = join(dir, 'ffprobe');
-    writeFileSync(fake, '#!/usr/bin/env node\\n' +
+    writeFileSync(fake, '#!/usr/bin/env node\n' +
       'process.stdout.write(JSON.stringify({format:{format_name:"matroska,webm"},streams:[' +
       '{codec_type:"video",codec_name:"vp8",start_time:"0",duration:"2"},' +
       '{codec_type:"audio",codec_name:"opus",start_time:"0",duration:"2"}],' +
-      'padding:"x".repeat(5*1024*1024)}));\\n');
+      'padding:"x".repeat(5*1024*1024)}));\n');
     chmodSync(fake, 0o755);
     const result = spawnSync(process.execPath, [new URL('../tools/check-av.mjs', import.meta.url).pathname, 'fixture.webm'], {
       encoding: 'utf8', timeout: 30000, env: { ...process.env, PATH: dir + delimiter + process.env.PATH }
