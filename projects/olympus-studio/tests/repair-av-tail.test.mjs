@@ -20,6 +20,7 @@ test('FFmpeg repair refuses overwrite even if output appears after preflight',()
  const args=repairArgs('source.webm','repaired.webm',0.995,2.707);
  assert.ok(args.includes('-n'));
  assert.ok(!args.includes('-y'));
+ assert.deepEqual(args.slice(args.indexOf('-map'),args.indexOf('-filter:v')),['-map','0:v:0','-map','0:a:0']);
  assert.equal(args.at(-1),'repaired.webm');
  assert.match(args[args.indexOf('-filter:v')+1],/stop_duration=0\.995/);
  assert.throws(()=>repairArgs('a','b',0,2),/Invalid repair duration/);
