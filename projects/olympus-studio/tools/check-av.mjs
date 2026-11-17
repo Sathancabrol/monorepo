@@ -16,18 +16,23 @@ export function assessStreams(probe, maxDrift = 0.6) {
   if (probe.format?.format_name && !probe.format.format_name.split(',').includes('matroska') &&
       !probe.format.format_name.split(',').includes('webm'))
     throw Error('Conteneur non WebM/Matroska');
+  // One bounded pass over packet metadata: avoid two filtered arrays and two
+  // additional span arrays for long recordings (hundreds of thousands of packets).
+  const packetBounds = new Map();
+  for (const packet of probe.packets || []) {
+    if (packet.stream_index !== video.index && packet.stream_index !== audio.index) continue;
+    const t = Number(packet.pts_time ?? packet.dts_time);
+    const d = Number(packet.duration_time ?? 0);
+    if (!Number.isFinite(t) || !Number.isFinite(d) || t < 0 || d < 0) continue;
+    const prev = packetBounds.get(packet.stream_index);
+    if (prev) {
+      prev.start = Math.min(prev.start, t);
+      prev.end = Math.max(prev.end, t + d);
+    } else packetBounds.set(packet.stream_index, { start: t, end: t + d });
+  }
   const bounds = stream => {
-    const packets = (probe.packets || []).filter(p => p.stream_index === stream.index);
-    const spans = packets.map(p => {
-      const t = Number(p.pts_time ?? p.dts_time);
-      const d = Number(p.duration_time ?? 0);
-      return { t, end: t + d };
-    }).filter(p => Number.isFinite(p.t) && Number.isFinite(p.end) && p.t >= 0);
-    if (spans.length) {
-      let start = Infinity, end = -Infinity;
-      for (const span of spans) { start = Math.min(start, span.t); end = Math.max(end, span.end); }
-      return { start, end };
-    }
+    const fromPackets = packetBounds.get(stream.index);
+    if (fromPackets) return fromPackets;
     if (stream.start_time == null || stream.duration == null) return null;
     const start = Number(stream.start_time), duration = Number(stream.duration);
     if (!Number.isFinite(start) || !Number.isFinite(duration) || start < 0 || duration <= 0) return null;
