@@ -859,3 +859,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - L'outil optionnel réencode une sortie WebM en prolongeant la dernière image avec FFmpeg/FFprobe installés localement. Il ne reconstruit pas les images manquantes, ne corrige pas MediaRecorder, ne modifie jamais la source, et refuse d'écraser la destination. Utilisation : `node tools/repair-av-tail.mjs entree.webm sortie.webm` ; contrôler ensuite `node tools/check-av.mjs sortie.webm` et écouter le résultat. Les licences de redistribution FFmpeg restent à vérifier.
 - Prochaine tâche P0 : vérifier CI du HEAD `4578969`, corriger tout échec des tests, puis isoler cause de perte de paquets dans le chemin UI EDIT. Si impossible à stabiliser avant mercredi, documenter export natif comme expérimental et démontrer le secours FFmpeg sur un vrai fichier témoin. Reprendre le téléchargement Portable après undo/redo. Estimation M–L.
 - Blocages : recette Windows/GTX/OBS réel non faite. Ne pas annoncer alpha validée. Aucun autre projet ou main modifié.
+
+
+## Reprise 17/11/2026, ~08h Paris — sûreté fallback FFmpeg
+- Dernière CI confirmée avant cette modification : run [44028456702](https://github.com/Sathancabrol/monorepo/actions/runs/44028456702), `completed/success`, sur commit `c69fcd4` ; ne pas attribuer ce résultat aux nouveaux commits.
+- Correction `9e5963ca` : `repair-av-tail.mjs` utilise désormais `-n` au lieu de `-y` ; une création concurrente du chemin de sortie ne doit plus écraser un fichier existant après le contrôle initial. `repairArgs` exporté pour test.
+- Test `0f1e5084` : assertion du refus d'écrasement, du filtre de prolongation et de la validation des durées. Tests non exécutés localement dans cette reprise ; attendre la CI du HEAD.
+- Limite : le fallback fige la dernière image, ne restaure pas le mouvement ; aucun fichier réel traité, ni validation Windows/GTX. Aucun changement hors Studio.
+- Prochain sous-objectif P0 (M) : vérifier la CI sur `0f1e5084` et réparer si rouge ; ensuite reproduire l'échec Portable undo/redo et inspecter les traces Chromium. Si vert, essayer le fallback sur fixture WebM et mesurer la synchronisation par FFprobe. Estimation restante alpha : L, risques export A/V et Windows non levés.
