@@ -101,6 +101,8 @@ jobs:
         run: |
           zip -q -r olympus-studio-preview.zip index.html server.mjs package.json LANCER_OLYMPUS.bat src docs tests README.md
           unzip -t olympus-studio-preview.zip | tail -1
+      - name: Smoke-test extracted alpha ZIP over HTTP
+        run: python tests/alpha_package_smoke.py
       - name: Publier le paquet de test
         uses: actions/upload-artifact@v4
         with:
