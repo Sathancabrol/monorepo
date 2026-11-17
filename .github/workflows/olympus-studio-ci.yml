@@ -84,7 +84,17 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
       - name: Chromium EDIT manifest import — IndexedDB, atomicity, undo/redo
+        env:
+          OLYMPUS_MANIFEST_EVIDENCE_DIR: ${{ runner.temp }}/olympus-manifest-evidence
         run: python tests/browser_edit_manifest_e2e.py
+      - name: Conserver les diagnostics Portable si E2E échoue
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: olympus-portable-failure-evidence
+          path: ${{ runner.temp }}/olympus-manifest-evidence/
+          retention-days: 7
+          if-no-files-found: ignore
       - name: Chromium EDIT MediaRecorder error — no partial download
         run: python tests/browser_recorder_error_e2e.py
       - name: Pack Windows preview (Node.js requis)
