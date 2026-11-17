@@ -25,11 +25,32 @@ def free_port():
         return s.getsockname()[1]
 
 def portable(page, folder, name):
-    with page.expect_download(timeout=15000) as info:
-        page.locator("#btnPortable").click()
-    path = folder / name
-    info.value.save_as(path)
-    return json.loads(path.read_text(encoding="utf-8"))
+    """One attempt only: preserve the actual UI failure instead of retrying it."""
+    button = page.locator("#btnPortable")
+    try:
+        with page.expect_download(timeout=15000) as info:
+            button.click()
+        path = folder / name
+        info.value.save_as(path)
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not payload.get("portable"):
+            raise AssertionError(f"{name}: download is not a portable project")
+        return payload
+    except Exception as exc:
+        # The asynchronous IndexedDB/encoding path can fail after the click.
+        # Preserve the status and control state to distinguish application
+        # rejection from a browser download event that was never emitted.
+        diagnostic = {
+            "checkpoint": name,
+            "error": str(exc),
+            "status": page.locator("#status").inner_text(timeout=3000),
+            "buttonDisabled": button.is_disabled(timeout=3000),
+        }
+        (folder / f"{name}.failure.json").write_text(
+            json.dumps(diagnostic, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print("PORTABLE FAILURE:", json.dumps(diagnostic, ensure_ascii=False), flush=True)
+        raise
 
 def upload_manifest(page, manifest):
     page.locator("#editManifestFile").set_input_files({
