@@ -7,7 +7,7 @@ const fixture = (audioStart=0,audioDuration=2) => ({format:{duration:'2'},stream
 ]});
 test('A/V: flux Opus alignés acceptés',()=>assert.equal(assessStreams(fixture()).endDrift,0));
 test('A/V: décalage supérieur au seuil rejeté',()=>assert.throws(()=>assessStreams(fixture(0,2.7)),/Décalage/));
-test('A/V: absence audio rejetée',()=>assert.throws(()=>assessStreams({streams:[]}),/absent/));
+test('A/V: absence audio rejetée',()=>assert.throws(()=>assessStreams({streams:[]}),/flux vidéo/));
 test('A/V: métadonnées invalides rejetées',()=>assert.throws(()=>assessStreams(fixture(0,-1)),/invalides/));
 
 test('A/V: WebM sans stream.duration utilise les timestamps des paquets', () => {
