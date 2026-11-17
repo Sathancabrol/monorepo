@@ -48,3 +48,26 @@ test('A/V: longues captures FFprobe sans dépassement de pile', () => {
   assert.equal(result.startDrift, 0);
   assert.equal(result.endDrift, 0);
 });
+
+test('A/V CLI: ffprobe JSON > 4 MiB reste analysable', async (t) => {
+  if (process.platform === 'win32') return t.skip('Executable mock POSIX only');
+  const { mkdtempSync, writeFileSync, chmodSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join, delimiter } = await import('node:path');
+  const { spawnSync } = await import('node:child_process');
+  const dir = mkdtempSync(join(tmpdir(), 'olympus-ffprobe-'));
+  try {
+    const fake = join(dir, 'ffprobe');
+    writeFileSync(fake, '#!/usr/bin/env node\\n' +
+      'process.stdout.write(JSON.stringify({format:{format_name:"matroska,webm"},streams:[' +
+      '{codec_type:"video",codec_name:"vp8",start_time:"0",duration:"2"},' +
+      '{codec_type:"audio",codec_name:"opus",start_time:"0",duration:"2"}],' +
+      'padding:"x".repeat(5*1024*1024)}));\\n');
+    chmodSync(fake, 0o755);
+    const result = spawnSync(process.execPath, [new URL('../tools/check-av.mjs', import.meta.url).pathname, 'fixture.webm'], {
+      encoding: 'utf8', timeout: 30000, env: { ...process.env, PATH: dir + delimiter + process.env.PATH }
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /"endDrift": 0/);
+  } finally { rmSync(dir, {recursive:true, force:true}); }
+});
