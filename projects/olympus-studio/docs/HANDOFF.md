@@ -958,3 +958,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Livraison `913ddea6` : `docs/INTEGRATION_MATRIX_ALPHA.md`, inventaire des 12 espaces avec sources réutilisées, adaptateurs et contrats I/O existants, preuves et lacunes. Les licences/versions des distributions externes sont explicitement à vérifier; aucune intégration non testée n'est annoncée comme fonctionnelle.
 - Aucun test local ou Windows exécuté pendant cette reprise; CI du nouveau HEAD non vérifiée. Dernière CI verte historiquement vérifiée : run 44143759100 sur ancien commit, ne pas l'attribuer à cette livraison.
 - Prochain P0 S : vérifier CI du HEAD `913ddea6` puis checkpoint; si rouge inspecter logs/artefacts. Ensuite P0 M : vérifier ZIP alpha, lancement HTTP, parcours 12 espaces, Portable et export EDIT A/V; limiter MediaRecorder et documenter fallback. Restant alpha L; Windows/GTX/OBS réel bloqués. Aucun merge main ni autre projet modifié.
+
+
+## Reprise 17/11/2026 ~23h Paris — smoke test du ZIP alpha extrait
+- Synchronisation : backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17, workflow dédié, matrice d'intégration et fichiers du paquet relus avant écriture. Aucun merge main.
+- **CI confirmée** : run [44174564858](https://github.com/Sathancabrol/monorepo/actions/runs/44174564858) `success` sur le checkpoint précédent `d6b571bf`. Cela ne valide pas les nouveaux commits.
+- **Code** : `407462a2` ajoute `tests/alpha_package_smoke.py`, qui vérifie l'intégrité du ZIP, les fichiers critiques, extrait dans un dossier temporaire, démarre le Node empaqueté sur loopback, vérifie HTML, santé et modules JS, et le refus de servir les fichiers privés. Aucun OBS/ComfyUI/Windows requis.
+- **CI** : `59a7975f` ajoute ce smoke test **après** la fabrication du ZIP et **avant** publication de l'artefact. Échec = artefact non publié. Le script est committé, mais **son exécution CI n'est pas encore confirmée**.
+- **Reprise P0 S** : vérifier la CI du HEAD (incluant le smoke ZIP). Si rouge, lire les logs et réparer. Sinon, P0 M : contrôler E2E Portable et export A/V; publier la procédure de recette alpha et les limitations réelles. Restant alpha estimé L. Windows 10/GTX 1060/1650/OBS réel et écoute humaine restent non validés.
+- Aucun moteur tiers réécrit, aucune dépendance payante, aucun fichier hors Studio et workflow dédié modifié.
