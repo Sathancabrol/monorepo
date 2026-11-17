@@ -82,6 +82,16 @@ def main():
                 browser = pw.chromium.launch(headless=True, args=["--no-sandbox"])
                 try:
                     page = browser.new_page(accept_downloads=True)
+                    # Explicitly allow repeated automated downloads in this isolated
+                    # Chromium context. The manifest E2E deliberately exports many
+                    # portable snapshots; Chromium may otherwise suppress later
+                    # downloads without a page JavaScript error.
+                    cdp = page.context.new_cdp_session(page)
+                    cdp.send("Browser.setDownloadBehavior", {
+                        "behavior": "allow",
+                        "downloadPath": str(folder),
+                        "eventsEnabled": True,
+                    })
                     errors = []
                     page.on("pageerror", lambda err: errors.append(str(err)))
                     page.goto(f"http://127.0.0.1:{port}/", wait_until="load")
