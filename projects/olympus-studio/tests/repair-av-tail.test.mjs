@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { plan, streamEnd, repairArgs } from '../tools/repair-av-tail.mjs';
 
 test('detects a missing video tail without hiding its length',()=>{
@@ -21,4 +23,16 @@ test('FFmpeg repair refuses overwrite even if output appears after preflight',()
  assert.equal(args.at(-1),'repaired.webm');
  assert.match(args[args.indexOf('-filter:v')+1],/stop_duration=0\.995/);
  assert.throws(()=>repairArgs('a','b',0,2),/Invalid repair duration/);
+});
+
+// The documented command must run main() on Windows and POSIX, even with a
+// relative entrypoint. Without this, the CLI could exit 0 without any repair.
+test('FFmpeg repair CLI actually invokes its entrypoint for relative and absolute paths',()=>{
+ const root=fileURLToPath(new URL('..',import.meta.url));
+ const absolute=fileURLToPath(new URL('../tools/repair-av-tail.mjs',import.meta.url));
+ for(const entry of ['tools/repair-av-tail.mjs',absolute]){
+  const result=spawnSync(process.execPath,[entry],{cwd:root,encoding:'utf8',timeout:10000});
+  assert.equal(result.status,1,`CLI must fail on missing arguments: ${entry}`);
+  assert.match(result.stderr,/Usage: node tools\/repair-av-tail\.mjs/);
+ }
 });
