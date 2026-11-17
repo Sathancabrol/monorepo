@@ -27,6 +27,10 @@ export function streamEnd(stream) {
  }
  return end;
 }
+export function repairArgs(input,output,pad,audioEnd){
+ if(!Number.isFinite(audioEnd)||audioEnd<=0||!Number.isFinite(pad)||pad<=0)throw Error('Invalid repair duration');
+ return ['-hide_banner','-nostdin','-n','-i',input,'-filter:v',`tpad=stop_mode=clone:stop_duration=${pad.toFixed(3)},fps=24`,'-c:v','libvpx','-b:v','1M','-c:a','libopus','-t',String(audioEnd),output];
+}
 function main(){
  const [inputArg,outputArg]=process.argv.slice(2);
  if(!inputArg||!outputArg)throw Error('Usage: node tools/repair-av-tail.mjs input.webm output.webm');
@@ -43,7 +47,7 @@ function main(){
  const p=plan(videoEnd,audioEnd);
  if(!p.needed)throw Error('No missing video tail detected; no repair performed');
  // Freeze the last frame to cover missing timestamps. Does not reconstruct motion.
- run('ffmpeg',['-hide_banner','-nostdin','-i',input,'-filter:v',`tpad=stop_mode=clone:stop_duration=${p.pad},fps=24`,'-c:v','libvpx','-b:v','1M','-c:a','libopus','-t',String(audioEnd),'-y',output]);
+ run('ffmpeg',repairArgs(input,output,p.gap,audioEnd));
  process.stdout.write(JSON.stringify({input,output,videoEnd,audioEnd,paddedSeconds:p.gap,warning:'Frozen final frame; motion not recovered'})+'\n');
 }
 if(import.meta.url===new URL('file://'+process.argv[1]).href){
