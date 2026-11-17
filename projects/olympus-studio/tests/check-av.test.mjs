@@ -71,3 +71,18 @@ test('A/V CLI: ffprobe JSON > 4 MiB reste analysable', async (t) => {
     assert.match(result.stdout, /"endDrift": 0/);
   } finally { rmSync(dir, {recursive:true, force:true}); }
 });
+
+// Invalid packet metadata must not poison a valid timeline.
+test('A/V: invalid packet timestamps ignored without masking valid bounds', () => {
+  const probe = {format:{format_name:'matroska,webm'},streams:[
+    {index:0,codec_type:'video',codec_name:'vp8'},
+    {index:1,codec_type:'audio',codec_name:'opus'}
+  ],packets:[
+    {stream_index:0,pts_time:'0',duration_time:'2'},
+    {stream_index:1,pts_time:'0',duration_time:'2'},
+    {stream_index:0,pts_time:'NaN',duration_time:'2'},
+    {stream_index:1,pts_time:'2',duration_time:'-4'},
+    {stream_index:99,pts_time:'100',duration_time:'100'}
+  ]};
+  assert.equal(assessStreams(probe).endDrift, 0);
+});
