@@ -146,6 +146,16 @@ def main():
                                          "--autoplay-policy=no-user-gesture-required"]
                 )
                 try:
+                    # Chromium may block repeated script-triggered downloads
+                    # on one origin. This test intentionally exports many snapshots.
+                    # Allow downloads explicitly in the isolated headless browser;
+                    # retain all expect_download and JSON assertions.
+                    cdp = browser.new_browser_cdp_session()
+                    cdp.send("Browser.setDownloadBehavior", {
+                        "behavior": "allow",
+                        "downloadPath": str(Path(temp).resolve()),
+                        "eventsEnabled": True,
+                    })
                     page = browser.new_page(accept_downloads=True)
                     errors = []
                     page.on("pageerror", lambda e: errors.append(str(e)))
