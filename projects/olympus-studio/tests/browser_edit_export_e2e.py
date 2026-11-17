@@ -72,6 +72,16 @@ def inspect_export(path):
         "audio_stream_duration": audio[0].get("duration"),
     }
     print("EDIT A/V packet timing:", json.dumps(diagnostics), flush=True)
+    if abs(ve - aue) >= 0.6:
+        # Synthetic fixture only; never upload user recordings.
+        evidence_dir = os.environ.get("OLYMPUS_SYNTHETIC_EVIDENCE_DIR")
+        if evidence_dir:
+            destination = Path(evidence_dir)
+            destination.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, destination / "edit-av-desync.webm")
+            (destination / "edit-av-desync.json").write_text(
+                json.dumps(diagnostics, indent=2), encoding="utf-8"
+            )
     assert abs(ve - aue) < 0.6, ("A/V end mismatch", diagnostics)
     result = subprocess.run(
         ["ffmpeg", "-hide_banner", "-nostats", "-i", str(path),
