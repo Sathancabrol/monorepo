@@ -79,3 +79,11 @@ test('ComfyUI output rejects arbitrary job identifiers and indexes before upstre
   const r=await fetch(base+'/api/comfy/output?'+query);assert.equal(r.status,400);
  }
 });
+
+test('XR event bus is served from allowlist with no remote exposure',async()=>{
+ const r=await fetch(base+'/src/studio-event-bus.js');
+ assert.equal(r.status,200);
+ assert.match(await r.text(),/validateStudioEvent/);
+ const privateTest=await fetch(base+'/tests/studio-event-bus.test.mjs');
+ assert.equal(privateTest.status,403);
+});
