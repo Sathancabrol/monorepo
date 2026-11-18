@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 // Guard against the asynchronous media-loading race: a user may replace the
 // soundtrack while IndexedDB or AudioContext is still being prepared.
 const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
-const exportBody = app.slice(app.indexOf('async function exportEditorWebM(){'), app.indexOf('\nfunction draw(){'));
+const exportBody = app.slice(app.indexOf('async function exportEditorWebM('), app.indexOf('\nfunction draw(){'));
 test('EDIT export serializes concurrent preparation and recording', () => {
   assert.match(exportBody, /editorExportPreparing\|\|editorRecorder\?\.state==='recording'/);
   assert.match(exportBody, /editorExportPreparing=true/);
