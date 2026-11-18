@@ -264,13 +264,13 @@ function drawEditor(now){
 }
 let editorExportPreparing=false;
 let editorExportFinalizing=false;
-async function exportEditorWebM(){
+async function exportEditorWebM({videoOnly=false}={}){
  const canvas=$('editPreview'),total=storyboardDuration(state.clips);
  if(!canvas||!total)return status('Aucun clip à exporter');
  if(total>120)return status('Export de démonstration limité à 120 secondes');
  if(editorExportPreparing||editorRecorder?.state==='recording')return status('Un export est déjà en cours');
  editorExportPreparing=true;
- const requestedAudio=state.editAudioTrack?{...state.editAudioTrack}:null;
+ const requestedAudio=!videoOnly&&state.editAudioTrack?{...state.editAudioTrack}:null;
  let stream=null;
  try{
   // Keep a paced capture alive even if Chromium drops explicit requestFrame()
@@ -307,7 +307,7 @@ async function exportEditorWebM(){
     status('Export storyboard impossible : aucun fichier valide produit');
     return;
    }
-   dl('olympus-storyboard-'+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
+   dl('olympus-storyboard-'+(videoOnly?'video-only-':'')+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
    status(audioIncluded?'WebM exporté avec piste son dédiée (synchronisation à valider sur Windows)':'Storyboard WebM exporté sans audio');
   };
   if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
@@ -324,6 +324,20 @@ async function exportEditorWebM(){
  }finally{
   editorExportPreparing=false;
  }
+}
+async function downloadEditorAudioSource(){
+ if(editorExportPreparing||editorRecorder?.state==='recording')return status('Attendre la fin de l’export EDIT');
+ const track=state.editAudioTrack;
+ if(!track?.enabled)return status('Activer une piste audio EDIT avant de télécharger sa source');
+ try{
+  const db=await dbReady;
+  if(!db)throw Error('IndexedDB indisponible');
+  const record=await getMedia(db,track.assetId);
+  if(!record?.blob||!String(record.type||'').startsWith('audio/'))throw Error('Source audio absente ou invalide');
+  const extension=String(record.name||'').match(/\.(wav|mp3|ogg|opus|flac|m4a|webm)$/i)?.[1]?.toLowerCase()||'audio';
+  dl('olympus-audio-source-'+Date.now()+'.'+extension,record.blob);
+  status('Source audio téléchargée sans modification : IN, départ et volume EDIT ne sont PAS appliqués. Ajuster avec FFmpeg.');
+ }catch(e){status('Téléchargement audio impossible : '+e.message);}
 }
 function draw(){
  ctx.fillStyle='#0b1725';ctx.fillRect(0,0,C.width,C.height);
@@ -511,7 +525,9 @@ function panel(){
   const seek=document.createElement('input');seek.id='editSeek';seek.type='range';seek.min='0';seek.max=String(Math.max(0.1,storyboardDuration(state.clips)));seek.step='.05';seek.value=String(state.editTime);seek.style.flex='1';
   seek.oninput=()=>{state.editTime=Number(seek.value);state.editPlaying=false;state.editLast=0;};
   const clock=document.createElement('span');clock.id='editClock';clock.className='muted';clock.textContent=editClock(state.editTime);
-  const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (audio optionnel)';exportButton.onclick=exportEditorWebM;
+  const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (audio optionnel)';exportButton.onclick=()=>exportEditorWebM();
+  const videoOnlyButton=document.createElement('button');videoOnlyButton.id='editVideoOnly';videoOnlyButton.textContent='Vidéo seule (secours FFmpeg)';videoOnlyButton.onclick=()=>exportEditorWebM({videoOnly:true});
+  const audioSourceButton=document.createElement('button');audioSourceButton.id='editAudioSource';audioSourceButton.textContent='Télécharger audio source';audioSourceButton.onclick=downloadEditorAudioSource;
   const cutButton=document.createElement('button');cutButton.textContent='Diviser au curseur';
   cutButton.title='Scinder une vidéo en deux segments à la position courante de la timeline';
   cutButton.onclick=()=>{
@@ -524,7 +540,7 @@ function panel(){
   };
   const undo=document.createElement('button');undo.id='editUndo';undo.textContent='Annuler';undo.disabled=!editHistory.past.length;undo.onclick=()=>travelEdit('undo');
   const redo=document.createElement('button');redo.id='editRedo';redo.textContent='Rétablir';redo.disabled=!editHistory.future.length;redo.onclick=()=>travelEdit('redo');
-  controls.append(play,seek,clock,cutButton,undo,redo,exportButton);
+  controls.append(play,seek,clock,cutButton,undo,redo,exportButton,videoOnlyButton,audioSourceButton);
   const importManifest=document.createElement('button');importManifest.id='editImportManifest';importManifest.textContent='Importer manifeste EDIT';
   const manifestFile=document.createElement('input');manifestFile.id='editManifestFile';manifestFile.type='file';manifestFile.accept='.json,application/json';manifestFile.hidden=true;
   importManifest.onclick=()=>{if(editorExportPreparing||editorRecorder?.state==='recording')return status('Attendre la fin de l’export EDIT');manifestFile.click();};
