@@ -1089,3 +1089,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `defb3052` : installation conditionnelle de FFmpeg/ffprobe dans le job `alpha-package` avant l'E2E ZIP extrait; aucun changement hors workflow dédié.
 - **Preuve** : diagnostics exacts des deux jobs et correctifs poussés. **CI du nouveau HEAD à confirmer**; aucun test local/Windows effectué dans cette reprise. Si rouge, inspecter les jobs/logs du HEAD et réparer avant nouvelle fonction. Puis audio de secours fidèle à la timeline (IN/départ/volume) et matrice des 12 adaptateurs.
 - Blocages : MediaRecorder vidéo seule peut encore perdre des images, WAV source non transformé, Windows 10/GTX1060/1650, OBS réel et écoute non validés. Restant alpha M–L plus recette matérielle. PR #16 draft, aucun merge main.
+
+
+## Reprise 18/11/2026 ~19h Paris — CI vérifiée et bornes audio EDIT
+- PR #16 HEAD initial `a63fd379`, draft. Run [44353268377](https://github.com/Sathancabrol/monorepo/actions/runs/44353268377) **completed/success** sur ce HEAD, après les correctifs export vidéo seule et installation conditionnelle FFmpeg. Cette réussite ne valide ni Windows ni l'écoute audio.
+- Commit `4f40101222ec9e303fe8f52facc7d413a098a683` : régression Node supplémentaire pour `audioAtTimeline` : début exact, fin exclusive de source, valeurs de temps invalides, point IN à la fin et immutabilité. **Test ajouté mais CI du nouveau commit non encore confirmée**, aucune exécution locale revendiquée.
+- Prochain P0 S : vérifier jobs `smoke` et `alpha-package` du nouveau HEAD et réparer si rouge. Ensuite P0 M : audio de secours respectant réellement offset/IN/volume (la sortie WAV actuelle est source brute), E2E Chromium + ffprobe. Ne pas confondre MediaRecorder vidéo seule et export A/V déterministe.
+- Blocages : Windows 10, GTX1060/1650, OBS réel, écoute et licences tierces non validés. Restant alpha M–L plus recette matérielle. Aucun changement main ni hors Studio.
