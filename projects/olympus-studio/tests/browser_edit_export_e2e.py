@@ -479,6 +479,16 @@ def main():
                     print("EDIT audio undo/redo UI: volume restored and redo invalidated")
                     assert not errors, "JS errors during undo/redo: " + " | ".join(errors)
                     print("EDIT undo/redo UI: split restored, audio and source preserved")
+                    # Isolate the final roundtrip from the preceding burst of
+                    # script-triggered downloads. Reload the actual exported
+                    # snapshot; never bypass Portable serialization or assertions.
+                    # This isolates Chromium's per-document download policy,
+                    # not a production fix for repeated exports.
+                    page.reload(wait_until="load")
+                    page.locator("#fileProject").set_input_files(str(Path(temp) / "order-redone.json"))
+                    page.locator("#status").get_by_text("Projet chargé", exact=False).wait_for(timeout=10000)
+                    page.locator('[data-space="EDIT"]').first.click()
+                    assert not page.locator("#editUndo").is_enabled(), "Undo history leaked after snapshot reload"
                     # Portable serializes multiple media Blobs asynchronously.
                     # On failure report application status, not only a timeout.
                     try:
