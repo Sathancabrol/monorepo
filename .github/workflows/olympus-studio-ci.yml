@@ -33,6 +33,7 @@ jobs:
       - name: Static parse
         run: |
           node --check server.mjs
+          python -m py_compile tools/ffmpeg_mux_fallback.py tests/ffmpeg_mux_fallback_test.py
           node --check src/comfy-output.js
           node --check tests/comfy-output.test.mjs
           node --check src/app.js
@@ -74,6 +75,8 @@ jobs:
         run: |
           command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
           python tests/browser_av_fixture.py
+      - name: FFmpeg fallback — synthetic VP9/Opus mux
+        run: python tests/ffmpeg_mux_fallback_test.py
       - name: Chromium EDIT manifest import — IndexedDB, atomicity, undo/redo
         env:
           OLYMPUS_MANIFEST_EVIDENCE_DIR: ${{ runner.temp }}/olympus-manifest-evidence
