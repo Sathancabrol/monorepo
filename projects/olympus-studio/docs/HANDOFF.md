@@ -1096,3 +1096,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `4f40101222ec9e303fe8f52facc7d413a098a683` : régression Node supplémentaire pour `audioAtTimeline` : début exact, fin exclusive de source, valeurs de temps invalides, point IN à la fin et immutabilité. **Test ajouté mais CI du nouveau commit non encore confirmée**, aucune exécution locale revendiquée.
 - Prochain P0 S : vérifier jobs `smoke` et `alpha-package` du nouveau HEAD et réparer si rouge. Ensuite P0 M : audio de secours respectant réellement offset/IN/volume (la sortie WAV actuelle est source brute), E2E Chromium + ffprobe. Ne pas confondre MediaRecorder vidéo seule et export A/V déterministe.
 - Blocages : Windows 10, GTX1060/1650, OBS réel, écoute et licences tierces non validés. Restant alpha M–L plus recette matérielle. Aucun changement main ni hors Studio.
+
+
+## Reprise 18/11/2026 ~20h Paris — rendu audio FFmpeg offline (étape préparatoire)
+- Vérification CI avant modifications : run [44365829042](https://github.com/Sathancabrol/monorepo/actions/runs/44365829042) **success** pour HEAD précédent `60413e00`; ne valide pas les commits nouveaux.
+- Commits `5d2e9272` et `d11cdd83` : nouveau script autonome `scripts/render-edit-audio.mjs` qui transforme un fichier audio source en WAV PCM 48 kHz stéréo selon point IN, départ, volume/mute et durée EDIT (≤120 s), via FFmpeg local sans shell, plus tests Node de construction du filtre et entrées invalides.
+- **Statut exact** : code et tests écrits/poussés; CI de ces commits non confirmée. Le script est utilisable en CLI mais **pas encore raccordé au bouton EDIT**; pas de test FFprobe/écoute sur la sortie. Ce n'est pas encore un export A/V déterministe.
+- **Reprise P0 S** : vérifier CI sur `d11cdd83`, réparer si rouge. **Puis P0 M** : E2E réel FFmpeg avec WAV synthétique, mesure de silence/décalage/amplitude et durée avec ffprobe; documenter la commande dans guide EDIT, puis raccordement UI/FFmpeg local sécurisé si possible.
+- Blocages inchangés : MediaRecorder vidéo peut perdre des frames, Windows/GTX/OBS/écoute non validés; licence et packaging FFmpeg à auditer. Restant alpha M–L + recette matérielle. Aucun merge main ni modification d'autre projet.
