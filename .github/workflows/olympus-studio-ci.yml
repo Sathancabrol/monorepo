@@ -47,6 +47,8 @@ jobs:
           node --check src/edit-history.js
           node --check tests/edit-history.test.mjs
           node --check src/editor-export.js
+          node --check src/studio-event-bus.js
+          node --check tests/studio-event-bus.test.mjs
           node --check tests/editor-export.test.mjs
           node --check tests/edit-audio.test.mjs
           node --check src/video-duration.js
