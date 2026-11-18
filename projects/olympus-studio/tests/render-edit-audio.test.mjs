@@ -8,7 +8,7 @@ test('FFmpeg EDIT audio: trim source IN, offset, volume and final duration',()=>
  assert.match(filter,/volume=0\.400000/);
  assert.match(filter,/adelay=250:all=1/);
  assert.match(filter,/atrim=duration=3\.000000/);
- assert.deepEqual(args.slice(-2),['-y','out.wav']);
+ assert.deepEqual(args.slice(-2),['-n','out.wav']);
 });
 test('Mute and invalid parameters are explicit; no shell commands',()=>{
  const args=renderAudioArgs('a.wav','b.wav',{assetId:'a',enabled:false,volume:.9},2);
@@ -17,4 +17,5 @@ test('Mute and invalid parameters are explicit; no shell commands',()=>{
  for(const d of [0,-1,121,NaN,Infinity])assert.throws(()=>renderAudioArgs('a','b',{assetId:'a'},d),/Durée/);
  assert.throws(()=>renderAudioArgs('a','b',{assetId:'a',offset:-1},2),/Départ/);
  assert.ok(!args.includes('-shell'));
+ assert.ok(!args.includes('-y'), 'Never overwrite existing output files');
 });
