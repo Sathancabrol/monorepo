@@ -770,7 +770,7 @@ function panel(){
  else if(state.space==='XR'){
   const intro=document.createElement('p');intro.className='notice';intro.textContent='Importer un événement X-Ray au format {"type":"detections","items":[{"label":"main","x":0.1,"y":0.2,"w":0.2,"h":0.3}]}. Démo d’overlays seulement.';el.append(intro);
   const input=document.createElement('textarea');input.placeholder='{"type":"detections","items":[]}';input.setAttribute('aria-label','Événement XR JSON');el.append(input);
-  const add=document.createElement('button');add.textContent='Importer détections';add.onclick=()=>{try{const obj=JSON.parse(input.value);xrBus.publish({type:'xr.detections',schemaVersion:1,source:'ui-manual',timestampMs:Date.now(),payload:{items:obj.items}});}catch(e){status('Événement invalide : '+e.message);}};wrap.append(add);
+  const add=document.createElement('button');add.textContent='Importer détections';add.onclick=()=>{try{const obj=JSON.parse(input.value);if(obj.type!=='detections')throw Error('Type attendu : detections');xrBus.publish({type:'xr.detections',schemaVersion:1,source:'ui-manual',timestampMs:Date.now(),payload:{items:obj.items}});}catch(e){status('Événement invalide : '+e.message);}};wrap.append(add);
   const gesture=document.createElement('button');gesture.textContent='Simuler claquement de doigts';gesture.onclick=()=>xrBus.publish({type:'xr.snap',schemaVersion:1,source:'ui-demo',timestampMs:Date.now(),payload:{action:'toggle-overlays'}});wrap.append(gesture);
  }
  else if(state.space==='CONTROL'){
