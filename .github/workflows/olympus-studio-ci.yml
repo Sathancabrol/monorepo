@@ -77,6 +77,8 @@ jobs:
           python tests/browser_av_fixture.py
       - name: FFmpeg fallback — synthetic VP9/Opus mux
         run: python tests/ffmpeg_mux_fallback_test.py
+      - name: FFmpeg fallback cleanup regression — preserve inputs and remove partial output
+        run: python -m unittest discover -s tests -p 'test_ffmpeg_mux_cleanup.py' -v
       - name: Chromium EDIT manifest import — IndexedDB, atomicity, undo/redo
         env:
           OLYMPUS_MANIFEST_EVIDENCE_DIR: ${{ runner.temp }}/olympus-manifest-evidence
