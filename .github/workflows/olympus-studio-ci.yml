@@ -125,6 +125,7 @@ jobs:
           trap 'rm -rf "$extract_dir"' EXIT
           unzip -q olympus-studio-preview.zip -d "$extract_dir"
           OLYMPUS_TEST_ROOT="$extract_dir" python tests/browser_indexeddb_e2e.py
+          OLYMPUS_TEST_ROOT="$extract_dir" python tests/browser_xr_event_e2e.py
       - name: Publier le paquet de test
         uses: actions/upload-artifact@v4
         with:
