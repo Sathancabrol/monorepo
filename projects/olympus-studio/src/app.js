@@ -282,10 +282,10 @@ async function exportEditorWebM({videoOnly=false}={}){
   let audioIncluded=false;
   if(requestedAudio?.enabled){
    const audio=await loadEditAsset(requestedAudio.assetId);
-   if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
+   if(requestedAudio&&JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
    if(!audio||audio.tagName!=='AUDIO')throw new Error('Piste audio manquante : export interrompu');
    await attachAudioToEditorCapture(stream,audio,requestedAudio.volume);
-   if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
+   if(requestedAudio&&JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
    audioIncluded=true;
   }
   const mime=selectEditorWebMMime(audioIncluded, type=>MediaRecorder.isTypeSupported(type));
@@ -310,7 +310,7 @@ async function exportEditorWebM({videoOnly=false}={}){
    dl('olympus-storyboard-'+(videoOnly?'video-only-':'')+Date.now()+'.webm',new Blob(chunks,{type:editorRecorder.mimeType||'video/webm'}));
    status(audioIncluded?'WebM exporté avec piste son dédiée (synchronisation à valider sur Windows)':'Storyboard WebM exporté sans audio');
   };
-  if(JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
+  if(requestedAudio&&JSON.stringify(state.editAudioTrack)!==JSON.stringify(requestedAudio))throw new Error('Piste audio modifiée pendant la préparation : relancer export');
   editorExportFinalizing=false;
   state.editTime=0;state.editLast=0;state.editPlaying=true;
   editorRecorder.start(1000);
