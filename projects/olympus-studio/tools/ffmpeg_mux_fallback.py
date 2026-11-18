@@ -5,6 +5,7 @@ Does not reconstruct frames lost by MediaRecorder. Never overwrites input/output
 """
 import argparse
 import json
+import math
 import shutil
 import subprocess
 from pathlib import Path
@@ -18,7 +19,9 @@ def probe(path):
     return json.loads(result.stdout).get("streams", [])
 
 
-def mux(video, audio, output):
+def mux(video, audio, output, audio_offset=0.0):
+    if not math.isfinite(audio_offset) or abs(audio_offset) > 120:
+        raise ValueError('Audio offset must be finite and within ±120 seconds')
     video, audio, output = map(lambda p: Path(p).resolve(), (video, audio, output))
     if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
         raise RuntimeError("FFmpeg and ffprobe are required locally")
@@ -34,7 +37,7 @@ def mux(video, audio, output):
         raise ValueError("Second input has no audio stream")
     command = [
         "ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-n",
-        "-i", str(video), "-i", str(audio), "-map", "0:v:0", "-map", "1:a:0",
+        "-i", str(video), "-itsoffset", str(audio_offset), "-i", str(audio), "-map", "0:v:0", "-map", "1:a:0",
         "-c:v", "libvpx-vp9", "-deadline", "realtime", "-cpu-used", "5",
         "-c:a", "libopus", "-shortest", str(output)
     ]
@@ -55,8 +58,10 @@ def main():
     parser.add_argument("--video", required=True, type=Path)
     parser.add_argument("--audio", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--audio-offset", type=float, default=0.0,
+                        help="Shift audio relative to video in seconds (positive = later; max ±120)")
     args = parser.parse_args()
-    print(mux(args.video, args.audio, args.output))
+    print(mux(args.video, args.audio, args.output, args.audio_offset))
 
 
 if __name__ == "__main__":
