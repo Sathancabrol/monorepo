@@ -30,4 +30,24 @@ with tempfile.TemporaryDirectory() as tmp:
         assert "overwrite" in str(exc)
     else:
         raise AssertionError("Existing output should be protected")
-    print("FFmpeg fallback: mux, VP9/Opus, and overwrite protection passed")
+
+    # Real FFmpeg regression: a deliberate audio delay must survive muxing.
+    delayed = base / "delayed.webm"
+    module.mux(video, audio, delayed, audio_offset=0.25)
+    def first_packet_time(path, selector):
+        import json
+        data = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", selector,
+             "-show_packets", "-show_entries", "packet=pts_time",
+             "-of", "json", str(path)],
+            capture_output=True, text=True, check=True, timeout=30
+        )
+        packets = json.loads(data.stdout).get("packets", [])
+        assert packets, f"No {selector} packets in {path}"
+        return float(packets[0]["pts_time"])
+    video_start = first_packet_time(delayed, "v:0")
+    audio_start = first_packet_time(delayed, "a:0")
+    assert 0.15 <= audio_start - video_start <= 0.35, (
+        f"Expected +250ms audio delay, got {audio_start-video_start:.3f}s"
+    )
+    print("FFmpeg fallback: mux, VP9/Opus, overwrite protection and +250ms offset passed")
