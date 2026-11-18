@@ -113,6 +113,14 @@ jobs:
           unzip -t olympus-studio-preview.zip | tail -1
       - name: Smoke-test extracted alpha ZIP over HTTP
         run: python tests/alpha_package_smoke.py
+      - name: Chromium E2E on extracted alpha ZIP — 12 spaces, IndexedDB, Portable
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          extract_dir="$(mktemp -d)"
+          trap 'rm -rf "$extract_dir"' EXIT
+          unzip -q olympus-studio-preview.zip -d "$extract_dir"
+          OLYMPUS_TEST_ROOT="$extract_dir" python tests/browser_indexeddb_e2e.py
       - name: Publier le paquet de test
         uses: actions/upload-artifact@v4
         with:
