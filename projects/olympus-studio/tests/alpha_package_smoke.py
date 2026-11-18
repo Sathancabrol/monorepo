@@ -12,6 +12,7 @@ import time
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 from zipfile import ZipFile
+import stat
 
 ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE = ROOT / "olympus-studio-preview.zip"
@@ -38,6 +39,14 @@ def main():
         missing = REQUIRED - names
         assert not missing, f"Missing ZIP files: {sorted(missing)}"
         assert archive.testzip() is None, "ZIP CRC failure"
+        # Packaging must never include private material or filesystem links.
+        for info in archive.infolist():
+            parts = info.filename.split("/")
+            assert not info.filename.startswith("/") and ".." not in parts, f"Unsafe ZIP path: {info.filename}"
+            assert not any(p.startswith(".env") or p in (".git", "node_modules", "__pycache__", ".pytest_cache") for p in parts), f"Private artifact packaged: {info.filename}"
+            assert not info.filename.lower().endswith((".pem", ".key", ".p12", ".pfx")), f"Credential-like file packaged: {info.filename}"
+            assert not stat.S_ISLNK((info.external_attr >> 16) & 0xFFFF), f"Symlink packaged: {info.filename}"
+            assert info.file_size <= 100 * 1024 * 1024, f"Oversized entry: {info.filename}"
         with tempfile.TemporaryDirectory(prefix="olympus-alpha-") as temp:
             target = Path(temp).resolve()
             for info in archive.infolist():
