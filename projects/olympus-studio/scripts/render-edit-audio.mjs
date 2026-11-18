@@ -13,7 +13,7 @@ export function renderAudioArgs(input,output,track,duration) {
   const n=x=>Number(x).toFixed(6);
   // Source IN, timeline delay, volume, then pad/trim to the exact EDIT length.
   const filter='[0:a]atrim=start='+n(t.inPoint)+',asetpts=PTS-STARTPTS,volume='+n(t.enabled?t.volume:0)+',adelay='+Math.round(t.offset*1000)+':all=1,apad,atrim=duration='+n(seconds)+',asetpts=PTS-STARTPTS[out]';
-  return ['-nostdin','-hide_banner','-loglevel','error','-i',input,'-filter_complex',filter,'-map','[out]','-ar','48000','-ac','2','-c:a','pcm_s16le','-y',output];
+  return ['-nostdin','-hide_banner','-loglevel','error','-i',input,'-filter_complex',filter,'-map','[out]','-ar','48000','-ac','2','-c:a','pcm_s16le','-n',output];
 }
 export async function renderAudio(input,output,track,duration,{binary='ffmpeg'}={}){
   const args=renderAudioArgs(input,output,track,duration);
