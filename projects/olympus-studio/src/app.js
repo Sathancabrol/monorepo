@@ -8,8 +8,13 @@ import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setCli
 import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, getMediaBatch, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable, snapshotPortableProject } from './media-store.js';
+import {createStudioEventBus} from './studio-event-bus.js';
+const xrBus=createStudioEventBus();
 const $=id=>document.getElementById(id);
 const C=$('stage'),ctx=C.getContext('2d');
+xrBus.subscribe('xr.detections',event=>{for(const d of event.payload.items){addLayer({type:'rect',name:'XR · '+d.label,x:d.x,y:d.y,w:d.w,h:d.h,color:'#42e8df'});}status('Détections XR validées et importées (source locale manuelle)');});
+xrBus.subscribe('xr.snap',()=>{scene().layers.filter(l=>l.name.startsWith('XR ·')).forEach(l=>l.visible=!l.visible);sync();status('Geste XR simulé : couches basculées');});
+
 const spaces=[
   ['LIVE','◉','Réalisation et enregistrement en direct'],
   ['EDIT','▤','Montage et chronologie'],
@@ -765,8 +770,8 @@ function panel(){
  else if(state.space==='XR'){
   const intro=document.createElement('p');intro.className='notice';intro.textContent='Importer un événement X-Ray au format {"type":"detections","items":[{"label":"main","x":0.1,"y":0.2,"w":0.2,"h":0.3}]}. Démo d’overlays seulement.';el.append(intro);
   const input=document.createElement('textarea');input.placeholder='{"type":"detections","items":[]}';input.setAttribute('aria-label','Événement XR JSON');el.append(input);
-  const add=document.createElement('button');add.textContent='Importer détections';add.onclick=()=>{try{const obj=JSON.parse(input.value);if(obj.type!=='detections'||!Array.isArray(obj.items))throw Error('Type attendu : detections');for(const d of obj.items.slice(0,30)){addLayer({type:'rect',name:'XR · '+String(d.label||'objet'),x:Math.max(0,Number(d.x)||0),y:Math.max(0,Number(d.y)||0),w:Math.min(1,Number(d.w)||.1),h:Math.min(1,Number(d.h)||.1),color:'#42e8df'});}status('Événement XR importé en overlays 2D (test manuel)');}catch(e){status('Événement invalide : '+e.message);}};wrap.append(add);
-  const gesture=document.createElement('button');gesture.textContent='Simuler claquement de doigts';gesture.onclick=()=>{scene().layers.filter(l=>l.name.startsWith('XR ·')).forEach(l=>l.visible=!l.visible);sync();status('Geste simulé : couches XR basculées');};wrap.append(gesture);
+  const add=document.createElement('button');add.textContent='Importer détections';add.onclick=()=>{try{const obj=JSON.parse(input.value);xrBus.publish({type:'xr.detections',schemaVersion:1,source:'ui-manual',timestampMs:Date.now(),payload:{items:obj.items}});}catch(e){status('Événement invalide : '+e.message);}};wrap.append(add);
+  const gesture=document.createElement('button');gesture.textContent='Simuler claquement de doigts';gesture.onclick=()=>xrBus.publish({type:'xr.snap',schemaVersion:1,source:'ui-demo',timestampMs:Date.now(),payload:{action:'toggle-overlays'}});wrap.append(gesture);
  }
  else if(state.space==='CONTROL'){
   const button=document.createElement('button');button.textContent='Actualiser les 12 intégrations';
