@@ -38,12 +38,16 @@ def mux(video, audio, output):
         "-c:v", "libvpx-vp9", "-deadline", "realtime", "-cpu-used", "5",
         "-c:a", "libopus", "-shortest", str(output)
     ]
-    subprocess.run(command, check=True, timeout=300)
-    streams = probe(output)
-    if not {"video", "audio"}.issubset({s.get("codec_type") for s in streams}):
+    try:
+        subprocess.run(command, check=True, timeout=300)
+        streams = probe(output)
+        if not {"video", "audio"}.issubset({s.get("codec_type") for s in streams}):
+            raise RuntimeError("Muxed output lacks video or audio")
+        return output
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, RuntimeError, OSError, ValueError):
+        # FFmpeg may leave a truncated output on failure; never present it as a valid export.
         output.unlink(missing_ok=True)
-        raise RuntimeError("Muxed output lacks video or audio")
-    return output
+        raise
 
 
 def main():
