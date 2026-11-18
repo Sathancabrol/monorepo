@@ -54,7 +54,7 @@ jobs:
           node --check tests/edit-audio.test.mjs
           node --check src/video-duration.js
           node --check tests/video-duration.test.mjs
-          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py tests/browser_av_fixture.py tests/browser_edit_export_e2e.py tests/browser_edit_manifest_e2e.py tests/browser_recorder_error_e2e.py tests/browser_comfy_import_e2e.py tests/browser_xr_event_e2e.py
+          python -m py_compile tests/browser_media_smoke.py tests/browser_indexeddb_e2e.py tests/browser_av_fixture.py tests/browser_edit_export_e2e.py tests/browser_edit_manifest_e2e.py tests/browser_recorder_error_e2e.py tests/browser_comfy_import_e2e.py tests/browser_xr_event_e2e.py tests/browser_edit_separate_e2e.py
           node --check tests/storyboard.test.mjs
           node --check src/obs-client.js
           node --check src/obs-panel.js
@@ -98,6 +98,8 @@ jobs:
           OLYMPUS_SYNTHETIC_EVIDENCE_DIR: ${{ runner.temp }}/olympus-av-evidence
         run: |
           python tests/browser_edit_export_e2e.py
+      - name: Chromium EDIT separate downloads — WAV integrity and video-only WebM
+        run: python tests/browser_edit_separate_e2e.py
       - name: Conserver la preuve synthétique A/V si E2E échoue
         if: failure()
         uses: actions/upload-artifact@v4
@@ -131,6 +133,7 @@ jobs:
           unzip -q olympus-studio-preview.zip -d "$extract_dir"
           OLYMPUS_TEST_ROOT="$extract_dir" python tests/browser_indexeddb_e2e.py
           OLYMPUS_TEST_ROOT="$extract_dir" python tests/browser_xr_event_e2e.py
+          OLYMPUS_TEST_ROOT="$extract_dir" python tests/browser_edit_separate_e2e.py
       - name: Publier le paquet de test
         uses: actions/upload-artifact@v4
         with:
