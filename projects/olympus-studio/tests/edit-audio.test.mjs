@@ -31,3 +31,16 @@ test('Le projet portable nâ€™oublie pas la piste audio et ne duplique pas les mÃ
   assert.deepEqual(restored,audio);
   assert.deepEqual(referencedAssetIds([],[],{assetId:'film'}),['film']);
 });
+
+test('Audio EDIT : bornes temporelles exactes, aucune lecture hors source',()=>{
+  const track=validateEditAudioTrack({assetId:'fixture',offset:1.25,inPoint:.5,volume:.4});
+  const snapshot=JSON.stringify(track);
+  assert.deepEqual(audioAtTimeline(track,1.249,2),{active:false,sourceTime:0});
+  assert.deepEqual(audioAtTimeline(track,1.25,2),{active:true,sourceTime:.5});
+  assert.deepEqual(audioAtTimeline(track,2.75,2),{active:false,sourceTime:2});
+  assert.equal(audioAtTimeline(track,2.749,2).active,true);
+  for(const value of [NaN,Infinity,-Infinity,-1])
+    assert.equal(audioAtTimeline(track,value,2).active,false);
+  assert.equal(audioAtTimeline({...track,inPoint:2},1.25,2).active,false);
+  assert.equal(JSON.stringify(track),snapshot,'La lecture ne doit pas muter la piste');
+});
