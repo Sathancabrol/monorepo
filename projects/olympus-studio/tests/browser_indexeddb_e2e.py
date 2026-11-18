@@ -14,7 +14,9 @@ import time
 
 from playwright.sync_api import sync_playwright
 
-ROOT = Path(__file__).resolve().parents[1]
+# Override only for testing the actual extracted alpha distribution.
+# The test script remains in the source tree; the server runs from the ZIP.
+ROOT = Path(os.environ["OLYMPUS_TEST_ROOT"]).resolve() if os.environ.get("OLYMPUS_TEST_ROOT") else Path(__file__).resolve().parents[1]
 
 
 def free_port():
