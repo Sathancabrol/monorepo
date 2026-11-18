@@ -233,6 +233,34 @@ def main():
                         });
                       };
                     }""")
+                    # Instrument the FIRST (delayed WebAudio) export, which is the
+                    # intermittent failing path. Telemetry is synthetic and bounded.
+                    page.evaluate("""() => {
+                      const canvas = document.querySelector('#editPreview');
+                      window.__delayedCaptureTrace = {captures: [], frames: [], recorder: []};
+                      const originalCapture = canvas.captureStream.bind(canvas);
+                      canvas.captureStream = (...args) => {
+                        const stream = originalCapture(...args);
+                        const trace = window.__delayedCaptureTrace;
+                        trace.captures.push({at: performance.now(), fps: args[0]});
+                        const track = stream.getVideoTracks()[0];
+                        if (track && typeof track.requestFrame === 'function') {
+                          const originalFrame = track.requestFrame.bind(track);
+                          track.requestFrame = () => {
+                            trace.frames.push(performance.now());
+                            return originalFrame();
+                          };
+                        }
+                        return stream;
+                      };
+                      const originalStart = MediaRecorder.prototype.start;
+                      MediaRecorder.prototype.start = function(...args) {
+                        const trace = window.__delayedCaptureTrace;
+                        trace.recorder.push({event: 'start', at: performance.now()});
+                        this.addEventListener('stop', () => trace.recorder.push({event: 'stop', at: performance.now()}), {once: true});
+                        return originalStart.apply(this, args);
+                      };
+                    }""")
                     page.get_by_role("button", name="Exporter WebM (audio optionnel)").click()
                     page.wait_for_function("window.__editResumeGate?.waiting === true", timeout=10000)
                     # Valid interchange import must be rejected while WebAudio
@@ -275,7 +303,28 @@ def main():
                         page.evaluate("window.__editResumeGate.release()")
                     delayed_path = Path(temp) / "delayed-preparation.webm"
                     delayed_info.value.save_as(delayed_path)
-                    print("EDIT delayed WebAudio preparation:", inspect_export(delayed_path))
+                    try:
+                        print("EDIT delayed WebAudio preparation:", inspect_export(delayed_path))
+                    except AssertionError:
+                        trace = page.evaluate("""() => {
+                          const t = window.__delayedCaptureTrace || {};
+                          const frames = t.frames || [];
+                          const gaps = frames.slice(1).map((v, i) => v - frames[i]);
+                          return {captures: t.captures || [], recorder: t.recorder || [],
+                                  frame_count: frames.length,
+                                  frame_span_ms: frames.length > 1 ? frames.at(-1) - frames[0] : 0,
+                                  max_frame_gap_ms: gaps.length ? Math.max(...gaps) : null,
+                                  first_frames: frames.slice(0, 5), last_frames: frames.slice(-5)};
+                        }""")
+                        print("EDIT delayed capture trace:", json.dumps(trace), flush=True)
+                        evidence = os.environ.get("OLYMPUS_SYNTHETIC_EVIDENCE_DIR")
+                        if evidence:
+                            folder = Path(evidence)
+                            folder.mkdir(parents=True, exist_ok=True)
+                            (folder / "delayed-capture-trace.json").write_text(
+                                json.dumps(trace, indent=2), encoding="utf-8"
+                            )
+                        raise
                     assert not errors, "JS errors during delayed preparation: " + " | ".join(errors)
                     with page.expect_download(timeout=15000) as gate_snapshot:
                         page.locator("#btnPortable").click()
