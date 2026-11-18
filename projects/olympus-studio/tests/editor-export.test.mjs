@@ -47,7 +47,7 @@ test('EDIT termine la capture après avoir dessiné et demandé la dernière ima
 test('EDIT ne télécharge jamais un export vide ou signalé en erreur par MediaRecorder', async () => {
   const { readFile } = await import('node:fs/promises');
   const source = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
-  const exportCode = source.slice(source.indexOf('async function exportEditorWebM(){'), source.indexOf('function draw(){'));
+  const exportCode = source.slice(source.indexOf('async function exportEditorWebM('), source.indexOf('function draw(){'));
   assert.match(exportCode, /editorRecorder\.onerror=event=>\{/);
   assert.match(exportCode, /recorderFailed=true;/);
   assert.match(exportCode, /if\(recorderFailed\|\|!chunks\.length\)\{/);
