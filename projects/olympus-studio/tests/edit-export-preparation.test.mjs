@@ -12,7 +12,8 @@ test('EDIT export serializes concurrent preparation and recording', () => {
   assert.match(exportBody, /finally\s*\{\s*editorExportPreparing=false/);
 });
 test('EDIT export revalidates audio after each asynchronous boundary', () => {
-  assert.match(exportBody, /const requestedAudio=state\.editAudioTrack\?\{\.\.\.state\.editAudioTrack\}:null/);
+  assert.match(exportBody, /const requestedAudio=!videoOnly&&state\.editAudioTrack\?\{\.\.\.state\.editAudioTrack\}:null/);
+  assert.match(exportBody, /if\(requestedAudio\?\.enabled\)/);
   const checks = exportBody.match(/JSON\.stringify\(state\.editAudioTrack\)!==JSON\.stringify\(requestedAudio\)/g) || [];
   assert.ok(checks.length >= 3, 'must revalidate after load, graph setup and before recorder start');
   assert.match(exportBody, /loadEditAsset\(requestedAudio\.assetId\)/);
