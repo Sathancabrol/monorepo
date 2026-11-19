@@ -33,10 +33,20 @@ export async function renderEditPngFrames(clips, {
   const frames = planEditFrames(clips, fps, { maxFrames, maxSeconds });
   const ctx = canvas.getContext('2d');
   if (!ctx || !canvas.width || !canvas.height) throw new Error('Invalid Canvas');
+  // Resolve every distinct source before writing the first frame. A missing source
+  // must not leave an apparently valid, truncated PNG sequence in the sink.
+  const sources = new Map();
   for (const frame of frames) {
     if (signal?.aborted) throw new Error('Frame export aborted');
+    const key = JSON.stringify([frame.kind, frame.assetId]);
+    if (sources.has(key)) continue;
     const media = await resolveAsset(frame.assetId, frame.kind);
     if (!media) throw new Error('Missing media: ' + frame.assetId);
+    sources.set(key, media);
+  }
+  for (const frame of frames) {
+    if (signal?.aborted) throw new Error('Frame export aborted');
+    const media = sources.get(JSON.stringify([frame.kind, frame.assetId]));
     if (frame.kind === 'video') await seek(media, frame.sourceTime);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
