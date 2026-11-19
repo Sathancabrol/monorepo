@@ -78,4 +78,21 @@ with tempfile.TemporaryDirectory() as tmp:
     else:
         raise AssertionError("Missing PNG frame should be rejected")
     assert not missing_output.exists()
+    # A linked PNG must not make FFmpeg read outside the selected directory.
+    (frames / "000025.png").rename(frames / "000012.png")
+    outside = base / "outside.png"
+    (frames / "000012.png").replace(outside)
+    try:
+        (frames / "000012.png").symlink_to(outside)
+    except (OSError, NotImplementedError):
+        print("Symlink creation unavailable; symlink guard skipped")
+    else:
+        linked_output = base / "linked.webm"
+        try:
+            module.mux_png_sequence(frames, audio, linked_output)
+        except ValueError as exc:
+            assert "no links" in str(exc), exc
+        else:
+            raise AssertionError("Symlinked PNG should be rejected")
+        assert not linked_output.exists()
     print("PNG sequence → VP9/Opus, 24 frames and missing-frame guard passed")
