@@ -34,3 +34,17 @@ test('video frames seek to source time before drawing',async()=>{
 test('seek rejects invalid timestamps',async()=>{
   await assert.rejects(seekVideoFrame({},-1),/Invalid video time/);
 });
+
+test('deterministic PNG export includes the same clip title overlay as EDIT preview',async()=>{
+  const canvas=canvasMock();
+  const context=canvas.getContext();
+  context.fillRect=(...args)=>canvas.calls.push(['fillRect',...args]);
+  context.fillText=(...args)=>canvas.calls.push(['fillText',...args]);
+  canvas.getContext=()=>context;
+  await renderEditPngFrames([{...clip,title:'Titre test'}],{
+    fps:4,canvas,resolveAsset:async()=>({}),onFrame:()=>{}
+  });
+  assert.deepEqual(canvas.calls.filter(call=>call[0]==='fillText').map(call=>call[1]),['Titre test','Titre test']);
+  assert.equal(canvas.calls.filter(call=>call[0]==='fillRect').length,2);
+  assert.ok(canvas.calls.findIndex(call=>call[0]==='fillText')<canvas.calls.findIndex(call=>call[0]==='blob'));
+});
