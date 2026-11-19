@@ -41,7 +41,7 @@ export async function renderEditPngFrames(clips, {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
     // Match the EDIT preview title overlay in exported frames (not LIVE).
-    const title = frame.clip?.title;
+    const title = frame.title;
     if (typeof title === 'string' && title.length) {
       ctx.fillStyle = 'rgba(0,0,0,.65)';
       ctx.fillRect(20, canvas.height - 95, canvas.width - 40, 65);
