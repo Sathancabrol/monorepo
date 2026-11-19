@@ -1239,3 +1239,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Tests : log CI lu et cause identifiée; **pas de nouveau résultat CI ni exécution Node confirmée** pour ce commit. La CI suivante devra exécuter `node --check tests/smoke.test.mjs`, `npm test`, puis E2E Chromium. Ne pas annoncer succès avant preuve.
 - Blocages : A/V MediaRecorder non synchronisé, fallback PNG→FFmpeg→WebM/Opus non câblé de bout en bout; essais Windows/GTX/OBS/licences non réalisés. `main` intact.
 - Prochain READY **S** : vérifier CI sur `2bfa9bae`; si rouge réparer l'étape exacte. Puis **M–L** : export déterministe PNG→FFmpeg et mesure FFprobe; A02 IndexedDB reste ouvert. Estimation restante alpha M–L plus recette Windows et licences. PR #16 toujours brouillon.
+
+
+## Reprise 19 novembre 2026, 16 h Paris — PNG → FFmpeg/Opus local
+
+- Prélecture : AUTONOMOUS_BACKLOG, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17, workflow et HEAD `8a6363dd`. CI [44539425990](https://github.com/Sathancabrol/monorepo/actions/runs/44539425990) sur `8a6363dd` : **success**, réparations syntaxe et packaging confirmées.
+- Nouveau code `e23d78aa` : `tools/ffmpeg_mux_fallback.py` accepte `--frames-dir` et `--fps`, vérifie 1–7200 PNG numérotés contigus, encode VP9/Opus via FFmpeg local, refuse les écrasements et nettoie une sortie partielle en échec. Le mode `--video` antérieur reste disponible. Aucun accès automatique au dossier ni moteur réécrit.
+- Test `5bab01a5` : fixture de 24 PNG synthétiques, mux réel VP9/Opus, vérification des codecs et refus d'un trou dans la séquence. **Test codé, CI de ces nouveaux commits non encore confirmée.**
+- Usage volontaire : `python tools/ffmpeg_mux_fallback.py --frames-dir CHEMIN_PNG --fps 24 --audio CHEMIN_WAV --output NOUVEAU.webm`. Ce n'est **pas** encore un bouton de rendu A/V en un clic, ni une preuve de synchronisation complète avec audio découpé sur la timeline EDIT.
+- **Prochaine tâche P0 S** : consulter la CI sur `5bab01a5`/ce checkpoint; si rouge, réparer la cause exacte. Puis **M** : rendre la chaîne PNG→FFmpeg/Opus découvrable depuis EDIT avec une procédure claire et tester FFprobe sur l'export final, notamment durées et offset. Puis A02 E2E IndexedDB. Restant alpha M–L + recette Windows/GTX/OBS/licences; PR #16 brouillon, main intact.
