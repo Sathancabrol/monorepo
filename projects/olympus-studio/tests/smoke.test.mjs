@@ -93,7 +93,7 @@ test('Every relative ES module imported by app.js is served over HTTP',async()=>
  const response=await fetch(base+'/src/app.js');
  assert.equal(response.status,200);
  const source=await response.text();
- const imports=[...source.matchAll(/from ['"]\\.\\/([^'"]+)['"]/g)].map(match=>match[1]);
+  const imports=[...source.matchAll(/from ['"]\.\/([^'"]+)['"]/g)].map(match=>match[1]);
  assert.ok(imports.includes('edit-frame-renderer.js'));
  assert.ok(imports.includes('png-directory-sink.js'));
  for(const file of imports){
