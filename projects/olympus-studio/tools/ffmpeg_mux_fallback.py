@@ -133,7 +133,11 @@ def main():
     parser.add_argument("--audio-offset", type=float, default=0.0,
                         help="Shift audio relative to video in seconds (positive = later; max ±120)")
     parser.add_argument("--av-report", action="store_true", help="Print measured A/V packet timing as JSON after export")
+    parser.add_argument("--max-end-delta", type=float, default=None,
+                        help="Reject output when absolute A/V packet end difference exceeds this many seconds")
     args = parser.parse_args()
+    if args.max_end_delta is not None and (not math.isfinite(args.max_end_delta) or args.max_end_delta < 0):
+        parser.error("--max-end-delta must be finite and nonnegative")
     if bool(args.video) == bool(args.frames_dir):
         parser.error("Specify exactly one of --video or --frames-dir")
     if args.frames_dir:
@@ -142,8 +146,13 @@ def main():
     else:
         created = mux(args.video, args.audio, args.output, args.audio_offset)
         print(created)
-    if args.av_report:
-        print(json.dumps(av_packet_report(created), sort_keys=True))
+    if args.av_report or args.max_end_delta is not None:
+        report = av_packet_report(created)
+        if args.av_report:
+            print(json.dumps(report, sort_keys=True))
+        if args.max_end_delta is not None and abs(report["end_delta_s"]) > args.max_end_delta:
+            created.unlink(missing_ok=True)
+            raise RuntimeError(f"A/V end delta {report['end_delta_s']}s exceeds {args.max_end_delta}s; invalid output removed")
 
 
 if __name__ == "__main__":
