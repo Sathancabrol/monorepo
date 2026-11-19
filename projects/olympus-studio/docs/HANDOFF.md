@@ -1271,3 +1271,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **Preuve** : commits GitHub enregistrés, test écrit; **pas encore de résultat CI confirmé pour ces commits**. Le défaut MediaRecorder reste ouvert; ne pas affaiblir le test de synchronisation.
 - **Prochaine tâche P0 S** : vérifier la CI au dernier commit, corriger toute nouvelle régression. Puis **M** : proposer un parcours utilisateur documenté et testé pour exporter depuis EDIT en PNG et muxer audio WAV local via FFmpeg avec `--av-report`, mesurer offset et décodage. Reprendre A02 E2E IndexedDB ensuite.
 - **Blocages** : recette Windows, GTX1060/1650, OBS réel, écoute humaine et licences de redistribution; alpha partielle, pas de validation matérielle. Estimation restante alpha M–L, recette séparée.
+
+
+## Reprise 19/11/2026 ~20h Paris — déblocage de couverture CI sans masquer MediaRecorder
+- Prélecture : AUTONOMOUS_BACKLOG, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17 et workflow dédié. HEAD initial `78e39de269ae4a0d8dd4dd54b38b31f98a2cda14`.
+- CI [44584138307](https://github.com/Sathancabrol/monorepo/actions/runs/44584138307) sur HEAD initial : `alpha-package` success, `smoke` failure **uniquement** au step Chromium EDIT export MediaRecorder; tests IndexedDB, ComfyUI mock, XR, FFmpeg VP9/Opus et FFprobe réussis; étapes E2E export WAV séparé et séquence PNG sautées car placées après ce test rouge.
+- Correctif workflow `052e737c` : déplacer les deux E2E indépendants (WAV séparé et PNG via bouton EDIT) **avant** le scénario MediaRecorder instable. Ne pas supprimer ce dernier, ne pas assouplir ses seuils, ne pas prétendre CI verte. Objectif : recueillir la preuve des alternatives déterministes même quand MediaRecorder échoue.
+- Tests : vérification statique de l'ordre des steps par inspection du workflow, **pas encore de nouvelle exécution CI confirmée**. Aucun code moteur modifié, aucun test Windows revendiqué.
+- Prochaine tâche P0 S : lire le run CI sur `052e737c` ou ce checkpoint; réparer toute nouvelle régression du WAV/PNG E2E. Si les deux passent, P0 M : documenter et tester parcours utilisateur EDIT → dossier PNG → FFmpeg local `--frames-dir ... --audio ... --output ... --av-report` avec contrôle offset et limites. Puis A02 IndexedDB. Restant alpha M–L + recette Windows/GTX/OBS/licences; PR brouillon, main intact.
