@@ -69,11 +69,15 @@ with tempfile.TemporaryDirectory() as tmp:
     assert abs(report["end_delta_s"]) < 0.2, report
     assert len(list(frames.glob("*.png"))) == 24
     # CLI acceptance: fail closed on a deliberately impossible end-delta budget.
+    short_audio = base / "short.wav"
+    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi", "-i",
+                    "sine=frequency=440:sample_rate=48000:duration=0.3",
+                    "-c:a", "pcm_s16le", str(short_audio)], check=True, timeout=60)
     rejected = base / "rejected.webm"
     check = subprocess.run([
         "python", str(ROOT / "tools" / "ffmpeg_mux_fallback.py"),
-        "--frames-dir", str(frames), "--audio", str(audio),
-        "--output", str(rejected), "--max-end-delta", "0", "--av-report"
+        "--frames-dir", str(frames), "--audio", str(short_audio),
+        "--output", str(rejected), "--max-end-delta", "0.2", "--av-report"
     ], capture_output=True, text=True, timeout=120)
     assert check.returncode != 0, check.stdout
     assert not rejected.exists(), "Out-of-sync export must not be retained"
