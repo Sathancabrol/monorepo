@@ -91,6 +91,10 @@ jobs:
           path: ${{ runner.temp }}/olympus-manifest-evidence/
           retention-days: 7
           if-no-files-found: ignore
+      - name: Chromium EDIT separate downloads — WAV integrity and video-only WebM
+        run: python tests/browser_edit_separate_e2e.py
+      - name: Chromium EDIT PNG sequence — real UI, mocked directory, collision guard
+        run: python tests/browser_edit_png_e2e.py
       - name: Chromium EDIT MediaRecorder error — no partial download
         run: python tests/browser_recorder_error_e2e.py
       - name: Chromium EDIT export E2E — bouton réel, WebM Opus et ffprobe
@@ -98,10 +102,6 @@ jobs:
           OLYMPUS_SYNTHETIC_EVIDENCE_DIR: ${{ runner.temp }}/olympus-av-evidence
         run: |
           python tests/browser_edit_export_e2e.py
-      - name: Chromium EDIT separate downloads — WAV integrity and video-only WebM
-        run: python tests/browser_edit_separate_e2e.py
-      - name: Chromium EDIT PNG sequence — real UI, mocked directory, collision guard
-        run: python tests/browser_edit_png_e2e.py
       - name: Conserver la preuve synthétique A/V si E2E échoue
         if: failure()
         uses: actions/upload-artifact@v4
