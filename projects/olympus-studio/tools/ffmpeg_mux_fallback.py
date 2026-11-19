@@ -142,17 +142,23 @@ def main():
         parser.error("Specify exactly one of --video or --frames-dir")
     if args.frames_dir:
         created = mux_png_sequence(args.frames_dir, args.audio, args.output, args.fps, args.audio_offset)
-        print(created)
     else:
         created = mux(args.video, args.audio, args.output, args.audio_offset)
-        print(created)
-    if args.av_report or args.max_end_delta is not None:
-        report = av_packet_report(created)
-        if args.av_report:
-            print(json.dumps(report, sort_keys=True))
-        if args.max_end_delta is not None and abs(report["end_delta_s"]) > args.max_end_delta:
-            created.unlink(missing_ok=True)
-            raise RuntimeError(f"A/V end delta {report['end_delta_s']}s exceeds {args.max_end_delta}s; invalid output removed")
+    # A path on stdout means a *validated* export, never a rejected candidate.
+    report = None
+    try:
+        if args.av_report or args.max_end_delta is not None:
+            report = av_packet_report(created)
+            if args.max_end_delta is not None and abs(report["end_delta_s"]) > args.max_end_delta:
+                raise RuntimeError(
+                    f"A/V end delta {report['end_delta_s']}s exceeds {args.max_end_delta}s; invalid output removed"
+                )
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError, RuntimeError, OSError):
+        created.unlink(missing_ok=True)
+        raise
+    print(created)
+    if args.av_report:
+        print(json.dumps(report, sort_keys=True))
 
 
 if __name__ == "__main__":
