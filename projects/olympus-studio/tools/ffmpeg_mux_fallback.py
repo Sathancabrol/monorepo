@@ -74,7 +74,7 @@ def mux_png_sequence(frames_dir, audio, output, fps=24, audio_offset=0.0):
     if output.parent == frames_dir or output == audio:
         raise ValueError("Output must be outside the input frame directory")
     files = sorted(p.name for p in frames_dir.iterdir() if p.is_file())
-    if not files or len(files) > 7200 or any(not re.fullmatch(r"\\d{6}\\.png", f) for f in files):
+    if not files or len(files) > 7200 or any(not re.fullmatch(r"\d{6}\.png", f) for f in files):
         raise ValueError("Expected only 1–7200 numbered PNG frames")
     if files != [f"{i:06d}.png" for i in range(1, len(files) + 1)]:
         raise ValueError("PNG frames must be contiguous from 000001.png")
