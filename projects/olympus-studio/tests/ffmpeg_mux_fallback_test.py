@@ -51,3 +51,27 @@ with tempfile.TemporaryDirectory() as tmp:
         f"Expected +250ms audio delay, got {audio_start-video_start:.3f}s"
     )
     print("FFmpeg fallback: mux, VP9/Opus, overwrite protection and +250ms offset passed")
+
+    # Deterministic browser PNG export → FFmpeg VP9/Opus, no MediaRecorder.
+    frames = base / "frames"
+    frames.mkdir()
+    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi", "-i",
+                    "color=c=blue:s=160x90:r=24:d=1", "-frames:v", "24",
+                    "-start_number", "1", str(frames / "%06d.png")], check=True, timeout=60)
+    png_output = base / "from-frames.webm"
+    assert module.mux_png_sequence(frames, audio, png_output, fps=24) == png_output.resolve()
+    streams = module.probe(png_output)
+    assert any(s.get("codec_name") == "vp9" for s in streams)
+    assert any(s.get("codec_name") == "opus" for s in streams)
+    assert len(list(frames.glob("*.png"))) == 24
+    # A gap in the sequence must fail before FFmpeg can silently truncate output.
+    (frames / "000012.png").rename(frames / "000025.png")
+    missing_output = base / "missing.webm"
+    try:
+        module.mux_png_sequence(frames, audio, missing_output)
+    except ValueError as exc:
+        assert "contiguous" in str(exc)
+    else:
+        raise AssertionError("Missing PNG frame should be rejected")
+    assert not missing_output.exists()
+    print("PNG sequence → VP9/Opus, 24 frames and missing-frame guard passed")
