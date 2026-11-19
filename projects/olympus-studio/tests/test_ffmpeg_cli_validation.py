@@ -25,7 +25,7 @@ class ValidationOutputTests(unittest.TestCase):
             argv = ["mux", "--frames-dir", temp, "--audio", "audio.wav",
                     "--output", str(output), "--max-end-delta", "0.2", "--av-report"]
             with patch.object(sys, "argv", argv), patch.object(mux, "mux_png_sequence", side_effect=fake_mux), \
-                 patch.object(mux, "av_packet_report", side_effect=report), contextlib.redirect_stdout(stdout):
+                 patch.object(mux, "av_packet_report", **({"side_effect": report} if isinstance(report, Exception) else {"return_value": report})), contextlib.redirect_stdout(stdout):
                 if isinstance(report, Exception) or report["end_delta_s"] > 0.2:
                     with self.assertRaises((RuntimeError, ValueError)):
                         mux.main()
