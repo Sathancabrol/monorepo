@@ -1304,3 +1304,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Test `3521a18c` : cas `NaN`, `Infinity`, `-Infinity` dans les paquets FFprobe et dans le delta CLI; vérifie l'absence de message de succès et la suppression de la sortie candidate. Tests ajoutés au fichier déjà exécuté par le workflow CI dédié, **non exécutés localement ni confirmés en CI sur ce commit**.
 - **Prochaine action P0 S** : inspecter Actions sur `3521a18c` et réparer tout échec syntaxique/test. **Ensuite M** : E2E IndexedDB avec deux segments d'un même média sauvegardés, rechargés et exportés; garder le parcours PNG/WAV/FFmpeg indépendant de MediaRecorder. Vérifier si d'autres sessions ont modifié les fichiers avant toute écriture.
 - Restant alpha M–L + recette Windows, GTX1060/1650, OBS réel, qualité audio et licences. PR #16 brouillon, aucun merge main, aucun autre projet modifié.
+
+
+## Reprise 20/11/2026 00 h Paris — A02 double segment, vraie origine HTTP
+
+- Prélecture backlog/HANDOFF/STATUS/SESSION_PLAN, tickets #11–#17, PR #16 et workflow dédié. Le dernier commit de la session précédente était `098dfac5`. CI **confirmée verte** sur ce SHA : [run 44624519516](https://github.com/Sathancabrol/monorepo/actions/runs/44624519516) (conclusion success). Cette CI ne valide pas Windows.
+- Test E2E renforcé dans `tests/browser_edit_manifest_e2e.py` : import via UI d'un manifeste à deux segments séquentiels pointant vers **le même assetId IndexedDB**, export Portable réel, assertion de déduplication à une seule entrée média, rechargement HTTP Chromium, import du fichier Portable, comparaison exacte des clips et des octets base64. Commits `b3bfc3b` et correction du nom de champ réel `data_b64` : `257f363`.
+- Ce test existait déjà dans le workflow CI dédié; **aucune CI du nouveau HEAD confirmée à cette écriture**. Ne pas déclarer le scénario réussi avant lecture des logs.
+- **Prochaine action P0 S** : lire Actions sur `257f363` et réparer toute régression du scénario Chromium manifest (notamment import, taille et identifiants). **Ensuite M** : remplacer le média image de la fixture par une vraie vidéo WebM avec deux coupes IN/OUT via l'UI, puis vérifier l'export portable et le rendu; poursuivre le parcours FFmpeg guidé sans masquer MediaRecorder.
+- Alpha partielle; recette Windows/GTX1060/1650/OBS réel, écoute A/V et audit licences toujours ouverts. PR #16 brouillon, main et autres projets inchangés.
