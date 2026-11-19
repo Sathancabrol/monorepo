@@ -33,7 +33,7 @@ jobs:
       - name: Static parse
         run: |
           node --check server.mjs
-          python -m py_compile tools/ffmpeg_mux_fallback.py tests/ffmpeg_mux_fallback_test.py
+          python -m py_compile tools/ffmpeg_mux_fallback.py tests/ffmpeg_mux_fallback_test.py tests/test_ffmpeg_cli_validation.py
           node --check src/comfy-output.js
           node --check tests/comfy-output.test.mjs
           node --check src/app.js
@@ -77,6 +77,8 @@ jobs:
           python tests/browser_av_fixture.py
       - name: FFmpeg fallback — synthetic VP9/Opus mux
         run: python tests/ffmpeg_mux_fallback_test.py
+      - name: FFmpeg CLI validation — no false success on rejected output
+        run: python -m unittest discover -s tests -p 'test_ffmpeg_cli_validation.py' -v
       - name: FFmpeg fallback cleanup regression — preserve inputs and remove partial output
         run: python -m unittest discover -s tests -p 'test_ffmpeg_mux_cleanup.py' -v
       - name: Chromium EDIT manifest import — IndexedDB, atomicity, undo/redo
