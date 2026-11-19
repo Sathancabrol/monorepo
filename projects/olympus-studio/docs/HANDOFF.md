@@ -1295,3 +1295,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **Preuve actuelle : commits GitHub enregistrés; nouveaux tests non exécutés ni confirmés CI.** Aucun essai Windows, GPU, OBS ni écoute humaine.
 - **Prochaine tâche P0 S** : consulter le run Actions sur `bfd1ceb2`, corriger tout échec avant d'ajouter des fonctions. Puis **M** : améliorer le parcours guidé EDIT→PNG/WAV→FFmpeg et E2E de restauration IndexedDB (deux segments même assetId). MediaRecorder reste expérimental; ne pas relâcher les seuils.
 - Restant alpha M–L, recette Windows/GTX/OBS et audit licences distincts; PR #16 brouillon, aucun merge main, aucun autre projet modifié.
+
+
+## Reprise 19/11/2026 ~23 h Paris — validation FFprobe non finie
+
+- Prélecture des quatre documents de pilotage, PR #16, issues #11–#17, workflow dédié et commits récents. Le dernier état documenté était `10456feb`; la CI associée aux commits les plus récents n'a pas pu être confirmée via la recherche des runs par SHA (aucun run retourné). Ne pas revendiquer une CI verte.
+- Correctif `8489e962` dans `tools/ffmpeg_mux_fallback.py` : FFprobe peut renvoyer `NaN` ou `Infinity` sous forme de chaînes; les flottants Python correspondants contournaient le seuil `--max-end-delta`. Le rapport refuse maintenant les timestamps/durées non finis, les durées négatives et les deltas non finis, avant toute annonce de réussite.
+- Test `3521a18c` : cas `NaN`, `Infinity`, `-Infinity` dans les paquets FFprobe et dans le delta CLI; vérifie l'absence de message de succès et la suppression de la sortie candidate. Tests ajoutés au fichier déjà exécuté par le workflow CI dédié, **non exécutés localement ni confirmés en CI sur ce commit**.
+- **Prochaine action P0 S** : inspecter Actions sur `3521a18c` et réparer tout échec syntaxique/test. **Ensuite M** : E2E IndexedDB avec deux segments d'un même média sauvegardés, rechargés et exportés; garder le parcours PNG/WAV/FFmpeg indépendant de MediaRecorder. Vérifier si d'autres sessions ont modifié les fichiers avant toute écriture.
+- Restant alpha M–L + recette Windows, GTX1060/1650, OBS réel, qualité audio et licences. PR #16 brouillon, aucun merge main, aucun autre projet modifié.
