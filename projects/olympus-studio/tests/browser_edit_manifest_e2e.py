@@ -314,8 +314,8 @@ def main():
                     )
                     assert len(split_reopened["embeddedAssets"]) == 1
                     assert split_reopened["embeddedAssets"][0]["id"] == asset
-                    assert split_reopened["embeddedAssets"][0]["data"] == (
-                        split_saved["embeddedAssets"][0]["data"]
+                    assert split_reopened["embeddedAssets"][0]["data_b64"] == (
+                        split_saved["embeddedAssets"][0]["data_b64"]
                     ), "Restored asset bytes changed"
                     assert not errors, "JavaScript errors: " + " | ".join(errors)
                     print("EDIT manifest HTTP/IndexedDB + rejection + undo/redo OK")
