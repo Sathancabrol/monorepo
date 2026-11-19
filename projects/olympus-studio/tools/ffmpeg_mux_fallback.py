@@ -6,6 +6,7 @@ Does not reconstruct frames lost by MediaRecorder. Never overwrites input/output
 import argparse
 import json
 import math
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -53,15 +54,66 @@ def mux(video, audio, output, audio_offset=0.0):
         raise
 
 
+
+def mux_png_sequence(frames_dir, audio, output, fps=24, audio_offset=0.0):
+    """Encode an explicitly selected numbered PNG sequence with an audio file.
+
+    Inputs are never changed; no implicit directory creation or overwrite.
+    """
+    if not isinstance(fps, int) or not 1 <= fps <= 60:
+        raise ValueError("FPS must be an integer from 1 to 60")
+    if not math.isfinite(audio_offset) or abs(audio_offset) > 120:
+        raise ValueError("Audio offset must be finite and within ±120 seconds")
+    frames_dir, audio, output = map(lambda p: Path(p).resolve(), (frames_dir, audio, output))
+    if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
+        raise RuntimeError("FFmpeg and ffprobe are required locally")
+    if not frames_dir.is_dir() or not audio.is_file():
+        raise ValueError("Frame directory and audio file must exist")
+    if output.suffix.lower() != ".webm" or output.exists():
+        raise ValueError("Output must be a new .webm file")
+    if output.parent == frames_dir or output == audio:
+        raise ValueError("Output must be outside the input frame directory")
+    files = sorted(p.name for p in frames_dir.iterdir() if p.is_file())
+    if not files or len(files) > 7200 or any(not re.fullmatch(r"\\d{6}\\.png", f) for f in files):
+        raise ValueError("Expected only 1–7200 numbered PNG frames")
+    if files != [f"{i:06d}.png" for i in range(1, len(files) + 1)]:
+        raise ValueError("PNG frames must be contiguous from 000001.png")
+    if not any(s.get("codec_type") == "audio" for s in probe(audio)):
+        raise ValueError("Audio input has no audio stream")
+    command = [
+        "ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-n",
+        "-framerate", str(fps), "-start_number", "1", "-i", str(frames_dir / "%06d.png"),
+        "-itsoffset", str(audio_offset), "-i", str(audio),
+        "-map", "0:v:0", "-map", "1:a:0",
+        "-c:v", "libvpx-vp9", "-deadline", "realtime", "-cpu-used", "5",
+        "-pix_fmt", "yuv420p", "-c:a", "libopus", "-shortest", str(output)
+    ]
+    try:
+        subprocess.run(command, check=True, timeout=300)
+        streams = probe(output)
+        if not {"video", "audio"}.issubset({s.get("codec_type") for s in streams}):
+            raise RuntimeError("Muxed output lacks video or audio")
+        return output
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, RuntimeError, OSError, ValueError):
+        output.unlink(missing_ok=True)
+        raise
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--video", required=True, type=Path)
+    parser.add_argument("--video", type=Path, help="Existing video file (mutually exclusive with --frames-dir)")
+    parser.add_argument("--frames-dir", type=Path, help="Directory containing 000001.png, 000002.png, ...")
+    parser.add_argument("--fps", type=int, default=24, help="PNG sequence frame rate, 1–60")
     parser.add_argument("--audio", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--audio-offset", type=float, default=0.0,
                         help="Shift audio relative to video in seconds (positive = later; max ±120)")
     args = parser.parse_args()
-    print(mux(args.video, args.audio, args.output, args.audio_offset))
+    if bool(args.video) == bool(args.frames_dir):
+        parser.error("Specify exactly one of --video or --frames-dir")
+    if args.frames_dir:
+        print(mux_png_sequence(args.frames_dir, args.audio, args.output, args.fps, args.audio_offset))
+    else:
+        print(mux(args.video, args.audio, args.output, args.audio_offset))
 
 
 if __name__ == "__main__":
