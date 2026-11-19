@@ -48,3 +48,27 @@ test('deterministic PNG export includes the same clip title overlay as EDIT prev
   assert.equal(canvas.calls.filter(call=>call[0]==='fillRect').length,2);
   assert.ok(canvas.calls.findIndex(call=>call[0]==='fillText')<canvas.calls.findIndex(call=>call[0]==='blob'));
 });
+
+test('preflight prevents partial PNG sequence when a later source is missing',async()=>{
+  const output=[];
+  const clips=[
+    {id:'a',assetId:'first',kind:'image',duration:0.5},
+    {id:'b',assetId:'missing',kind:'image',duration:0.5}
+  ];
+  await assert.rejects(renderEditPngFrames(clips,{
+    fps:4,canvas:canvasMock(),
+    resolveAsset:async id=>id==='first'?{}:null,
+    onFrame:frame=>output.push(frame)
+  }),/Missing media: missing/);
+  assert.equal(output.length,0);
+});
+test('preflight resolves a reused media source once for multiple frames',async()=>{
+  let resolves=0, emitted=0;
+  await renderEditPngFrames([clip],{
+    fps:4,canvas:canvasMock(),
+    resolveAsset:async()=>{resolves++;return {};},
+    onFrame:()=>{emitted++;}
+  });
+  assert.equal(resolves,1);
+  assert.equal(emitted,2);
+});
