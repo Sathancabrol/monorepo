@@ -1263,3 +1263,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Test `beea1b45` : vérifie sur la fixture PNG synthétique 24 images que les deux flux contiennent des paquets et que l'écart final est inférieur à 200 ms. **Test commité mais pas encore exécuté/confirmé CI sur ce SHA**.
 - Prochaine tâche **P0 S** : vérifier CI sur `beea1b45`; si le nouveau test échoue, lire les durées/PTS exacts et corriger sans assouplissement arbitraire. Le défaut MediaRecorder est timeboxé : conserver la CI rouge documentée jusqu'à réparation réelle, poursuivre l'export PNG déterministe et le parcours EDIT→FFmpeg; ne pas supprimer le test de désynchronisation. Ensuite A02 IndexedDB.
 - Restant alpha M–L plus recette Windows/GTX1060/1650/OBS et licences; aucune exécution Windows revendiquée, aucun merge main.
+
+
+## Reprise 19/11/2026 ~19h Paris — durcissement séquence PNG
+- Prélecture des quatre documents de pilotage, PR #16, issues #11–#17 et CI du commit `c0dbf49e`. Run [44571749386](https://github.com/Sathancabrol/monorepo/actions/runs/44571749386) : `alpha-package` success, `smoke` failure au step « Chromium EDIT export E2E » MediaRecorder. Tous les steps précédents, y compris mux PNG/FFmpeg et FFprobe, sont success; les E2E suivants sont skipped.
+- Correctif `7f664d2b` : `mux_png_sequence` refuse désormais les liens symboliques et les entrées non régulières avant de lancer FFmpeg. Test de régression `034c1963` : lien `000012.png` vers un PNG extérieur, refus avant création du WebM. Aucun changement de moteur, main, autre projet ou workflow.
+- **Preuve** : commits GitHub enregistrés, test écrit; **pas encore de résultat CI confirmé pour ces commits**. Le défaut MediaRecorder reste ouvert; ne pas affaiblir le test de synchronisation.
+- **Prochaine tâche P0 S** : vérifier la CI au dernier commit, corriger toute nouvelle régression. Puis **M** : proposer un parcours utilisateur documenté et testé pour exporter depuis EDIT en PNG et muxer audio WAV local via FFmpeg avec `--av-report`, mesurer offset et décodage. Reprendre A02 E2E IndexedDB ensuite.
+- **Blocages** : recette Windows, GTX1060/1650, OBS réel, écoute humaine et licences de redistribution; alpha partielle, pas de validation matérielle. Estimation restante alpha M–L, recette séparée.
