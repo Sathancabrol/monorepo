@@ -1248,3 +1248,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Test `5bab01a5` : fixture de 24 PNG synthétiques, mux réel VP9/Opus, vérification des codecs et refus d'un trou dans la séquence. **Test codé, CI de ces nouveaux commits non encore confirmée.**
 - Usage volontaire : `python tools/ffmpeg_mux_fallback.py --frames-dir CHEMIN_PNG --fps 24 --audio CHEMIN_WAV --output NOUVEAU.webm`. Ce n'est **pas** encore un bouton de rendu A/V en un clic, ni une preuve de synchronisation complète avec audio découpé sur la timeline EDIT.
 - **Prochaine tâche P0 S** : consulter la CI sur `5bab01a5`/ce checkpoint; si rouge, réparer la cause exacte. Puis **M** : rendre la chaîne PNG→FFmpeg/Opus découvrable depuis EDIT avec une procédure claire et tester FFprobe sur l'export final, notamment durées et offset. Puis A02 E2E IndexedDB. Restant alpha M–L + recette Windows/GTX/OBS/licences; PR #16 brouillon, main intact.
+
+
+## Reprise 19 novembre 2026, ~17 h Paris — réparation CI PNG
+- CI [44550339181](https://github.com/Sathancabrol/monorepo/actions/runs/44550339181) sur `592fbad0` : `alpha-package` success; `smoke` failure dans `tests/ffmpeg_mux_fallback_test.py`, `mux_png_sequence` refusant des noms `000001.png` valides. Les étapes précédentes dont fixture Chromium A/V Opus ont réussi; les étapes suivantes ne sont pas validées par ce run.
+- Cause confirmée par lecture du code : regex raw-string `r"\\\\d{6}\\\\.png"` recherchait des antislashs littéraux. Correctif ciblé `1b8cff996d118b34b576a5d9fdb200d901fcc056` : `r"\\d{6}\\.png"`. Le test d'intégration existant avec 24 PNG couvre ce défaut; **pas de CI verte encore vérifiée pour le correctif**.
+- Prochaine tâche P0 S : vérifier la CI du nouveau HEAD et réparer tout échec, notamment test PNG/Chromium; ensuite M : rendre l'export déterministe et son contrôle FFprobe accessibles depuis EDIT/documenter l'offset audio, puis reprendre A02 IndexedDB.
+- Restant alpha M–L + recette Windows/GTX/OBS/licences; aucun test Windows revendiqué, aucun merge main ni modification d'autres projets.
