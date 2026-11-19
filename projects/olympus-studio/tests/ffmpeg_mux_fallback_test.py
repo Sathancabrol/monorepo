@@ -68,6 +68,23 @@ with tempfile.TemporaryDirectory() as tmp:
     assert report["audio"]["packets"] > 0, report
     assert abs(report["end_delta_s"]) < 0.2, report
     assert len(list(frames.glob("*.png"))) == 24
+    # CLI acceptance: fail closed on a deliberately impossible end-delta budget.
+    rejected = base / "rejected.webm"
+    check = subprocess.run([
+        "python", str(ROOT / "tools" / "ffmpeg_mux_fallback.py"),
+        "--frames-dir", str(frames), "--audio", str(audio),
+        "--output", str(rejected), "--max-end-delta", "0", "--av-report"
+    ], capture_output=True, text=True, timeout=120)
+    assert check.returncode != 0, check.stdout
+    assert not rejected.exists(), "Out-of-sync export must not be retained"
+    accepted = base / "accepted.webm"
+    check = subprocess.run([
+        "python", str(ROOT / "tools" / "ffmpeg_mux_fallback.py"),
+        "--frames-dir", str(frames), "--audio", str(audio),
+        "--output", str(accepted), "--max-end-delta", "0.2", "--av-report"
+    ], capture_output=True, text=True, timeout=120)
+    assert check.returncode == 0, check.stderr
+    assert accepted.exists() and '"end_delta_s"' in check.stdout
     # A gap in the sequence must fail before FFmpeg can silently truncate output.
     (frames / "000012.png").rename(frames / "000025.png")
     missing_output = base / "missing.webm"
