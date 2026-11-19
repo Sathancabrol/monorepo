@@ -2,6 +2,7 @@
 import contextlib
 import importlib.util
 import io
+import json
 import sys
 import tempfile
 import unittest
@@ -42,6 +43,35 @@ class ValidationOutputTests(unittest.TestCase):
 
     def test_probe_failure_removes_candidate(self):
         self.run_cli(ValueError("missing audio packets"))
+
+    def test_nonfinite_delta_never_announces_success(self):
+        for invalid in (float("nan"), float("inf"), -float("inf")):
+            with self.subTest(value=str(invalid)):
+                with tempfile.TemporaryDirectory() as temp:
+                    output = Path(temp) / "result.webm"
+                    def fake_mux(*args):
+                        output.write_bytes(b"candidate")
+                        return output
+                    stdout = io.StringIO()
+                    argv = ["mux", "--frames-dir", temp, "--audio", "audio.wav",
+                            "--output", str(output), "--max-end-delta", "0.2", "--av-report"]
+                    with patch.object(sys, "argv", argv), patch.object(mux, "mux_png_sequence", side_effect=fake_mux):
+                        with patch.object(mux, "av_packet_report", return_value={"end_delta_s": invalid}):
+                            with contextlib.redirect_stdout(stdout):
+                                with self.assertRaises(ValueError):
+                                    mux.main()
+                    self.assertFalse(output.exists())
+                    self.assertEqual(stdout.getvalue(), "")
+
+    def test_nonfinite_packet_timestamps_rejected(self):
+        for invalid in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(value=invalid):
+                packets = [{"codec_type": "video", "pts_time": invalid, "duration_time": "0.04"},
+                           {"codec_type": "audio", "pts_time": "0", "duration_time": "0.04"}]
+                fake_result = type("Result", (), {"stdout": json.dumps({"packets": packets})})()
+                with patch.object(mux.subprocess, "run", return_value=fake_result):
+                    with self.assertRaises(ValueError):
+                        mux.av_packet_report("synthetic.webm")
 
     def test_valid_report_prints_success(self):
         self.run_cli({"end_delta_s": 0.01})
