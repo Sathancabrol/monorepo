@@ -40,6 +40,15 @@ export async function renderEditPngFrames(clips, {
     if (frame.kind === 'video') await seek(media, frame.sourceTime);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
+    // Match the EDIT preview title overlay in exported frames (not LIVE).
+    const title = frame.clip?.title;
+    if (typeof title === 'string' && title.length) {
+      ctx.fillStyle = 'rgba(0,0,0,.65)';
+      ctx.fillRect(20, canvas.height - 95, canvas.width - 40, 65);
+      ctx.font = 'bold 38px Segoe UI,Arial';
+      ctx.fillStyle = '#fff';
+      ctx.fillText(title, 34, canvas.height - 55, canvas.width - 80);
+    }
     const png = await new Promise((resolve, reject) => {
       canvas.toBlob(blob => blob?.type === 'image/png' && blob.size > 0
         ? resolve(blob) : reject(new Error('PNG encoding failed')), 'image/png');
