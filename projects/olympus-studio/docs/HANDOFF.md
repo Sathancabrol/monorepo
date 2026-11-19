@@ -1179,3 +1179,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Matrice des 12 espaces : `docs/INTEGRATION_MATRIX.md` existe déjà sur la branche; ne pas la recréer ni déclarer les intégrations externes testées sans preuves.
 - **Prochain P0 S** : vérifier la CI sur `ef2fd8af`, corriger toute régression. **Puis P0 M–L** : raccorder le bouton EDIT au renderer PNG avec destination locale autorisée et pipeline FFmpeg existant, E2E Chromium/FFprobe. Le MediaRecorder demeure fallback instable. Vérifier versions/licences réelles des moteurs externes séparément.
 - **Restant alpha M–L + recette matérielle** : pas de test Windows/GTX1060/1650, OBS réel, écoute humaine, ni licence de redistribution validée. PR #16 reste draft; aucun merge main ni modification des autres projets.
+
+
+## Checkpoint 19/11/2026 09h — sortie PNG locale explicite
+- Prélecture backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17 et CI effectuée. Dernière CI examinée : [#44475897578](https://github.com/Sathancabrol/monorepo/actions/runs/44475897578) **rouge** (smoke Chromium A/V), alpha-package vert. Mesure : fin vidéo 1,640 s, fin audio 2,671 s, écart -1,031 s, 27 paquets vidéo/44 audio, 87 demandes de frame sur 2,797 s. Ne pas assouplir le seuil 0,6 s.
+- Code livré : `src/png-directory-sink.js` (commit `a3dc4d6f`) et tests `tests/png-directory-sink.test.mjs` (commit `f6936bf0`). Écriture de PNG numérotés dans un répertoire choisi explicitement par l'utilisateur, sans écrasement des fichiers existants, avec contrôle séquence/type/limite et propagation des refus de permission.
+- Tests : nouveaux tests Node écrits mais **pas encore confirmés par GitHub Actions** au moment de ce checkpoint. Aucun essai Windows ou navigateur File System Access API revendiqué.
+- Blocage : bouton EDIT non raccordé au répertoire; export déterministe complet UI→PNG→FFmpeg→WebM toujours non validé. CI MediaRecorder reste rouge; ne pas masquer l'échec.
+- Prochain sous-objectif READY (M) : vérifier CI sur `f6936bf0`, raccorder `renderEditPngFrames` à un choix explicite de dossier et à `createPngDirectorySink`, test E2E Chromium (avec permission utilisateur simulée seulement si clairement étiquetée), puis relier la commande FFmpeg existante. Éviter de retoucher MediaRecorder tant que la voie déterministe progresse.
+- Périmètre : branche dédiée, dossier Studio uniquement, pas de main ni autre projet. Alpha non validée sur Windows/GTX/OBS/licences.
