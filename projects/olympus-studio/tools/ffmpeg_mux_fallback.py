@@ -117,11 +117,19 @@ def av_packet_report(path):
         selected = [p for p in packets if p.get("codec_type") == kind and p.get("pts_time") is not None]
         if not selected:
             raise ValueError(f"No {kind} packets for A/V report")
-        start = min(float(p["pts_time"]) for p in selected)
-        end = max(float(p["pts_time"]) + float(p.get("duration_time") or 0) for p in selected)
+        times = [(float(p["pts_time"]), float(p.get("duration_time") or 0)) for p in selected]
+        if any(not math.isfinite(pts) or not math.isfinite(duration) or duration < 0 for pts, duration in times):
+            raise ValueError(f"Invalid {kind} packet timestamp or duration")
+        start = min(pts for pts, _ in times)
+        end = max(pts + duration for pts, duration in times)
+        if not math.isfinite(end):
+            raise ValueError(f"Invalid {kind} packet endpoint")
         spans[kind] = {"start_s": round(start, 4), "end_s": round(end, 4), "packets": len(selected)}
+    delta = spans["video"]["end_s"] - spans["audio"]["end_s"]
+    if not math.isfinite(delta):
+        raise ValueError("Invalid A/V endpoint difference")
     return {"video": spans["video"], "audio": spans["audio"],
-            "end_delta_s": round(spans["video"]["end_s"] - spans["audio"]["end_s"], 4)}
+            "end_delta_s": round(delta, 4)}
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -149,6 +157,8 @@ def main():
     try:
         if args.av_report or args.max_end_delta is not None:
             report = av_packet_report(created)
+            if not math.isfinite(report["end_delta_s"]):
+                raise ValueError("Invalid A/V end delta")
             if args.max_end_delta is not None and abs(report["end_delta_s"]) > args.max_end_delta:
                 raise RuntimeError(
                     f"A/V end delta {report['end_delta_s']}s exceeds {args.max_end_delta}s; invalid output removed"
