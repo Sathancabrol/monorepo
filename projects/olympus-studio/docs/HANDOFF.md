@@ -1255,3 +1255,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Cause confirmée par lecture du code : regex raw-string `r"\\\\d{6}\\\\.png"` recherchait des antislashs littéraux. Correctif ciblé `1b8cff996d118b34b576a5d9fdb200d901fcc056` : `r"\\d{6}\\.png"`. Le test d'intégration existant avec 24 PNG couvre ce défaut; **pas de CI verte encore vérifiée pour le correctif**.
 - Prochaine tâche P0 S : vérifier la CI du nouveau HEAD et réparer tout échec, notamment test PNG/Chromium; ensuite M : rendre l'export déterministe et son contrôle FFprobe accessibles depuis EDIT/documenter l'offset audio, puis reprendre A02 IndexedDB.
 - Restant alpha M–L + recette Windows/GTX/OBS/licences; aucun test Windows revendiqué, aucun merge main ni modification d'autres projets.
+
+
+## Reprise 19/11/2026 ~18h Paris — audit FFprobe export déterministe
+- Prélecture : backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17. CI [44560827846](https://github.com/Sathancabrol/monorepo/actions/runs/44560827846) sur `59d89cf8` : `alpha-package` **success**, `smoke` **failure** au scénario Chromium EDIT MediaRecorder; vidéo 1,919 s, audio 2,678 s, écart -0,759 s. Le test PNG→FFmpeg est passé avant ce défaut; **ne pas modifier le seuil MediaRecorder ni déclarer A/V validé**.
+- Incrément `5170d738` : `tools/ffmpeg_mux_fallback.py --av-report` imprime les bornes de paquets A/V et leur décalage final mesurés par FFprobe après mux VP9/Opus, sans cacher la désynchronisation.
+- Test `beea1b45` : vérifie sur la fixture PNG synthétique 24 images que les deux flux contiennent des paquets et que l'écart final est inférieur à 200 ms. **Test commité mais pas encore exécuté/confirmé CI sur ce SHA**.
+- Prochaine tâche **P0 S** : vérifier CI sur `beea1b45`; si le nouveau test échoue, lire les durées/PTS exacts et corriger sans assouplissement arbitraire. Le défaut MediaRecorder est timeboxé : conserver la CI rouge documentée jusqu'à réparation réelle, poursuivre l'export PNG déterministe et le parcours EDIT→FFmpeg; ne pas supprimer le test de désynchronisation. Ensuite A02 IndexedDB.
+- Restant alpha M–L plus recette Windows/GTX1060/1650/OBS et licences; aucune exécution Windows revendiquée, aucun merge main.
