@@ -9,6 +9,8 @@ import { migrateV03Project } from './v03-migration.js';
 import { parseSRT, formatSRT, exportMeetingNotes } from './meeting-utils.js';
 import { openMediaDB, putMedia, getMedia, getMediaBatch, listMedia, exportPortableAssets, importPortableAsset, mediaLayerUsable, snapshotPortableProject } from './media-store.js';
 import {createStudioEventBus} from './studio-event-bus.js';
+import { renderEditPngFrames } from './edit-frame-renderer.js';
+import { createPngDirectorySink } from './png-directory-sink.js';
 const xrBus=createStudioEventBus();
 const $=id=>document.getElementById(id);
 const C=$('stage'),ctx=C.getContext('2d');
@@ -325,6 +327,27 @@ async function exportEditorWebM({videoOnly=false}={}){
   editorExportPreparing=false;
  }
 }
+async function exportEditorPngSequence(){
+ if(editorExportPreparing||editorRecorder?.state==='recording')return status('Un export EDIT est déjà en cours');
+ if(!state.clips.length)return status('Ajouter un clip avant export PNG');
+ if(typeof window.showDirectoryPicker!=='function')return status('Export PNG : navigateur sans File System Access API (utiliser Chromium local)');
+ // The picker must be invoked synchronously from the user's click (transient activation).
+ let directory;
+ try{directory=await window.showDirectoryPicker({mode:'readwrite'});}
+ catch(e){if(e?.name==='AbortError')return status('Choix du dossier annulé');return status('Dossier PNG inaccessible : '+e.message);}
+ editorExportPreparing=true;
+ state.editPlaying=false;state.editLast=0;
+ const clips=structuredClone(state.clips);
+ try{
+  const sink=createPngDirectorySink(directory);
+  const canvas=document.createElement('canvas');canvas.width=1280;canvas.height=720;
+  const result=await renderEditPngFrames(clips,{
+   fps:24,canvas,resolveAsset:(id)=>loadEditAsset(id),onFrame:sink
+  });
+  status(result.count+' PNG exportés dans le dossier choisi (24 FPS). Pour le WebM A/V, utiliser le pipeline FFmpeg documenté; aucun encodage automatique.');
+ }catch(e){status('Export PNG interrompu : '+e.message+' — les images déjà écrites restent dans le dossier choisi');}
+ finally{editorExportPreparing=false;}
+}
 async function downloadEditorAudioSource(){
  if(editorExportPreparing||editorRecorder?.state==='recording')return status('Attendre la fin de l’export EDIT');
  const track=state.editAudioTrack;
@@ -527,7 +550,8 @@ function panel(){
   const clock=document.createElement('span');clock.id='editClock';clock.className='muted';clock.textContent=editClock(state.editTime);
   const exportButton=document.createElement('button');exportButton.textContent='Exporter WebM (audio optionnel)';exportButton.onclick=()=>exportEditorWebM();
   const videoOnlyButton=document.createElement('button');videoOnlyButton.id='editVideoOnly';videoOnlyButton.textContent='Vidéo seule (secours FFmpeg)';videoOnlyButton.onclick=()=>exportEditorWebM({videoOnly:true});
-  const audioSourceButton=document.createElement('button');audioSourceButton.id='editAudioSource';audioSourceButton.textContent='Télécharger audio source';audioSourceButton.onclick=downloadEditorAudioSource;
+  const pngSequenceButton=document.createElement('button');pngSequenceButton.id='editPngSequence';pngSequenceButton.textContent='Images PNG fixes (FFmpeg)';pngSequenceButton.onclick=exportEditorPngSequence;
+   const audioSourceButton=document.createElement('button');audioSourceButton.id='editAudioSource';audioSourceButton.textContent='Télécharger audio source';audioSourceButton.onclick=downloadEditorAudioSource;
   const cutButton=document.createElement('button');cutButton.textContent='Diviser au curseur';
   cutButton.title='Scinder une vidéo en deux segments à la position courante de la timeline';
   cutButton.onclick=()=>{
@@ -540,7 +564,7 @@ function panel(){
   };
   const undo=document.createElement('button');undo.id='editUndo';undo.textContent='Annuler';undo.disabled=!editHistory.past.length;undo.onclick=()=>travelEdit('undo');
   const redo=document.createElement('button');redo.id='editRedo';redo.textContent='Rétablir';redo.disabled=!editHistory.future.length;redo.onclick=()=>travelEdit('redo');
-  controls.append(play,seek,clock,cutButton,undo,redo,exportButton,videoOnlyButton,audioSourceButton);
+  controls.append(play,seek,clock,cutButton,undo,redo,exportButton,videoOnlyButton,pngSequenceButton,audioSourceButton);
   const importManifest=document.createElement('button');importManifest.id='editImportManifest';importManifest.textContent='Importer manifeste EDIT';
   const manifestFile=document.createElement('input');manifestFile.id='editManifestFile';manifestFile.type='file';manifestFile.accept='.json,application/json';manifestFile.hidden=true;
   importManifest.onclick=()=>{if(editorExportPreparing||editorRecorder?.state==='recording')return status('Attendre la fin de l’export EDIT');manifestFile.click();};
