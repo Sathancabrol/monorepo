@@ -270,6 +270,53 @@ def main():
                     assert restored["editAudioTrack"] == imported["editAudioTrack"]
                     assert len(restored["embeddedAssets"]) == 1
                     assert restored["embeddedAssets"][0]["id"] == asset
+                    # A02: two sequential segments referencing the SAME IndexedDB
+                    # asset must survive a real portable download and fresh page.
+                    split_manifest = {
+                        "schema": "olympus.edit.interchange.v1",
+                        "timeUnit": "seconds", "duration": 3,
+                        "segments": [
+                            {"clipId": "segment-left", "assetId": asset,
+                             "kind": "image", "timelineStart": 0,
+                             "duration": 1, "sourceIn": 0, "title": "Left"},
+                            {"clipId": "segment-right", "assetId": asset,
+                             "kind": "image", "timelineStart": 1,
+                             "duration": 2, "sourceIn": 0, "title": "Right"},
+                        ],
+                        "soundtrack": None,
+                    }
+                    page.locator('[data-space="EDIT"]').first.click()
+                    upload_manifest(page, split_manifest)
+                    page.locator("#status").get_by_text(
+                        "Manifeste EDIT importé", exact=False
+                    ).wait_for()
+                    split_saved = portable(page, folder, "split-two-segments.json")
+                    assert [c["id"] for c in split_saved["clips"]] == [
+                        "segment-left", "segment-right"
+                    ]
+                    assert [c["assetId"] for c in split_saved["clips"]] == [asset, asset]
+                    assert len(split_saved["embeddedAssets"]) == 1, (
+                        "Shared source duplicated in portable archive"
+                    )
+                    page.reload(wait_until="load")
+                    page.wait_for_function(
+                        "document.querySelectorAll('#navItems [data-space]').length===12"
+                    )
+                    page.locator("#fileProject").set_input_files(
+                        str(folder / "split-two-segments.json")
+                    )
+                    page.locator("#status").get_by_text(
+                        "Projet chargé", exact=False
+                    ).wait_for()
+                    split_reopened = portable(page, folder, "split-reopened.json")
+                    assert split_reopened["clips"] == split_saved["clips"], (
+                        "Two segments changed across portable restore"
+                    )
+                    assert len(split_reopened["embeddedAssets"]) == 1
+                    assert split_reopened["embeddedAssets"][0]["id"] == asset
+                    assert split_reopened["embeddedAssets"][0]["data"] == (
+                        split_saved["embeddedAssets"][0]["data"]
+                    ), "Restored asset bytes changed"
                     assert not errors, "JavaScript errors: " + " | ".join(errors)
                     print("EDIT manifest HTTP/IndexedDB + rejection + undo/redo OK")
                 finally:
