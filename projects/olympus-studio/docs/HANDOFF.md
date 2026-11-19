@@ -1219,3 +1219,14 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `4d94f704` : renforce `tests/browser_edit_png_e2e.py` : les 24 PNG issus du vrai bouton EDIT sont désormais décodés par `createImageBitmap` dans Chromium, dessinés sur Canvas et échantillonnés via `getImageData` (dimensions non nulles et alpha non nul). Les signatures seules n'étaient pas une preuve de décodage.
 - Test E2E codé, **non exécuté dans cette session** ; le picker et les handles restent simulés, donc pas de preuve Windows/permissions OS. Aucune modification de main ni d'autres projets.
 - Prochaine tâche P0 S : vérifier le dernier run du workflow Studio et réparer tout échec (notamment initialisation des 12 espaces et scénario PNG). Ensuite P0 M–L : raccorder export PNG→FFmpeg VP9/Opus avec FFprobe, sans écriture implicite; reprendre A02 IndexedDB. Restant alpha M–L + recette Windows/GTX/OBS/licences. PR #16 draft.
+
+
+## Reprise 19 novembre 2026, 14 h Paris — CI rouge, correctif modules transitifs
+
+- Base vérifiée : branche `feat/olympus-studio-20261112`, PR #16 brouillon, issues #11–#17 et backlog relus.
+- Dernier run examiné : [44519258485](https://github.com/Sathancabrol/monorepo/actions/runs/44519258485), **rouge** sur `a3352b90`. `smoke` bloque dans `browser_indexeddb_e2e.py` (12 espaces absents après 10 s). `alpha-package` bloque pendant l'installation FFmpeg par `apt` (miroir Ubuntu inaccessible) ; ce deuxième défaut est environnemental, pas une preuve d'échec du ZIP.
+- Cause de démarrage identifiée par graphe des imports : `src/edit-frame-renderer.js` importe `./edit-frame-plan.js`, mais `server.mjs` ne servait pas ce module dans `STATIC_FILES` (HTTP 403). Le test HTTP antérieur ne vérifiait que les imports directs de `app.js`.
+- Correctif `a5c426a3` : ajout ciblé de `/src/edit-frame-plan.js` à la liste blanche. Test `5bcc4f6c` : exploration récursive des imports ESM relatifs, HTTP 200 obligatoire, tout autre fichier privé reste interdit.
+- **Preuve limitée** : commits GitHub réussis, diagnostic statique et logs CI lus. Aucun test Node/Chromium exécuté dans cette session; attendre le prochain run et ne pas annoncer vert prématurément.
+- **Prochain objectif READY (S–M)** : vérifier le run du commit de checkpoint, réparer toute erreur `smoke`/packaging; si vert, vérifier le bouton PNG Chromium puis raccorder l'export FFmpeg/FFprobe. Si `apt` reste indisponible, fiabiliser l'étape FFmpeg avec une alternative reproductible sans cacher l'absence de test.
+- **Blocages** : Windows/GTX1060/1650/OBS réel, écoute humaine et licences de redistribution non vérifiés; alpha non recettée. Aucun autre projet ni `main` modifié.
