@@ -1230,3 +1230,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **Preuve limitée** : commits GitHub réussis, diagnostic statique et logs CI lus. Aucun test Node/Chromium exécuté dans cette session; attendre le prochain run et ne pas annoncer vert prématurément.
 - **Prochain objectif READY (S–M)** : vérifier le run du commit de checkpoint, réparer toute erreur `smoke`/packaging; si vert, vérifier le bouton PNG Chromium puis raccorder l'export FFmpeg/FFprobe. Si `apt` reste indisponible, fiabiliser l'étape FFmpeg avec une alternative reproductible sans cacher l'absence de test.
 - **Blocages** : Windows/GTX1060/1650/OBS réel, écoute humaine et licences de redistribution non vérifiés; alpha non recettée. Aucun autre projet ni `main` modifié.
+
+
+## Reprise 19 novembre 2026, 15 h Paris — CI static parse
+
+- Relus backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17 et workflow dédié. CI [44529521756](https://github.com/Sathancabrol/monorepo/actions/runs/44529521756) sur `f6b6d12f` : `alpha-package` **success**, `smoke` **failure** à `Static parse` (SyntaxError dans `tests/smoke.test.mjs:118`, regex avec antislashs doublés devant le `/` littéral).
+- Correctif commité `2bfa9baef028f82c13412458fc24ff8e780a9832` : regex `matchAll` valide et motifs de noms de modules corrigés dans le test de graphe d'imports transitifs. Aucun changement du serveur ou des moteurs; uniquement `projects/olympus-studio/tests/smoke.test.mjs`.
+- Tests : log CI lu et cause identifiée; **pas de nouveau résultat CI ni exécution Node confirmée** pour ce commit. La CI suivante devra exécuter `node --check tests/smoke.test.mjs`, `npm test`, puis E2E Chromium. Ne pas annoncer succès avant preuve.
+- Blocages : A/V MediaRecorder non synchronisé, fallback PNG→FFmpeg→WebM/Opus non câblé de bout en bout; essais Windows/GTX/OBS/licences non réalisés. `main` intact.
+- Prochain READY **S** : vérifier CI sur `2bfa9bae`; si rouge réparer l'étape exacte. Puis **M–L** : export déterministe PNG→FFmpeg et mesure FFprobe; A02 IndexedDB reste ouvert. Estimation restante alpha M–L plus recette Windows et licences. PR #16 toujours brouillon.
