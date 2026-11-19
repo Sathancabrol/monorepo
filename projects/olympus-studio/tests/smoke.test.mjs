@@ -111,12 +111,12 @@ test('All transitive ES module imports resolve through HTTP allowlist',async()=>
   const file=pending.pop();
   if(visited.has(file))continue;
   visited.add(file);
-  assert.match(file,/^[a-z0-9-]+\\.js$/,'Unexpected module name');
+  assert.match(file,/^[a-z0-9-]+\.js$/,'Unexpected module name');
   const response=await fetch(base+'/src/'+file);
   assert.equal(response.status,200,'Missing HTTP module: '+file);
   const source=await response.text();
-  for(const match of source.matchAll(/(?:from\\s*|import\\s*)['"]\\.\\/([^'"]+)['"]/g)){
-   assert.match(match[1],/^[a-z0-9-]+\\.js$/,'Unexpected relative import');
+  for(const match of source.matchAll(/(?:from\s*|import\s*)['"]\.\/([^'"]+)['"]/g)){
+   assert.match(match[1],/^[a-z0-9-]+\.js$/,'Unexpected relative import');
    pending.push(match[1]);
   }
  }
