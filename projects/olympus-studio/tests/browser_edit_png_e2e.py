@@ -92,7 +92,19 @@ def main():
                   const files = [...window.__pngTestFiles.entries()];
                   const signatures = await Promise.all(files.map(async ([name, blob]) => ({
                     name, type: blob.type, size: blob.size,
-                    magic: [...new Uint8Array(await blob.slice(0, 8).arrayBuffer())]
+                    magic: [...new Uint8Array(await blob.slice(0, 8).arrayBuffer())],
+                    decoded: await (async () => {
+                      const bitmap = await createImageBitmap(blob);
+                      try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = bitmap.width;
+                        canvas.height = bitmap.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(bitmap, 0, 0);
+                        const pixel = [...ctx.getImageData(0, 0, 1, 1).data];
+                        return {width: bitmap.width, height: bitmap.height, pixel};
+                      } finally { bitmap.close(); }
+                    })()
                   })));
                   return {calls: window.__pngPickerCalls, signatures};
                 }""")
@@ -103,6 +115,8 @@ def main():
                 ]
                 assert all(s["type"] == "image/png" and s["size"] > 50 and
                            s["magic"] == [137, 80, 78, 71, 13, 10, 26, 10]
+                           and s["decoded"]["width"] > 0 and s["decoded"]["height"] > 0
+                           and s["decoded"]["pixel"][3] > 0
                            for s in result["signatures"]), result
                 # The second export into the same selected directory must not overwrite.
                 page.locator("#editPngSequence").click()
@@ -111,7 +125,7 @@ def main():
                 ).wait_for(timeout=15000)
                 assert page.evaluate("window.__pngTestFiles.size") == 24
                 assert not errors, errors
-                print("Chromium EDIT PNG UI OK: 24 decoded PNG signatures; collision refused; directory mocked")
+                print("Chromium EDIT PNG UI OK: 24 PNG bitmaps decoded and sampled; collision refused; directory mocked")
             finally:
                 browser.close()
     finally:
