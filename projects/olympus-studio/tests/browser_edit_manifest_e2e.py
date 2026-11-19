@@ -317,6 +317,65 @@ def main():
                     assert split_reopened["embeddedAssets"][0]["data_b64"] == (
                         split_saved["embeddedAssets"][0]["data_b64"]
                     ), "Restored asset bytes changed"
+                    # Real video fixture: two non-destructive IN/OUT segments
+                    # sharing a single WebM blob, not two synthetic image clips.
+                    video_path = folder / "manifest-video.webm"
+                    subprocess.run([
+                        "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+                        "-f", "lavfi", "-i", "testsrc2=size=160x90:rate=12",
+                        "-t", "2", "-an", "-c:v", "libvpx", "-b:v", "250k",
+                        str(video_path),
+                    ], check=True, timeout=40)
+                    page.locator("#fileMedia").set_input_files(str(video_path))
+                    page.get_by_text("manifest-video.webm", exact=True).first.wait_for()
+                    video_id = page.evaluate("""async () => {
+                        const m = await import('/src/media-store.js');
+                        const db = await m.openMediaDB();
+                        try {
+                            const assets = await m.listMedia(db);
+                            const a = assets.find(x => x.name === 'manifest-video.webm');
+                            if (!a) throw Error('Video fixture missing from IndexedDB');
+                            return a.id;
+                        } finally { db.close(); }
+                    }""")
+                    video_manifest = {
+                        "schema": "olympus.edit.interchange.v1",
+                        "timeUnit": "seconds", "duration": 2,
+                        "segments": [
+                            {"clipId": "video-left", "assetId": video_id,
+                             "kind": "video", "timelineStart": 0,
+                             "duration": 0.75, "sourceIn": 0.25, "title": "IN 0.25"},
+                            {"clipId": "video-right", "assetId": video_id,
+                             "kind": "video", "timelineStart": 0.75,
+                             "duration": 1.25, "sourceIn": 0.5, "title": "IN 0.5"},
+                        ],
+                        "soundtrack": None,
+                    }
+                    upload_manifest(page, video_manifest)
+                    page.locator("#status").get_by_text(
+                        "Manifeste EDIT importé", exact=False
+                    ).wait_for()
+                    video_saved = portable(page, folder, "video-two-trims.json")
+                    assert len(video_saved["clips"]) == 2
+                    assert [c["assetId"] for c in video_saved["clips"]] == [video_id, video_id]
+                    assert [c["inPoint"] for c in video_saved["clips"]] == [0.25, 0.5]
+                    assert [c["outPoint"] for c in video_saved["clips"]] == [1, 1.75]
+                    video_embedded = [a for a in video_saved["embeddedAssets"] if a["id"] == video_id]
+                    assert len(video_embedded) == 1, "Shared WebM duplicated"
+                    assert base64.b64decode(video_embedded[0]["data_b64"]) == video_path.read_bytes()
+                    page.reload(wait_until="load")
+                    page.wait_for_function(
+                        "document.querySelectorAll('#navItems [data-space]').length===12"
+                    )
+                    page.locator("#fileProject").set_input_files(str(folder / "video-two-trims.json"))
+                    page.locator("#status").get_by_text("Projet chargé", exact=False).wait_for()
+                    video_restored = portable(page, folder, "video-two-trims-restored.json")
+                    assert video_restored["clips"] == video_saved["clips"], (
+                        "Video IN/OUT or timeline changed on portable restore"
+                    )
+                    restored_video = [a for a in video_restored["embeddedAssets"] if a["id"] == video_id]
+                    assert len(restored_video) == 1
+                    assert restored_video[0]["data_b64"] == video_embedded[0]["data_b64"]
                     assert not errors, "JavaScript errors: " + " | ".join(errors)
                     print("EDIT manifest HTTP/IndexedDB + rejection + undo/redo OK")
                 finally:
