@@ -63,6 +63,10 @@ with tempfile.TemporaryDirectory() as tmp:
     streams = module.probe(png_output)
     assert any(s.get("codec_name") == "vp9" for s in streams)
     assert any(s.get("codec_name") == "opus" for s in streams)
+    report = module.av_packet_report(png_output)
+    assert report["video"]["packets"] >= 20, report
+    assert report["audio"]["packets"] > 0, report
+    assert abs(report["end_delta_s"]) < 0.2, report
     assert len(list(frames.glob("*.png"))) == 24
     # A gap in the sequence must fail before FFmpeg can silently truncate output.
     (frames / "000012.png").rename(frames / "000025.png")
