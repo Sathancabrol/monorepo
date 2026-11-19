@@ -32,10 +32,10 @@ export async function renderEditAV(video,audio,track,duration,output,{ffmpeg='ff
   try{
     await renderAudio(a,wav,track,seconds,{binary:ffmpeg});
     // Re-encode the source video to VP9 and the timeline WAV to Opus. No shell or network.
+    outputCreated=true; // An absent output was checked above; any partial output belongs to this invocation.
     await run(ffmpeg,['-nostdin','-hide_banner','-loglevel','error','-n','-i',v,'-i',wav,
       '-map','0:v:0','-map','1:a:0','-t',String(seconds),'-c:v','libvpx-vp9',
       '-deadline','realtime','-cpu-used','5','-c:a','libopus','-b:a','128k',o]);
-    outputCreated=true;
     const chunks=[];
     const probe=spawn(ffprobe,['-v','error','-show_entries','stream=codec_type,codec_name','-of','json',o],{shell:false,stdio:['ignore','pipe','pipe']});
     for await(const chunk of probe.stdout)chunks.push(chunk);
