@@ -1330,3 +1330,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Correctif `1c69187a` : sélectionner explicitement l'espace EDIT et attendre l'attachement du champ avant d'importer le manifeste des deux segments vidéo. Pas de seuil A/V modifié, ni moteur réécrit.
 - **Validation** : correction commitée, **CI sur ce nouveau HEAD non encore confirmée**. A02 reste ouverte jusqu'à preuve E2E verte. Dernier run inspecté : 44641952292 (rouge); dernier commit de code : 1c69187a.
 - **Prochaine tâche P0 S** : lire la CI du dernier HEAD et réparer le prochain éventuel échec du scénario WebM (import, IN/OUT, export Portable, restauration). **Ensuite M** : raccordement guidé EDIT → PNG/WAV → FFmpeg avec preuve de sortie A/V; puis matrice des adaptateurs des 12 espaces (source, licence, API, offline, ressources, test). MediaRecorder demeure instable. Estimation restante alpha M–L et recette Windows/GTX1060/1650/OBS/licences séparée. Aucun merge main ni autre projet modifié.
+
+
+## Reprise 20/11/2026 ~03 h Paris — A02 décodage réel WebM restauré
+
+- Relecture AUTONOMOUS_BACKLOG, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17 et workflow dédié. CI [44650443828](https://github.com/Sathancabrol/monorepo/actions/runs/44650443828) **success** sur le checkpoint précédent `58d56743` : le correctif de navigation EDIT et le scénario WebM/IndexedDB sont validés sur Chromium Linux CI, pas sur Windows.
+- Commit `d4115285` : le même E2E `tests/browser_edit_manifest_e2e.py` vérifie désormais, après restauration Portable, le **décodage réel par HTMLVideoElement du Blob IndexedDB** (métadonnées durée ~2 s et dimensions 160×90), au-delà de la simple égalité base64. URL objet révoquée et vidéo libérée en fin de test. Aucune réécriture de moteur.
+- **CI du nouveau commit non encore confirmée** lors de cette écriture; ne pas revendiquer le nouveau contrôle comme passé. Aucun essai Windows, GPU ou OBS réel.
+- **Prochaine action S** : vérifier le run GitHub Actions sur `d4115285` et réparer tout échec de décodage/timeout. **Ensuite M** : raccorder plus directement le fallback PNG/WAV → FFmpeg au parcours EDIT; produire matrice 12 espaces source→adaptateur→I/O→licence/offline→état testé, en distinguant présence et intégration.
+- Restant alpha M–L plus recette Windows/GTX 1060/1650/OBS/licences. MediaRecorder toujours expérimental. PR #16 brouillon; aucun merge main, aucun autre projet modifié.
