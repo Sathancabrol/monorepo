@@ -12,7 +12,7 @@ export function editFfmpegPlan(track, duration) {
     return {
       audio: false,
       prepare: null,
-      mux: 'ffmpeg -nostdin -hide_banner -loglevel error -n -framerate 24 -start_number 1 -i "CHEMIN_DOSSIER_PNG/%06d.png" -c:v libvpx-vp9 -deadline realtime -cpu-used 5 -pix_fmt yuv420p -an "montage.webm"',
+      mux: 'ffmpeg -nostdin -hide_banner -loglevel error -n -framerate 24 -start_number 1 -i "CHEMIN_DOSSIER_PNG/%06d.png"' + ' -t ' + seconds + ' -c:v libvpx-vp9 -deadline realtime -cpu-used 5 -pix_fmt yuv420p -an "montage.webm"',
       warning: 'Aucune piste audio active : sortie vidéo sans son.',
     };
   }
