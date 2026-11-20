@@ -95,12 +95,12 @@ def main():
                     for expected in (
                         "--offset 0.500000", "--in-point 0.250000",
                         "--volume 0.600000", "--duration 1.500000",
-                        "--audio \\"audio_prepare.wav\\"", "--av-report",
+                        '--audio "audio_prepare.wav"', "--av-report",
                     ):
                         assert expected in command, (expected, command)
                     assert "CHEMIN_AUDIO_SOURCE" in command
                     assert "ffmpeg_mux_fallback.py" in command
-                    assert "-an \\"montage.webm\\"" not in command
+                    assert '-an "montage.webm"' not in command
                     assert "MediaRecorder A/V reste expérimental" in page.locator("#editFfmpegGuide").inner_text()
                     guide_button.click()
                     assert page.locator("#editFfmpegGuide").is_hidden()
