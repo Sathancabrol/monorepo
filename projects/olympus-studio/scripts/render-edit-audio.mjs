@@ -11,6 +11,9 @@ export function renderAudioArgs(input,output,track,duration) {
   if(!Number.isFinite(seconds)||seconds<=0||seconds>120)throw Error('Durée EDIT invalide (0–120 s)');
   if(typeof input!=='string'||!input.trim()||typeof output!=='string'||!output.trim()||input===output)throw Error('Chemins audio invalides');
   const n=x=>Number(x).toFixed(6);
+  // Work in a fixed 48 kHz sample domain: timestamp-based atrim after adelay/apad
+  // can truncate the WAV (observed 1.792667 s instead of 2.000000 s).
+  const samples=Math.round(seconds*48000);
   // Source IN, timeline delay, volume, then pad/trim to the exact EDIT length.
   const filter='[0:a]atrim=start='+n(t.inPoint)+',asetpts=PTS-STARTPTS,volume='+n(t.enabled?t.volume:0)+',adelay='+Math.round(t.offset*1000)+':all=1,apad,atrim=duration='+n(seconds)+',asetpts=PTS-STARTPTS[out]';
   return ['-nostdin','-hide_banner','-loglevel','error','-i',input,'-filter_complex',filter,'-map','[out]','-ar','48000','-ac','2','-c:a','pcm_s16le','-n',output];
