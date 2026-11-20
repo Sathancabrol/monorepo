@@ -1423,3 +1423,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Cause : le scénario utilise **aucune piste audio**; depuis la correction de la route silencieuse, le guide affiche une commande `ffmpeg ... -an` et non le CLI de mux A/V qui accepte `--max-end-delta`. L'assertion était obsolète, pas une preuve de défaillance FFmpeg.
 - Commit `870463e6` : vérifie désormais commande native vidéo seule, `-an`, durée `-t 1.000000`, séquence PNG et absence du drapeau audio. Garde les contrôles du guide, PNG et collision. **Nouvelle CI pas encore confirmée**; aucun essai Windows/OBS/GTX.
 - **Reprise P0 S** : vérifier la CI sur `870463e6` ou ce checkpoint, réparer tout échec. **Ensuite P0 M** : E2E guide avec piste audio active et paramètres IN/départ/volume, puis commande WAV → mux VP9/Opus → FFprobe. Restant alpha M–L + recette Windows/GTX/OBS/licences; PR brouillon, main et autres projets inchangés.
+
+
+## Reprise du 20/11/2026 15h Europe/Paris — contrat guide FFmpeg
+
+- CI vérifiée avant écriture : [run 44740901210](https://github.com/Sathancabrol/monorepo/actions/runs/44740901210), **success** sur `be343651` (branche dédiée).
+- Commit livré : `cfcb0630725b17c62def2239cb6eae1d5cb34e67` — `tests/edit-ffmpeg-guide-contract.test.mjs`. Trois tests Node couvrent route audio active (offset, IN, volume, durée, mux Opus), route silencieuse bornée, et non-interpolation des métadonnées média dans les commandes shell.
+- Tests du nouveau commit : écrits, **CI du nouveau HEAD à confirmer**; aucun test Windows ou OBS effectué. Ce sont des tests de contrat des commandes, pas une preuve de fichier exporté depuis EDIT.
+- Première tâche suivante : vérifier la CI du HEAD; si rouge, lire logs et corriger. Sinon créer un E2E Chromium du guide avec piste audio active, puis vérifier la chaîne PNG/WAV → FFmpeg → FFprobe; éviter de retoucher MediaRecorder sans nouvelle preuve.
+- Blocages : essais matériels Windows GTX1060/1650, OBS réel et audit licences toujours ouverts. Taille restante pour E2E guide audio : M; recette Windows : L.
