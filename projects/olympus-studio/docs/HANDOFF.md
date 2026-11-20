@@ -1339,3 +1339,12 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - **CI du nouveau commit non encore confirmée** lors de cette écriture; ne pas revendiquer le nouveau contrôle comme passé. Aucun essai Windows, GPU ou OBS réel.
 - **Prochaine action S** : vérifier le run GitHub Actions sur `d4115285` et réparer tout échec de décodage/timeout. **Ensuite M** : raccorder plus directement le fallback PNG/WAV → FFmpeg au parcours EDIT; produire matrice 12 espaces source→adaptateur→I/O→licence/offline→état testé, en distinguant présence et intégration.
 - Restant alpha M–L plus recette Windows/GTX 1060/1650/OBS/licences. MediaRecorder toujours expérimental. PR #16 brouillon; aucun merge main, aucun autre projet modifié.
+
+
+## Reprise 20/11/2026 ~04 h Paris — audit d'intégration 12 espaces
+
+- Prélecture des quatre documents, PR #16, issues #11–#17, code serveur/registre, README et workflow CI dédié. HEAD initial `419a8f3f`; dernier run **documenté vert** [44650443828](https://github.com/Sathancabrol/monorepo/actions/runs/44650443828) sur un HEAD antérieur. API de statuts combinés pour `419a8f3f` : tableau vide, **ne prouve pas une CI verte**; Actions n'a pas pu être interrogé directement.
+- Commit `b90099b0` : tests Node du registre des 12 espaces, contrats non vides, probes OBS/ComfyUI et interdiction de présenter une simple disponibilité réseau comme validation fonctionnelle. `npm test` découvre les fichiers `*.test.mjs` automatiquement.
+- Commit `7d80a52f` : `docs/INTEGRATION_MATRIX_12.md` source → adaptateur → I/O → preuve → licence/offline/GTX pour les 12 espaces. Distingue explicitement mock, partiel, absent et réel. Aucun moteur externe copié, installé ou déclaré validé.
+- **Preuve** : fichiers et commits présents sur branche dédiée. **Tests nouveaux et CI du HEAD non confirmés**; aucune validation Windows/OBS/GTX, aucune licence de redistribution auditée en profondeur.
+- **Reprise exacte P0 S** : lire CI du HEAD `7d80a52f` ou suivant, réparer toute régression (y compris décodage WebM du commit `d4115285`). **Puis P0 M** : intégrer une aide contextualisée et un parcours guidé EDIT → PNG/WAV → FFmpeg/FFprobe avec E2E, sans contourner le contrôle MediaRecorder. Estimation alpha restante M–L + recette Windows/OBS/GTX/licences. PR brouillon, main et projets voisins intacts.
