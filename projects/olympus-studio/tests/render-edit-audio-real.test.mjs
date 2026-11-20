@@ -38,3 +38,21 @@ test('FFmpeg real render: IN, delay, gain and exact PCM duration', {skip:!ffmpeg
     console.log(JSON.stringify({duration:2,before,active,after}));
   }finally{await rm(dir,{recursive:true,force:true});}
 });
+
+// Regression: source rate differs from the 48 kHz EDIT output sample clock.
+test('FFmpeg real render: 44.1 kHz source padded to exact 48 kHz output samples', {skip:!ffmpegReady}, async()=>{
+  const dir=await mkdtemp(join(tmpdir(),'olympus-edit-audio-rate-'));
+  try {
+    const src=join(dir,'source.wav'),out=join(dir,'render.wav'),raw=join(dir,'render.raw');
+    const p=run('ffmpeg',['-nostdin','-hide_banner','-loglevel','error','-f','lavfi','-i','sine=frequency=440:duration=0.6:sample_rate=44100','-c:a','pcm_s16le','-y',src]);
+    assert.equal(p.status,0,p.stderr);
+    await renderAudio(src,out,{assetId:'fixture',inPoint:0.1,offset:0.3,volume:0.5},2);
+    const decoded=run('ffmpeg',['-nostdin','-hide_banner','-loglevel','error','-i',out,'-f','s16le','-ac','2','-ar','48000','-y',raw]);
+    assert.equal(decoded.status,0,decoded.stderr);
+    const pcm=await readFile(raw);
+    assert.equal(pcm.length,2*48000*2*2,'exact 2 seconds of 48kHz stereo PCM');
+    assert.ok(rms(pcm,0.05,0.20)<0.0002,'silence before delay');
+    assert.ok(rms(pcm,0.4,0.6)>0.005,'non-silent audio after delay');
+    assert.ok(rms(pcm,1.2,1.8)<0.0002,'padded silence after short source');
+  } finally {await rm(dir,{recursive:true,force:true});}
+});
