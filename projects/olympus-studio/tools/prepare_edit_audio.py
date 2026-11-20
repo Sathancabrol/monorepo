@@ -34,12 +34,12 @@ def prepare_audio(source, output, *, offset, in_point, volume, duration):
         raise ValueError("Input contains no audio stream")
     # Build a full-duration timeline, including silence before/after the source.
     # atrim removes source time before IN, asetpts resets timestamps, adelay positions
-    # the clip, apad fills the remainder, final atrim caps exactly at project end.
+    # the clip, apad fills the remainder. Rebuild sample-based PTS after adelay:\n    # FFmpeg adelay can preserve upstream timestamps, causing atrim=end to\n    # truncate early (~2.046 s instead of 2.5 s in the regression fixture).\n    # final atrim caps the normalized sample timeline at project end.
     delay_ms = round(offset * 1000)
     filters = (
         f"atrim=start={in_point:.6f},asetpts=PTS-STARTPTS,"
         f"volume={volume:.6f},adelay={delay_ms}:all=1,"
-        f"apad,atrim=end={duration:.6f},asetpts=PTS-STARTPTS"
+        f"apad,asetpts=N/SR/TB,atrim=end={duration:.6f},asetpts=PTS-STARTPTS"
     )
     cmd = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-n",
            "-i", str(source), "-af", filters, "-vn", "-ac", "2",
