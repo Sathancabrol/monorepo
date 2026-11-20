@@ -62,7 +62,7 @@ function main(){
  const rvEnd=streamEnd({packets:(repaired.packets||[]).filter(p=>p.stream_index===rv.index)});
  const raEnd=streamEnd({packets:(repaired.packets||[]).filter(p=>p.stream_index===ra.index)});
  const verified=verifyRepair(rvEnd,raEnd);
- process.stdout.write(JSON.stringify({input,output,videoEnd,audioEnd,paddedSeconds:p.gap,verified,warning:'Frozen final frame; motion not recovered'})+'\\n');
+ process.stdout.write(JSON.stringify({input,output,videoEnd,audioEnd,paddedSeconds:p.gap,verified,warning:'Frozen final frame; motion not recovered'})+'\n');
 }
 // Compare canonical file URLs: manual file:// concatenation fails on Windows drives,
 // spaces, and relative script paths (including the documented CLI invocation).
