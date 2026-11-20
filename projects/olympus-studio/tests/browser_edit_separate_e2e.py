@@ -7,6 +7,7 @@ import base64
 import hashlib
 import json
 import os
+import shlex
 from pathlib import Path
 import socket
 import subprocess
@@ -98,6 +99,38 @@ def main():
                         '--audio "audio_prepare.wav"', "--av-report",
                     ):
                         assert expected in command, (expected, command)
+                    # Execute the exact guide emitted by the Chromium UI, using
+                    # synthetic assets and an isolated working directory.
+                    frames = temp / "frames"
+                    frames.mkdir()
+                    subprocess.run([
+                        "ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi",
+                        "-i", "color=c=blue:s=160x90:r=24:d=1.5",
+                        "-frames:v", "36", "-start_number", "1",
+                        str(frames / "%06d.png"),
+                    ], check=True, timeout=45)
+                    commands = [line.strip() for line in command.splitlines()
+                                if line.strip().startswith("python ")]
+                    assert len(commands) == 2, commands
+                    for line in commands:
+                        line = line.replace("CHEMIN_AUDIO_SOURCE", str(tone))
+                        line = line.replace("CHEMIN_DOSSIER_PNG", str(frames))
+                        args = shlex.split(line)
+                        assert args[0] == "python" and args[1].startswith("tools/"), args
+                        args[1] = str(ROOT / args[1])
+                        result = subprocess.run(args, cwd=temp, capture_output=True,
+                                                text=True, timeout=120, check=True)
+                    mux_report = json.loads(result.stdout.strip().splitlines()[-1])
+                    assert abs(mux_report["end_delta_s"]) <= 0.2, mux_report
+                    rendered = temp / "montage.webm"
+                    rendered_streams = json.loads(subprocess.run([
+                        "ffprobe", "-v", "error", "-show_streams", "-of", "json",
+                        str(rendered),
+                    ], check=True, capture_output=True, text=True, timeout=30).stdout)["streams"]
+                    assert any(s.get("codec_name") == "vp9" for s in rendered_streams), rendered_streams
+                    assert any(s.get("codec_name") == "opus" for s in rendered_streams), rendered_streams
+                    assert tone.exists() and len(list(frames.glob("*.png"))) == 36
+                    print("Chromium EDIT guide executed through FFmpeg/FFprobe:", mux_report)
                     assert "CHEMIN_AUDIO_SOURCE" in command
                     assert "ffmpeg_mux_fallback.py" in command
                     assert '-an "montage.webm"' not in command
