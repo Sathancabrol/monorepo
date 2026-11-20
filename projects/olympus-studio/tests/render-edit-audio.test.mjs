@@ -7,7 +7,10 @@ test('FFmpeg EDIT audio: trim source IN, offset, volume and final duration',()=>
  assert.match(filter,/atrim=start=1\.500000/);
  assert.match(filter,/volume=0\.400000/);
  assert.match(filter,/adelay=250:all=1/);
- assert.match(filter,/atrim=duration=3\.000000/);
+ assert.match(filter,/aresample=48000/);
+ assert.match(filter,/apad=whole_len=144000/);
+ assert.match(filter,/atrim=end_sample=144000/);
+ assert.doesNotMatch(filter,/atrim=duration=/);
  assert.deepEqual(args.slice(-2),['-n','out.wav']);
 });
 test('Mute and invalid parameters are explicit; no shell commands',()=>{
