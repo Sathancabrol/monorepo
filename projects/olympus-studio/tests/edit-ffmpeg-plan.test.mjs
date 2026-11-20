@@ -14,6 +14,10 @@ test('disabled or absent audio never passes an audio argument', () => {
     const p=editFfmpegPlan(t,2);
     assert.equal(p.prepare,null);
     assert.doesNotMatch(p.mux,/--audio/);
+    assert.match(p.mux,/^ffmpeg -nostdin /);
+    assert.match(p.mux,/-an "montage.webm"$/);
+    assert.match(p.mux,/-i "CHEMIN_DOSSIER_PNG\/%06d.png"/);
+    assert.doesNotMatch(p.mux,/ffmpeg_mux_fallback.py/);
   }
 });
 test('invalid EDIT duration and unsafe numeric audio parameters fail closed', () => {
