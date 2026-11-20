@@ -78,6 +78,32 @@ def main():
                     duration.dispatch_event("change")
                     page.get_by_role("button", name="Ajouter / remplacer piste").click()
                     page.locator('[aria-label="Audio Départ projet (s)"]').wait_for()
+                    # Real HTTP Chromium UI contract: active audio settings must drive
+                    # the deterministic FFmpeg fallback, not merely a pure JS helper.
+                    for label, value in [
+                        ("Audio Départ projet (s)", "0.5"),
+                        ("Audio IN source (s)", "0.25"),
+                        ("Audio Volume (0–1)", "0.6"),
+                    ]:
+                        field = page.get_by_role("spinbutton", name=label)
+                        field.fill(value)
+                        field.dispatch_event("change")
+                    guide_button = page.locator("#editFfmpegGuideButton")
+                    guide_button.click()
+                    assert page.locator("#editFfmpegGuide").is_visible()
+                    command = page.locator("#editFfmpegCommand").inner_text()
+                    for expected in (
+                        "--offset 0.500000", "--in-point 0.250000",
+                        "--volume 0.600000", "--duration 1.500000",
+                        "--audio \\"audio_prepare.wav\\"", "--av-report",
+                    ):
+                        assert expected in command, (expected, command)
+                    assert "CHEMIN_AUDIO_SOURCE" in command
+                    assert "ffmpeg_mux_fallback.py" in command
+                    assert "-an \\"montage.webm\\"" not in command
+                    assert "MediaRecorder A/V reste expérimental" in page.locator("#editFfmpegGuide").inner_text()
+                    guide_button.click()
+                    assert page.locator("#editFfmpegGuide").is_hidden()
                     with page.expect_download(timeout=15000) as audio_info:
                         page.locator("#editAudioSource").click()
                     audio = audio_info.value
