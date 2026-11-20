@@ -79,6 +79,11 @@ def main():
                 })
                 page.get_by_text("png-sequence-fixture.png", exact=True).first.wait_for()
                 page.locator('#navItems [data-space="EDIT"]').click()
+                page.get_by_role("button", name="+ Clip").click()
+                duration = page.locator(".layer-row input[title='Durée en secondes']").first
+                duration.wait_for()
+                duration.fill("1")
+                duration.dispatch_event("change")
                 guide_button = page.locator("#editFfmpegGuideButton")
                 guide = page.locator("#editFfmpegGuide")
                 assert guide.is_hidden()
@@ -92,11 +97,6 @@ def main():
                 guide_button.click()
                 assert guide.is_hidden()
                 assert guide_button.get_attribute("aria-expanded") == "false"
-                page.get_by_role("button", name="+ Clip").click()
-                duration = page.locator(".layer-row input[title='Durée en secondes']").first
-                duration.wait_for()
-                duration.fill("1")
-                duration.dispatch_event("change")
                 page.locator("#editPngSequence").click()
                 page.locator("#status").get_by_text(
                     "24 PNG exportés", exact=False
