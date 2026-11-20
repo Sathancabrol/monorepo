@@ -1348,3 +1348,11 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `7d80a52f` : `docs/INTEGRATION_MATRIX_12.md` source → adaptateur → I/O → preuve → licence/offline/GTX pour les 12 espaces. Distingue explicitement mock, partiel, absent et réel. Aucun moteur externe copié, installé ou déclaré validé.
 - **Preuve** : fichiers et commits présents sur branche dédiée. **Tests nouveaux et CI du HEAD non confirmés**; aucune validation Windows/OBS/GTX, aucune licence de redistribution auditée en profondeur.
 - **Reprise exacte P0 S** : lire CI du HEAD `7d80a52f` ou suivant, réparer toute régression (y compris décodage WebM du commit `d4115285`). **Puis P0 M** : intégrer une aide contextualisée et un parcours guidé EDIT → PNG/WAV → FFmpeg/FFprobe avec E2E, sans contourner le contrôle MediaRecorder. Estimation alpha restante M–L + recette Windows/OBS/GTX/licences. PR brouillon, main et projets voisins intacts.
+
+
+## Reprise 20/11/2026 ~05 h Paris — guide fallback FFmpeg accessible dans EDIT
+- Prélecture AUTONOMOUS_BACKLOG/HANDOFF/STATUS/SESSION_PLAN, PR #16, issues #11–#17, workflow dédié et matrice 12 espaces. HEAD initial `a2cb741a`; CI [44664594889](https://github.com/Sathancabrol/monorepo/actions/runs/44664594889) **success** sur ce HEAD, incluant les contrôles Node et Chromium existants. Pas de validation Windows.
+- Commit `726540e7` : bouton de guide FFmpeg directement dans EDIT, commande locale paramétrable à chemins placeholders, étapes PNG/audio/FFprobe, avertissement explicite que la source audio brute ne respecte pas IN/départ/volume et que MediaRecorder est expérimental. Aucune exécution automatique de commande ou accès fichiers additionnel.
+- Commit `713a87d5` : le scénario Chromium PNG existant vérifie ouverture/fermeture du guide, attribut ARIA, commande et avertissement audio. **Test commité, nouvelle CI non encore confirmée**.
+- Prochain P0 S : vérifier CI sur `713a87d5` et réparer si rouge. Ensuite P0 M : créer une vraie préparation audio respectant IN/départ/gain (sans réécrire FFmpeg), test A/V FFprobe et parcours utilisateur complet; ne pas présenter le téléchargement audio brut comme rendu final. Poursuivre A02/A03, puis OBS/ASR selon backlog.
+- Restant alpha M–L + recette Windows/GTX1060/1650/OBS et audit licences; PR #16 brouillon, main et autres projets inchangés.
