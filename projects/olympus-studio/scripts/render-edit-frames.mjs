@@ -2,6 +2,7 @@
 // Usage: node scripts/render-edit-frames.mjs framesDir fps durationSeconds output.webm
 import {spawn} from 'node:child_process';
 import {readdir,stat} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -27,6 +28,7 @@ export async function renderFrames(dir,fps,duration,output,{ffmpeg='ffmpeg'}={})
   if(typeof dir!=='string'||!dir.trim()||typeof output!=='string'||!output.trim())throw Error('Chemin manquant');
   const source=resolve(dir),target=resolve(output);
   if(!target.toLowerCase().endsWith('.webm')||target.startsWith(source+'/')||target.startsWith(source+'\\'))throw Error('Sortie invalide');
+  if(existsSync(target))throw Error('FFmpeg: sortie existante, écrasement refusé');
   const names=await readdir(source);
   const expected=Array.from({length:plan.count},(_,i)=>String(i+1).padStart(6,'0')+'.png');
   const pngs=names.filter(n=>n.toLowerCase().endsWith('.png')).sort();
