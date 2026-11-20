@@ -91,7 +91,7 @@ def main():
                 guide_button.click()
                 assert guide.is_visible()
                 assert guide_button.get_attribute("aria-expanded") == "true"
-                assert "--max-end-delta 0.2" in page.locator("#editFfmpegCommand").inner_text()
+                # No audio track: the guide must offer a runnable video-only FFmpeg route.\n                # --max-end-delta belongs to the audio mux CLI, not this route.\n                command = page.locator("#editFfmpegCommand").inner_text()\n                assert "ffmpeg -nostdin" in command, command\n                assert "-an" in command and "-t 1.000000" in command, command\n                assert "CHEMIN_DOSSIER_PNG/%06d.png" in command, command\n                assert "--max-end-delta" not in command, command
                 assert "Aucune piste audio active" in guide.inner_text()
                 assert "MediaRecorder A/V reste expérimental" in guide.inner_text()
                 guide_button.click()
