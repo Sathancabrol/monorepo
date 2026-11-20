@@ -1416,3 +1416,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `ecb80b86` : le test crée d'abord le clip PNG, règle sa durée à 1 s, puis vérifie le guide et les exports. Le contrôle utilisateur et les assertions audio/MediaRecorder sont conservés; aucun seuil ni moteur modifié.
 - **CI sur ce nouveau commit non confirmée** : recherche de runs par SHA vide lors du checkpoint. Aucun essai Windows, OBS réel, GPU ou licences.
 - **Reprise P0 S** : lire Actions pour `ecb80b86` ou ce checkpoint; réparer si rouge. **Puis P0 M** : ajouter un E2E Chromium du guide avec piste audio active et vérifier IN/départ/volume/durée, ainsi que les commandes produites et leur usage sur fixture FFmpeg/FFprobe. Reste alpha M–L + recette Windows/GTX/OBS/licences. PR #16 brouillon, main et autres projets inchangés.
+
+
+## Reprise 20/11/2026 ~14 h Paris — correction CI du guide vidéo seule
+- Lecture backlog, HANDOFF, STATUS, SESSION_PLAN, PR #16, issues #11–#17, workflow et logs Actions. [Run 44732315030](https://github.com/Sathancabrol/monorepo/actions/runs/44732315030) **failure** : alpha-package success, Node/IndexedDB/ComfyUI mock/XR/FFmpeg/manifest/separate exports success; échec unique dans Chromium EDIT PNG à `browser_edit_png_e2e.py:94` sur assertion `--max-end-delta 0.2`.
+- Cause : le scénario utilise **aucune piste audio**; depuis la correction de la route silencieuse, le guide affiche une commande `ffmpeg ... -an` et non le CLI de mux A/V qui accepte `--max-end-delta`. L'assertion était obsolète, pas une preuve de défaillance FFmpeg.
+- Commit `870463e6` : vérifie désormais commande native vidéo seule, `-an`, durée `-t 1.000000`, séquence PNG et absence du drapeau audio. Garde les contrôles du guide, PNG et collision. **Nouvelle CI pas encore confirmée**; aucun essai Windows/OBS/GTX.
+- **Reprise P0 S** : vérifier la CI sur `870463e6` ou ce checkpoint, réparer tout échec. **Ensuite P0 M** : E2E guide avec piste audio active et paramètres IN/départ/volume, puis commande WAV → mux VP9/Opus → FFprobe. Restant alpha M–L + recette Windows/GTX/OBS/licences; PR brouillon, main et autres projets inchangés.
