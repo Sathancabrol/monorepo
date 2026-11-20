@@ -3,6 +3,7 @@ import { fromEditInterchange } from './edit-interchange.js';
 import { inspectEditInterchangeAssets } from './edit-interchange-assets.js';
 import { clipDuration, storyboardDuration, locateClip, moveClip, validateClip, referencedAssetIds, splitStoryboardAt } from './storyboard.js';
 import {validateEditAudioTrack, audioAtTimeline} from './edit-audio.js';
+import { editFfmpegPlan } from './edit-ffmpeg-plan.js';
 import {selectEditorWebMMime} from './editor-export.js';
 import { readVideoDuration, initialClipDuration, trimWithinVideoDuration, setClipDuration } from './video-duration.js';
 import { migrateV03Project } from './v03-migration.js';
@@ -568,8 +569,20 @@ function panel(){
   const ffmpegGuide=document.createElement('section');ffmpegGuide.id='editFfmpegGuide';ffmpegGuide.hidden=true;ffmpegGuide.className='notice';
   const guideTitle=document.createElement('strong');guideTitle.textContent='Export A/V local — parcours alternatif';ffmpegGuide.append(guideTitle);
   const guideSteps=document.createElement('p');guideSteps.textContent='1. Exporter les images PNG (24 FPS) dans un dossier vide. 2. Télécharger la source audio, si nécessaire. 3. Depuis le dossier projects/olympus-studio, lancer la commande ci-dessous avec vos chemins. 4. Vérifier le rapport FFprobe et écouter le fichier final.';ffmpegGuide.append(guideSteps);
-  const guideCommand=document.createElement('code');guideCommand.id='editFfmpegCommand';guideCommand.textContent='python tools/ffmpeg_mux_fallback.py --frames-dir "CHEMIN_DOSSIER_PNG" --fps 24 --audio "CHEMIN_AUDIO" --output "montage.webm" --av-report --max-end-delta 0.2';ffmpegGuide.append(guideCommand);
-  const guideWarning=document.createElement('p');guideWarning.textContent='Attention : la source audio téléchargée est brute : IN, départ et volume EDIT ne sont pas appliqués par cette commande. Adapter la piste séparément avant le mux. Sans audio, retirer --audio et son chemin. MediaRecorder A/V reste expérimental; aucune validation Windows ou synchronisation intégrale garantie.';ffmpegGuide.append(guideWarning);
+  const guideCommand=document.createElement('code');guideCommand.id='editFfmpegCommand';
+  const guideWarning=document.createElement('p');
+  function refreshFfmpegGuide(){
+    try {
+      const plan=editFfmpegPlan(state.editAudioTrack,storyboardDuration(state.clips));
+      guideCommand.textContent=(plan.prepare ? plan.prepare+'\\n' : '')+plan.mux;
+      guideWarning.textContent=plan.warning+' MediaRecorder A/V reste expérimental; vérifier FFprobe et écouter le résultat. Windows non validé.';
+    } catch(e) {
+      guideCommand.textContent='Ajouter un clip valide avant de préparer un export FFmpeg.';
+      guideWarning.textContent=e.message;
+    }
+  }
+  refreshFfmpegGuide();
+  ffmpegGuide.append(guideCommand,guideWarning);
   ffmpegGuideButton.onclick=()=>{ffmpegGuide.hidden=!ffmpegGuide.hidden;ffmpegGuideButton.setAttribute('aria-expanded',String(!ffmpegGuide.hidden));};
   controls.append(play,seek,clock,cutButton,undo,redo,exportButton,videoOnlyButton,pngSequenceButton,audioSourceButton,ffmpegGuideButton);
   el.append(ffmpegGuide);
