@@ -351,6 +351,10 @@ def main():
                         ],
                         "soundtrack": None,
                     }
+                    # Portable restore returns to the default workspace; the EDIT
+                    # manifest input is mounted only while EDIT is active.
+                    page.locator('[data-space="EDIT"]').first.click()
+                    page.locator("#editManifestFile").wait_for(state="attached")
                     upload_manifest(page, video_manifest)
                     page.locator("#status").get_by_text(
                         "Manifeste EDIT importé", exact=False
