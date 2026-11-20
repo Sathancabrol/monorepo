@@ -25,3 +25,9 @@ test('invalid EDIT duration and unsafe numeric audio parameters fail closed', ()
   assert.throws(()=>editFfmpegPlan({assetId:'a',offset:Infinity},2));
   assert.throws(()=>editFfmpegPlan({assetId:'a',volume:2},2));
 });
+
+test('silent export respects a fractional EDIT duration rather than exporting all PNGs', () => {
+  const plan = editFfmpegPlan(null, 1.375);
+  assert.match(plan.mux, /-t 1\.375000 -c:v/);
+  assert.doesNotMatch(plan.mux, /--audio/);
+});
