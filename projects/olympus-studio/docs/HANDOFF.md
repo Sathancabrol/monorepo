@@ -1387,3 +1387,10 @@ Aucun accès au PC, aucun achat, aucun merge de main, aucun autre dépôt modifi
 - Commit `0cd34153` : route sans audio désormais commande FFmpeg native PNG numérotés → VP9 WebM sans audio, sans écrasement (`-n`), sans moteur réécrit. Route audio inchangée.
 - Commit `dd982dc8` : assertions Node vérifiant la commande vidéo seule, `-an`, source PNG et absence du CLI exigeant un audio. **Tests nouveaux non exécutés localement et CI du HEAD non confirmée**.
 - Prochaine tâche P0 S : vérifier la CI du HEAD `dd982dc8` et corriger toute régression; puis M : scénario réel de préparation WAV → mux VP9/Opus → FFprobe et E2E UI avec piste active. Le guide demeure manuel et la sortie vidéo seule n'a pas de contrôle FFprobe automatique. Recette Windows/GTX/OBS/licences non faite. PR brouillon; main et projets voisins intacts.
+
+
+## Reprise 20/11/2026 ~10 h Paris — durée du fallback vidéo seule
+- Prélecture backlog, HANDOFF, STATUS, SESSION_PLAN, issues #11–#17 et adaptateurs FFmpeg. Le guide silencieux utilisait les PNG sans borne de durée du montage, pouvant exporter au-delà de la timeline EDIT si le dossier contenait plus de frames.
+- Commit `57f9717a` : ajoute `-t <durée EDIT>` à la commande FFmpeg VP9 sans audio, sans modifier les sources ni appeler un shell depuis le navigateur. Commit `616904c8` : assertions Node sur la durée entière et fractionnaire.
+- **Validation** : tests commités, mais non exécutés localement dans cette session; CI sur HEAD `616904c8` non confirmée. Dernière CI verte documentée : 44684463494 sur un HEAD antérieur. Aucun test Windows/GTX/OBS réel.
+- **Prochain READY P0 S** : inspecter le run CI du HEAD, corriger tout échec, puis construire un E2E fixture PNG + piste audio préparée → mux VP9/Opus → rapport FFprobe, en validant réellement le seuil A/V. Estimation M; ensuite parcours UI audio actif. Alpha toujours partielle, MediaRecorder instable, licences et recette Windows ouvertes. PR #16 brouillon, main et autres projets inchangés.
