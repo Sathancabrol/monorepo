@@ -380,6 +380,42 @@ def main():
                     restored_video = [a for a in video_restored["embeddedAssets"] if a["id"] == video_id]
                     assert len(restored_video) == 1
                     assert restored_video[0]["data_b64"] == video_embedded[0]["data_b64"]
+
+                    # Decode the restored IndexedDB Blob in Chromium, not just
+                    # its base64 representation. This catches an asset that
+                    # round-trips byte-for-byte but cannot be played by EDIT.
+                    playback = page.evaluate("""async id => {
+                        const m = await import('/src/media-store.js');
+                        const db = await m.openMediaDB();
+                        let record;
+                        try { record = await m.getMedia(db, id); }
+                        finally { db.close(); }
+                        if (!record || !record.blob || !record.type.startsWith('video/'))
+                            throw Error('Restored video missing or has wrong MIME type');
+                        const url = URL.createObjectURL(record.blob);
+                        const video = document.createElement('video');
+                        video.muted = true;
+                        video.preload = 'auto';
+                        video.src = url;
+                        try {
+                            await Promise.race([
+                                new Promise((resolve, reject) => {
+                                    video.onloadedmetadata = resolve;
+                                    video.onerror = () => reject(Error('Restored WebM decode error'));
+                                    video.load();
+                                }),
+                                new Promise((_, reject) => setTimeout(() => reject(Error('Restored WebM metadata timeout')), 8000))
+                            ]);
+                            return {duration: video.duration, width: video.videoWidth, height: video.videoHeight};
+                        } finally {
+                            video.removeAttribute('src');
+                            video.load();
+                            URL.revokeObjectURL(url);
+                        }
+                    }""", video_id)
+                    assert 1.8 <= playback["duration"] <= 2.2, playback
+                    assert playback["width"] == 160 and playback["height"] == 90, playback
+
                     assert not errors, "JavaScript errors: " + " | ".join(errors)
                     print("EDIT manifest HTTP/IndexedDB + rejection + undo/redo OK")
                 finally:
