@@ -60,6 +60,8 @@ jobs:
           node --check src/obs-panel.js
           node --check tests/obs-client.test.mjs
           node --check tests/smoke.test.mjs
+      - name: FFmpeg prerequisites for Node integration tests
+        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
       - name: API smoke tests
         run: npm test
       - name: Chromium E2E — HTTP, IndexedDB, portable
