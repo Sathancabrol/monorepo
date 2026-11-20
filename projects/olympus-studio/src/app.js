@@ -577,7 +577,7 @@ function panel(){
       guideCommand.textContent=(plan.prepare ? plan.prepare+'\\n' : '')+plan.mux;
       guideWarning.textContent=plan.warning+' MediaRecorder A/V reste expérimental; vérifier FFprobe et écouter le résultat. Windows non validé.';
     } catch(e) {
-      guideCommand.textContent='Ajouter un clip valide avant de préparer un export FFmpeg.';
+      guideCommand.textContent='python tools/ffmpeg_mux_fallback.py --frames-dir "CHEMIN_DOSSIER_PNG" --fps 24 --output "montage.webm" --av-report --max-end-delta 0.2';
       guideWarning.textContent=e.message;
     }
   }
