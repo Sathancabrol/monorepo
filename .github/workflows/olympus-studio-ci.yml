@@ -75,6 +75,8 @@ jobs:
         run: |
           command -v ffprobe || (sudo apt-get update && sudo apt-get install -y ffmpeg)
           python tests/browser_av_fixture.py
+      - name: FFmpeg EDIT audio preparation — trim, delay, gain, silence
+        run: python -m unittest discover -s tests -p 'test_prepare_edit_audio.py' -v
       - name: FFmpeg fallback — synthetic VP9/Opus mux
         run: python tests/ffmpeg_mux_fallback_test.py
       - name: FFmpeg CLI validation — no false success on rejected output
