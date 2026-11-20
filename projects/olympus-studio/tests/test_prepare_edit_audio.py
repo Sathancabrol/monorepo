@@ -70,5 +70,53 @@ class PrepareAudioTests(unittest.TestCase):
             self.assertEqual(max(map(abs, samples[int(1.5 * 48000):])), 0)
 
 
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "FFmpeg not installed")
+    def test_prepared_audio_muxes_with_png_frames_and_opus(self):
+        """Real fallback chain: PNG sequence + EDIT audio -> VP9/Opus WebM -> packet timing."""
+        import importlib.util
+        import json
+        mux_path = MODULE.parent / "ffmpeg_mux_fallback.py"
+        mux_spec = importlib.util.spec_from_file_location("ffmpeg_mux_fallback", mux_path)
+        mux_module = importlib.util.module_from_spec(mux_spec)
+        mux_spec.loader.exec_module(mux_module)
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            frames = root / "frames"
+            frames.mkdir()
+            frame = root / "frame.png"
+            source = root / "source.wav"
+            prepared = root / "prepared.wav"
+            output = root / "render.webm"
+            subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi",
+                            "-i", "color=c=blue:s=160x90:r=24", "-frames:v", "1",
+                            "-y", str(frame)], check=True, timeout=30)
+            for index in range(1, 25):
+                shutil.copyfile(frame, frames / f"{index:06d}.png")
+            subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi",
+                            "-i", "sine=frequency=440:duration=1", "-y", str(source)],
+                           check=True, timeout=30)
+            mod.prepare_audio(source, prepared, offset=.15, in_point=.05,
+                              volume=.8, duration=1)
+            mux_module.mux_png_sequence(frames, prepared, output, fps=24)
+            streams = mux_module.probe(output)
+            self.assertEqual({s.get("codec_name") for s in streams
+                              if s.get("codec_type") in ("video", "audio")},
+                             {"vp9", "opus"})
+            report = mux_module.av_packet_report(output)
+            self.assertLessEqual(abs(report["end_delta_s"]), .25, report)
+            self.assertGreater(report["audio"]["packets"], 0)
+            self.assertGreater(report["video"]["packets"], 0)
+            self.assertTrue(source.exists())
+            self.assertTrue(prepared.exists())
+            self.assertEqual(len(list(frames.glob("*.png"))), 24)
+            decoded = subprocess.check_output(
+                ["ffmpeg", "-nostdin", "-v", "error", "-i", str(output),
+                 "-map", "0:a:0", "-f", "s16le", "-ac", "1", "-ar", "48000", "-"],
+                timeout=30)
+            import array
+            samples = array.array("h")
+            samples.frombytes(decoded)
+            self.assertGreater(max(map(abs, samples)), 100)
+
 if __name__ == "__main__":
     unittest.main()
