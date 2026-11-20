@@ -50,6 +50,25 @@ class PrepareAudioTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 mod.prepare_audio(src, dst, offset=0, in_point=0, volume=1, duration=2)
 
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "FFmpeg not installed")
+    def test_short_source_is_padded_to_exact_timeline(self):
+        with tempfile.TemporaryDirectory() as d:
+            src, dst = Path(d) / "short.wav", Path(d) / "timeline.wav"
+            subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi",
+                            "-i", "sine=frequency=660:duration=0.3", "-y", str(src)], check=True)
+            mod.prepare_audio(src, dst, offset=.75, in_point=.1, volume=1, duration=3)
+            import json
+            result = subprocess.check_output(["ffprobe", "-v", "error", "-show_entries",
+                                              "format=duration", "-of", "json", str(dst)], text=True)
+            self.assertAlmostEqual(float(json.loads(result)["format"]["duration"]), 3, delta=.002)
+            raw = subprocess.check_output(["ffmpeg", "-v", "error", "-i", str(dst),
+                                           "-f", "s16le", "-ac", "1", "-ar", "48000", "-"])
+            import array
+            samples = array.array("h"); samples.frombytes(raw)
+            self.assertEqual(max(map(abs, samples[:int(.7 * 48000)])), 0)
+            self.assertGreater(max(map(abs, samples[int(.8 * 48000):int(.9 * 48000)])), 100)
+            self.assertEqual(max(map(abs, samples[int(1.5 * 48000):])), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
