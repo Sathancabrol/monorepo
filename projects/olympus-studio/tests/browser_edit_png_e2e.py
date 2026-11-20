@@ -79,6 +79,18 @@ def main():
                 })
                 page.get_by_text("png-sequence-fixture.png", exact=True).first.wait_for()
                 page.locator('#navItems [data-space="EDIT"]').click()
+                guide_button = page.locator("#editFfmpegGuideButton")
+                guide = page.locator("#editFfmpegGuide")
+                assert guide.is_hidden()
+                assert guide_button.get_attribute("aria-expanded") == "false"
+                guide_button.click()
+                assert guide.is_visible()
+                assert guide_button.get_attribute("aria-expanded") == "true"
+                assert "--max-end-delta 0.2" in page.locator("#editFfmpegCommand").inner_text()
+                assert "ne sont pas appliqués" in guide.inner_text()
+                guide_button.click()
+                assert guide.is_hidden()
+                assert guide_button.get_attribute("aria-expanded") == "false"
                 page.get_by_role("button", name="+ Clip").click()
                 duration = page.locator(".layer-row input[title='Durée en secondes']").first
                 duration.wait_for()
