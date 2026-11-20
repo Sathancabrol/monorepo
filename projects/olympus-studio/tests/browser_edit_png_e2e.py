@@ -87,7 +87,8 @@ def main():
                 assert guide.is_visible()
                 assert guide_button.get_attribute("aria-expanded") == "true"
                 assert "--max-end-delta 0.2" in page.locator("#editFfmpegCommand").inner_text()
-                assert "ne sont pas appliqués" in guide.inner_text()
+                assert "Aucune piste audio active" in guide.inner_text()
+                assert "MediaRecorder A/V reste expérimental" in guide.inner_text()
                 guide_button.click()
                 assert guide.is_hidden()
                 assert guide_button.get_attribute("aria-expanded") == "false"
