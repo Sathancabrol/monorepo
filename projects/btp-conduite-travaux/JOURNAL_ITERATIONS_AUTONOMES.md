@@ -1,5 +1,21 @@
 # BTP Studio V2 — journal des itérations autonomes
 
+## 2026-11-23, passage 4 — registres locaux livraisons et intempéries
+
+**Inspection :** branche de travail et deux branches historiques `feat/btp-studio-premium-3d-20261123`, `fix/btp-navigation-pages-20261123` ; backlog V2, journal, veille GitHub 2026 et source `assets/workbench-v3.js` relus. Les boutons de création/export des registres pointaient vers des fonctions absentes du monolithe.
+
+**Code poussé :**
+- `7ba2b27ca07553041d79530c13f9105ca73a42b3` : `assets/legacy-registers-v1.js`, module local sans dépendance ajoutant saisie/validation des bons de livraison et constats d'intempéries, anti-doublon, sauvegarde localStorage, rendu tableau/KPI, export CSV avec échappement des guillemets.
+- `8949f6a0f7a295c567802a5681b19218d50f27dd` : chargement du module depuis `assets/workbench-v3.js`, sans remplacement du monolithe historique.
+- `db8bc8b630d2cbb98809a2d20eb242507a80c72b` : `tests/legacy-registers-v1.test.cjs`, scénario de non-régression reproductible sans npm.
+
+**Vérification effective :** syntaxe JavaScript du nouveau module et du workbench vérifiée par compilation JS isolée. **7 contrôles exécutés et réussis** sur un DOM simulé : création BL, KPI enrobé 28,40 t, rejet doublon, rejet quantité négative, création intempérie, refus de calcul automatique d'un droit contractuel, invocation des deux exports CSV. Le test Node versionné contient 9 assertions ; **la commande Node n'a pas été exécutée dans cet environnement**. Exécution locale attendue : `cd projects/btp-conduite-travaux && node tests/legacy-registers-v1.test.cjs`.
+
+**Limites / sécurité :** les données enregistrées sont locales au navigateur, non synchronisées avec les projets, et non des preuves validées. Les constats ne donnent **aucun droit automatique** à prolongation de délai ou indemnisation. Le KPI béton reste « Non renseigné » (unités mixtes) et le rendement enrobé « Non calculable sans surface réelle ». Aucune validation en navigateur, aucun test caméra/3D ou test d'impression. Aucun SDK externe ajouté, aucune fusion dans `main`.
+
+**Suite :** vérifier chargement réel du script et les formulaires en navigateur, fiabiliser les calculateurs hydraulique/électrique et la navigation de sous-vues, puis relier les registres au chantier actif avec migration de données versionnée. V2 toujours incomplète.
+
+
 Ce journal est incrémental, distinct du backlog historique `BTP_STUDIO_V2_ETAT_ET_BACKLOG.md`. Les preuves de calcul ne valent pas recette UI ni validation réglementaire. Ne jamais marquer « terminé » sans tests reproductibles.
 
 ## 2026-11-23, passage 3 — validation des calculs du workbench 23 modules
