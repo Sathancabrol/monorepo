@@ -76,7 +76,7 @@ function schedule(input){
   let start=t.startConstraint?chooseDay(p.startDate,t.startConstraint):p.startDate;
   for(const d of t.depends)start=chooseDay(start,compute(d).endExclusive);
   const endExclusive=addDays(start,duration);
-  const row={...t,start,endExclusive,endInclusive:addDays(endExclusive,-1),durationDays:duration,plannedCost:Math.round(t.quantity*t.unitCost*100)/100,realizedValue:Math.round(t.doneQuantity*t.unitCost*100)/100,estimatedCrewHours:duration*8*t.crew};
+  const row={...t,start,endExclusive,endInclusive:duration===0?null:addDays(endExclusive,-1),durationDays:duration,plannedCost:Math.round(t.quantity*t.unitCost*100)/100,realizedValue:Math.round(t.doneQuantity*t.unitCost*100)/100,estimatedCrewHours:duration*8*t.crew};
   memo.set(id,row);return row
  }
  const rows=p.tasks.map(t=>compute(t.id));
