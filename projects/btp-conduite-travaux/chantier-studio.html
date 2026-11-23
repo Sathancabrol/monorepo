@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d171c">
+<title>BTP Studio — Dossier chantier & planning opérationnel</title>
+<link rel="stylesheet" href="assets/project-workspace.css">
+</head>
+<body>
+<header class="topbar">
+ <a class="identity" href="index.html"><span class="logo">▧</span><span><strong>BTP STUDIO</strong><small>CHANTIERS · OPÉRATIONS · MÉTRÉS</small></span></a>
+ <div class="toplinks"><a href="fiches-taches.html">Fiches méthodes</a><a href="atelier-3d.html">Atelier 3D</a><span class="local-tag">Mode local</span></div>
+</header>
+<div class="layout">
+ <aside class="panel side">
+  <div class="panel-heading"><p class="eyebrow">Portefeuille</p><h2>Mes chantiers</h2><p class="muted">Aucun compte ni service obligatoire. Les données restent dans ce navigateur.</p></div>
+  <div class="pad"><button class="button primary full" id="newProject">+ Nouveau chantier</button><div id="projectList" class="project-list" aria-label="Liste des projets"></div><div class="help">Les modèles sont marqués <b>EXEMPLE</b>. Ils ne reflètent aucun chantier réel.</div></div>
+ </aside>
+ <main class="main">
+  <section class="hero panel">
+   <div class="hero-main"><p class="eyebrow" id="projectType">EXEMPLE</p><h1 id="projectTitle">Dossier chantier</h1><p class="muted" id="projectDetail">Chargement des données...</p>
+    <div class="actions"><button class="button" id="editProject">Modifier identité</button><button class="button" id="exportProject">Exporter JSON</button><button class="button" id="importProject">Importer JSON</button><button class="button danger-text" id="deleteProject">Supprimer</button></div>
+   </div><div class="hero-icon" aria-hidden="true"><span>▧</span><small>WORKSPACE</small></div>
+  </section>
+  <section class="metrics" aria-label="Indicateurs du projet">
+   <div class="metric"><small>Coût théorique prévisionnel</small><strong id="plannedCost">—</strong><span>Quantités × déboursé unitaire</span></div>
+   <div class="metric"><small>Valorisation théorique réalisée</small><strong id="earnedValue">—</strong><span>Quantités relevées × PU indicatif</span></div>
+   <div class="metric"><small>Avancement valorisé</small><strong id="progress">—</strong><span>Pas un avancement contractuel</span></div>
+   <div class="metric"><small>Durée planifiée</small><strong id="calendarDays">—</strong><span>Jours calendaires, dépendances incluses</span></div>
+  </section>
+  <section class="panel">
+   <div class="section-top"><div><p class="eyebrow">WBS · Découpage opérationnel</p><h2>Tâches, quantités et ressources</h2><p class="muted">Modifie les postes pour recalculer immédiatement planning, valorisation et durée.</p></div><div class="actions"><button class="button primary" id="addTask">+ Ajouter une tâche</button><button class="button" id="exportCSV">Exporter quantités CSV</button></div></div>
+   <div class="table-scroll"><table><thead><tr><th>Activité / lot</th><th>Quantité prévue</th><th>Réalisé</th><th>Rendement</th><th>Durée</th><th>Début</th><th>Fin</th><th>Coût prévisionnel</th><th class="col-actions">Action</th></tr></thead><tbody id="taskTable"><tr><td colspan="9">Chargement...</td></tr></tbody></table></div>
+   <div class="table-foot" id="summaryFooter"></div>
+  </section>
+  <section class="panel gantt-panel">
+   <div class="section-top"><div><p class="eyebrow">Ordonnancement · Phasage</p><h2>Chronogramme chantier</h2><p class="muted">Les barres suivent les prédécesseurs et dates contraintes. Calendrier continu simplifié, sans jours fériés ni interruptions.</p></div><div class="legend"><span><i class="planned"></i>Planifié</span><span><i class="realized"></i>Réalisé (quantité)</span></div></div>
+   <div id="gantt" class="gantt" aria-label="Planning Gantt simplifié"></div>
+  </section>
+  <section class="grid-2">
+   <article class="panel pad"><p class="eyebrow">Contrôles et limites</p><h2>Points de vigilance</h2><div id="warnings" class="warnings"></div><p class="help">Le planning est pédagogique. Il n'intègre pas automatiquement les calendriers de travail, contraintes météo, délais d'approvisionnement, arrêts ou coactivité.</p></article>
+   <article class="panel pad"><p class="eyebrow">Modules reliés</p><h2>Passer aux outils techniques</h2><div class="quicklinks"><a href="atelier-3d.html"><span>▧</span><strong>Modéliser un ouvrage</strong><small>Tranchées, couches et volumes</small></a><a href="fiches-taches.html"><span>▤</span><strong>Préparer une fiche méthode</strong><small>Équipes, temps, contrôles, livrables</small></a><a href="index.html"><span>▥</span><strong>Retour au cockpit</strong><small>23 modules de pilotage</small></a></div></article>
+  </section>
+ </main>
+ <aside class="panel edit-side">
+  <div class="panel-heading"><p class="eyebrow">Éditeur de tâche</p><h2 id="editorTitle">Nouvelle activité</h2><p class="muted" id="editorSubtitle">Renseigner les hypothèses de quantité, cadence et moyens.</p></div>
+  <form id="taskForm" class="form pad" autocomplete="off">
+   <div class="field"><label for="taskName">Désignation</label><input id="taskName" name="name" maxlength="180" required placeholder="Ex. Terrassement pleine masse"></div>
+   <div class="field"><label for="taskGroup">Lot / phase</label><select id="taskGroup"><option>Offre & marché</option><option>Préparation</option><option>Exécution</option><option>Contrôles</option><option>Réception & DOE</option></select></div>
+   <div class="form-grid"><div class="field"><label for="taskQuantity">Quantité prévue</label><input id="taskQuantity" type="number" min="0" max="100000000" step="any" required value="100"></div><div class="field"><label for="taskUnit">Unité</label><select id="taskUnit"><option>m²</option><option>m³</option><option>ml</option><option>t</option><option>u</option><option>lot</option><option>dossier</option></select></div></div>
+   <div class="form-grid"><div class="field"><label for="taskDone">Quantité réalisée</label><input id="taskDone" type="number" min="0" max="100000000" step="any" value="0"></div><div class="field"><label for="taskCost">Déboursé unitaire (€)</label><input id="taskCost" type="number" min="0" max="100000000" step="any" value="0"></div></div>
+   <div class="form-grid"><div class="field"><label for="taskDailyRate">Rendement (unité/jour)</label><input id="taskDailyRate" type="number" min=".0001" max="100000000" step="any" value="50"></div><div class="field"><label for="taskCrew">Effectif équipe</label><input id="taskCrew" type="number" min="1" max="200" step="1" value="3"></div></div>
+   <div class="form-grid"><div class="field"><label for="taskDays">Durée forcée (j)</label><input id="taskDays" type="number" min="1" max="10000" step="1" placeholder="Automatique"></div><div class="field"><label for="taskConstraint">Début au plus tôt</label><input id="taskConstraint" type="date"></div></div>
+   <div class="field"><label for="taskDependencies">Prédécesseurs (séparés par virgule)</label><input id="taskDependencies" placeholder="Ex. t01, t02"><span id="dependencyHint" class="hint">Les ID sont affichés sous chaque ligne du tableau.</span></div>
+   <div class="field"><label for="taskActualCost">Coût réel constaté (€) — optionnel</label><input id="taskActualCost" type="number" min="0" max="10000000000" step="any" placeholder="Non renseigné"></div>
+   <div class="field"><label for="taskNotes">Observations / hypothèses</label><textarea id="taskNotes" rows="3" maxlength="2000" placeholder="Conditions de réalisation, risques et contraintes..."></textarea></div>
+   <div class="hint warn">Les valeurs d'exemple ne valent ni prix contractuel ni cadence garantie. Vérifier les pièces du marché et le terrain.</div>
+   <div id="formError" class="form-error" role="alert" aria-live="polite"></div>
+   <div class="actions stretch"><button class="button primary" type="submit" id="saveTask">Enregistrer la tâche</button><button class="button" type="button" id="cancelEdit">Effacer</button><button class="button danger-text" type="button" id="deleteTask">Supprimer</button></div>
+  </form>
+ </aside>
+</div>
+<dialog id="projectDialog" class="modal">
+ <form method="dialog" id="projectForm">
+  <div class="modal-heading"><p class="eyebrow">Dossier chantier</p><h2 id="projectModalTitle">Créer un chantier</h2><button type="button" class="button close" id="closeDialog" aria-label="Fermer">×</button></div>
+  <div class="field"><label for="projectName">Nom du projet</label><input id="projectName" required maxlength="180" placeholder="Ex. Réaménagement VRD"></div>
+  <div class="field"><label for="projectClient">Maître d’ouvrage / client</label><input id="projectClient" maxlength="180"></div>
+  <div class="form-grid"><div class="field"><label for="projectCity">Localisation</label><input id="projectCity" maxlength="180"></div><div class="field"><label for="projectStart">Date de départ</label><input id="projectStart" type="date" required></div></div>
+  <p class="help">Nouveau projet vierge. Les coûts et rendements ne seront pas préremplis avec des données fictives.</p>
+  <div id="projectError" class="form-error" role="alert"></div>
+  <div class="actions" style="justify-content:flex-end"><button type="button" class="button" id="cancelDialog">Annuler</button><button type="submit" class="button primary">Enregistrer</button></div>
+ </form>
+</dialog>
+<input type="file" id="fileImport" accept=".json,application/json" hidden>
+<script src="assets/project-core-v1.js"></script>
+<script src="assets/project-workspace.js"></script>
+</body>
+</html>
