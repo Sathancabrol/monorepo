@@ -2,6 +2,25 @@
 
 Ce journal est incrémental, distinct du backlog historique `BTP_STUDIO_V2_ETAT_ET_BACKLOG.md`. Les preuves de calcul ne valent pas recette UI ni validation réglementaire. Ne jamais marquer « terminé » sans tests reproductibles.
 
+## 2026-11-23, passage 3 — validation des calculs du workbench 23 modules
+
+**État inspecté :** branche `feat/btp-all-modules-workbench-20261123`, branches `feat/btp-studio-premium-3d-20261123` et `fix/btp-navigation-pages-20261123` repérées ; backlog historique et veille GitHub 2026 relus. Le monolithe `index.html` comporte 23 panneaux, et `assets/workbench-v3.js` contient la couche d'interaction commune aux 23 modules.
+
+**Correctif réel :** `3523da65d2d594e530cf26b6781781c6b88cca29` modifie `assets/workbench-v3.js`. Auparavant, les valeurs vides ou non numériques étaient silencieusement remplacées par zéro ou les valeurs d'exemple, et une division par zéro affichait un taux trompeur de 0 %. Les calculs rapides affichent désormais « Saisie invalide », « Division par zéro » ou « Résultat hors limites », au lieu de résultats plausibles mais faux. Les zéros valides restent acceptés ; les soldes négatifs calculés restent affichables.
+
+**Tests :** `aa4ff9103ba058b188a5e1edf1697493f6fef9dc` ajoute `tests/workbench-metrics.test.cjs` (13 scénarios). **13/13 scénarios exécutés et réussis** dans un moteur JavaScript isolé en extrayant le bloc `metrics` de la version GitHub après commit. Scénarios : exemples de trois modules, entrée vide, texte, quantité négative, zéro valide, division par zéro, résultat nul, solde négatif, infini en entrée, décimale et débordement numérique. Commande Node reproductible :
+
+```bash
+cd projects/btp-conduite-travaux
+node tests/workbench-metrics.test.cjs
+```
+
+**Limites :** exécution de la commande Node non effectuée ici ; pas de navigateur, donc les interactions DOM, impression et persistance ne sont pas validées. Le correctif vise le calcul rapide pédagogique commun aux 23 modules, **pas** les calculateurs historiques intégrés dans le monolithe, qui doivent encore être audités et corrigés. Les données restent fictives et aucune conformité réglementaire n'est démontrée.
+
+**Suite prioritaire :** inspecter/corriger les handlers UI manquants du monolithe, notamment les calculateurs hydrauliques/électriques et les registres livraisons/intempéries ; réaliser tests navigateur sur l'ensemble des 23 modules, puis intégrer données de tâche, planning, géométrie 3D et exports. Aucun SDK tiers intégré (veille GitHub = benchmark).
+
+**Statut :** V2 incomplète ; poursuite nécessaire.
+
 ## 2026-11-23, passage 2 — fiabilité du moteur de tâches
 
 **Base inspectée :** `feat/btp-all-modules-workbench-20261123`; branches repérées `feat/btp-studio-premium-3d-20261123`, `fix/btp-navigation-pages-20261123`. Backlog et veille GitHub 2026 lus. Aucune fusion, aucune dépendance externe ajoutée.
