@@ -30,6 +30,9 @@ function display(){
  data.modules.map(m=>'<tr style="border-top:1px solid #35535a"><td style="padding:9px">'+esc(m.id)+'</td><td style="text-align:center">'+(m.tab_exists?"Oui":"Non")+'</td><td style="text-align:center">'+m.controls_visible_in_dom+'</td><td style="text-align:center">'+(m.toolbox_present?"Oui":"Non")+'</td></tr>').join("")+
  '</tbody></table></div>'+
  '<div class="btp-wb-forced-note">Doublons ID signalés : '+data.duplicate_dom_ids.length+' · Erreurs JS interceptées depuis le chargement du diagnostic : '+data.observed_errors.length+'. L’absence d’erreur détectée n’est pas une validation des fonctionnalités.</div>'+
+ '<details open style="margin:12px 0;padding:11px;border:1px solid #5e7975;border-radius:8px;color:#d4eadb"><summary style="cursor:pointer;font-weight:800">Détails des erreurs et doublons détectés</summary>'+
+ '<p style="font-size:11px;margin:8px 0">Identifiants en doublon : '+(data.duplicate_dom_ids.map(x=>esc(x.id)+' ('+x.count+')').join(', ')||'Aucun')+'</p>'+
+ '<div style="max-height:220px;overflow:auto">'+(data.observed_errors.length?data.observed_errors.map(x=>'<div style="font:11px ui-monospace,monospace;padding:7px;border-top:1px solid #3d5e5a"><strong>'+esc(x.message)+'</strong><div>'+esc(x.source||'Script')+' : ligne '+esc(x.line||'-')+' · '+esc(x.time||'')+'</div></div>').join(''):'<p style="font-size:11px">Aucune erreur interceptée par ce collecteur (les erreurs antérieures à son chargement ne sont pas observables).</p>')+'</div></details>'+
  '<div class="btp-wb-actions" style="margin-top:12px"><button type="button" class="btp-wb-action primary" data-btp-diag="export">Exporter diagnostic JSON</button><button type="button" class="btp-wb-action" data-btp-diag="again">Relancer le contrôle</button></div>'+
  '</div>';
 }
