@@ -22,6 +22,7 @@ rejects(()=>core.task({...task,daysOverride:2.3}),"fractional days");
 const zero=core.schedule({...p,tasks:[{...task,quantity:0,depends:[]}]});
 equal(zero.tasks[0].durationDays,0,"zero quantity does not automatically consume a day");
 equal(zero.summary.calendarDays,0,"zero quantity produces no calendar span");
+equal(zero.tasks[0].endInclusive,null,"zero-duration task has no inclusive end date");
 ok(zero.warnings.some(x=>x.includes("quantité nulle")),"zero quantity is flagged");
 const forced=core.schedule({...p,tasks:[{...task,quantity:0,daysOverride:2,depends:[]}]});
 equal(forced.tasks[0].durationDays,2,"explicit mobilization is retained");
