@@ -1094,8 +1094,8 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                 <button class="btn btn-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.5rem;" onclick="runAutopilot()">▶️ Exécuter Cycle IA</button>
             </div>
             <div id="cockpit-terminal" style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 0.75rem; background: #040711; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid var(--border); color: #38bdf8; max-height: 120px; overflow-y: auto; line-height: 1.5;">
-                <div style="color: #22c55e;">[10:54:10] Initialisation du noyau BTP Conduite Travaux v5.3 : 100% opérationnel</div>
-                <div style="color: #94a3b8;">[10:54:12] Système SIG Watchtower synchronisé : 4 couches cartographiques HD actives</div>
+                <div style="color: #22c55e;">[10:54:10] Interface BTP chargée — fonctions métier à vérifier</div>
+                <div style="color: #94a3b8;">[10:54:12] Carte SIG de démonstration — sources des couches à vérifier</div>
                 <div style="color: #eab308;">[10:54:15] Détection station météo Bassin de Thau : Vent 14 km/h NO, T°C 22°C (Conditions optimales pose BBSG)</div>
                 <div style="color: #38bdf8;">[10:54:20] Registre des pesées centrale : 428.5t enrobés validées conformes</div>
             </div>
@@ -1834,7 +1834,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                     <button class="btn btn-secondary" id="btn-aipr-blindage-toggle" onclick="toggleAiprBlindage()">🛡️ Blindage R4534 : ACTIF</button>
                     <button class="btn btn-secondary" onclick="openSafetyQuarterHourModal()">📋 Fiches 1/4h Sécurité OPPBTP</button>
-                    <button class="btn btn-primary" onclick="openSafetyVisionAuditorModal()">📸 Audit Vision IA Sécurité (EPI / Fouilles)</button>
+                    <button class="btn btn-primary" onclick="openSafetyVisionAuditorModal()">📸 Démo du protocole d’inspection QSE (sans IA)</button>
                     <button class="btn btn-danger" onclick="openSafetyEmergencySimulator()">🚨 Simuler Rupture & Urgence</button>
                 </div>
             </div>
@@ -4266,8 +4266,7 @@ iv>
     };
 
     window.resetAllDataFactory = function() {
-        if (confirm('Réinitialiser l\'intégralité des données et recharger la configuration d\'usine ?')) {
-            localStorage.clear();
+        if (confirm("Recharger les données de démonstration BTP sans effacer vos notes, projets ni sauvegardes locales ?")) {
             location.reload();
         }
     };
@@ -5107,17 +5106,26 @@ iv>
     }
 
     function downloadProjectDoc(docName, projName, fileType) {
-        const content = `=== DOSSIER OFFICIEL BTP ===\nChantier : ${projName || 'Travaux Publics'}\nDocument : ${docName}\nFormat : ${fileType || 'PDF'}\nDate : ${new Date().toISOString()}\nCertification SHA-256 : ${Math.random().toString(36).substring(2)}\n\nConforme aux prescriptions CCTP et normes NF/EN.`;
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        // A prototype cannot generate an official PV or certify a PDF.
+        // Save a truthful text draft regardless of any legacy requested extension.
+        const project = String(projName || "Chantier");
+        const label = String(docName || "Document");
+        const content = "# FICHE BTP — BROUILLON DE DÉMONSTRATION\n\n"
+            + "Chantier : " + project + "\n"
+            + "Document demandé : " + label + "\n"
+            + "Type attendu dans le prototype : " + String(fileType || "non précisé") + "\n"
+            + "Date de génération : " + new Date().toISOString() + "\n\n"
+            + "Avertissement : contenu pédagogique non contractuel.\n"
+            + "Ce fichier texte ne constitue ni PDF réglementaire, ni certificat, ni PV, ni preuve de conformité.\n"
+            + "À compléter et faire valider à partir des pièces du marché et des contrôles réels.\n";
+        const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${(projName || 'Chantier').replace(/\s+/g, '_')}_${docName.replace(/\s+/g, '_')}.${fileType || 'pdf'}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        logCockpit(`📥 Téléchargement direct initié : ${docName} pour ${projName}.`, 'ok');
+        const a = document.createElement("a");
+        a.href=url;
+        a.download=(project+"_"+label).replace(/[^a-zA-Z0-9_-]/g,"_").slice(0,120)+".txt";
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(function(){URL.revokeObjectURL(url);},1000);
+        if(typeof logCockpit==="function")logCockpit("Brouillon texte non contractuel exporté : "+label,"info");
     }
 
     function downloadDoc(docName) {
@@ -14457,12 +14465,14 @@ iv>
     }
 
     function runAutopilot() {
-        alert('⚡ Audit IA Global exécuté : Analyse des cadences de 4 chantiers, conformité des 28 SDP, vérification DICT, audit DGD et inventaire dépôt 100% validés.');
-        logCockpit('Audit IA Global exécuté avec succès.', 'ok');
+        const ids=["cockpit","company","depot","projects_hub","planning","simulator","fleet","catalog","hr","opbtp","safety","rdc","compagnon_mobile","obsidian","schemas","sdp","benchmark","procurement","ledger","docs","archives","atelier_3d","fiches_taches"];
+        const count=ids.filter(id=>!!document.getElementById("tab-"+id)).length;
+        alert("Diagnostic structurel local : "+count+"/"+ids.length+" panneaux disponibles.\n\nAucun audit IA, contrôle DICT, vérification de prix, validation QSE, de DGD ou de documents contractuels n’a été effectué.\nPour contrôler le fonctionnement des modules, utilisez le diagnostic dédié et les essais métier.");
+        if(typeof logCockpit==="function")logCockpit("Contrôle de structure local des panneaux : "+count+"/"+ids.length+" (non certifiant).","info");
     }
 
     function toggleVoiceControl() {
-        alert('🎙️ Commande vocale VRD initialisée. Parlez pour dicter vos ordres (ex: "Afficher planning Alès").');
+        alert('Commande vocale non disponible dans cette version. Aucun microphone ni moteur de transcription n’a été initialisé.');
     }
 
     function triggerSimulatedCrisis() {
@@ -14949,15 +14959,15 @@ iv>
         const bodyEl = document.getElementById('safety-modal-body');
         if (!modal || !titleEl || !bodyEl) return;
 
-        titleEl.innerHTML = "📸 Audit par Vision IA : Contrôle Automatisé Sécurité & EPI";
+        titleEl.innerHTML = "Préparer un contrôle QSE — démonstration";
         bodyEl.innerHTML = `
             <div style="background: rgba(15,23,42,0.95); border: 2px solid var(--cyan); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-                <h4 style="font-size: 0.95rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.4rem;">Inspection Visuelle Automatisée par Intelligence Artificielle</h4>
+                <h4 style="font-size: 0.95rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.4rem;">Préparation d’une inspection humaine (aucune IA active)</h4>
                 <p style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.75rem;">
-                    Scannez une prise de vue de chantier pour vérifier la conformité du port des EPI (Casque, Gilet fluo), la présence de blindage sur fouille > 1.30m et le balisage de zone.
+                    Cette version ne sait pas analyser une photo de chantier : utiliser cette fiche comme aide à préparer les contrôles sur site. Aucun résultat de conformité ne peut être conclu automatiquement.
                 </p>
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
-                    <button class="btn btn-primary" onclick="runSafetyVisionAudit()">⚡ Lancer Scan IA Temps Réel</button>
+                    <button class="btn btn-primary" onclick="runSafetyVisionAudit()">Afficher les limites de cette démonstration</button>
                     <button class="btn btn-secondary" onclick="closeModal('safety-emergency-modal')">Fermer</button>
                 </div>
                 <div id="safety-vision-results" style="display: none; background: #070a14; border: 1px solid rgba(56,189,248,0.4); border-radius: 6px; padding: 0.75rem; font-size: 0.78rem;">
@@ -14969,31 +14979,13 @@ iv>
     }
 
     function runSafetyVisionAudit() {
-        const resEl = document.getElementById('safety-vision-results');
-        if (!resEl) return;
-        resEl.style.display = 'block';
-        resEl.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid #334155; padding-bottom: 4px;">
-                <span style="font-weight: 800; color: var(--emerald);">✅ ANALYSE VISION IA CHANTIER TERMINÉE</span>
-                <span class="badge badge-success">Score Conformité : 96.5%</span>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 6px; border-radius: 4px;">
-                    <strong style="color: var(--emerald);">🦺 Détection EPI :</strong>
-                    <div>• 6/6 Casques de sécurité détectés (100%)</div>
-                    <div>• 6/6 Gilets haute visibilité classe 2 (100%)</div>
-                </div>
-                <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 6px; border-radius: 4px;">
-                    <strong style="color: var(--emerald);">🛡️ Blindage de Fouille :</strong>
-                    <div>• Caisson Krings acier vérifié (Prof. 2.20m)</div>
-                    <div>• Étrésillons conformes R4534</div>
-                </div>
-            </div>
-            <div style="color: #cbd5e1; font-size: 0.72rem;">
-                🔍 <strong>Recommandation IA :</strong> Aucun manquement critique relevé. Le chantier est autorisé à poursuivre son activité. Rapport d'audit horodaté consigné dans le journal RDC.
-            </div>
-        `;
-        logCockpit("Audit Vision IA Sécurité exécuté : 100% conformité EPI et blindage.", "ok");
+        const resEl=document.getElementById("safety-vision-results");
+        if(!resEl)return;
+        resEl.style.display="block";
+        resEl.innerHTML='<div style="font-weight:800;color:#facc15">Simulation pédagogique — aucun contrôle visuel automatique exécuté</div>'
+          + '<p style="font-size:.8rem;color:#e2e8f0">Aucune image de chantier ni modèle de vision n’est actuellement connecté à ce prototype. Impossible de déduire la conformité des EPI, de la fouille ou du blindage.</p>'
+          + '<p style="font-size:.8rem;color:#e2e8f0">Pour un contrôle réel : inspection sur site par une personne compétente, pièces justificatives datées, puis saisie et validation humaine.</p>';
+        if(typeof logCockpit==="function")logCockpit("Démonstration du processus QSE uniquement : aucun audit IA ni validation de sécurité.","warning");
     }
 
     window.onload = function() {
