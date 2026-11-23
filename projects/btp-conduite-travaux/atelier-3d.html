@@ -201,7 +201,7 @@ input[type=range]{width:100%;accent-color:#b8ee70;cursor:pointer}
   el('auxValue').textContent=fmt(q.truck,0);
   el('auxSub').textContent='Théoriques · hors foisonnement / contraintes';
   el('details').innerHTML='<strong>'+fmt(q.days,1)+' jour(s)</strong> théoriques à '+fmt(state.prod,0)+' m³/j<br>'+(state.mode==='road'?'GNT '+fmt(state.len*state.width*state.gnt,2)+' m³ · GB '+fmt(state.len*state.width*state.gb,2)+' m³ · Enrobé '+fmt(state.len*state.width*state.bbs,2)+' m³':'Largeur en tête '+fmt(q.top,2)+' m · Conduite '+fmt(q.pipeVol,2)+' m³')+'<br><span>Ni pertes, ni foisonnement, ni sécurité intégrés.</span>';
-  updateUndo();render();
+  updateUndo();render();document.dispatchEvent(new CustomEvent('btp3d:changed'));
  }
  ids.forEach(function(id){el(id).addEventListener('input',function(){var v=Number(this.value);if(v!==state[id]){state[id]=v;refresh()}});el(id).addEventListener('change',function(){ /* l'historique est pris au début du geste */}) ;el(id).addEventListener('pointerdown',function(){undo.push(clone());if(undo.length>70)undo.shift();redo=[]})});
  toggles.forEach(function(id){el(id).addEventListener('change',function(){var v=this.checked;change(function(){state[id]=v})})});
@@ -303,8 +303,11 @@ input[type=range]{width:100%;accent-color:#b8ee70;cursor:pointer}
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(name){canvas.addEventListener(name,function(){dragging=null})});
  canvas.addEventListener('wheel',function(e){e.preventDefault();cam.zoom=clamp(cam.zoom*(e.deltaY>0?.91:1.10),.35,3.4);render()},{passive:false});
  ['handleWidth','handleDepth'].forEach(function(id){var h=el(id),ref=null;h.addEventListener('pointerdown',function(e){e.stopPropagation();e.preventDefault();ref={x:e.clientX,y:e.clientY,value:state[id==='handleWidth'?'width':'depth']};undo.push(clone());redo=[];h.setPointerCapture(e.pointerId)});h.addEventListener('pointermove',function(e){if(!ref)return;var key=id==='handleWidth'?'width':'depth';state[key]=clamp(Math.round((ref.value+(id==='handleWidth'?(e.clientX-ref.x)/30:(e.clientY-ref.y)/28))*10)/10,+el(key).min,+el(key).max);refresh()});h.addEventListener('pointerup',function(){ref=null});h.addEventListener('pointercancel',function(){ref=null})});
+ window.BTPAtelier3D = Object.freeze({getModel:function(){return clone()},getQuantities:function(){return Object.assign({},qty())}});
  refresh();resize();
 })();
 </script>
+<script src="assets/project-core-v1.js"></script>
+<script src="assets/atelier-project-bridge.js"></script>
 </body>
 </html>
