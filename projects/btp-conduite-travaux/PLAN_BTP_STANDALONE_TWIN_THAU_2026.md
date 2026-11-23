@@ -16,6 +16,8 @@
 
 | Rôle | Outil | URL | Licence | Intégration conseillée |
 |---|---|---|---|---|
+| ERP BTP autonome (benchmark majeur) | OpenConstructionERP | https://github.com/datadrivenconstruction/OpenConstructionERP | AGPL-3.0 | Benchmark de modules métiers : devis/BOQ, coûts, 4D/5D, achats, RH, dossiers ; application desktop, vérifier chaque parcours avant récupération |
+| Visionneuse multi-format desktop | Open BIM Suite | https://github.com/OpenAEC-Foundation/open-bim-suite | vérifier les sous-composants/licences exactes | Import de nombreux formats IFC, DWG/DXF, LAS/LAZ, 3D Tiles ; tests de formats et extraction | 
 | Scène géospatiale | CesiumJS | https://github.com/CesiumGS/cesium | Apache-2.0 | Moteur principal 3D géoréférencé dans BTP Studio autonome |
 | IFC BIM | That Open Engine | https://github.com/ThatOpen/engine_components | MIT | Viewer et propriétés IFC; prototype intégration Cesium via exports glTF/3D Tiles |
 | Exemple appli BIM complète | IFC Viewer | https://github.com/chilldanil/ifc-viewer-app | MIT | Étudier code et intégration bibliothèque/desktop, coupes, sélections, édition de propriétés |
@@ -28,6 +30,8 @@
 | CAO/BIM exécutable | OpenConstructionDesign | https://github.com/datadrivenconstruction/OpenConstructionDesign | AGPL-3.0-only | Benchmark édition BIM/IFC, Windows zip ; ne pas intégrer son code sans revue licence |
 | Traitement 3D Tiles | Digital Twin Toolbox | https://github.com/geosolutions-it/digital-twin-toolbox | GPL-3.0 | Expérimental / pas production-ready : tester conversion LAS + Shapefile en 3D Tiles |
 | Viewer LiDAR léger | LiDAR HD Viewer | https://www.data.gouv.fr/reuses/lidar-hd-viewer | licence libre à créditer | Preuve de concept de récupération COPC sur emprise |
+
+OpenConstructionERP revendique plus de 190 modules et un exécutable desktop ; ce chiffre est un inventaire déclaré par son éditeur, pas une preuve de qualité ou d'intégration. La version GitHub v20.2.1 est publiée le 23/11/2026 ; vérifier maintenabilité, dépendances et capacité d'intégration avant tout fork.
 
 Les descriptions de fonctionnalités viennent des pages projet et nécessitent un essai sur des fichiers réels ; **aucune intégration des dépôts tiers n'est déclarée livrée**. Revoir licences transitoires des assets tiers et termes géoservices. Les projets sous AGPL/GPL ne sont pas « copiables sans conditions » ; préférer l'usage séparé ou implémentations conformes.
 
