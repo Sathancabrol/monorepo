@@ -10,7 +10,7 @@
 const SCHEMA="btp-project-v1";
 const MAX_TASKS=300;
 function invariant(ok,msg){if(!ok)throw new Error(msg)}
-function finite(v,name,lo,hi){const x=Number(v);invariant(Number.isFinite(x)&&x>=lo&&x<=hi,name+" : valeur hors limites");return x}
+function finite(v,name,lo,hi){invariant(v!==null&&v!==undefined&&!(typeof v==="string"&&v.trim()===""),name+" : valeur obligatoire");const x=Number(v);invariant(typeof v!=="boolean"&&Number.isFinite(x)&&x>=lo&&x<=hi,name+" : valeur hors limites");return x}
 function str(v,name,max=180){const t=String(v==null?"":v).trim();invariant(t.length>0&&t.length<=max,name+" : texte manquant ou trop long");return t}
 function iso(s){
  invariant(typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s),"Date invalide : AAAA-MM-JJ attendu");
@@ -27,14 +27,16 @@ function task(raw){
   doneQuantity:finite(raw.doneQuantity==null?0:raw.doneQuantity,"Quantité réalisée",0,1e8),
   unitCost:finite(raw.unitCost==null?0:raw.unitCost,"Déboursé unitaire indicatif",0,1e8),
   dailyRate:finite(raw.dailyRate==null?1:raw.dailyRate,"Rendement",.0001,1e8),
-  crew:Math.round(finite(raw.crew==null?1:raw.crew,"Équipe",1,200)),
+  crew:finite(raw.crew==null?1:raw.crew,"Équipe",1,200),
   depends:Array.isArray(raw.depends)?[...new Set(raw.depends.map(v=>str(v,"Prédécesseur",90)))]:[],
   group:String(raw.group||"Exécution").slice(0,90),
   notes:String(raw.notes||"").slice(0,2000),
   verification:String(raw.verification||"À vérifier").slice(0,120),
   costActual:raw.costActual==null?null:finite(raw.costActual,"Coût réel constaté",0,1e10)
  };
- if(raw.daysOverride!=null&&raw.daysOverride!=="")t.daysOverride=Math.round(finite(raw.daysOverride,"Durée imposée",1,10000));
+ if(raw.daysOverride!=null&&raw.daysOverride!=="")t.daysOverride=finite(raw.daysOverride,"Durée imposée",1,10000);
+ invariant(Number.isInteger(t.crew),"Équipe : nombre entier requis");
+ if(t.daysOverride!=null)invariant(Number.isInteger(t.daysOverride),"Durée imposée : nombre entier requis");
  if(raw.startConstraint!=null&&raw.startConstraint!==""){iso(raw.startConstraint);t.startConstraint=raw.startConstraint}
  invariant(!t.depends.includes(t.id),"Dépendance circulaire directe");
  return t
@@ -69,7 +71,8 @@ function schedule(input){
  const p=project(input),byId=new Map(p.tasks.map(t=>[t.id,t])),memo=new Map();
  function compute(id){
   if(memo.has(id))return memo.get(id);
-  const t=byId.get(id),duration=t.daysOverride||Math.max(1,Math.ceil(t.quantity/t.dailyRate));
+  // Zero-quantity tasks do not silently consume a full production day unless explicitly overridden.
+  const t=byId.get(id),duration=t.daysOverride!=null?t.daysOverride:(t.quantity===0?0:Math.max(1,Math.ceil(t.quantity/t.dailyRate)));
   let start=t.startConstraint?chooseDay(p.startDate,t.startConstraint):p.startDate;
   for(const d of t.depends)start=chooseDay(start,compute(d).endExclusive);
   const endExclusive=addDays(start,duration);
@@ -83,6 +86,7 @@ function schedule(input){
  const end=rows.reduce((max,t)=>chooseDay(max,t.endExclusive),p.startDate);
  const warnings=[];
  if(rows.some(t=>t.doneQuantity>t.quantity))warnings.push("Quantité réalisée supérieure à la quantité prévue : dépassement ou mise à jour du métré à vérifier");
+ if(rows.some(t=>t.quantity===0))warnings.push("Tâche à quantité nulle : durée de production égale à zéro, vérifier si une mobilisation reste nécessaire");
  if(rows.some(t=>t.unitCost===0))warnings.push("Certains déboursés unitaires sont nuls ou non renseignés");
  if(rows.some(t=>t.verification!=="Validé"))warnings.push("Les contrôles et validations restent à effectuer");
  return {project:p,tasks:rows,summary:{
@@ -94,6 +98,7 @@ function schedule(input){
   valueProgressPct:cost>0?Math.round(value/cost*10000)/100:0,
   earliestDate:p.startDate,endExclusive:end,calendarDays:Math.round((iso(end)-iso(p.startDate))/86400000),
   plannedCrewHours:rows.reduce((n,t)=>n+t.estimatedCrewHours,0),
+  scheduleBasis:"calendar-days", // Weekends, holidays, weather and shifts are NOT deducted.
   warningCount:warnings.length
  },warnings}
 }
