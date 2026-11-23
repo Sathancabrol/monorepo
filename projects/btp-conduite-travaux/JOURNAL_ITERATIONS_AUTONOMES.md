@@ -1,5 +1,24 @@
 # BTP Studio V2 — journal des itérations autonomes
 
+## 2026-11-24, passage 8 — attribution des handlers manquants par module
+
+**Inspection :** branches BTP (`feat/btp-all-modules-workbench-20261123`, `feat/btp-studio-premium-3d-20261123`, `fix/btp-navigation-pages-20261123`), backlog V2, veille GitHub 2026, journal et source du diagnostic. Le diagnostic global des handlers ne permettait pas de savoir quel module contenait un contrôle défaillant.
+
+**Code réellement poussé :**
+- [`89374741`](https://github.com/Sathancabrol/monorepo/commit/89374741f65181b205065a12209330ceacc82442) : `assets/diagnostics-v3.js` — attribution des appels inline non résolus au panneau `tab-*` propriétaire ; nombre d'anomalies par module dans le JSON et dans le tableau du diagnostic ; séparation des appels globaux et des appels propres à un module ; étiquette explicite du caractère heuristique des anomalies.
+- [`96ef1d22`](https://github.com/Sathancabrol/monorepo/commit/96ef1d2272fbde4c6d93111362a6384b6a37976a) : `tests/diagnostics-module-attribution.test.cjs` — test reproductible simulant deux panneaux et un contrôle global, couvrant l'attribution, le compteur, le statut structurel et l'absence de certification fonctionnelle.
+
+**Vérification :** syntaxe du nouveau `diagnostics-v3.js` compilée dans un moteur JavaScript isolé (`new Function`), six vérifications structurelles de présence du code passées. **Le test Node versionné et les clics dans un navigateur n'ont pas été exécutés ici.** Commande : `cd projects/btp-conduite-travaux && node tests/diagnostics-module-attribution.test.cjs`. Ne pas confondre compilation et recette UI.
+
+**Limites :** l'analyse par expressions régulières des attributs HTML peut générer des faux positifs et ne détecte ni les événements liés par `addEventListener`, ni les erreurs métier. La liste par module ne prouve pas que les fonctions existent ou répondent correctement. Les panneaux hérités ont encore des données de démonstration et des interactions non vérifiées.
+
+**Suite :** exécuter les tests Node et Playwright/Chromium sur l'application réelle ; corriger les fonctions manquantes les plus fréquentes ; réaliser les scénarios création → persistance → export → rechargement pour chaque module, puis le flux DCE → DOE. Ne pas intégrer de dépôt tiers avant preuve de licence et prototype isolé.
+
+**Statut :** V2 incomplète. Aucun merge dans `main`, aucune dépendance payante ajoutée.
+
+---
+
+
 ## 2026-11-23, passage 5 — calculateurs techniques indicatifs raccordés
 
 **Inspection :** branches BTP (branche de travail et deux branches historiques), backlog, journal, veille 2026, `index.html` et `assets/workbench-v3.js`. Les handlers de calcul hydraulique, bassin, réseaux électriques et éclairage public étaient appelés par les contrôles UI sans définition dans le monolithe.
