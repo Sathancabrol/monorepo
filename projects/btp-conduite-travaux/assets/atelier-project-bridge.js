@@ -34,7 +34,7 @@ function quantity(){
  return metric==="m³"?q.volume:q.area;
 }
 function refresh(){
- const found=read(),selected=$("b3d-task").value;
+ const found=read(),selected=$("b3d-task").value||localStorage.getItem("btp_project_active_task_v1")||"";
  $("b3d-caption").textContent=found?"Dossier : "+found.project.title+" ("+(found.project.dataType==="demonstration"?"EXEMPLE":found.project.dataType==="imported"?"IMPORT":"UTILISATEUR")+")":"Aucun dossier trouvé. Ouvre d’abord « Dossier chantier ».";
  const tasks=matching();
  $("b3d-task").innerHTML=tasks.length?tasks.map(t=>'<option value="'+esc(t.id)+'" '+(t.id===selected?"selected":"")+'>'+esc(t.name)+' · '+fmt(t.quantity)+' '+esc(t.unit)+'</option>').join(""):'<option value="">Aucune tâche en '+metric+'</option>';
@@ -48,7 +48,7 @@ function refresh(){
  $("b3d-apply").disabled=!found||!selectedTask||!Number.isFinite(q)||q<0;
 }
 $("b3d-metric").addEventListener("change",e=>{metric=e.target.value;refresh()});
-$("b3d-task").addEventListener("change",refresh);
+$("b3d-task").addEventListener("change",function(){try{localStorage.setItem("btp_project_active_task_v1",this.value)}catch(e){}refresh()});
 $("b3d-apply").addEventListener("click",()=>{
  const found=read(),taskId=$("b3d-task").value;if(!found)return;
  const q=quantity(),task=found.project.tasks.find(t=>t.id===taskId&&t.unit===metric);
