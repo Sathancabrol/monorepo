@@ -4472,76 +4472,10 @@ iv>
         window.switchNav('projects_hub');
     };
 
-window.switchNav = function(tabId, btn) {
-        document.querySelectorAll('.tab-panel').forEach(function(p) {
-            p.classList.remove('active');
-            p.style.display = 'none';
-        });
-        document.querySelectorAll('.nav-item, .drawer-nav-item, .nav-btn, .quick-hub-btn').forEach(function(b) {
-            b.classList.remove('active');
-        });
-
-        var target = document.getElementById('tab-' + tabId);
-        if (target) {
-            target.classList.add('active');
-            target.style.display = 'block';
-        }
-
-        if (btn && btn.classList) {
-            btn.classList.add('active');
-        }
-        var quickBtn = document.querySelector('.quick-hub-btn[onclick*=\"' + tabId + '\"]');
-        if (quickBtn) quickBtn.classList.add('active');
-        var drawerBtn = document.querySelector('.drawer-nav-item[onclick*=\"' + tabId + '\"]');
-        if (drawerBtn) drawerBtn.classList.add('active');
-
-        window.currentNav = tabId;
-
-        try {
-            if (tabId === 'cockpit') {
-                if (window.renderCockpitAiAgents) window.renderCockpitAiAgents();
-                if (window.renderCockpitProjectsSummary) window.renderCockpitProjectsSummary();
-                if (window.initCockpitOsmMap) setTimeout(window.initCockpitOsmMap, 50);
-            } else if (tabId === 'watchtower') {
-                if (window.initWatchtowerMap) setTimeout(window.initWatchtowerMap, 100);
-            } else if (tabId === 'projects_hub') {
-                if (window.renderProjectsHubList) window.renderProjectsHubList();
-            } else if (tabId === 'company') {
-                if (window.renderFinancialCards) window.renderFinancialCards();
-            } else if (tabId === 'technique_analyse') {
-                if (window.initSimulation2DEnrobes) setTimeout(window.initSimulation2DEnrobes, 100);
-                if (window.initTalus3DCanvas) setTimeout(window.initTalus3DCanvas, 100);
-            } else if (tabId === 'safety_qse') {
-                if (window.renderSafetyRecords) window.renderSafetyRecords();
-            } else if (tabId === 'pointage_terrain') {
-                if (window.renderPointageTeam) window.renderPointageTeam();
-            } else if (tabId === 'rdc_pesee') {
-                if (window.renderRdcPeseeTable) window.renderRdcPeseeTable();
-            } else if (tabId === 'devis_express') {
-                if (window.renderExpressCatalog) window.renderExpressCatalog();
-            } else if (tabId === 'materiel_depot') {
-                if (window.renderInventoryTable) window.renderInventoryTable();
-            } else if (tabId === 'fournisseurs') {
-                if (window.renderFournisseursTable) window.renderFournisseursTable();
-            } else if (tabId === 'rh_personnel') {
-                if (window.renderPersonnelTable) window.renderPersonnelTable();
-            } else if (tabId === 'ccag_travaux') {
-                if (window.renderCcagTree) window.renderCcagTree();
-            } else if (tabId === 'obsidian_wiki') {
-                if (window.renderObsidianGraph) setTimeout(window.renderObsidianGraph, 100);
-            } else if (tabId === 'benchmarking') {
-                if (window.renderBenchmarkingCards) window.renderBenchmarkingCards();
-            } else if (tabId === 'legal_vault') {
-                if (window.renderVaultDocuments) window.renderVaultDocuments();
-            } else if (tabId === 'audit_blockchain') {
-                if (window.renderBlockchainBlocks) window.renderBlockchainBlocks();
-            }
-        } catch(err) {
-            console.warn('Tab init notice:', err);
-        }
-    };
-
-    window.openModal = function(id) {
+// Navigateur BTP : une seule implementation. L'ancienne surcharge de window.switchNav
+    // cassait les alias (planning_gantt -> planning, devis_express -> sdp, etc.).
+    // Utiliser la declaration globale switchNav(rawTabId, btn) ci-dessous.
+        window.openModal = function(id) {
         var m = document.getElementById(id);
         if (m) {
             m.style.display = 'flex';
