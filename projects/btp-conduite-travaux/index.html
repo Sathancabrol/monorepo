@@ -1116,7 +1116,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                 </div>
                 <div style="display: flex; gap: 0.4rem;">
                     <button class="btn btn-secondary" onclick="openCompanySwitchModal()">🔄 Changer de Profil Société</button>
-                    <button class="btn btn-primary" onclick="simulatePaymentSituation()">💰 Encaisser Situation n°3 (+125k€)</button>
+                    <button class="btn btn-primary" onclick="simulatePaymentSituation()">💰 Simuler encaissement n°3 (démonstration)</button>
                 </div>
             </div>
 
@@ -1175,7 +1175,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                         <button class="btn-secondary depot-view-btn" id="btn-depot-3d" onclick="setDepotViewMode('3d')">🛰️ Perspective 3D</button>
                         <button class="btn-secondary depot-view-btn" id="btn-depot-list" onclick="setDepotViewMode('list')">📋 Inventaire Complet</button>
                     </div>
-                    <button class="btn btn-primary" onclick="window.switchNav('catalog')">➕ Enregistrer Entrée Matériel</button>
+                    <button class="btn btn-primary" onclick="window.openDepotEntryV4()">➕ Enregistrer Entrée Matériel</button>
                 </div>
             </div>
 
@@ -1590,7 +1590,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                     <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border);">
                         <button class="btn-secondary fleet-view-btn active" id="btn-fleet-grid" onclick="setFleetPresentationMode('grid')">🔲 Grille Cartes</button>
                         <button class="btn-secondary fleet-view-btn" id="btn-fleet-table" onclick="setFleetPresentationMode('table')">📑 Tableau Détaillé</button>
-                        <button class="btn-secondary fleet-view-btn" id="btn-fleet-telemetry" onclick="setFleetPresentationMode('telemetry')">📡 Télémétrie GPS/CAN</button>
+                        <button class="btn-secondary fleet-view-btn" id="btn-fleet-telemetry" onclick="setFleetPresentationMode('telemetry')">📡 Télémétrie GPS/CAN (simulation)</button>
                     </div>
                     <select id="fleet-sort-select" class="input-field" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.75rem;" onchange="sortFleet(this.value)">
                         <option value="name_asc">Trier : Nom (A ➔ Z)</option>
@@ -1600,7 +1600,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                         <option value="cost_desc">Trier : Coût horaire le plus élevé</option>
                         <option value="category">Trier : Catégorie d'engin</option>
                     </select>
-                    <button class="btn btn-primary" onclick="alert('Fiche engin TP ouverte.');">➕ Ajouter Engin</button>
+                    <button class="btn btn-primary" onclick="window.openFleetEntryV4()">➕ Ajouter Engin</button>
                 </div>
             </div>
 
@@ -3302,7 +3302,7 @@ iv>
                         <option value="2025">Exercice 2025</option>
                         <option value="2024">Exercice 2024</option>
                     </select>
-                    <button class="btn btn-primary" onclick="alert('Module de téléversement et scellement d\'une nouvelle pièce d\'archive ouvert.');">📤 Archiver une Pièce</button>
+                    <button class="btn btn-primary" onclick="window.openArchiveUploaderV4()">📤 Archiver une Pièce</button>
                 </div>
             </div>
 
@@ -15249,5 +15249,7 @@ iv>
 <script defer src="assets/bruckner-repairs-v4.js"></script>
 <script defer src="assets/interactions-repairs-v4.js"></script>
 <script defer src="assets/navigation-repairs-v4.js"></script>
+<script defer src="assets/operations-repairs-v4.js"></script>
+<script defer src="assets/archives-repairs-v4.js"></script>
 </body>
 </html>
