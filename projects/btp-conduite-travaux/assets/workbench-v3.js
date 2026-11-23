@@ -96,6 +96,16 @@ function loadLegacyRegisters(){
  script.onerror=function(){console.warn("BTP local registers could not load; existing UI remains unchanged.");};
  doc.head.appendChild(script);
 }
+/* Safe, independent technical calculators; do not overwrite the historical source. */
+function loadTechnicalCalculators(){
+ if(doc.querySelector('script[data-btp-technical-calculators]'))return;
+ const script=doc.createElement("script");
+ script.src="assets/technical-calculators-v1.js";
+ script.dataset.btpTechnicalCalculators="v1";
+ script.onerror=function(){console.warn("BTP technical calculators failed to load.");};
+ doc.head.appendChild(script);
+}
 if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",setup);else setup();
+if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",loadTechnicalCalculators);else loadTechnicalCalculators();
 if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",loadLegacyRegisters);else loadLegacyRegisters();
 })();
