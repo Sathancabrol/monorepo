@@ -85,3 +85,20 @@ node tests/project-core-v1.test.js
 - **Veille :** `VEILLE_GITHUB_2026_BTP.md` conservée comme benchmark ; aucun nouveau SDK intégré sans prototype, licence et test matériel.
 
 **Statut :** V2 incomplète, automation à poursuivre.
+
+
+## 2026-11-23, passage 6 — sécurisation des registres CSV et saisies
+
+**Inspection :** comparaison de `main` avec `feat/btp-all-modules-workbench-20261123` (80 commits d'avance lors de la lecture, 300 fichiers signalés dans la comparaison), branches `feat/btp-studio-premium-3d-20261123` et `fix/btp-navigation-pages-20261123` repérées. Backlog V2, veille 2026, journal et fichiers de réparation V4 relus. Les corrections de navigation des sous-vues techniques et du planning étaient déjà présentes dans `assets/navigation-repairs-v4.js` : elles n'ont **pas** été réécrites.
+
+**Problème confirmé :** `assets/legacy-registers-v1.js` exportait les valeurs saisies en CSV avec simple échappement des guillemets. Un numéro de BL commençant par `=`, `+`, `-` ou `@` pouvait être interprété comme formule à l'ouverture dans un tableur. La validation des dates acceptait des dates calendaires inexistantes via `Date.parse`, et la quantité vide pouvait être convertie en zéro.
+
+**Code poussé :**
+- `4ae97b13df99085b6170e540c51d6948d4a671d5` : neutralisation des formules CSV en préfixant une apostrophe dans les cellules suspectes, validation stricte des dates (année bissextile, mois, jour, heure/minute), rejet de quantité vide et borne maximale de saisie (1 000 000 t).
+- `a2f9cabb42c245093f7a311d9c8c94f5ea479247` : test Node reproductible `tests/legacy-registers-security.test.cjs` (DOM simulé : rejet date impossible, quantité vide, enregistrement valide, export de cellule à formule neutralisée).
+
+**Vérification effective :** 7 cas calendaires, 5 chaînes de formule CSV, 3 champs ordinaires et 1 compilation JavaScript **réussis** dans un moteur JavaScript isolé sur le texte modifié avant commit. **La commande Node du fichier de test versionné n'a pas été exécutée ici** et **aucun parcours navigateur réel n'a été réalisé**. Pour reproduire : `cd projects/btp-conduite-travaux && node tests/legacy-registers-security.test.cjs`.
+
+**Limites :** le préfixe apostrophe réduit le risque d'exécution de formules lors de l'ouverture CSV dans les tableurs usuels, mais doit être vérifié sur LibreOffice et Excel ; la défense n'est pas une garantie universelle pour tous les importateurs. Les registres restent locaux, manuels et non contractuels. Aucun SDK ajouté, aucune fusion dans `main`.
+
+**À suivre :** exécuter les tests Node et UI dans un navigateur, vérifier le CSV dans un tableur, étendre la protection à tous les exports CSV du monolithe, auditer les 23 modules par scénario complet et vérifier la persistance/import/export de projet. **V2 incomplète.**
