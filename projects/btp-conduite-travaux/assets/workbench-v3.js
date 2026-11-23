@@ -87,5 +87,15 @@ function setup(){
  $$(".tab-panel").forEach(p=>observer.observe(p,{attributes:true,attributeFilter:["class"]}));
  window.addEventListener("load",refresh);
 }
+/* Isolated repair module; preserves the historical monolith and existing handlers. */
+function loadLegacyRegisters(){
+ if(doc.querySelector('script[data-btp-legacy-registers]'))return;
+ const script=doc.createElement("script");
+ script.src="assets/legacy-registers-v1.js";
+ script.dataset.btpLegacyRegisters="v1";
+ script.onerror=function(){console.warn("BTP local registers could not load; existing UI remains unchanged.");};
+ doc.head.appendChild(script);
+}
 if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",setup);else setup();
+if(doc.readyState==="loading")doc.addEventListener("DOMContentLoaded",loadLegacyRegisters);else loadLegacyRegisters();
 })();
