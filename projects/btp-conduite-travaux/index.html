@@ -3171,8 +3171,8 @@ iv>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                     <div style="display: flex; background: #040711; padding: 2px; border-radius: 6px; border: 1px solid var(--border);">
-                        <button class="btn-secondary map-layer-btn active" id="btn-layer-osm" onclick="setSuppliersMapLayer('osm')">🗺️ Plan OpenStreetMap</button>
-                        <button class="btn-secondary map-layer-btn" id="btn-layer-sat" onclick="setSuppliersMapLayer('sat')">🛰️ Vue Satellite HD</button>
+                        <button class="btn-secondary map-layer-btn active" id="btn-supplier-layer-osm" onclick="setSuppliersMapLayer('osm')">🗺️ Plan OpenStreetMap</button>
+                        <button class="btn-secondary map-layer-btn" id="btn-supplier-layer-sat" onclick="setSuppliersMapLayer('sat')">🛰️ Vue Satellite HD</button>
                     </div>
                     <button class="btn-secondary" onclick="sortSuppliers('rating')">Trier par Note ⭐</button>
                     <button class="btn-secondary" onclick="sortSuppliers('distance')">Trier par Distance 📍</button>
@@ -7748,7 +7748,7 @@ iv>
 
     function setWatchtowerMapLayer(layer) {
         watchtowerMapLayer = layer;
-        document.querySelectorAll('.map-layer-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#tab-simulator .map-layer-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('btn-layer-' + layer)?.classList.add('active');
 
         if (wtLeafletMap && wtTileLayers[layer]) {
@@ -13795,8 +13795,8 @@ iv>
 
     function setSuppliersMapLayer(layer) {
         suppliersMapLayer = layer;
-        document.querySelectorAll('.map-layer-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-layer-' + layer)?.classList.add('active');
+        document.querySelectorAll('#tab-procurement .map-layer-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-supplier-layer-' + layer)?.classList.add('active');
 
         const badge = document.getElementById('suppliers-map-badge');
         if (badge) badge.textContent = layer === 'osm' ? 'OpenStreetMap Standard' : '🛰️ Orthophoto Satellite HD';
