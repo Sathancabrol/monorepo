@@ -16,9 +16,10 @@ function handlerAudit(){
   let match;
   while((match=rx.exec(code))){
    const name=match[1];if(ignored.has(name)||["function","if","switch","catch","return","typeof"].includes(name))continue;
-   const key=attr+"|"+name+"|"+(node.id||node.tagName);
+   const moduleNode=node.closest('[id^="tab-"]');const moduleId=moduleNode?moduleNode.id.slice(4):null;
+   const key=attr+"|"+name+"|"+(node.id||node.tagName)+"|"+(moduleId||"global");
    if(seen.has(key))continue;seen.add(key);
-   if(typeof window[name]!=="function")entries.push({element:node.id||node.tagName,attribute:attr,handler:name,code:code.slice(0,160)});
+   if(typeof window[name]!=="function")entries.push({element:node.id||node.tagName,module_id:moduleId,attribute:attr,handler:name,code:code.slice(0,160)});
   }
  }
  return entries;
@@ -26,15 +27,18 @@ function handlerAudit(){
 function run(){
  const all=document.querySelectorAll("[id]"),counts={};for(const e of all){counts[e.id]=(counts[e.id]||0)+1}
  const duplicates=Object.entries(counts).filter(x=>x[1]>1).map(x=>({id:x[0],count:x[1]}));
+ const unresolved=handlerAudit();
  const modules=ids.map(id=>{
  const p=document.getElementById("tab-"+id);
  const controls=p?p.querySelectorAll("button,input,select,textarea,canvas,iframe").length:0;
  const aid=p&&!!p.querySelector(".btp-wb-hub");
  const frames=p?Array.from(p.querySelectorAll("iframe")).map(f=>f.getAttribute("src")):[];
- const available=!!p&&!!p.querySelector(".btp-wb-hub");
- return {id,tab_exists:!!p,toolbox_present:aid,controls_visible_in_dom:controls,iframe_sources:frames,structural_status:available?"wired":"missing",functional_validation:"not_proven"};
+ // Scope each unresolved handler to the module's DOM subtree, including controls without an ID.
+ const unresolvedCount=p?unresolved.filter(entry=>entry.module_id===id).length:0;
+ const available=!!p&&aid;
+ return {id,tab_exists:!!p,toolbox_present:aid,controls_visible_in_dom:controls,iframe_sources:frames,unresolved_handler_count:unresolvedCount,structural_status:available?"wired":"missing",functional_validation:"not_proven"};
  });
- lastAudit={schema:"btp-studio-structural-audit-v1",timestamp:new Date().toISOString(),total:ids.length,connected:modules.filter(x=>x.structural_status==="wired").length,modules,duplicate_dom_ids:duplicates,unresolved_inline_handlers:handlerAudit(),observed_errors:errors.slice(-30),warning:"Diagnostic de structure uniquement : ne garantit ni la validité métier, ni la fonction des boutons, ni la conformité du site."};
+ lastAudit={schema:"btp-studio-structural-audit-v1",timestamp:new Date().toISOString(),total:ids.length,connected:modules.filter(x=>x.structural_status==="wired").length,modules,duplicate_dom_ids:duplicates,unresolved_inline_handlers:unresolved,observed_errors:errors.slice(-30),warning:"Diagnostic de structure uniquement : ne garantit ni la validité métier, ni la fonction des boutons, ni la conformité du site."};
  return lastAudit;
 }
 function display(){
@@ -43,13 +47,13 @@ function display(){
  div.innerHTML='<div class="btp-wb-dialog" role="dialog" aria-modal="true" aria-label="Diagnostic des modules BTP">'+
  '<div style="display:flex;justify-content:space-between;align-items:center;gap:9px"><h2 class="btp-wb-dialog-title">Diagnostic des 23 modules</h2><button type="button" class="btp-wb-action" data-btp-diag="close">Fermer</button></div>'+
  '<p class="btp-wb-secondary">Contrôle de structure : '+data.connected+'/'+data.total+' panneaux connectés. Les calculs, interactions avancées et validations métier ne sont pas certifiés par ce contrôle.</p>'+
- '<div style="overflow:auto;max-height:55vh"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:9px">Module</th><th>Panneau</th><th>Outils DOM</th><th>Atelier</th></tr></thead><tbody>'+
- data.modules.map(m=>'<tr style="border-top:1px solid #35535a"><td style="padding:9px">'+esc(m.id)+'</td><td style="text-align:center">'+(m.tab_exists?"Oui":"Non")+'</td><td style="text-align:center">'+m.controls_visible_in_dom+'</td><td style="text-align:center">'+(m.toolbox_present?"Oui":"Non")+'</td></tr>').join("")+
+ '<div style="overflow:auto;max-height:55vh"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:9px">Module</th><th>Panneau</th><th>Outils DOM</th><th>Atelier</th><th>Handlers manquants*</th></tr></thead><tbody>'+
+ data.modules.map(m=>'<tr style="border-top:1px solid #35535a"><td style="padding:9px">'+esc(m.id)+'</td><td style="text-align:center">'+(m.tab_exists?"Oui":"Non")+'</td><td style="text-align:center">'+m.controls_visible_in_dom+'</td><td style="text-align:center">'+(m.toolbox_present?"Oui":"Non")+'</td><td style="text-align:center">'+m.unresolved_handler_count+'</td></tr>').join("")+
  '</tbody></table></div>'+
  '<div class="btp-wb-forced-note">Doublons ID signalés : '+data.duplicate_dom_ids.length+' · Appels inline non résolus : '+data.unresolved_inline_handlers.length+' · Erreurs JS interceptées depuis le chargement du diagnostic : '+data.observed_errors.length+'. L’absence d’erreur détectée n’est pas une validation des fonctionnalités.</div>'+
  '<details open style="margin:12px 0;padding:11px;border:1px solid #5e7975;border-radius:8px;color:#d4eadb"><summary style="cursor:pointer;font-weight:800">Détails des erreurs, doublons et handlers</summary>'+
  '<p style="font-size:11px;margin:8px 0">Identifiants en doublon : '+(data.duplicate_dom_ids.map(x=>esc(x.id)+' ('+x.count+')').join(', ')||'Aucun')+'</p>'+
- '<p style="font-size:11px;margin:8px 0">Appels inline non résolus (à vérifier) : '+(data.unresolved_inline_handlers.slice(0,50).map(x=>esc(x.handler)+' ['+esc(x.element)+']').join(', ')||'Aucun')+'</p>'+
+ '<p style="font-size:11px;margin:8px 0">*Appels inline non résolus (signal heuristique ; peut contenir des faux positifs) : '+(data.unresolved_inline_handlers.slice(0,50).map(x=>esc(x.handler)+' ['+esc(x.element)+']').join(', ')||'Aucun')+'</p>'+
  '<div style="max-height:220px;overflow:auto">'+(data.observed_errors.length?data.observed_errors.map(x=>'<div style="font:11px ui-monospace,monospace;padding:7px;border-top:1px solid #3d5e5a"><strong>'+esc(x.message)+'</strong><div>'+esc(x.source||'Script')+' : ligne '+esc(x.line||'-')+' · '+esc(x.time||'')+'</div></div>').join(''):'<p style="font-size:11px">Aucune erreur interceptée par ce collecteur (les erreurs antérieures à son chargement ne sont pas observables).</p>')+'</div></details>'+
  '<div class="btp-wb-actions" style="margin-top:12px"><button type="button" class="btp-wb-action primary" data-btp-diag="export">Exporter diagnostic JSON</button><button type="button" class="btp-wb-action" data-btp-diag="again">Relancer le contrôle</button></div>'+
  '</div>';
