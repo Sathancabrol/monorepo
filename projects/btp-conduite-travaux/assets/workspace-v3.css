@@ -1,0 +1,29 @@
+
+/* Project context switcher — scoped, responsive, no third-party dependency */
+.btp-project-strip{display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:9px 18px;background:linear-gradient(100deg,#193137,#11252a);border-bottom:1px solid #47625f5e;box-shadow:0 8px 20px #0002}
+.btp-project-logo{font-weight:850;color:#bde991;font-size:11px;letter-spacing:.11em;text-transform:uppercase}
+.btp-project-select{min-width:190px;max-width:350px;flex:1;background:#102025;border:1px solid #597873;color:#edf9ee;font:700 12px Inter,system-ui,sans-serif;border-radius:8px;padding:9px 11px;outline:none}
+.btp-project-select:focus{border-color:#bde991}
+.btp-project-badge{color:#d4dfe0;border-radius:6px;border:1px solid #567f7977;background:#1d3d40;padding:5px 8px;font-size:10px;font-weight:750}
+.btp-project-badge.demo{background:#4b362b55;border-color:#af775174;color:#f1c398}
+.btp-project-meta{color:#abc9be;font-size:11px;max-width:450px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.btp-project-buttons{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.btp-project-buttons button{cursor:pointer;border:1px solid #55746d;background:#253e40;border-radius:8px;padding:8px 11px;color:#e3f5e7;font-size:11px;font-weight:750}
+.btp-project-buttons button:hover{border-color:#bde991;background:#345453}
+.btp-project-buttons button.primary{background:#bce985;border-color:#bce985;color:#172519}
+.btp-project-dialog{display:none;position:fixed;inset:0;z-index:999999999;background:#071214de;backdrop-filter:blur(9px);padding:5vh 14px;align-items:flex-start;justify-content:center}
+.btp-project-dialog.open{display:flex}
+.btp-project-card{width:min(620px,100%);max-height:90vh;overflow:auto;padding:20px;border:1px solid #648b80;border-radius:17px;background:linear-gradient(145deg,#223a3f,#11262b);box-shadow:0 35px 120px #0009;color:#e9faeb}
+.btp-project-card h2{font-size:21px;margin:0 0 3px;letter-spacing:-.04em}
+.btp-project-card p{font-size:12px;color:#bbd4cc;margin:4px 0 13px}
+.btp-project-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.btp-project-field{min-width:0}.btp-project-field.wide{grid-column:1/-1}
+.btp-project-field label{display:block;font-size:11px;color:#d2e8db;font-weight:700;margin-bottom:4px}
+.btp-project-field :is(input,textarea){width:100%;background:#0e1f24;color:#eafaee;border:1px solid #56756f;border-radius:8px;padding:10px;outline:0;font:13px/1.45 Inter,system-ui,sans-serif}
+.btp-project-field textarea{min-height:80px;resize:vertical}
+.btp-project-field :is(input,textarea):focus{border-color:#bce985}
+.btp-project-footer{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+.btp-project-footer button{border:1px solid #618076;border-radius:8px;background:#284347;color:#ecfff0;padding:10px 13px;font:750 12px Inter,system-ui,sans-serif;cursor:pointer}
+.btp-project-footer button.primary{background:#bce985;color:#172719;border-color:#bce985}
+.btp-project-warning{font-size:11px;background:#4e3f282f;border:1px solid #896c455a;color:#efd0a8;padding:9px;border-radius:8px;margin-top:12px}
+@media(max-width:760px){.btp-project-strip{padding:8px 11px}.btp-project-logo{width:100%}.btp-project-meta{display:none}.btp-project-buttons{margin-left:0}.btp-project-select{min-width:140px}.btp-project-form{display:block}.btp-project-field{margin-bottom:11px}}
