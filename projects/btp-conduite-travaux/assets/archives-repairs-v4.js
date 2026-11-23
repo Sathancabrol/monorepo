@@ -57,6 +57,7 @@ async function render(){
   if(status)status.textContent=entries.length+" document(s) conservé(s) dans ce navigateur. Pense à exporter des copies : le stockage du navigateur peut être effacé.";
  }catch(e){tbody.innerHTML="";if(status)status.textContent="Archives indisponibles : "+e.message}
 }
+window.BTPArchiveV4=Object.freeze({addFile:addFile,list:metadata,render:render});
 window.openArchiveUploaderV4=function(){const input=$("btp-v4-archive-input");if(input)input.click();else alert("Outil d'archive non chargé");};
 function init(){
  const tab=$("tab-archives");if(!tab||$("btp-v4-archive"))return;
