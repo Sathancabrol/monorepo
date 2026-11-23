@@ -1,0 +1,40 @@
+/* BTP Studio V3: application-wide visual refinement.
+   All original controls remain operational and all 23 tab panels are preserved. */
+:root{--v3-lime:#bce985;--v3-ice:#9fe4dc;--v3-surface:#16282e;--v3-raised:#1b3036;--v3-rule:#46656877}
+body{background:radial-gradient(ellipse 60vw 30vw at 55% -10%,#2d484a55,transparent 70%),#0a1115!important}
+.app-main{max-width:1740px;width:100%;margin:0 auto}
+.app-main .tab-panel{animation:btpV3In .18s ease-out}
+@keyframes btpV3In{from{opacity:.75;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.app-main .tab-panel .card:not(.kpi-card){background:linear-gradient(155deg,#1c2c32,#132128)!important;border:1px solid #567b733b!important;border-radius:14px!important;box-shadow:0 9px 25px #00000023!important}
+.app-main .tab-panel .card-header{border-bottom:1px solid #64857a33!important;padding-bottom:10px;margin-bottom:11px}
+.app-main .tab-panel .card-title{letter-spacing:-.018em;color:#e9fff2}
+.app-main .tab-panel .card p,.app-main .tab-panel .card label{line-height:1.5}
+.app-main .tab-panel :is(input[type=text],input[type=search],input[type=number],input[type=date],textarea,select).input-field{background:#101e24!important;border:1px solid #56757991!important;border-radius:9px!important;color:#e9f7ee!important;min-height:34px}
+.app-main .tab-panel :is(input,select,textarea):focus-visible{outline:2px solid #aee88a;outline-offset:2px}
+.app-main .tab-panel input[type=range]{accent-color:#bce985}
+.app-main .tab-panel .btn{border-radius:9px}
+.app-main .tab-panel .btn-primary{color:#12231a!important;background:linear-gradient(115deg,#c3f091,#8cdec0)!important;border-color:#b8ee80!important}
+.app-main .tab-panel .btn-secondary{background:#23373d!important;color:#d5e7df!important;border-color:#536d6fa0!important}
+.app-main .tab-panel .btn-secondary:hover{background:#315057!important;border-color:#bce985!important;color:#f4fff4!important}
+.app-main .tab-panel :is(table,.data-table){border-collapse:separate;border-spacing:0;border:1px solid #52736a48;border-radius:10px;overflow:hidden}
+.app-main .tab-panel table th{background:#20363b!important;color:#d9f2e6!important;border-bottom:1px solid #69877c55!important;font-weight:800}
+.app-main .tab-panel table tbody tr:nth-child(2n){background:#ffffff05}
+.app-main .tab-panel table tbody tr:hover{background:#9bd39d12!important}
+.app-main .tab-panel table :is(th,td){padding-top:9px;padding-bottom:9px}
+.app-main .tab-panel .kpi-card{background:linear-gradient(160deg,#20363c,#13272c)!important;border:1px solid #7da7904f!important;border-radius:14px!important}
+.app-main .tab-panel .kpi-val{letter-spacing:-.045em}
+.hud-topbar-4x{box-shadow:0 4px 26px #0003}
+.hud-account-card,.kpi-chip-4x{transition:background .18s,border-color .18s}
+.hud-account-card:hover,.kpi-chip-4x:hover{background:#30454677!important}
+.drawer-nav-item{min-height:36px;letter-spacing:-.01em}
+.drawer-nav-item.active{background:linear-gradient(90deg,#2e5c51,#27423c)!important;border-left:3px solid #bce985!important;color:#f1fff2!important}
+.drawer-search-input{border-radius:9px!important;border-color:#587974!important}
+.app-main .tab-panel .badge-info{background:#1f4445!important;border-color:#50817e!important;color:#c4efeb!important}
+.app-main .tab-panel .badge-warning{background:#443b21!important;color:#f2d8a7!important}
+.app-main .tab-panel .badge-success{background:#294834!important;color:#c4f6b1!important}
+.app-main .tab-panel .badge-danger{background:#4c2b32!important;color:#ffc5cb!important}
+.app-main .tab-panel :is(.input-label,.form-label){color:#bdd5c8!important;font-weight:700}
+.app-main .tab-panel :is(.modal-box,.modal-content){border-radius:15px!important}
+body:has(.btp-wb-modal.open){overflow:hidden}
+@media(max-width:700px){.app-main{padding-inline:6px}.app-main .tab-panel .card:not(.kpi-card){padding:11px!important}.app-main .tab-panel table{font-size:11px!important}}
+@media(prefers-reduced-motion:reduce){.app-main .tab-panel{animation:none}.hud-account-card,.kpi-chip-4x{transition:none}}
