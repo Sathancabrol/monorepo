@@ -102,3 +102,16 @@ node tests/project-core-v1.test.js
 **Limites :** le préfixe apostrophe réduit le risque d'exécution de formules lors de l'ouverture CSV dans les tableurs usuels, mais doit être vérifié sur LibreOffice et Excel ; la défense n'est pas une garantie universelle pour tous les importateurs. Les registres restent locaux, manuels et non contractuels. Aucun SDK ajouté, aucune fusion dans `main`.
 
 **À suivre :** exécuter les tests Node et UI dans un navigateur, vérifier le CSV dans un tableur, étendre la protection à tous les exports CSV du monolithe, auditer les 23 modules par scénario complet et vérifier la persistance/import/export de projet. **V2 incomplète.**
+
+
+## 2026-11-23, passage 7 — diagnostic des commandes UI orphelines
+
+**Inspection :** branche de travail relue, trois branches BTP recensées (`feat/btp-all-modules-workbench-20261123`, `feat/btp-studio-premium-3d-20261123`, `fix/btp-navigation-pages-20261123`). Backlog V2, journal des six passages, veille GitHub 2026 et modules `assets/diagnostics-v3.js`, `assets/navigation-repairs-v4.js`, `assets/legacy-registers-v1.js` inspectés. Aucune reprise à zéro.
+
+**Problème :** le diagnostic existant dénombrait les panneaux et boutons, mais ne détectait pas les noms de fonctions appelées par les attributs `onclick`, `onchange`, `oninput`, `onsubmit`, `onload`, `onmousedown`, `onmouseup` lorsqu'ils étaient absents de `window`. Un bouton présent pouvait donc être présenté comme « connecté » alors que son action échouait.
+
+**Code poussé :** `8883df3cf6148f809ae957e2c23f5b9c9dc0f0d4` — `assets/diagnostics-v3.js`. Ajout d'un inventaire `unresolved_inline_handlers` dans l'export JSON, compteur dans la fenêtre de diagnostic et détail des 50 premières occurrences. Analyse statique sans exécuter les actions ; les appels de propriétés (ex. `Math.max`) sont exclus pour réduire les faux positifs. Aucune modification du monolithe, de la branche principale ou des données métier.
+
+**Tests réellement exécutés :** compilation JavaScript via `new Function`, initialisation sous fenêtre/document simulés, puis cinq scénarios d'attributs inline : fonction absente, fonction `window` absente, fonction globale présente, appel conditionnel absent, méthode d'objet ignorée. Résultat **5/5 scénarios conformes aux attentes**. Aucun navigateur réel, aucun test DOM complet ou CI exécuté. Le diagnostic n'est pas une preuve de fonctionnement métier et peut manquer les appels indirects, fonctions chargées tardivement ou événements ajoutés via JavaScript.
+
+**À suivre :** exécuter ce diagnostic dans un navigateur réel sur les 23 panneaux, trier les faux positifs, réparer les appels orphelins un par un avec tests d'interaction, puis poursuivre les scénarios DCE → DOE et les tests de performance. Veille 2026 conservée, aucun SDK tiers intégré. **V2 incomplète ; poursuivre les itérations.**
