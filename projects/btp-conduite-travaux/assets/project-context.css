@@ -1,0 +1,11 @@
+.btp-context{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 13px;margin:0 0 14px;border:1px solid #56766a66;border-radius:10px;background:linear-gradient(115deg,#152c30,#203638);color:#d7eee1;font-size:11px}
+.btp-context strong{font-size:11px;color:#bce985;letter-spacing:.02em}
+.btp-context label{color:#abc4b9;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.btp-context select{max-width:260px;min-width:140px;border:1px solid #61847d;background:#101f25;color:#f0f9f1;border-radius:7px;padding:7px;outline:0}
+.btp-context select:focus-visible{outline:2px solid #bce985;outline-offset:2px}
+.btp-context .btp-context-tag{border:1px solid #749080;color:#d7e9bd;border-radius:6px;padding:4px 7px;font-size:9px;font-weight:800}
+.btp-context .btp-context-tag.demo{color:#f0c5a3;border-color:#af8568}
+.btp-context .btp-context-note{color:#98b7a8;font-size:10px;flex:1 1 220px}
+.btp-context a{background:#bce985;color:#172719;border-radius:7px;padding:7px 10px;text-decoration:none;font-weight:850;font-size:10px}
+.btp-context a:hover{background:#d6f6a8}
+@media(max-width:760px){.btp-context{gap:6px}.btp-context select{max-width:180px}.btp-context-note{flex-basis:100%}}
