@@ -1,5 +1,23 @@
 # BTP Studio V2 — journal des itérations autonomes
 
+## 2026-11-23, passage 5 — calculateurs techniques indicatifs raccordés
+
+**Inspection :** branches BTP (branche de travail et deux branches historiques), backlog, journal, veille 2026, `index.html` et `assets/workbench-v3.js`. Les handlers de calcul hydraulique, bassin, réseaux électriques et éclairage public étaient appelés par les contrôles UI sans définition dans le monolithe.
+
+**Code poussé :**
+- `dc76da9b9c07b58b7b1f72a29f0b068d2ff309ab` : `assets/technical-calculators-v1.js`, quatre calculateurs indépendants, sans dépendance ni réseau. Manning-Strickler en conduite circulaire partiellement remplie (section et périmètre mouillés), ruissellement brut d'une pluie, chute de tension résistive simplifiée et rapport espacement/hauteur d'éclairage.
+- `78fed5d845ccc787b4e24550d362f7969970eb5e` : `tests/technical-calculators-v1.test.cjs`, **10 scénarios Node** versionnés, à exécuter sur PC.
+- `448d1c96248bd703c47c62cac7b079d7c41e4097` : raccordement du script au workbench historique, chargement après DOMContentLoaded, sans modification destructive du monolithe.
+
+**Preuves de vérification :** compilation syntaxique JS du module et du test réussie ; **6/6 scénarios exécutés avec succès dans un moteur JavaScript isolé** : conduite pleine (Q cohérent), demi-section circulaire, refus de remplissage >100 %, bassin 562,5 m³ brut pour 2,5 ha × 0,5 × 45 mm, chute de tension résistive monophasée, refus de lux inventés. Les **10 tests Node versionnés ne sont pas déclarés exécutés**. Commande reproductible : `cd projects/btp-conduite-travaux && node tests/technical-calculators-v1.test.cjs`.
+
+**Limites métier :** le bassin affiche un volume **brut de ruissellement**, pas un dimensionnement réglementaire de rétention ; l'ajutage reste non dimensionné faute d'hydrogramme. La chute de tension est une estimation résistive cos φ=1, sans vérification normative, protection ni échauffement. Le ratio hauteur/espacement ne fournit **aucun lux** sans photométrie. L'autocurage n'est **pas déclaré conforme** automatiquement. Valeurs fictives conservées et signalées comme indicatives. Aucun navigateur, aucune caméra, aucune recette métier, aucune fusion dans main.
+
+**À poursuivre :** test réel des quatre sous-vues dans un navigateur, détection des autres handlers orphelins, correction de la navigation technique qui n'affiche actuellement que quatre vues, vérification des calculs contre références métier, puis raccordement aux données de chantier et à la géométrie 3D.
+
+**Statut :** V2 incomplète ; poursuite nécessaire.
+
+
 ## 2026-11-23, passage 4 — registres locaux livraisons et intempéries
 
 **Inspection :** branche de travail et deux branches historiques `feat/btp-studio-premium-3d-20261123`, `fix/btp-navigation-pages-20261123` ; backlog V2, journal, veille GitHub 2026 et source `assets/workbench-v3.js` relus. Les boutons de création/export des registres pointaient vers des fonctions absentes du monolithe.
