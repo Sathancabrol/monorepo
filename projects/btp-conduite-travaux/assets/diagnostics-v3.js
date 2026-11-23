@@ -6,6 +6,23 @@ const errors=[];let lastAudit=null;
 window.addEventListener("error",e=>{errors.push({time:new Date().toISOString(),message:e.message||"Erreur JS",source:e.filename||"",line:e.lineno||0});if(errors.length>70)errors.shift()});
 window.addEventListener("unhandledrejection",e=>{errors.push({time:new Date().toISOString(),message:String(e.reason).slice(0,300),source:"promise"});if(errors.length>70)errors.shift()});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// Inline handlers are inspected, never executed. This is not a functional certification.
+function handlerAudit(){
+ const entries=[],seen=new Set(),ignored=new Set(["alert","confirm","prompt","setTimeout","clearTimeout","parseInt","parseFloat","Number","String","Boolean","Date","Array","Object","Math","JSON","isNaN","isFinite","encodeURIComponent","decodeURIComponent"]);
+ const attrs=["onclick","onchange","oninput","onsubmit","onload","onmousedown","onmouseup"];
+ for(const node of document.querySelectorAll("*"))for(const attr of attrs){
+  const code=node.getAttribute(attr);if(!code)continue;
+  const rx=/(?:^|[^\w$.])(?:window\.)?([A-Za-z_$][\w$]*)\s*\(/g;
+  let match;
+  while((match=rx.exec(code))){
+   const name=match[1];if(ignored.has(name)||["function","if","switch","catch","return","typeof"].includes(name))continue;
+   const key=attr+"|"+name+"|"+(node.id||node.tagName);
+   if(seen.has(key))continue;seen.add(key);
+   if(typeof window[name]!=="function")entries.push({element:node.id||node.tagName,attribute:attr,handler:name,code:code.slice(0,160)});
+  }
+ }
+ return entries;
+}
 function run(){
  const all=document.querySelectorAll("[id]"),counts={};for(const e of all){counts[e.id]=(counts[e.id]||0)+1}
  const duplicates=Object.entries(counts).filter(x=>x[1]>1).map(x=>({id:x[0],count:x[1]}));
@@ -17,7 +34,7 @@ function run(){
  const available=!!p&&!!p.querySelector(".btp-wb-hub");
  return {id,tab_exists:!!p,toolbox_present:aid,controls_visible_in_dom:controls,iframe_sources:frames,structural_status:available?"wired":"missing",functional_validation:"not_proven"};
  });
- lastAudit={schema:"btp-studio-structural-audit-v1",timestamp:new Date().toISOString(),total:ids.length,connected:modules.filter(x=>x.structural_status==="wired").length,modules,duplicate_dom_ids:duplicates,observed_errors:errors.slice(-30),warning:"Diagnostic de structure uniquement : ne garantit ni la validité métier, ni la fonction des boutons, ni la conformité du site."};
+ lastAudit={schema:"btp-studio-structural-audit-v1",timestamp:new Date().toISOString(),total:ids.length,connected:modules.filter(x=>x.structural_status==="wired").length,modules,duplicate_dom_ids:duplicates,unresolved_inline_handlers:handlerAudit(),observed_errors:errors.slice(-30),warning:"Diagnostic de structure uniquement : ne garantit ni la validité métier, ni la fonction des boutons, ni la conformité du site."};
  return lastAudit;
 }
 function display(){
@@ -29,9 +46,10 @@ function display(){
  '<div style="overflow:auto;max-height:55vh"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:9px">Module</th><th>Panneau</th><th>Outils DOM</th><th>Atelier</th></tr></thead><tbody>'+
  data.modules.map(m=>'<tr style="border-top:1px solid #35535a"><td style="padding:9px">'+esc(m.id)+'</td><td style="text-align:center">'+(m.tab_exists?"Oui":"Non")+'</td><td style="text-align:center">'+m.controls_visible_in_dom+'</td><td style="text-align:center">'+(m.toolbox_present?"Oui":"Non")+'</td></tr>').join("")+
  '</tbody></table></div>'+
- '<div class="btp-wb-forced-note">Doublons ID signalés : '+data.duplicate_dom_ids.length+' · Erreurs JS interceptées depuis le chargement du diagnostic : '+data.observed_errors.length+'. L’absence d’erreur détectée n’est pas une validation des fonctionnalités.</div>'+
- '<details open style="margin:12px 0;padding:11px;border:1px solid #5e7975;border-radius:8px;color:#d4eadb"><summary style="cursor:pointer;font-weight:800">Détails des erreurs et doublons détectés</summary>'+
+ '<div class="btp-wb-forced-note">Doublons ID signalés : '+data.duplicate_dom_ids.length+' · Appels inline non résolus : '+data.unresolved_inline_handlers.length+' · Erreurs JS interceptées depuis le chargement du diagnostic : '+data.observed_errors.length+'. L’absence d’erreur détectée n’est pas une validation des fonctionnalités.</div>'+
+ '<details open style="margin:12px 0;padding:11px;border:1px solid #5e7975;border-radius:8px;color:#d4eadb"><summary style="cursor:pointer;font-weight:800">Détails des erreurs, doublons et handlers</summary>'+
  '<p style="font-size:11px;margin:8px 0">Identifiants en doublon : '+(data.duplicate_dom_ids.map(x=>esc(x.id)+' ('+x.count+')').join(', ')||'Aucun')+'</p>'+
+ '<p style="font-size:11px;margin:8px 0">Appels inline non résolus (à vérifier) : '+(data.unresolved_inline_handlers.slice(0,50).map(x=>esc(x.handler)+' ['+esc(x.element)+']').join(', ')||'Aucun')+'</p>'+
  '<div style="max-height:220px;overflow:auto">'+(data.observed_errors.length?data.observed_errors.map(x=>'<div style="font:11px ui-monospace,monospace;padding:7px;border-top:1px solid #3d5e5a"><strong>'+esc(x.message)+'</strong><div>'+esc(x.source||'Script')+' : ligne '+esc(x.line||'-')+' · '+esc(x.time||'')+'</div></div>').join(''):'<p style="font-size:11px">Aucune erreur interceptée par ce collecteur (les erreurs antérieures à son chargement ne sont pas observables).</p>')+'</div></details>'+
  '<div class="btp-wb-actions" style="margin-top:12px"><button type="button" class="btp-wb-action primary" data-btp-diag="export">Exporter diagnostic JSON</button><button type="button" class="btp-wb-action" data-btp-diag="again">Relancer le contrôle</button></div>'+
  '</div>';
