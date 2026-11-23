@@ -67,6 +67,7 @@ function resetEditor(){
 }
 function editTask(id){
  const t=active().tasks.find(x=>x.id===id);if(!t)return;editingId=id;
+ try{localStorage.setItem("btp_project_active_task_v1",id)}catch(e){}
  el("editorTitle").textContent="Modifier "+id;el("editorSubtitle").textContent="Recalcul automatique des dépendances après enregistrement.";
  for(const [key,val] of Object.entries({taskName:t.name,taskGroup:t.group,taskQuantity:t.quantity,taskUnit:t.unit,taskDone:t.doneQuantity,taskCost:t.unitCost,taskDailyRate:t.dailyRate,taskCrew:t.crew,taskDays:t.daysOverride||"",taskConstraint:t.startConstraint||"",taskDependencies:t.depends.join(", "),taskActualCost:t.costActual===null?"":t.costActual,taskNotes:t.notes}))el(key).value=val;
  el("deleteTask").disabled=false;error("");el("taskName").focus();
