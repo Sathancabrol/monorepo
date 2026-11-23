@@ -1,5 +1,7 @@
 # WATCHTOWER × BTP INTEL — vision cible Digital Twin 3D unifié
 
+> **RECTIFICATIF PRIORITAIRE — 23 novembre 2026.** BTP Studio doit fonctionner en application **100 % autonome**, avec son **propre jumeau numérique 3D complet**, accessible directement sous Windows ou en mode web local. WATCHTOWER n'est **pas** une dépendance, un lanceur imposé ou l'unique interface. Une interopérabilité avec Watchtower peut être ajoutée ultérieurement via connecteur facultatif. Le terme « interface unique » signifie **la scène 3D unifiée à l'intérieur de BTP Studio**, pas une obligation d'utiliser Watchtower. Les paragraphes historiques ci-dessous doivent être lus à la lumière de ce correctif.
+
 **Date** : 2026-11-23
 **Statut** : spécification de vision / critères d'acceptation, **non implémenté**.
 **Branche de cadrage** : `feat/btp-all-modules-workbench-20261123`
@@ -8,7 +10,7 @@
 
 ## 1. Invariant d'expérience
 
-L'interface principale finale est un **monde 3D géoréférencé et persistant** (Watchtower). L'utilisateur peut y entrer par clic sur un objet du monde OU via une icône d'application/vignette/recherche. Les modules (BTP, INTEL, gestion entreprise, RH, engins, dépôts, chantiers, fiches, documents, conception, suivi) sont des **modes/lentilles contextuels superposés** à **une même scène**, pas une juxtaposition de sites, iframes, nouvelles cartes ou caméras isolées.
+L'interface principale finale **dans BTP Studio autonome** est un **monde 3D géoréférencé et persistant** (moteur CesiumJS réutilisable, intégré au module BTP sans dépendance à l'application Watchtower). L'utilisateur peut y entrer par clic sur un objet du monde OU via une icône d'application/vignette/recherche. Les modules (BTP, INTEL, gestion entreprise, RH, engins, dépôts, chantiers, fiches, documents, conception, suivi) sont des **modes/lentilles contextuels superposés** à **une même scène**, pas une juxtaposition de sites, iframes, nouvelles cartes ou caméras isolées.
 
 Les panneaux métier, arborescences, formulaires, timelines, documents, graphiques et tableaux restent possibles **en HUD 2D accessible sur la scène 3D**. Pas de 3D forcée pour de longues écritures ; les documents et l'accessibilité conservent des composants 2D, sans sortie du contexte.
 
@@ -45,7 +47,7 @@ WATCHTOWER SHELL (scène unique Cesium / carte / caméra / sélection / timeline
         └── Sources horodatées / synchronisation locale / journaux d'audit
 ```
 
-**Ne pas avoir 2 scènes en concurrence.** Réutiliser CesiumJS existant dans Watchtower pour les coordonnées, caméra et terrain. Démontrer un petit modèle de dépôt/chantier en glTF/GLB puis implémenter l'éditeur de géométrie, en évaluant Three.js/ThatOpen pour les sous-systèmes spécialisés sans imposer une deuxième navigation ou une réécriture totale. Adapter les objets BTP Canvas actuels ; ne pas appeler « BIM » une simple projection Canvas.
+**Ne pas avoir 2 scènes en concurrence au sein de BTP Studio.** Réutiliser la bibliothèque CesiumJS (éventuellement du code mutualisable de Watchtower) pour les coordonnées, caméra et terrain, en assurant que BTP Studio démarre et fonctionne sans Watchtower. Démontrer un petit modèle de dépôt/chantier en glTF/GLB puis implémenter l'éditeur de géométrie, en évaluant Three.js/ThatOpen pour les sous-systèmes spécialisés sans imposer une deuxième navigation ou une réécriture totale. Adapter les objets BTP Canvas actuels ; ne pas appeler « BIM » une simple projection Canvas.
 
 **Source de vérité unifiée** pour les entités :
 `entity.id, entity.type, entity.parentId, entity.geometry, entity.crs, entity.source, entity.sourceVersion, entity.recordedAt, entity.updatedAt, entity.validFrom, entity.validTo, entity.confidence, entity.dataMode, entity.permissions, entity.links`.
@@ -108,7 +110,7 @@ Dans `Sathancabrol/monorepo`, branche `feat/btp-all-modules-workbench-20261123` 
 - `fiches-taches.html`, `assets/project-core-v1.js`, `assets/metres-v1.cjs` : fiches, cœur métier, métrés.
 - `BTP_STUDIO_V2_ETAT_ET_BACKLOG.md` : backlog technique préexistant.
 
-**Cible de développement** : aucun module supprimé avant équivalence validée ; adopter le monde Watchtower comme shell commun. Le BTP Studio peut rester lançable séparément **uniquement en mode test, maintenance ou secours**, pas comme une seconde interface principale finale.
+**Cible de développement corrigée** : aucun module supprimé avant équivalence validée ; faire de **BTP Studio une application autonome livrable**, dont le shell est sa propre scène 3D commune. Watchtower reste une application distincte, pouvant partager des paquets, protocoles et données via un adaptateur optionnel. Le lancement séparé de BTP Studio est le comportement nominal, pas un mode de secours.
 
 ## 8. Démonstrateur et tests d'acceptation bloquants
 
@@ -133,7 +135,7 @@ Dans `Sathancabrol/monorepo`, branche `feat/btp-all-modules-workbench-20261123` 
 
 **Lot 0 — Audit & données.** Inventaire de toutes les scènes et panneaux existants, références images, objets 3D, source IDs, arborescences, et cartographie de dépendances. Fixer le schéma d'entité commun et le contrat de navigation.
 
-**Lot 1 — Tranche verticale démontrable.** Scène Watchtower → dépôt 3D fictif → BTP INTEL → liste chantiers → focus chantier → couches terrain/phasage → fiche cliquable → retour. Les données peuvent être DEMO explicitement déclarées mais les actions doivent toutes fonctionner.
+**Lot 1 — Tranche verticale démontrable.** Démarrage autonome BTP Studio → scène locale 3D → dépôt 3D fictif → BTP INTEL → liste chantiers → focus chantier → couches terrain/phasage → fiche cliquable → retour. Les données peuvent être DEMO explicitement déclarées mais les actions doivent toutes fonctionner.
 
 **Lot 2 — Vrai contenu chantier.** Associer dossier Barbazan, plans, emprises, profils, tâche de terrassement, métrés, phase, contrôle et documents à la scène. Import GEOJSON/GLB/IFC expérimental validé.
 
