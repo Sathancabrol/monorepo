@@ -18,9 +18,23 @@ function progress(id){let m=moduleById[id],item=entry(id);return m.checks.reduce
 function current(){return $$(".tab-panel").find(p=>p.classList.contains("active"))?.id.replace(/^tab-/,"")||"cockpit"}
 function go(id){if(!moduleById[id])return; if(typeof window.switchNav==="function"){window.switchNav(id)}else{const p=doc.getElementById("tab-"+id);if(!p)return;$$(".tab-panel").forEach(t=>t.classList.remove("active"));p.classList.add("active")}refresh();window.scrollTo?.({top:0,behavior:"smooth"})}
 function download(text,name,mime){const u=URL.createObjectURL(new Blob([text],{type:mime}));const a=doc.createElement("a");a.href=u;a.download=name;doc.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000)}
-function metrics(id){const m=moduleById[id],cfg=m.calc,state=entry(id);const x=Number.isFinite(+state.vals[0])?+state.vals[0]:cfg[3],y=Number.isFinite(+state.vals[1])?+state.vals[1]:cfg[4];let res=0,u="";
-switch(cfg[0]){case "ratio":res=x>0?y/x*100:0;u="%";break;case "multiply":res=x*y;u= id==="fiches_taches"?" h":id==="sdp"?" €":" m³";break;case "difference":res=x-y;u=["company"].includes(id)?" €":id==="planning"?" j":id==="compagnon_mobile"?" h":" u";break;}
-return {x,y,res:Math.round(res*100)/100,display:nf(res)+u};
+function metrics(id){
+ const m=moduleById[id],cfg=m.calc,state=entry(id);
+ const raw=[0,1].map(i=>state.vals[i]===undefined?String(cfg[i+3]):String(state.vals[i]));
+ const nums=raw.map(v=>v.trim()===""?NaN:Number(v));
+ const [x,y]=nums;
+ // Explicit invalid state: never turn a blank, negative or non-finite field into a plausible estimate.
+ if(nums.some(v=>!Number.isFinite(v)||v<0))return {x:raw[0],y:raw[1],res:null,display:"Saisie invalide",valid:false};
+ if(cfg[0]==="ratio"&&x===0)return {x,y,res:null,display:"Division par zéro",valid:false};
+ let res=0,u="";
+ switch(cfg[0]){
+ case "ratio":res=y/x*100;u="%";break;
+ case "multiply":res=x*y;u=id==="fiches_taches"?" h":id==="sdp"?" €":" m³";break;
+ case "difference":res=x-y;u=id==="company"?" €":id==="planning"?" j":id==="compagnon_mobile"?" h":" u";break;
+ default:return {x,y,res:null,display:"Calcul indisponible",valid:false};
+ }
+ if(!Number.isFinite(res))return {x,y,res:null,display:"Résultat hors limites",valid:false};
+ return {x,y,res:Math.round(res*100)/100,display:nf(res)+u,valid:true};
 }
 function card(m){
 const s=entry(m.id),complete=progress(m.id),calc=m.calc,metric=metrics(m.id);
