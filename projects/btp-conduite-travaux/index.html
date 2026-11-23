@@ -1988,7 +1988,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#233e43 0,transparent 46%),#
                         <button class="btn-secondary rdc-view-btn" id="btn-rdc-livraisons" onclick="setRdcViewMode('livraisons')">🚛 Bons de Livraison & Pesée</button>
                     </div>
                     <button class="btn btn-secondary" onclick="openRdcCameraModal()">📸 Photo Chantier</button>
-                    <button class="btn btn-primary" onclick="downloadProfessionalDoc('rdc_pdf')">📥 Exporter RDC PDF</button>
+                    <button class="btn btn-primary" onclick="window.exportCurrentRDCV4()">Imprimer RDC / PDF navigateur</button>
                 </div>
             </div>
 
@@ -14669,7 +14669,7 @@ iv>
                 </div>
             `;
         } else if (type === 'dc4_sous_traitance') {
-            docTitle = `FORMULAIRE OFFICIEL DC4 — DÉCLARATION DE SOUS-TRAITANCE`;
+            docTitle = `EXEMPLE DE DÉCLARATION DC4 — BROUILLON NON OFFICIEL`;
             docContentHTML = `
                 <div style="font-family: Arial, sans-serif; padding: 25px; color: #0f172a; max-width: 900px; margin: 0 auto; line-height: 1.5;">
                     <div style="border: 2px solid #0f172a; padding: 15px; margin-bottom: 20px; text-align: center; background: #f8fafc;">
@@ -14718,6 +14718,7 @@ iv>
         }
 
         // Open formatted print/PDF window
+        docContentHTML = `<div style="padding:14px;background:#fff1c7;border:3px solid #b67922;color:#502d05;font-size:16px;font-weight:900;text-align:center">BROUILLON DE DÉMONSTRATION — DONNÉES FICTIVES — DOCUMENT NON OFFICIEL — VALIDATION HUMAINE REQUISE</div>` + docContentHTML;
         const win = window.open('', '_blank', 'width=950,height=800');
         if (win) {
             win.document.write(`
@@ -15251,5 +15252,7 @@ iv>
 <script defer src="assets/navigation-repairs-v4.js"></script>
 <script defer src="assets/operations-repairs-v4.js"></script>
 <script defer src="assets/archives-repairs-v4.js"></script>
+<script defer src="assets/camera-rdc-repairs-v4.js"></script>
+<script defer src="assets/rdc-repairs-v4.js"></script>
 </body>
 </html>
