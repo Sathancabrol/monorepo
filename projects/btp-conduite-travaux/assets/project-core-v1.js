@@ -16,7 +16,12 @@ function iso(s){
  invariant(typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s),"Date invalide : AAAA-MM-JJ attendu");
  const ms=Date.parse(s+"T00:00:00Z");invariant(Number.isFinite(ms)&&new Date(ms).toISOString().slice(0,10)===s,"Date calendaire invalide");return ms
 }
-function addDays(date,number){return new Date(iso(date)+number*86400000).toISOString().slice(0,10)}
+function addDays(date,number){
+ invariant(Number.isSafeInteger(number),"Décalage calendaire : nombre entier requis");
+ const ms=iso(date)+number*86400000;
+ invariant(ms>=iso("0000-01-01")&&ms<=iso("9999-12-31"),"Date calculée hors limites calendaires");
+ return new Date(ms).toISOString().slice(0,10)
+}
 function chooseDay(a,b){return iso(a)>=iso(b)?a:b}
 function task(raw){
  invariant(raw&&typeof raw==="object","Tâche absente");
@@ -73,6 +78,7 @@ function schedule(input){
   if(memo.has(id))return memo.get(id);
   // Zero-quantity tasks do not silently consume a full production day unless explicitly overridden.
   const t=byId.get(id),duration=t.daysOverride!=null?t.daysOverride:(t.quantity===0?0:Math.max(1,Math.ceil(t.quantity/t.dailyRate)));
+  invariant(Number.isSafeInteger(duration)&&duration<=10000,"Durée calculée hors limites (10000 jours) : "+t.id);
   let start=t.startConstraint?chooseDay(p.startDate,t.startConstraint):p.startDate;
   for(const d of t.depends)start=chooseDay(start,compute(d).endExclusive);
   const endExclusive=addDays(start,duration);
