@@ -8,7 +8,7 @@ window.addEventListener("unhandledrejection",e=>{errors.push({time:new Date().to
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 // Inline handlers are inspected, never executed. This is not a functional certification.
 function handlerAudit(){
- const entries=[],seen=new Set(),ignored=new Set(["alert","confirm","prompt","setTimeout","clearTimeout","parseInt","parseFloat","Number","String","Boolean","Date","Array","Object","Math","JSON","isNaN","isFinite","encodeURIComponent","decodeURIComponent"]);
+ const entries=[],seen=new WeakMap(),ignored=new Set(["alert","confirm","prompt","setTimeout","clearTimeout","parseInt","parseFloat","Number","String","Boolean","Date","Array","Object","Math","JSON","isNaN","isFinite","encodeURIComponent","decodeURIComponent"]);
  const attrs=["onclick","onchange","oninput","onsubmit","onload","onmousedown","onmouseup"];
  for(const node of document.querySelectorAll("*"))for(const attr of attrs){
   const code=node.getAttribute(attr);if(!code)continue;
@@ -17,8 +17,10 @@ function handlerAudit(){
   while((match=rx.exec(code))){
    const name=match[1];if(ignored.has(name)||["function","if","switch","catch","return","typeof"].includes(name))continue;
    const moduleNode=node.closest('[id^="tab-"]');const moduleId=moduleNode?moduleNode.id.slice(4):null;
-   const key=attr+"|"+name+"|"+(node.id||node.tagName)+"|"+(moduleId||"global");
-   if(seen.has(key))continue;seen.add(key);
+   const key=attr+"|"+name;
+   // Deduplicate only repeated calls on the same element, not distinct anonymous buttons.
+   let keys=seen.get(node);if(!keys){keys=new Set();seen.set(node,keys)}
+   if(keys.has(key))continue;keys.add(key);
    if(typeof window[name]!=="function")entries.push({element:node.id||node.tagName,module_id:moduleId,attribute:attr,handler:name,code:code.slice(0,160)});
   }
  }
