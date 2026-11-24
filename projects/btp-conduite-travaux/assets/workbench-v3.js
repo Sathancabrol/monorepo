@@ -7,7 +7,18 @@ const moduleById=Object.fromEntries(modules.map(m=>[m.id,m]));
 const KEY="btp_workbench_v3_20261123";
 const doc=document;
 const ctx={value:{},active:"cockpit"};
-try{const stored=JSON.parse(localStorage.getItem(KEY)||"{}");if(stored&&typeof stored==="object")ctx.value=stored}catch(e){}
+function normalizeStored(raw){
+ const clean=Object.create(null);
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))return clean;
+ for(const m of modules){
+  if(!Object.prototype.hasOwnProperty.call(raw,m.id))continue;
+  const v=raw[m.id];
+  if(!v||typeof v!=="object"||Array.isArray(v))continue;
+  clean[m.id]={notes:typeof v.notes==="string"?v.notes:"",checks:m.checks.map((_,i)=>Array.isArray(v.checks)&&v.checks[i]===true),vals:[0,1].map(i=>Array.isArray(v.vals)&&(typeof v.vals[i]==="string"||typeof v.vals[i]==="number")?String(v.vals[i]):undefined),expanded:v.expanded===true};
+ }
+ return clean;
+}
+try{ctx.value=normalizeStored(JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){ctx.value=Object.create(null)}
 const $=(s,root=doc)=>root.querySelector(s);
 const $$=(s,root=doc)=>Array.from(root.querySelectorAll(s));
 const esc=s=>String(s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
@@ -49,7 +60,7 @@ m.checks.map((label,i)=>'<label class="btp-wb-row"><input type="checkbox" data-w
 '<h3 style="margin-top:15px">Notes de travail</h3><textarea class="btp-wb-notes" data-wb-notes placeholder="Observation, décision, vérification à effectuer...">'+esc(s.notes)+'</textarea>'+
 '<div class="btp-wb-actions" style="margin-top:9px"><button type="button" class="btp-wb-action" data-wb-action="export">Exporter ce module (JSON)</button><button type="button" class="btp-wb-action" data-wb-action="print">Imprimer</button></div></div>'+
 '<div class="btp-wb-panel"><h3>Calcul rapide illustratif</h3><p class="btp-wb-secondary">Indépendant des données officielles du chantier. Vérifier unités, contexte et hypothèses.</p><div class="btp-wb-inputs">'+
-[0,1].map(i=>'<div class="btp-wb-field"><label>'+esc(calc[1+i])+'</label><input type="number" step="any" min="0" data-wb-num="'+i+'" value="'+(i?metric.y:metric.x)+'"></div>').join("")+
+[0,1].map(i=>'<div class="btp-wb-field"><label>'+esc(calc[1+i])+'</label><input type="number" step="any" min="0" data-wb-num="'+i+'" value="' +esc(i?metric.y:metric.x)+'"></div>').join("")+
 '</div><div class="btp-wb-calc-result"><span>'+esc(calc[5])+'</span><strong data-wb-result>'+esc(metric.display)+'</strong></div><div class="btp-wb-forced-note">Le résultat est un ordre de grandeur pédagogique, pas une donnée contractuelle.</div></div>'+
 '<div class="btp-wb-panel"><h3>Pièces / livrables utiles</h3>'+
 m.outputs.map(x=>'<div class="btp-wb-row"><span>▣</span><span>'+esc(x)+'</span></div>').join("")+
