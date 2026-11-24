@@ -111,3 +111,10 @@ Exiger traçabilité par source, date et version. Distinction claire hypothèse 
 ## Définition d'une V2 complète
 
 Faire effectivement le cycle **DCE → étude de prix → préparation → planning → modélisation et métrés → suivi terrain → contrôles → réception et DOE** sur un dossier exemple, avec des résultats traçables et exportables, une interface testée et aucune fonctionnalité déclarée livrée sur la seule présence d'un bouton.
+
+## Journal — 24 novembre 2026, 14 h 55
+
+- Commit `7ab1b4573ebf42339d6aecc453db60f6589fa9fb` : contrôle des décalages calendaires entiers, bornes AAAA-MM-JJ et durée calculée maximale de 10 000 jours (alignée sur la durée imposée).
+- Relecture distante du correctif effectuée. Tests moteur et UI non exécutés ; ne pas considérer le P0 validé.
+- À tester : 29 février, passage d'année, dépassement 9999-12-31, durée 10 001 jours, tâche nulle, chaîne de dépendances, validation numérique du commit précédent.
+- Veille relue ; aucune dépendance intégrée. Restent notamment précision financière, provenance, dépendances et sauvegarde.
