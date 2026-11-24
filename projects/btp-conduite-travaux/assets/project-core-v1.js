@@ -25,6 +25,8 @@ function addDays(date,number){
 function chooseDay(a,b){return iso(a)>=iso(b)?a:b}
 function task(raw){
  invariant(raw&&typeof raw==="object","Tâche absente");
+ invariant(raw.depends==null||Array.isArray(raw.depends),"Dépendances : tableau requis");
+ invariant(raw.depends==null||raw.depends.every(v=>typeof v==="string"),"Prédécesseur : texte requis");
  const t={
   id:str(raw.id,"Identifiant",90),name:str(raw.name,"Intitulé",180),
   unit:str(raw.unit||"u","Unité",24),
@@ -33,7 +35,7 @@ function task(raw){
   unitCost:finite(raw.unitCost==null?0:raw.unitCost,"Déboursé unitaire indicatif",0,1e8),
   dailyRate:finite(raw.dailyRate==null?1:raw.dailyRate,"Rendement",.0001,1e8),
   crew:finite(raw.crew==null?1:raw.crew,"Équipe",1,200),
-  depends:Array.isArray(raw.depends)?[...new Set(raw.depends.map(v=>str(v,"Prédécesseur",90)))]:[],
+  depends:raw.depends==null?[]:[...new Set(raw.depends.map(v=>str(v,"Prédécesseur",90)))],
   group:String(raw.group||"Exécution").slice(0,90),
   notes:String(raw.notes||"").slice(0,2000),
   verification:String(raw.verification||"À vérifier").slice(0,120),
