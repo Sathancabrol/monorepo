@@ -118,3 +118,10 @@ Faire effectivement le cycle **DCE → étude de prix → préparation → plann
 - Relecture distante du correctif effectuée. Tests moteur et UI non exécutés ; ne pas considérer le P0 validé.
 - À tester : 29 février, passage d'année, dépassement 9999-12-31, durée 10 001 jours, tâche nulle, chaîne de dépendances, validation numérique du commit précédent.
 - Veille relue ; aucune dépendance intégrée. Restent notamment précision financière, provenance, dépendances et sauvegarde.
+
+
+### 2026-11-24 — validation provenance et régression moteur
+
+- Commit `ecde3efe3668eed7cb920cd9c1146bcc0ae10eb2` : rejet des provenances explicites inconnues ; absence de provenance conserve le comportement historique.
+- 19 assertions JavaScript exécutées avec succès avant publication : exemple 1830 € / 6 jours, trois provenances admises, cinq invalides, quatre types numériques invalides, deux limites calendaires, deux dépendances invalides et durée excessive.
+- Tests navigateur non exécutés ; précision financière et provenance absente restent à traiter. Aucun ajout de dépendance ni intégration AEC.
