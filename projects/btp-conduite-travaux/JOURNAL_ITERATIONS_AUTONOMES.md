@@ -134,3 +134,10 @@ node tests/project-core-v1.test.js
 **Tests réellement exécutés :** compilation JavaScript via `new Function`, initialisation sous fenêtre/document simulés, puis cinq scénarios d'attributs inline : fonction absente, fonction `window` absente, fonction globale présente, appel conditionnel absent, méthode d'objet ignorée. Résultat **5/5 scénarios conformes aux attentes**. Aucun navigateur réel, aucun test DOM complet ou CI exécuté. Le diagnostic n'est pas une preuve de fonctionnement métier et peut manquer les appels indirects, fonctions chargées tardivement ou événements ajoutés via JavaScript.
 
 **À suivre :** exécuter ce diagnostic dans un navigateur réel sur les 23 panneaux, trier les faux positifs, réparer les appels orphelins un par un avec tests d'interaction, puis poursuivre les scénarios DCE → DOE et les tests de performance. Veille 2026 conservée, aucun SDK tiers intégré. **V2 incomplète ; poursuivre les itérations.**
+
+
+## 2026-11-24 — diagnostic : comptage exact des contrôles anonymes
+
+Inspection de la branche de travail, des trois branches BTP, du backlog, de la veille et du diagnostic courant. Le diagnostic fusionnait les boutons sans ID partageant le même handler dans un module, sous-estimant les commandes défaillantes. Correction par WeakMap indexée sur chaque élément DOM, sans réécriture du monolithe. Commit 3169e89a9fad933cc5addfa348482720c8146956.
+
+Tests exécutés en JavaScript isolé avec DOM simulé : trois contrôles anonymes, appels répétés sur chacun, deux modules. Assertions réussies : 3 occurrences distinctes, 2 planning, 1 RDC. Compilation implicite réussie. Aucun navigateur réel ni suite Node exécutés. Aucun SDK ajouté. Reste : tests navigateur, réparation des commandes métier, cycle DCE–DOE. V2 incomplète.
