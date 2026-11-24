@@ -141,3 +141,10 @@ node tests/project-core-v1.test.js
 Inspection de la branche de travail, des trois branches BTP, du backlog, de la veille et du diagnostic courant. Le diagnostic fusionnait les boutons sans ID partageant le même handler dans un module, sous-estimant les commandes défaillantes. Correction par WeakMap indexée sur chaque élément DOM, sans réécriture du monolithe. Commit 3169e89a9fad933cc5addfa348482720c8146956.
 
 Tests exécutés en JavaScript isolé avec DOM simulé : trois contrôles anonymes, appels répétés sur chacun, deux modules. Assertions réussies : 3 occurrences distinctes, 2 planning, 1 RDC. Compilation implicite réussie. Aucun navigateur réel ni suite Node exécutés. Aucun SDK ajouté. Reste : tests navigateur, réparation des commandes métier, cycle DCE–DOE. V2 incomplète.
+
+
+## 2026-11-24 — passage 10 : robustesse de la persistance des 23 ateliers
+
+Backlog, veille et journal relus sur la branche de travail. Le workbench acceptait des objets locaux mal formés (checks/vals absents), pouvant interrompre le rendu de tous les ateliers. Normalisation par module connu, types contrôlés, conservation des notes et zéros valides, rejet des clés inconnues et échappement HTML des valeurs numériques interpolées. Commit f9c623da7a14fec1906cb60d01800aec1e6b4b91.
+
+Vérification effective : compilation du script complet et 7 contrôles de normalisation en JavaScript isolé (null, tableau, nombre, entrée nulle, champs invalides, état valide, conservation zéro/vide et booléens stricts). Pas de navigateur réel ni de test de rechargement complet. Les données invalides sont ignorées en mémoire, pas de suppression explicite du stockage. Reste : sauvegarde exportable globale, restauration contrôlée, tests UI, parcours DCE–DOE. Veille consultée, aucune nouvelle intégration ni vérification externe de licences lors de cette passe. V2 incomplète.
