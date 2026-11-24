@@ -9,14 +9,32 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const euro=n=>Number(n).toLocaleString("fr-FR",{style:"currency",currency:"EUR"});
 const fmt=(n,d=2)=>Number(n).toLocaleString("fr-FR",{maximumFractionDigits:d});
 const today=()=>new Date().toISOString().slice(0,10);
-let projects=[],activeId="",editingId="",modalMode="new",seq=0;
+let projects=[],activeId="",editingId="",modalMode="new",seq=0,storageBlocked=false;
 const newId=prefix=>prefix+"-"+Date.now().toString(36)+"-"+(++seq).toString(36);
 function active(){return projects.find(p=>p.id===activeId)||projects[0]}
 function error(s,id="formError"){el(id).textContent=s}
-function store(){try{localStorage.setItem(STORE,JSON.stringify({schema:"btp-workspace-collection-v1",projects}));localStorage.setItem(ACTIVE,activeId)}catch(e){error("Stockage indisponible : utiliser Export JSON.")}}
+function store(){if(storageBlocked){alert("Stockage protégé : données illisibles. Exportez le JSON avant toute intervention. Les modifications restent en mémoire.");return}try{localStorage.setItem(STORE,JSON.stringify({schema:"btp-workspace-collection-v1",projects}));localStorage.setItem(ACTIVE,activeId)}catch(e){error("Stockage indisponible : utiliser Export JSON.")}}
 function load(){
- try{const v=JSON.parse(localStorage.getItem(STORE)||"null");if(v&&v.schema==="btp-workspace-collection-v1"&&Array.isArray(v.projects)){projects=v.projects.map(core.project);if(projects.length>100)throw Error("Nombre de projets trop élevé")}activeId=localStorage.getItem(ACTIVE)||""}
- catch(e){projects=[];error("Erreur de lecture du stockage : "+e.message)}
+ let stored=null;
+ try{
+  stored=localStorage.getItem(STORE);
+  const v=JSON.parse(stored||"null");
+  if(stored!==null){
+   if(!v||v.schema!=="btp-workspace-collection-v1"||!Array.isArray(v.projects)||!v.projects.length||v.projects.length>100)throw Error("Collection invalide");
+   const next=v.projects.map(core.project);
+   if(new Set(next.map(p=>p.id)).size!==next.length)throw Error("Identifiants de projets dupliqués");
+   next.forEach(core.schedule);
+   projects=next;
+  }
+  activeId=localStorage.getItem(ACTIVE)||"";
+ }catch(e){
+  // Never replace unreadable user data with a demonstration.
+  if(!projects.length)projects=[core.sample()];
+  activeId=projects.some(p=>p.id===activeId)?activeId:projects[0].id;
+  storageBlocked=true;
+  return;
+ }
+ storageBlocked=false;
  if(!projects.length){projects=[core.sample()];activeId=projects[0].id;store()}
  if(!projects.some(p=>p.id===activeId))activeId=projects[0].id;
 }
@@ -27,6 +45,7 @@ function listProjects(){
 }
 function warnings(model){
  const w=model.warnings.slice();
+ if(storageBlocked)w.unshift("Stockage local illisible : sauvegarde bloquée pour préserver les données originales. Les modifications restent en mémoire.");
  if(model.project.dataType==="demonstration")w.unshift("Projet de démonstration : données, durées et coûts fictifs.");
  if(!model.project.client)w.push("Maître d’ouvrage non renseigné.");
  el("warnings").innerHTML=w.length?w.map(t=>'<p>'+esc(t)+'</p>').join(""):'<p class="ok">Aucune incohérence simple détectée. Validation humaine toujours indispensable.</p>';
@@ -77,7 +96,7 @@ const optional=id=>val(id).trim()===""?null:Number(val(id));
 function submitTask(event){
  event.preventDefault();error("");
  try{
- const id=editingId||newId("t"),raw={id,name:val("taskName"),group:val("taskGroup"),unit:val("taskUnit"),quantity:Number(val("taskQuantity")),doneQuantity:Number(val("taskDone")),unitCost:Number(val("taskCost")),dailyRate:Number(val("taskDailyRate")),crew:Number(val("taskCrew")),depends:val("taskDependencies").split(",").map(x=>x.trim()).filter(Boolean),notes:val("taskNotes"),costActual:optional("taskActualCost"),daysOverride:optional("taskDays"),startConstraint:val("taskConstraint")||undefined};
+ const id=editingId||newId("t"),raw={id,name:val("taskName"),group:val("taskGroup"),unit:val("taskUnit"),quantity:val("taskQuantity"),doneQuantity:val("taskDone"),unitCost:val("taskCost"),dailyRate:val("taskDailyRate"),crew:val("taskCrew"),depends:val("taskDependencies").split(",").map(x=>x.trim()).filter(Boolean),notes:val("taskNotes"),costActual:optional("taskActualCost"),daysOverride:optional("taskDays"),startConstraint:val("taskConstraint")||undefined};
  const next=core.putTask(active(),raw);core.schedule(next);projects[projects.findIndex(x=>x.id===activeId)]=next;store();render();editTask(id);
  }catch(e){error(e.message)}
 }
