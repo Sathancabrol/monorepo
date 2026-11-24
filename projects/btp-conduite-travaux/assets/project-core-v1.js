@@ -51,6 +51,7 @@ function task(raw){
 function project(raw){
  invariant(raw&&typeof raw==="object","Projet invalide");
  invariant(raw.schema==null||raw.schema===SCHEMA,"Version de projet non prise en charge");
+ invariant(raw.dataType==null||["demonstration","imported","user"].includes(raw.dataType),"Provenance de projet inconnue");
  const p={
   schema:SCHEMA,
   id:str(raw.id,"Identifiant projet",90),
