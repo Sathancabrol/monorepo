@@ -10,7 +10,7 @@
 const SCHEMA="btp-project-v1";
 const MAX_TASKS=300;
 function invariant(ok,msg){if(!ok)throw new Error(msg)}
-function finite(v,name,lo,hi){invariant(v!==null&&v!==undefined&&!(typeof v==="string"&&v.trim()===""),name+" : valeur obligatoire");const x=Number(v);invariant(typeof v!=="boolean"&&Number.isFinite(x)&&x>=lo&&x<=hi,name+" : valeur hors limites");return x}
+function finite(v,name,lo,hi){invariant(v!==null&&v!==undefined&&!(typeof v==="string"&&v.trim()===""),name+" : valeur obligatoire");invariant(typeof v==="number"||typeof v==="string",name+" : type numérique invalide");const x=Number(v);invariant((typeof v==="number"||typeof v==="string")&&Number.isFinite(x)&&x>=lo&&x<=hi,name+" : valeur hors limites");return x}
 function str(v,name,max=180){const t=String(v==null?"":v).trim();invariant(t.length>0&&t.length<=max,name+" : texte manquant ou trop long");return t}
 function iso(s){
  invariant(typeof s==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(s),"Date invalide : AAAA-MM-JJ attendu");
