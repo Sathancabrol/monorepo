@@ -22,6 +22,19 @@ function addDays(date,number){
  invariant(ms>=iso("0000-01-01")&&ms<=iso("9999-12-31"),"Date calculée hors limites calendaires");
  return new Date(ms).toISOString().slice(0,10)
 }
+// Round decimal inputs to cents, half-up, without binary multiplication drift.
+function decimalParts(n){
+ const [m,e="0"]=String(n).toLowerCase().split("e"),[a,b=""]=m.split(".");
+ return [BigInt(a+b),Number(e)-b.length]
+}
+function moneyCents(a,b=1){
+ const [x,p]=decimalParts(a),[y,q]=decimalParts(b),shift=p+q+2;
+ const z=x*y, divisor=10n**BigInt(Math.max(0,-shift));
+ const cents=shift>=0?z*10n**BigInt(shift):(z+divisor/2n)/divisor;
+ invariant(cents<=BigInt(Number.MAX_SAFE_INTEGER),"Montant hors limites de précision");
+ return Number(cents)
+}
+function sumCents(values){return values.reduce((a,b)=>{const n=a+b;invariant(Number.isSafeInteger(n),"Total hors limites de précision");return n},0)}
 function chooseDay(a,b){return iso(a)>=iso(b)?a:b}
 function task(raw){
  invariant(raw&&typeof raw==="object","Tâche absente");
@@ -85,12 +98,12 @@ function schedule(input){
   let start=t.startConstraint?chooseDay(p.startDate,t.startConstraint):p.startDate;
   for(const d of t.depends)start=chooseDay(start,compute(d).endExclusive);
   const endExclusive=addDays(start,duration);
-  const row={...t,start,endExclusive,endInclusive:duration===0?null:addDays(endExclusive,-1),durationDays:duration,plannedCost:Math.round(t.quantity*t.unitCost*100)/100,realizedValue:Math.round(t.doneQuantity*t.unitCost*100)/100,estimatedCrewHours:duration*8*t.crew};
+  const row={...t,start,endExclusive,endInclusive:duration===0?null:addDays(endExclusive,-1),durationDays:duration,plannedCost:moneyCents(t.quantity,t.unitCost)/100,realizedValue:moneyCents(t.doneQuantity,t.unitCost)/100,estimatedCrewHours:duration*8*t.crew};
   memo.set(id,row);return row
  }
  const rows=p.tasks.map(t=>compute(t.id));
- const cost=rows.reduce((n,t)=>n+t.plannedCost,0),value=rows.reduce((n,t)=>n+t.realizedValue,0);
- const actualCost=rows.filter(t=>t.costActual!=null).reduce((n,t)=>n+t.costActual,0);
+ const cost=sumCents(rows.map(t=>moneyCents(t.quantity,t.unitCost))),value=sumCents(rows.map(t=>moneyCents(t.doneQuantity,t.unitCost)));
+ const actualCost=sumCents(rows.filter(t=>t.costActual!=null).map(t=>moneyCents(t.costActual)));
  const actualCostCount=rows.filter(t=>t.costActual!=null).length;
  const end=rows.reduce((max,t)=>chooseDay(max,t.endExclusive),p.startDate);
  const warnings=[];
@@ -100,10 +113,10 @@ function schedule(input){
  if(rows.some(t=>t.unitCost===0))warnings.push("Certains déboursés unitaires sont nuls ou non renseignés");
  if(rows.some(t=>t.verification!=="Validé"))warnings.push("Les contrôles et validations restent à effectuer");
  return {project:p,tasks:rows,summary:{
-  plannedCost:Math.round(cost*100)/100,
-  theoreticalRealizedValue:Math.round(value*100)/100,
-  theoreticalBalance:Math.round((cost-value)*100)/100,
-  actualCost:actualCostCount?Math.round(actualCost*100)/100:null,
+  plannedCost:cost/100,
+  theoreticalRealizedValue:value/100,
+  theoreticalBalance:(cost-value)/100,
+  actualCost:actualCostCount?actualCost/100:null,
   actualCostCoverage:actualCostCount+"/"+rows.length,
   valueProgressPct:cost>0?Math.round(value/cost*10000)/100:0,
   earliestDate:p.startDate,endExclusive:end,calendarDays:Math.round((iso(end)-iso(p.startDate))/86400000),
