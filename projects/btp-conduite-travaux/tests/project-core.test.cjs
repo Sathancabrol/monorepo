@@ -116,3 +116,12 @@ test("montant et cumul hors précision refusés",()=>{
  for(const t of p.tasks){t.quantity=1e7;t.dailyRate=1e7;t.unitCost=2e6;}
  assert.throws(()=>core.schedule(p),/précision/);
 });
+
+ test("provenance historique inconnue conservée et signalée",()=>{
+ const p=core.sample();delete p.dataType;
+ const normalized=core.project(p);assert.equal(normalized.dataType,"unknown");
+ assert.equal(core.project(normalized).dataType,"unknown");
+ assert.ok(core.schedule(p).warnings.some(w=>w.includes("Provenance inconnue")));
+ for(const dataType of ["user","imported","demonstration"])assert.equal(core.project({...p,dataType}).dataType,dataType);
+ assert.throws(()=>core.project({...p,dataType:"verified"}),/Provenance/);
+ });
