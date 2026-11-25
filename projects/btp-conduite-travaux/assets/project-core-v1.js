@@ -96,6 +96,7 @@ function schedule(input){
  const warnings=[];
  if(rows.some(t=>t.doneQuantity>t.quantity))warnings.push("Quantité réalisée supérieure à la quantité prévue : dépassement ou mise à jour du métré à vérifier");
  if(rows.some(t=>t.quantity===0))warnings.push("Tâche à quantité nulle : durée de production égale à zéro, vérifier si une mobilisation reste nécessaire");
+ if(actualCostCount>0&&actualCostCount<rows.length)warnings.push("Coûts réels incomplets : total partiel ("+actualCostCount+"/"+rows.length+" tâches renseignées), ne pas interpréter comme coût total du chantier");
  if(rows.some(t=>t.unitCost===0))warnings.push("Certains déboursés unitaires sont nuls ou non renseignés");
  if(rows.some(t=>t.verification!=="Validé"))warnings.push("Les contrôles et validations restent à effectuer");
  return {project:p,tasks:rows,summary:{
