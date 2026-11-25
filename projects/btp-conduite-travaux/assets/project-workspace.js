@@ -40,8 +40,9 @@ function load(){
 }
 function saveFile(name,body,type){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
 function csv(v){let s=String(v==null?"":v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'}
+function provenanceLabel(type){return ({demonstration:"EXEMPLE",imported:"IMPORT · À VÉRIFIER",user:"UTILISATEUR",unknown:"ORIGINE INCONNUE"})[type]||"ORIGINE INCONNUE"}
 function listProjects(){
- el("projectList").innerHTML=projects.map(p=>'<button class="project-item '+(p.id===activeId?"active":"")+'" data-project="'+esc(p.id)+'"><strong>'+esc(p.title)+'</strong><small>'+esc(p.client||"Sans client")+'</small><span class="pill">'+(p.dataType==="demonstration"?"EXEMPLE":p.dataType==="imported"?"IMPORT":"UTILISATEUR")+'</span></button>').join("");
+ el("projectList").innerHTML=projects.map(p=>'<button class="project-item '+(p.id===activeId?"active":"")+'" data-project="'+esc(p.id)+'"><strong>'+esc(p.title)+'</strong><small>'+esc(p.client||"Sans client")+'</small><span class="pill">'+esc(provenanceLabel(p.dataType))+'</span></button>').join("");
 }
 function warnings(model){
  const w=model.warnings.slice();
@@ -73,7 +74,7 @@ function gantt(model){
 }
 function render(){
  const model=core.schedule(active()),p=model.project,m=model.summary;
- el("projectType").textContent=p.dataType==="demonstration"?"EXEMPLE PÉDAGOGIQUE":p.dataType==="imported"?"PROJET IMPORTÉ · À VÉRIFIER":"PROJET UTILISATEUR";
+ el("projectType").textContent=provenanceLabel(p.dataType);
  el("projectTitle").textContent=p.title;el("projectDetail").textContent=[p.client||"Client non renseigné",p.city||"Localisation non renseignée","Début : "+p.startDate,p.tasks.length+" tâches"].join(" · ");
  el("plannedCost").textContent=euro(m.plannedCost);el("earnedValue").textContent=euro(m.theoreticalRealizedValue);
  el("progress").textContent=fmt(m.valueProgressPct,1)+" %";el("calendarDays").textContent=m.calendarDays+" j";
@@ -129,9 +130,9 @@ function exportJSON(){
  const p=active();saveFile("btp-"+p.id+".json",JSON.stringify({...p,exportedAt:new Date().toISOString(),warning:"Informations indicatives, non certifiées."},null,2),"application/json");
 }
 function exportCSV(){
- const rows=core.schedule(active()).tasks,head=["ID","Désignation","Phase","Unité","Quantité prévue","Quantité réalisée","Prix unitaire hypothétique","Rendement quotidien","Équipe","Début","Fin","Jours","Coût prévisionnel","Prédécesseurs"];
+ const model=core.schedule(active()),rows=model.tasks,head=["Provenance projet","ID","Désignation","Phase","Unité","Quantité prévue","Quantité réalisée","Prix unitaire hypothétique","Rendement quotidien","Équipe","Début","Fin","Jours","Coût prévisionnel","Prédécesseurs"];
  const lines=[head.map(csv).join(";")];
- for(const t of rows)lines.push([t.id,t.name,t.group,t.unit,t.quantity,t.doneQuantity,t.unitCost,t.dailyRate,t.crew,t.start,t.endInclusive,t.durationDays,t.plannedCost,t.depends.join(",")].map(csv).join(";"));
+ for(const t of rows)lines.push([model.project.dataType,t.id,t.name,t.group,t.unit,t.quantity,t.doneQuantity,t.unitCost,t.dailyRate,t.crew,t.start,t.endInclusive,t.durationDays,t.plannedCost,t.depends.join(",")].map(csv).join(";"));
  saveFile("btp-metrés-"+activeId+".csv","\uFEFF"+lines.join("\r\n"),"text/csv;charset=utf-8");
 }
 function importFile(file){
@@ -139,7 +140,7 @@ function importFile(file){
  const reader=new FileReader();
  reader.onload=function(){
  try{
- const raw=JSON.parse(String(reader.result)),p=core.project({...raw,dataType:raw.dataType==="demonstration"?"demonstration":"imported"});core.schedule(p);
+ const raw=JSON.parse(String(reader.result)),validated=core.project(raw),p=core.project({...validated,dataType:validated.dataType==="demonstration"||validated.dataType==="unknown"?validated.dataType:"imported"});core.schedule(p);
  if(projects.length>=100)throw Error("Limite de 100 projets atteinte");
  if(projects.some(x=>x.id===p.id)){if(!confirm("Cet identifiant existe déjà. Créer une copie ?"))return;p.id=newId("import");core.project(p)}
  projects.push(p);activeId=p.id;resetEditor();store();render();
