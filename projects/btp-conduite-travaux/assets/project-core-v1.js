@@ -64,7 +64,7 @@ function task(raw){
 function project(raw){
  invariant(raw&&typeof raw==="object","Projet invalide");
  invariant(raw.schema==null||raw.schema===SCHEMA,"Version de projet non prise en charge");
- invariant(raw.dataType==null||["demonstration","imported","user"].includes(raw.dataType),"Provenance de projet inconnue");
+ invariant(raw.dataType==null||["demonstration","imported","user","unknown"].includes(raw.dataType),"Provenance de projet inconnue");
  const p={
   schema:SCHEMA,
   id:str(raw.id,"Identifiant projet",90),
@@ -72,7 +72,7 @@ function project(raw){
   client:String(raw.client||"").slice(0,180),
   city:String(raw.city||"").slice(0,180),
   startDate:String(raw.startDate||"2026-11-23"),
-  dataType:raw.dataType==="demonstration"?"demonstration":raw.dataType==="imported"?"imported":"user",
+  dataType:raw.dataType==null?"unknown":raw.dataType,
   notes:String(raw.notes||"").slice(0,3000),
   tasks:[]
  };
@@ -107,6 +107,7 @@ function schedule(input){
  const actualCostCount=rows.filter(t=>t.costActual!=null).length;
  const end=rows.reduce((max,t)=>chooseDay(max,t.endExclusive),p.startDate);
  const warnings=[];
+ if(p.dataType==="unknown")warnings.push("Provenance inconnue : données historiques non vérifiées, ne pas assimiler à un chantier réel");
  if(rows.some(t=>t.doneQuantity>t.quantity))warnings.push("Quantité réalisée supérieure à la quantité prévue : dépassement ou mise à jour du métré à vérifier");
  if(rows.some(t=>t.quantity===0))warnings.push("Tâche à quantité nulle : durée de production égale à zéro, vérifier si une mobilisation reste nécessaire");
  if(actualCostCount>0&&actualCostCount<rows.length)warnings.push("Coûts réels incomplets : total partiel ("+actualCostCount+"/"+rows.length+" tâches renseignées), ne pas interpréter comme coût total du chantier");
