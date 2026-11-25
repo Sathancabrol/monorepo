@@ -136,3 +136,9 @@ Faire effectivement le cycle **DCE → étude de prix → préparation → plann
 - Preuve : 19/19 scénarios exécutés sur le moteur modifié dans un environnement JavaScript avec adaptateur minimal des assertions Node. Commande native à reproduire : `node --test projects/btp-conduite-travaux/tests/project-core.test.cjs`.
 - À faire : adapter et tester tous les affichages/imports/exports de provenance, vérifier les parcours navigateur et exécuter Node natif. Aucun critère P0 global clôturé. Les données déjà normalisées en `user` ne peuvent pas être rétroactivement identifiées sans source.
 - Veille existante relue ; aucune dépendance ajoutée ni nouveau benchmark AEC.
+
+### 2026-11-25 — restitution de provenance dans le workspace
+
+- Commit `8e58896fe8a36b553a91d54ad7f2652ac6b82526` : libellés explicites des quatre provenances dans le portefeuille et l'en-tête, provenance dans le CSV, validation brute avant import et conservation de `unknown`/`demonstration`.
+- Contrôle statique : cinq remplacements à ancre unique ; couverture financière déjà exprimée en fraction par le moteur, laissée intacte. Aucun test navigateur ni Node natif exécuté ; validation fonctionnelle encore requise.
+- Veille relue, aucune nouvelle dépendance. Prochaine étape : tests UI import/export et affichage, y compris provenance invalide et coût nul.
