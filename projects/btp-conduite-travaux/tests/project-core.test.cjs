@@ -104,3 +104,15 @@ test("limite de 300 tâches et version de schéma",()=>{
  const p=core.sample();p.tasks=Array.from({length:301},(_,i)=>({id:"x"+i,name:"test",quantity:1,unit:"u"}));
  assert.throws(()=>core.project(p),/Limite/);
 });
+
+test("arrondi décimal par ligne et total en centimes",()=>{
+ const p=core.sample();p.tasks=p.tasks.slice(0,2);
+ for(const t of p.tasks){t.quantity=1;t.unitCost=1.005;t.costActual=0.105;t.doneQuantity=1;}
+ const s=core.schedule(p);assert.equal(s.summary.plannedCost,2.02);assert.equal(s.summary.actualCost,0.22);assert.equal(s.summary.theoreticalBalance,0);
+});
+test("montant et cumul hors précision refusés",()=>{
+ const p=core.sample();p.tasks[0].quantity=1e8;p.tasks[0].dailyRate=1e8;p.tasks[0].unitCost=1e8;
+ assert.throws(()=>core.schedule(p),/précision/);
+ for(const t of p.tasks){t.quantity=1e7;t.dailyRate=1e7;t.unitCost=2e6;}
+ assert.throws(()=>core.schedule(p),/précision/);
+});
