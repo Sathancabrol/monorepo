@@ -1,6 +1,6 @@
 # BTP Studio V2 — état, limitations et backlog maximal
 
-> Branche de développement : feat/btp-studio-premium-3d-20261123
+> Branche de développement : feat/btp-all-modules-workbench-20261123
 > Objectif : suite BTP gratuite/local-first, de l'analyse de l'offre à la livraison du DOE, riche en visualisations et en outils métier.
 
 ## Livré dans la branche V2
@@ -125,3 +125,14 @@ Faire effectivement le cycle **DCE → étude de prix → préparation → plann
 - Commit `ecde3efe3668eed7cb920cd9c1146bcc0ae10eb2` : rejet des provenances explicites inconnues ; absence de provenance conserve le comportement historique.
 - 19 assertions JavaScript exécutées avec succès avant publication : exemple 1830 € / 6 jours, trois provenances admises, cinq invalides, quatre types numériques invalides, deux limites calendaires, deux dépendances invalides et durée excessive.
 - Tests navigateur non exécutés ; précision financière et provenance absente restent à traiter. Aucun ajout de dépendance ni intégration AEC.
+
+
+### 2026-11-25 — fiabilité financière et provenance historique
+
+- `a9740685a16a41389f940021fb78efb9d0d0c275` : avertissement coûts réels partiels.
+- `0ddfcfac7907dc022422b6c03be97728971885bd` et `9aa39df8f24309e3eb7a52dc7dd8e7c079fbba21` : arrondis décimaux et garde-fous en centimes, tests financiers.
+- `f477779cbd9ca1167c1161ac337578599c8c9572` : provenance absente normalisée en `unknown`, avertissement explicite ; les trois provenances historiques explicites restent admises.
+- `734b5523703be96db767d54b81ed13279ecf6756` : test de provenance, aller-retour et rejet des valeurs inconnues non prévues.
+- Preuve : 19/19 scénarios exécutés sur le moteur modifié dans un environnement JavaScript avec adaptateur minimal des assertions Node. Commande native à reproduire : `node --test projects/btp-conduite-travaux/tests/project-core.test.cjs`.
+- À faire : adapter et tester tous les affichages/imports/exports de provenance, vérifier les parcours navigateur et exécuter Node natif. Aucun critère P0 global clôturé. Les données déjà normalisées en `user` ne peuvent pas être rétroactivement identifiées sans source.
+- Veille existante relue ; aucune dépendance ajoutée ni nouveau benchmark AEC.
