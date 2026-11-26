@@ -3,10 +3,10 @@
 <style>
 :root{color-scheme:dark;font:14px system-ui;background:#10141c;color:#e5eaf0}*{box-sizing:border-box}body{margin:0}header,footer{padding:16px 24px;background:#181e28;border-bottom:1px solid #343e4c;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}small{color:#97a6b8}h1{font-size:18px;letter-spacing:.14em;margin:0}h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:#a7b8ca}main{display:grid;grid-template-columns:240px minmax(0,1fr) 250px;gap:12px;padding:12px}section,aside{background:#181e28;border:1px solid #343e4c;border-radius:10px;padding:14px;min-width:0}button,select,.file{background:#252e3c;color:#e5eaf0;border:1px solid #445269;border-radius:6px;padding:9px 12px;cursor:pointer;font:inherit}button:hover,.file:hover{background:#36465b}button:disabled{opacity:.5;cursor:not-allowed}.actions{display:grid;gap:8px}.file input{display:none}.control{display:grid;gap:7px;margin:16px 0}.control label{display:flex;justify-content:space-between}input[type=range]{width:100%;accent-color:#79d8d1}canvas{width:100%;height:auto;display:block;background:black;border-radius:6px}figure{margin:12px 0}figcaption{font-size:11px;color:#a0adbf;margin:6px 0}.views{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tag{color:#7ce0d4;font-size:11px}#status{overflow-wrap:anywhere} @media(max-width:900px){main{grid-template-columns:1fr}.views{grid-template-columns:1fr}aside{order:2}}
 </style></head><body>
-<header><div><small>OLYMPUS STUDIO / VISUAL EFFECTS</small><h1>VFX LAB</h1></div><span class="tag">LOCAL · PROTOTYPE 0.1</span><a href="/" id="back" style="color:inherit" hidden>Retour au Studio</a></header>
-<main><aside><h2>Sources</h2><div class="actions"><button id="demo">Signal de test</button><label class="file">Importer image / vidéo<input id="file" type="file" accept="image/*,video/*"></label><button id="cam">Activer webcam</button><button id="stop">Arrêter source</button></div><h2>Presets</h2><div class="actions"><select id="preset" aria-label="Preset"><option value="clean">Neutre</option><option value="crt">CRT couleur</option><option value="vhs">VHS dégradé</option><option value="terminal">Terminal vert</option></select><button id="reset">Réinitialiser</button></div><h2>Sortie</h2><div class="actions"><button id="png">Exporter PNG</button></div><p><small>Les médias restent dans ce navigateur. Webcam uniquement sur demande.</small></p></aside>
+<header><div><small>OLYMPUS STUDIO / VISUAL EFFECTS</small><h1>VFX LAB</h1></div><span class="tag">LOCAL · REALITY LITE 0.3</span><a href="/" id="back" style="color:inherit" hidden>Retour au Studio</a></header>
+<main><aside><h2>Sources</h2><div class="actions"><button id="demo">Signal de test</button><label class="file">Importer image / vidéo<input id="file" type="file" accept="image/*,video/*"></label><button id="cam">Activer webcam</button><button id="stop">Arrêter source</button></div><h2>Presets</h2><div class="actions"><select id="preset" aria-label="Preset"><option value="clean">Neutre</option><option value="crt">CRT couleur</option><option value="vhs">VHS dégradé</option><option value="terminal">Terminal vert</option></select><button id="reset">Réinitialiser</button></div><h2>Reality Lite</h2><div class="actions"><select id="realityMode" aria-label="Moteur"><option value="off">Désactivé</option><option value="feedback">Hallucination graphique (local)</option><option value="ai">Diffusion IA (ComfyUI local)</option></select><button id="realityDetect">Détecter modèles locaux</button><select id="realityModel" aria-label="Checkpoint"><option value="">Aucun modèle détecté</option></select><textarea id="realityPrompt" rows="3" maxlength="1000" style="width:100%;background:#111;color:inherit" aria-label="Prompt">Living liquid chrome, organic metallic reflections, surreal cinematic lighting</textarea><select id="realitySize" aria-label="Résolution IA"><option>256</option><option selected>320</option><option>384</option><option>512</option></select><select id="realityMask" aria-label="Zone"><option value="all">Image entière</option><option value="center">Ellipse centrale (manuelle)</option><option value="person">Personne (MediaPipe)</option><option value="background">Décor (MediaPipe)</option><option value="face">Tête (approximation pose)</option></select><button id="poseStart">Activer suivi corps local</button><label><input id="poseOverlay" type="checkbox"> Afficher squelette</label><label><input id="poseWarp" type="checkbox" checked> Compensation du mouvement</label><small id="poseStatus">Suivi désactivé</small><label>Intensité <input id="realityMix" type="range" min="0" max="1" value=".65" step=".05"></label><label><input id="realityConsent" type="checkbox"> Autoriser les captures vers ComfyUI local (fichiers conservés)</label><button id="realityGo">Générer une image</button><button id="realityLoop">Démarrer génération continue</button><button id="realityStop">Arrêter IA</button><p id="realityStatus" role="status">Prêt · aucun modèle requis pour le mode graphique</p><small>IA : 4 étapes, denoise 0.5, CFG 1, seed fixe, checkpoint SD-Turbo conseillé. Fréquence non garantie. Suivi corps facultatif, moteur CPU local.</small></div><h2>Sortie</h2><div class="actions"><button id="png">Exporter PNG</button></div><p><small>Webcam sur demande. Les captures IA sont envoyées uniquement à ComfyUI local après consentement.</small></p></aside>
 <section><h2>Moniteur A/B</h2><div class="views"><figure><figcaption>01 / SOURCE</figcaption><canvas id="source" width="640" height="360"></canvas></figure><figure><figcaption>02 / PROGRAMME</figcaption><canvas id="output" width="640" height="360"></canvas></figure></div><p id="status" role="status">Signal de test</p><small>Pipeline Canvas 2D · 640 × 360 · aperçu local</small></section>
-<aside><h2>Effets</h2><div id="controls"></div><label><input id="green" type="checkbox"> Phosphore vert</label><p><small>Les réglages sont non destructifs. Le fichier original n'est jamais modifié.</small></p></aside></main><footer><small>VFX Lab · aucun service distant</small><small>Export vidéo, WebGL et OBS : à développer</small></footer>
+<aside><h2>Effets</h2><div id="controls"></div><label><input id="green" type="checkbox"> Phosphore vert</label><p><small>Les réglages sont non destructifs. Le fichier original n'est jamais modifié.</small></p></aside></main><footer><small>VFX Lab · local uniquement (ComfyUI facultatif)</small><small>Export vidéo, WebGL et OBS : à développer</small></footer>
 <script>
 'use strict';
 if(location.pathname==='/vfxlab/index.html' && location.port!=='8790')document.getElementById('back').hidden=false;
@@ -17,7 +17,7 @@ for(const [k,[name,val]] of Object.entries(defs)){settings[k]=val;const d=docume
 const presets={clean:[0,0,0,0,0,0,0,false],crt:[.45,.26,.04,.02,.1,.24,.36,false],vhs:[.13,.02,.38,.45,.48,.12,.21,false],terminal:[.55,.08,.08,.02,0,.35,.42,true]};
 function preset(k){const p=presets[k];Object.keys(defs).forEach((n,j)=>{const e=$('fx-'+n);e.value=p[j];e.dispatchEvent(new Event('input'))});green=p[7];$('green').checked=green;$('preset').value=k}
 $('preset').onchange=e=>preset(e.target.value);$('reset').onclick=()=>preset('clean');$('green').onchange=e=>green=e.target.checked;
-function release(){epoch++;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}if(media instanceof HTMLVideoElement){media.pause();media.srcObject=null;media.removeAttribute('src');media.load()}if(url){URL.revokeObjectURL(url);url=null}media=null;kind='blank'}
+function release(){stopReality();pose?.reset();epoch++;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}if(media instanceof HTMLVideoElement){media.pause();media.srcObject=null;media.removeAttribute('src');media.load()}if(url){URL.revokeObjectURL(url);url=null}media=null;kind='blank'}
 function status(t){$('status').textContent=t}
 $('demo').onclick=()=>{release();kind='demo';status('Signal de test')};$('stop').onclick=()=>{release();status('Source arrêtée')};
 $('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;release();const token=epoch;url=URL.createObjectURL(f);try{if(f.type.startsWith('video/')){const v=document.createElement('video');v.src=url;v.loop=true;v.muted=true;v.playsInline=true;media=v;await v.play();if(token!==epoch)return;kind='video'}else if(f.type.startsWith('image/')){const i=new Image();i.src=url;await i.decode();if(token!==epoch)return;media=i;kind='image'}else throw Error('Format non pris en charge');status(f.name)}catch(err){if(token===epoch){release();status('Erreur : '+err.message)}}finally{e.target.value=''}};
@@ -33,7 +33,84 @@ b.fillStyle='rgba(0,0,0,'+q.scan*.7+')';for(let y=0;y<h;y+=3)b.fillRect(0,y,w,1)
 b.globalAlpha=q.mask*.18;for(let x=0;x<w;x++){b.fillStyle=['red','lime','blue'][x%3];b.fillRect(x,0,1,h)}b.globalAlpha=1;
 for(let i=0;i<q.noise*1500;i++){b.fillStyle=Math.random()>.5?'rgba(255,255,255,.28)':'rgba(0,0,0,.35)';b.fillRect(Math.random()*w,Math.random()*h,2,1)}
 const g=b.createRadialGradient(w/2,h/2,h*.15,w/2,h/2,w*.57);g.addColorStop(0,'transparent');g.addColorStop(1,'rgba(0,0,0,'+q.vignette+')');b.fillStyle=g;b.fillRect(0,0,w,h)}
-frame=requestAnimationFrame(render)}
+if(kind!=='blank'&&pose?.active){try{pose.tick(src,t)}catch(e){pose.stop();$('poseStatus').textContent='Suivi arrêté : '+e.message;}}
+applyReality(t);if($('poseOverlay').checked)pose?.draw(b,w,h,t);frame=requestAnimationFrame(render)}
+
+const rc=document.createElement('canvas');rc.width=w;rc.height=h;const rx=rc.getContext('2d');
+const previous=document.createElement('canvas');previous.width=w;previous.height=h;const px=previous.getContext('2d');
+const capture=document.createElement('canvas');const cx=capture.getContext('2d');
+let pose=null,poseLoading=false,aiAnchor=null;
+let realityImage=null,realityEpoch=-1,realityRevision=0,realityBusy=false,realityRunning=false,realityTimer=null,realityLast=0,realityFrames=0,feedbackReady=false;
+const rstatus=t=>$('realityStatus').textContent=t;
+$('poseStart').onclick=async()=>{
+ if(poseLoading)return;
+ if(pose?.active){pose.stop();$('poseStart').textContent='Activer suivi corps local';$('poseStatus').textContent='Suivi désactivé';return;}
+ poseLoading=true;$('poseStatus').textContent='Chargement du modèle local…';
+ try{if(!pose){const {RealityPose}=await import('./pose.mjs');pose=new RealityPose();}
+ await pose.start();$('poseStart').textContent='Désactiver suivi';$('poseStatus').textContent='Suivi CPU activé · corps, masque et squelette';
+ }catch(e){$('poseStatus').textContent='Assets MediaPipe absents ou incompatibles : '+e.message;}
+ finally{poseLoading=false;}
+};
+function stopReality(){realityRunning=false;realityRevision++;clearTimeout(realityTimer);realityTimer=null;realityImage=null;aiAnchor=null;feedbackReady=false;}
+function resetReality(){stopReality();rstatus('Arrêt demandé · une tâche ComfyUI déjà lancée peut finir');}
+$('realityStop').onclick=resetReality;
+$('realityMode').onchange=()=>{stopReality();rstatus('Mode : '+$('realityMode').selectedOptions[0].textContent)};
+$('realityConsent').onchange=()=>{if(!$('realityConsent').checked)resetReality()};
+for(const id of ['realityModel','realityPrompt','realitySize'])$(id).addEventListener('change',()=>{stopReality();rstatus('Réglages modifiés · relancer la génération')});
+$('realityDetect').onclick=async()=>{try{const r=await fetch('/api/reality/models',{cache:'no-store'}),d=await r.json();if(!r.ok)throw Error(d.error);const s=$('realityModel');s.replaceChildren(new Option('Choisir un checkpoint',''));for(const n of d.models)s.add(new Option(n,n));const turbo=d.models.find(n=>/sd[-_ ]?turbo/i.test(n)&&!/xl/i.test(n));if(turbo)s.value=turbo;rstatus(d.models.length+' checkpoint(s) détecté(s). Choisir SD-Turbo.')}catch(e){rstatus('ComfyUI : '+e.message)}};
+async function realityOnce(){
+ if(realityBusy)return;
+ if(kind==='blank'){resetReality();rstatus('Activer une source avant la génération');return;}
+ if($('realityMode').value!=='ai'||!$('realityConsent').checked||!$('realityModel').value){resetReality();rstatus('Choisir IA, checkpoint et autoriser les captures locales');return;}
+ realityBusy=true;const token=epoch,revision=realityRevision,start=performance.now();rstatus('Génération IA en cours · aperçu vidéo maintenu');
+ try{
+  const size=Number($('realitySize').value);capture.width=capture.height=size;const ch=Math.round(size*h/w);cx.fillStyle='black';cx.fillRect(0,0,size,size);cx.drawImage(src,0,(size-ch)/2,size,ch);const anchor=pose?.fresh(performance.now())&&pose.center?{...pose.center}:null;
+  const response=await fetch('/api/reality/frame',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:capture.toDataURL('image/jpeg',.85),checkpoint:$('realityModel').value,prompt:$('realityPrompt').value,size,steps:4,denoise:.5,seed:42})});
+  const data=await response.json();if(!response.ok)throw Error(data.error||'Erreur IA');
+  const image=new Image();image.src=data.image;await image.decode();
+  if(epoch!==token||revision!==realityRevision)return;
+  realityImage=image;aiAnchor=anchor;realityEpoch=token;realityFrames++;rstatus('IA : '+((performance.now()-start)/1000).toFixed(1)+' s/image · '+realityFrames+' résultat(s)');
+ }catch(e){if(revision===realityRevision){stopReality();rstatus('IA arrêtée : '+e.message+' · rendu graphique disponible')}}
+ finally{realityBusy=false;if(realityRunning&&revision===realityRevision)realityTimer=setTimeout(realityOnce,500);}
+}
+$('realityGo').onclick=()=>realityOnce();
+$('realityLoop').onclick=()=>{if(realityBusy){rstatus('Attendre la génération actuelle');return;}if(realityRunning)return;realityRunning=true;realityOnce()};
+function applyReality(t){
+ if(kind==='blank')return;
+ const mode=$('realityMode').value,mix=Number($('realityMix').value);
+ if(mode==='off')return;
+ rx.clearRect(0,0,w,h);rx.globalAlpha=1;rx.globalCompositeOperation='source-over';rx.filter='none';
+ if(mode==='ai'){
+  if(!realityImage||realityEpoch!==epoch)return;
+  let dx=0,dy=0;
+  if($('poseWarp').checked&&aiAnchor&&pose?.fresh(t)&&pose.center){dx=Math.max(-w*.15,Math.min(w*.15,(pose.center.x-aiAnchor.x)*w));dy=Math.max(-h*.15,Math.min(h*.15,(pose.center.y-aiAnchor.y)*h));}
+  const iw=realityImage.naturalWidth,ih=realityImage.naturalHeight,sh=ih*h/w;
+  rx.drawImage(realityImage,0,(ih-sh)/2,iw,sh,dx,dy,w,h);
+ }
+ else{
+  rx.filter='contrast(1.6) saturate(1.8) hue-rotate('+Math.round(45+35*Math.sin(t*.0005))+'deg)';
+  rx.drawImage(src,0,0,w,h);rx.filter='none';
+  if(feedbackReady){rx.save();rx.translate(w/2,h/2);rx.rotate(Math.sin(t*.001)*.015);rx.scale(1.025,1.025);rx.globalAlpha=.38;rx.globalCompositeOperation='screen';rx.drawImage(previous,-w/2,-h/2);rx.restore();}
+  px.clearRect(0,0,w,h);px.drawImage(rc,0,0);feedbackReady=true;
+ }
+ const zone=$('realityMask').value;
+ if(zone==='person'||zone==='background'){
+  if(!pose?.fresh(t)||!pose.valid)return;
+  rx.globalCompositeOperation=zone==='person'?'destination-in':'destination-out';
+  rx.drawImage(pose.mask,0,0,w,h);rx.globalCompositeOperation='source-over';
+ }
+ if(zone==='face'){
+  if(!pose?.fresh(t))return;
+  const nose=pose.points[0],left=pose.points[7],right=pose.points[8];if(!nose||!left||!right||Math.min(nose.visibility,left.visibility,right.visibility)<.4)return;
+  const radius=Math.max(12,Math.hypot((left.x-right.x)*w,(left.y-right.y)*h)*.85);
+  rx.globalCompositeOperation='destination-in';
+  const fg=rx.createRadialGradient(nose.x*w,nose.y*h,radius*.4,nose.x*w,nose.y*h,radius);
+  fg.addColorStop(0,'white');fg.addColorStop(1,'transparent');rx.fillStyle=fg;rx.fillRect(0,0,w,h);rx.globalCompositeOperation='source-over';
+ }
+ if(zone==='center'){rx.globalCompositeOperation='destination-in';const g=rx.createRadialGradient(w/2,h/2,h*.13,w/2,h/2,h*.43);g.addColorStop(0,'white');g.addColorStop(1,'transparent');rx.fillStyle=g;rx.fillRect(0,0,w,h);rx.globalCompositeOperation='source-over';}
+ b.save();b.globalAlpha=mix;b.drawImage(rc,0,0);b.restore();
+}
+
 $('png').onclick=()=>{out.toBlob(blob=>{if(!blob){status('Export impossible');return}const u=URL.createObjectURL(blob),el=document.createElement('a');el.href=u;el.download='olympus-vfx.png';el.click();setTimeout(()=>URL.revokeObjectURL(u),1000)},'image/png')};
-addEventListener('pagehide',()=>{cancelAnimationFrame(frame);release()});preset('crt');frame=requestAnimationFrame(render);
+addEventListener('pagehide',()=>{cancelAnimationFrame(frame);release();pose?.close()});preset('crt');frame=requestAnimationFrame(render);
 </script></body></html>

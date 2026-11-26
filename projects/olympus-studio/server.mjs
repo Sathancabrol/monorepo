@@ -3,13 +3,15 @@ import { readFile, stat } from 'node:fs/promises';
 import { join, resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import net from 'node:net';
+import {makeRealityHandler} from './reality.mjs';
+const reality=makeRealityHandler();
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
 const PORT = Number(process.env.OLYMPUS_PORT || 8787);
-const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
+const types = {'.mjs':'text/javascript; charset=utf-8','.wasm':'application/wasm','.task':'application/octet-stream','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon'};
 // Serve only the Studio UI files. Never expose .env, source maps, tests or server code.
-const STATIC_FILES = new Set(['/vfxlab/index.html','/index.html','/src/style.css','/src/app.js','/src/media-store.js','/src/meeting-utils.js','/src/v03-migration.js','/src/storyboard.js','/src/edit-audio.js','/src/video-duration.js','/src/shared-camera.js','/src/camera-pool.js','/src/obs-panel.css','/src/obs-panel.js','/src/obs-client.js']);
+const STATIC_FILES = new Set(['/vfxlab/pose.mjs','/vfxlab/vendor/vision_bundle.mjs','/vfxlab/vendor/pose_landmarker_lite.task','/vfxlab/vendor/wasm/vision_wasm_internal.js','/vfxlab/vendor/wasm/vision_wasm_internal.wasm','/vfxlab/vendor/wasm/vision_wasm_nosimd_internal.js','/vfxlab/vendor/wasm/vision_wasm_nosimd_internal.wasm','/vfxlab/index.html','/index.html','/src/style.css','/src/app.js','/src/media-store.js','/src/meeting-utils.js','/src/v03-migration.js','/src/storyboard.js','/src/edit-audio.js','/src/video-duration.js','/src/shared-camera.js','/src/camera-pool.js','/src/obs-panel.css','/src/obs-panel.js','/src/obs-client.js']);
 const ORIGINS = new Set(['http://127.0.0.1:'+PORT,'http://localhost:'+PORT]);
 
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
@@ -38,6 +40,7 @@ async function handle(req,res){
  if (!['127.0.0.1:'+PORT,'localhost:'+PORT].includes(req.headers.host)) return json(res,403,{error:'Hôte interdit'});
  if (req.method === 'POST' && req.headers.origin && !ORIGINS.has(req.headers.origin)) return json(res,403,{error:'Origine interdite'});
 
+ if(await reality(req,res,url,bodyJson))return;
  if(req.method==='GET'&&url.pathname==='/obs'){
   res.writeHead(200,{'Content-Type':'multipart/x-mixed-replace; boundary=frame','Cache-Control':'no-cache, no-store','Connection':'keep-alive','X-Content-Type-Options':'nosniff'});
   viewers.add(res);req.once('close',()=>viewers.delete(res));
