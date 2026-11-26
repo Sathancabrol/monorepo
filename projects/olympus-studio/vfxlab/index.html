@@ -48,7 +48,8 @@ $('realityConsent').onchange=()=>{if(!$('realityConsent').checked)resetReality()
 for(const id of ['realityModel','realityPrompt','realitySize'])$(id).addEventListener('change',()=>{stopReality();rstatus('Réglages modifiés · relancer la génération')});
 $('realityDetect').onclick=async()=>{try{const r=await fetch('/api/reality/models',{cache:'no-store'}),d=await r.json();if(!r.ok)throw Error(d.error);const s=$('realityModel');s.replaceChildren(new Option('Choisir un checkpoint',''));for(const n of d.models)s.add(new Option(n,n));const turbo=d.models.find(n=>/sd[-_ ]?turbo/i.test(n)&&!/xl/i.test(n));if(turbo)s.value=turbo;rstatus(d.models.length+' checkpoint(s) détecté(s). Choisir SD-Turbo.')}catch(e){rstatus('ComfyUI : '+e.message)}};
 async function realityOnce(){
- if(realityBusy||kind==='blank')return;
+ if(realityBusy)return;
+ if(kind==='blank'){resetReality();rstatus('Activer une source avant la génération');return;}
  if($('realityMode').value!=='ai'||!$('realityConsent').checked||!$('realityModel').value){resetReality();rstatus('Choisir IA, checkpoint et autoriser les captures locales');return;}
  realityBusy=true;const token=epoch,revision=realityRevision,start=performance.now();rstatus('Génération IA en cours · aperçu vidéo maintenu');
  try{
