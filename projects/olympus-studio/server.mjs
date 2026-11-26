@@ -3,6 +3,8 @@ import { readFile, stat } from 'node:fs/promises';
 import { join, resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import net from 'node:net';
+import {makeRealityHandler} from './reality.mjs';
+const reality=makeRealityHandler();
 
 const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const HOST = '127.0.0.1'; // No LAN or cloud exposure by default.
@@ -38,6 +40,7 @@ async function handle(req,res){
  if (!['127.0.0.1:'+PORT,'localhost:'+PORT].includes(req.headers.host)) return json(res,403,{error:'Hôte interdit'});
  if (req.method === 'POST' && req.headers.origin && !ORIGINS.has(req.headers.origin)) return json(res,403,{error:'Origine interdite'});
 
+ if(await reality(req,res,url,bodyJson))return;
  if(req.method==='GET'&&url.pathname==='/obs'){
   res.writeHead(200,{'Content-Type':'multipart/x-mixed-replace; boundary=frame','Cache-Control':'no-cache, no-store','Connection':'keep-alive','X-Content-Type-Options':'nosniff'});
   viewers.add(res);req.once('close',()=>viewers.delete(res));
