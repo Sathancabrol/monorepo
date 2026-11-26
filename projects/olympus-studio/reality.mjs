@@ -10,7 +10,7 @@ export function workflow({checkpoint,prompt,filename,size,steps,denoise,seed}){
   '6':{class_type:'VAEEncode',inputs:{pixels:['5',0],vae:['1',2]}},
   '7':{class_type:'KSampler',inputs:{model:['1',0],positive:['2',0],negative:['3',0],latent_image:['6',0],seed,steps,cfg:1,sampler_name:'euler_ancestral',scheduler:'normal',denoise}},
   '8':{class_type:'VAEDecode',inputs:{samples:['7',0],vae:['1',2]}},
-  '9':{class_type:'SaveImage',inputs:{images:['8',0],filename_prefix:'olympus_reality'}}
+  '9':{class_type:'PreviewImage',inputs:{images:['8',0]}}
  };
 }
 export function validate(d){
@@ -22,6 +22,7 @@ export function validate(d){
 }
 export function makeRealityHandler({fetcher=fetch,pause=ms=>new Promise(r=>setTimeout(r,ms)),maxPoll=120}={}){
  let busy=false, pending=null;
+ const sessionInput='olympus-reality-'+randomUUID()+'.jpg';
  async function request(path,opts={}){
   const r=await fetcher(BASE+path,{...opts,signal:AbortSignal.timeout(8000)});
   if(!r.ok)throw Error('ComfyUI HTTP '+r.status);return r;
@@ -46,8 +47,8 @@ export function makeRealityHandler({fetcher=fetch,pause=ms=>new Promise(r=>setTi
     pending=null;
    }
    if(!(await models()).includes(d.checkpoint)){send(res,400,{error:'Checkpoint non installé'});return true;}
-   const id=randomUUID(),form=new FormData();
-   form.append('image',new Blob([bytes],{type:'image/jpeg'}),'olympus-'+id+'.jpg');form.append('type','input');
+   const form=new FormData();
+   form.append('image',new Blob([bytes],{type:'image/jpeg'}),sessionInput);form.append('type','input');form.append('overwrite','true');
    const uploaded=await (await request('/upload/image',{method:'POST',body:form})).json();
    if(!uploaded.name||uploaded.subfolder)throw Error('Réponse upload inattendue');
    const result=await (await request('/prompt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:workflow({...d,filename:uploaded.name}),client_id:'olympus-reality'})})).json();
